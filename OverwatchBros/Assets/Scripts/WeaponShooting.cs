@@ -8,7 +8,7 @@ public class WeaponShooting : MonoBehaviour
 
     int currentAmmo;
     float nextFireTime;
-
+    public int CurrentAmmo => currentAmmo;
     void Start()
     {
         currentAmmo = weapon.maxAmmo;
