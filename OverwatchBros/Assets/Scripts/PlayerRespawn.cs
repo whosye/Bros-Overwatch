@@ -1,26 +1,29 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerRespawn : MonoBehaviour
+public class PlayerRespawn : NetworkBehaviour
 {
-    public Transform spawnPoint;
     public float respawnDelay = 2f;
 
     CharacterController controller;
     Health health;
+    PlayerTeam team;
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
         health = GetComponent<Health>();
-
-        if (spawnPoint == null)
-        {
-            GameObject spawnPointObject = GameObject.Find("SpawnPoint");
-            if (spawnPointObject != null)
-                spawnPoint = spawnPointObject.transform;
-        }
+        team = GetComponent<PlayerTeam>();
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner) return;
+
+        Transform spawnPoint = FindSpawnPoint();
+        if (spawnPoint != null)
+            transform.position = spawnPoint.position;
+    }
 
     void OnEnable()
     {
@@ -39,10 +42,20 @@ public class PlayerRespawn : MonoBehaviour
 
     void Respawn()
     {
+        Transform spawnPoint = FindSpawnPoint();
+
         controller.enabled = false;
-        transform.position = spawnPoint.position;
+        if (spawnPoint != null)
+            transform.position = spawnPoint.position;
         controller.enabled = true;
         health.ResetHealth();
         Debug.Log("Respawn.");
+    }
+
+    Transform FindSpawnPoint()
+    {
+        string spawnPointName = $"SpawnPoint_Team{team.teamId.Value}";
+        GameObject spawnPointObject = GameObject.Find(spawnPointName);
+        return spawnPointObject != null ? spawnPointObject.transform : null;
     }
 }

@@ -16,12 +16,14 @@ public class FirstPersonController : NetworkBehaviour
     public float crouchHeight = 1f;
 
     CharacterController controller;
+    Health health;
     float verticalVelocity;
     float cameraPitch;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        health = GetComponent<Health>();
     }
 
     public override void OnNetworkSpawn()
@@ -59,6 +61,12 @@ public class FirstPersonController : NetworkBehaviour
 
     void HandleMovement()
     {
+        if (health != null && health.currentHealth.Value <= 0)
+        {
+            Debug.Log("Player is dead, cannot move. Spawn dead animation here.");
+            return;
+        }
+
         bool isGrounded = controller.isGrounded;
         if (isGrounded && verticalVelocity < 0)
             verticalVelocity = -2f;

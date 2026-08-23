@@ -155,6 +155,8 @@ GameObject:
   - component: {fileID: 8912812493316825607}
   - component: {fileID: 856219777043907810}
   - component: {fileID: 4429321282671951896}
+  - component: {fileID: -2488185985224849026}
+  - component: {fileID: 1775325243099886135}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -334,8 +336,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c81940ea5ae4c9b42a9837ce8e0f67ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
+  ShowTopMostFoldoutHeaderGroup: 1
   maxHealth: 100
-  currentHealth: 0
+  currentHealth:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &856219777043907810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,7 +355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93436bd5aa2de5e45acfc96978eeba80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRespawn
-  spawnPoint: {fileID: 0}
+  ShowTopMostFoldoutHeaderGroup: 1
   respawnDelay: 2
 --- !u!114 &4429321282671951896
 MonoBehaviour:
@@ -396,3 +403,35 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &-2488185985224849026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28763fe854d110946b63c5463ca98e53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTeam
+  ShowTopMostFoldoutHeaderGroup: 1
+  teamId:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &1775325243099886135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e21cb70b959ce4b8a8b89d597f2050, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DashAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 11400000, guid: c274d57a1a9868941ae150d04588a291, type: 2}
