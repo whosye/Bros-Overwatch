@@ -1,35 +1,48 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+public class Health : NetworkBehaviour
 {
     public float maxHealth = 100f;
-    public float currentHealth;
+    public NetworkVariable<float> currentHealth = new NetworkVariable<float>();
 
     public event Action OnDeath;
 
-    void Start()
+    public override void OnNetworkSpawn()
     {
-        currentHealth = maxHealth;
+        if (IsServer)
+            currentHealth.Value = maxHealth;
+
+        currentHealth.OnValueChanged += HandleHealthChanged;
     }
 
-    public void TakeDamage(float amount)
+    public override void OnNetworkDespawn()
     {
-        if (currentHealth <= 0f) return;
+        currentHealth.OnValueChanged -= HandleHealthChanged;
+    }
 
-        currentHealth -= amount;
-        Debug.Log($"{gameObject.name}: {currentHealth}/{maxHealth} HP");
-
-        if (currentHealth <= 0f)
+    void HandleHealthChanged(float previous, float current)
+    {
+        if (current <= 0f)
         {
-            currentHealth = 0f;
             Debug.Log($"{gameObject.name} zemřel.");
             OnDeath?.Invoke();
         }
     }
 
+    public void TakeDamage(float amount)
+    {
+        if (!IsServer) return;
+        if (currentHealth.Value <= 0f) return;
+
+        currentHealth.Value = Mathf.Max(0f, currentHealth.Value - amount);
+        Debug.Log($"{gameObject.name}: {currentHealth.Value}/{maxHealth} HP");
+    }
+
     public void ResetHealth()
     {
-        currentHealth = maxHealth;
+        if (!IsServer) return;
+        currentHealth.Value = maxHealth;
     }
 }

@@ -1,10 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
-
+using Unity.Netcode;
 
 [RequireComponent(typeof(CharacterController))]
-public class FirstPersonController : MonoBehaviour
+public class FirstPersonController : NetworkBehaviour
 {
     public Camera playerCamera;
 
@@ -23,11 +22,23 @@ public class FirstPersonController : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            playerCamera.gameObject.SetActive(false);
+            return;
+        }
+
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
+        if (!IsOwner) return;
+
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
             Cursor.lockState = CursorLockMode.None;
 

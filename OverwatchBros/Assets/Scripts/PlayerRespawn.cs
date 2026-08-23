@@ -12,7 +12,15 @@ public class PlayerRespawn : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         health = GetComponent<Health>();
+
+        if (spawnPoint == null)
+        {
+            GameObject spawnPointObject = GameObject.Find("SpawnPoint");
+            if (spawnPointObject != null)
+                spawnPoint = spawnPointObject.transform;
+        }
     }
+
 
     void OnEnable()
     {

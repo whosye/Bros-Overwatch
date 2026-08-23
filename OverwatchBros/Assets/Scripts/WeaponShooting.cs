@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
-public class WeaponShooting : MonoBehaviour
+public class WeaponShooting : NetworkBehaviour
 {
     public WeaponDefinition weapon;
     public Camera playerCamera;
@@ -16,6 +17,8 @@ public class WeaponShooting : MonoBehaviour
 
     void Update()
     {
+        if (!IsOwner) return;
+
         if (Keyboard.current.rKey.wasPressedThisFrame)
         {
             Reload();
@@ -42,9 +45,24 @@ public class WeaponShooting : MonoBehaviour
             Target target = hit.collider.GetComponent<Target>();
             if (target != null)
                 target.TakeDamage(weapon.damage);
+
+            NetworkObject hitNetworkObject = hit.collider.GetComponent<NetworkObject>();
+            if (hitNetworkObject != null)
+                RequestDamageServerRpc(hitNetworkObject, weapon.damage);
         }
 
         Debug.Log($"Vystřeleno. Zbývá náboju: {currentAmmo}/{weapon.maxAmmo}");
+    }
+
+    [ServerRpc]
+    void RequestDamageServerRpc(NetworkObjectReference targetRef, float amount)
+    {
+        if (targetRef.TryGet(out NetworkObject targetObject))
+        {
+            Health targetHealth = targetObject.GetComponent<Health>();
+            if (targetHealth != null)
+                targetHealth.TakeDamage(amount);
+        }
     }
 
     void Reload()

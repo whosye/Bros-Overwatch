@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.Netcode;
 
 public class PlayerHUD : MonoBehaviour
 {
@@ -10,7 +11,26 @@ public class PlayerHUD : MonoBehaviour
 
     void Update()
     {
-        healthText.text = $"HP: {health.currentHealth:0} / {health.maxHealth:0}";
+        if (health == null || weapon == null)
+        {
+            FindLocalPlayer();
+            return;
+        }
+
+        healthText.text = $"HP: {health.currentHealth.Value:0} / {health.maxHealth:0}";
         ammoText.text = $"Ammo: {weapon.CurrentAmmo} / {weapon.weapon.maxAmmo}";
+    }
+
+    void FindLocalPlayer()
+    {
+        if (NetworkManager.Singleton == null || NetworkManager.Singleton.LocalClient == null)
+            return;
+
+        NetworkObject localPlayerObject = NetworkManager.Singleton.LocalClient.PlayerObject;
+        if (localPlayerObject == null)
+            return;
+
+        health = localPlayerObject.GetComponent<Health>();
+        weapon = localPlayerObject.GetComponent<WeaponShooting>();
     }
 }

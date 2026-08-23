@@ -24,20 +24,22 @@ Unity 6 projekt (URP template), Git + Git LFS nastavené, .gitignore pro Unity. 
 Cube nahrazen player prefabem s FPS kamerou. Walk/run/jump/crouch, kolize se zemí. Grey-box testovací místnost v ProBuilderu.
 **DoD:** chození po grey-box místnosti v první osobě, stabilní FPS.
 
-### M2 — Shooting Core (data-driven)
+### M2 — Shooting Core (data-driven) -- DONE
 
-`WeaponDefinition` ScriptableObject (damage, ra-te of fire, ammo, hitscan/projectile). Raycast střelba na dummy terče, crosshair, ammo/reload UI.
+`WeaponDefinition` ScriptableObject (damage, rate of fire, ammo, hitscan/projectile). Raycast střelba na dummy terče, crosshair, ammo/reload UI.
 **DoD:** střelba na dummy terč, vidíš poškození/log.
 
-### M3 — Health & Respawn
+### M3 — Health & Respawn -- DONE
 
 `Health` komponenta, damage pipeline, smrt, respawn na spawn pointu. Základní HUD (health, ammo).
 **DoD:** hráč umře od terče/hazardu a respawnne se.
 
-### M4 — LAN Multiplayer Core
+### M4 — LAN Multiplayer Core -- DONE
 
 Netcode for GameObjects, host/join přes LAN (lokální síť). Síťovaný pohyb + síťovaná střelba/health, server-authoritative.
 **DoD:** dva reálné notebooky na stejné síti se vidí, střílí po sobě, health se správně synchronizuje.
+
+**Poznámka k nastavení hostitele pro reálný LAN test:** na `NetworkManager` → `Unity Transport` u buildu, který hostuje, musí být zaškrtnuté **Allow Remote Connections** a **Address** nastavená na `0.0.0.0` (ne `127.0.0.1`, který poslouchá jen lokálně). Bez tohoto se z jiného stroje nejde připojit, i když je vše ostatní správně.
 
 ### M5 — First Hero (ScriptableObject architektura)
 
@@ -68,6 +70,16 @@ Zopakovat M8 pipeline pro zbytek kamarádů/hrdinů. Zopakovat M6 proces pro dal
 ### M10 — Polish & Release-to-friends
 
 UI polish, settings menu, audio mix, bugfixing, sestavené buildy pro LAN párty.
+
+## Nápady k zapracování (zatím neimplementováno)
+
+Věci, na které jsme narazili v diskuzi, zapadají do architektury beze změny existujícího kódu, ale zatím nejsou potřeba. Až na ně dojde řada, patří sem:
+
+- **Projektilové zbraně** (rakety, šípy) — vedle `WeaponDefinition` s hitscan přidat variantu s `Instantiate` + `Rigidbody` a damage přes `OnCollisionEnter`. Síťově dražší než hitscan (nutno spawnout `NetworkObject`). → **M5**, u druhé zbraně/hrdiny.
+- **Hitboxy po částech těla** (headshoty) — víc menších colliderů (head/body) na skutečné postavě, `hit.collider` určí násobič damage. Nemá smysl bez rigovaných postav. → **M8+**.
+- **Animace zbraně** (viewmodel, idle/fire/reload) — 3D model zbraně jako child kamery + `Animator`, spouštěný z `WeaponShooting` (`animator.SetTrigger(...)`) na místech, kde už dnes voláme `Debug.Log`. → **M7 (placeholder) / M9-M10 (finální model)**.
+- **Melee útok** — stejný princip jako `WeaponShooting`, jen `Physics.SphereCast`/`OverlapSphere` na krátký dosah místo raycastu na `weapon.range`. Volání `TakeDamage` beze změny. → **M5**, jako druhý typ zbraně (test, že data-driven systém zvládne i jiný typ).
+- **Meele obrana/blok (parry)** — hrdinská ability (`AbilityDefinition`), ne zbraň. `Health.TakeDamage()` dostane na začátku podmínku `if (isBlocking) ...`. → **M5**.
 
 ## Poznámka k postupu
 
