@@ -7,9 +7,13 @@ public class NetworkUI : MonoBehaviour
 {
     public GameObject menuPanel;
     public TMP_InputField ipInputField;
+    public TMP_InputField scoreToWinInput;
 
     public void OnHostClicked()
     {
+        if (int.TryParse(scoreToWinInput.text, out int scoreToWin) && scoreToWin > 0)
+            MatchManager.Instance.scoreToWin = scoreToWin;
+
         NetworkManager.Singleton.StartHost();
         menuPanel.SetActive(false);
     }

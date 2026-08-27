@@ -60,8 +60,17 @@ public class WeaponShooting : NetworkBehaviour
         if (targetRef.TryGet(out NetworkObject targetObject))
         {
             Health targetHealth = targetObject.GetComponent<Health>();
-            if (targetHealth != null)
-                targetHealth.TakeDamage(amount);
+            if (targetHealth == null) return;
+
+            bool wasAlive = targetHealth.currentHealth.Value > 0f;
+            targetHealth.TakeDamage(amount);
+
+            if (wasAlive && targetHealth.currentHealth.Value <= 0f)
+            {
+                PlayerTeam shooterTeam = GetComponent<PlayerTeam>();
+                if (shooterTeam != null && MatchManager.Instance != null)
+                    MatchManager.Instance.AddScore(shooterTeam.teamId.Value, 1);
+            }
         }
     }
 
