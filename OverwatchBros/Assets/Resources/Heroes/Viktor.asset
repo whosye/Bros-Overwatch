@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a39f21388b7624d84e663cff5b4ed3, type: 3}
+  m_Name: Viktor
+  m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
+  heroName: Viktor
+  color: {r: 0.45, g: 0.65, b: 0.95, a: 1}
+  maxHealth: 100
+  weapon: {fileID: 11400000, guid: c0a64531a1b9ffd4bbe5f837139b5fdf, type: 2}
+  abilityKind: 1
+  ability: {fileID: 11400000, guid: c274d57a1a9868941ae150d04588a291, type: 2}
+  spawnLines: []
+  killLines: []
+  deathLines: []

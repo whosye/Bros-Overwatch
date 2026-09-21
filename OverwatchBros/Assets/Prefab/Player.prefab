@@ -157,6 +157,9 @@ GameObject:
   - component: {fileID: 4429321282671951896}
   - component: {fileID: -2488185985224849026}
   - component: {fileID: 1775325243099886135}
+  - component: {fileID: 2572852570881747774}
+  - component: {fileID: 4159225094029200330}
+  - component: {fileID: 4138224259697668993}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -309,6 +312,7 @@ MonoBehaviour:
   mouseSensitivity: 2
   standHeight: 2
   crouchHeight: 1
+  footstepDistance: 2.2
 --- !u!114 &7417173623501469966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,3 +439,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DashAbility
   ShowTopMostFoldoutHeaderGroup: 1
   ability: {fileID: 11400000, guid: c274d57a1a9868941ae150d04588a291, type: 2}
+--- !u!114 &2572852570881747774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5af7397db7c01748affa21234fdf999, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHero
+  ShowTopMostFoldoutHeaderGroup: 1
+  heroId:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: -1
+--- !u!114 &4159225094029200330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35f2d944335580a4498e928daa89bb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeapStrikeAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+  hoverHeight: 14
+  ascendTime: 0.7
+  diveSpeed: 48
+  maxAimDistance: 150
+  thirdPersonCameraOffset: {x: 0, y: 2.4, z: -6.5}
+--- !u!114 &4138224259697668993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0ff34109eb6730458e6f29cc10157dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeroVoice
+  volume: 1

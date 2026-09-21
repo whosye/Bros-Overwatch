@@ -35,6 +35,7 @@ public class Health : NetworkBehaviour
     {
         if (!IsServer) return;
         if (currentHealth.Value <= 0f) return;
+        if (MatchManager.Instance != null && MatchManager.Instance.IsLobby) return;
 
         currentHealth.Value = Mathf.Max(0f, currentHealth.Value - amount);
         Debug.Log($"{gameObject.name}: {currentHealth.Value}/{maxHealth} HP");

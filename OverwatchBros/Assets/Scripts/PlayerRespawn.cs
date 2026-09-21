@@ -8,12 +8,14 @@ public class PlayerRespawn : NetworkBehaviour
     CharacterController controller;
     Health health;
     PlayerTeam team;
+    FirstPersonController fpc;
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
         health = GetComponent<Health>();
         team = GetComponent<PlayerTeam>();
+        fpc = GetComponent<FirstPersonController>();
     }
 
     public override void OnNetworkSpawn()
@@ -42,14 +44,35 @@ public class PlayerRespawn : NetworkBehaviour
 
     void Respawn()
     {
+        if (MatchManager.Instance != null && MatchManager.Instance.IsOver) return;
+
+        Teleport();
+        health.ResetHealth();
+        Debug.Log("Respawn.");
+    }
+
+    // Vola MatchManager pri restartu zapasu (na vlastniku hrace).
+    public void ResetToSpawn()
+    {
+        CancelInvoke(nameof(Respawn));
+        Teleport();
+    }
+
+    void Teleport()
+    {
         Transform spawnPoint = FindSpawnPoint();
+
+        var leap = GetComponent<LeapStrikeAbility>();
+        if (leap != null)
+            leap.Cancel();
 
         controller.enabled = false;
         if (spawnPoint != null)
             transform.position = spawnPoint.position;
         controller.enabled = true;
-        health.ResetHealth();
-        Debug.Log("Respawn.");
+
+        if (fpc != null)
+            fpc.ResetVertical();
     }
 
     Transform FindSpawnPoint()

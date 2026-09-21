@@ -39,7 +39,7 @@ Cube nahrazen player prefabem s FPS kamerou. Walk/run/jump/crouch, kolize se zem
 Netcode for GameObjects, host/join přes LAN (lokální síť). Síťovaný pohyb + síťovaná střelba/health, server-authoritative.
 **DoD:** dva reálné notebooky na stejné síti se vidí, střílí po sobě, health se správně synchronizuje.
 
-**Poznámka k nastavení hostitele pro reálný LAN test:** na `NetworkManager` → `Unity Transport` u buildu, který hostuje, musí být zaškrtnuté **Allow Remote Connections** a **Address** nastavená na `0.0.0.0` (ne `127.0.0.1`, který poslouchá jen lokálně). Bez tohoto se z jiného stroje nejde připojit, i když je vše ostatní správně.
+**Poznámka k nastavení hostitele pro reálný LAN test:** hostitel musí poslouchat na `0.0.0.0` (ne `127.0.0.1`, který poslouchá jen lokálně), jinak se z jiného stroje nejde připojit. Od M7 to dělá `GameConnection.Host` sám (`SetConnectionData("127.0.0.1", 7777, "0.0.0.0")`), takže ruční nastavení na `NetworkManageru` už není potřeba. Firewall hostitele musí povolit UDP port 7777 (hra) a 47777 (hledání her v LAN).
 
 ### M5 — First Hero (ScriptableObject architektura) -- DONE
 
@@ -61,6 +61,17 @@ Druhý hrdina (ověří, že ScriptableObject systém škáluje bez nového kód
 **DoD:** ty + kamarádi odehrajete celý zápas od začátku do konce přes LAN se 2 hrdiny — na tomhle bodě je hra poprvé "hratelná jako hra".
 
 **Druhý hrdina — Ayran, ultimate "skok+dopad":** vyskočí do vzduchu, až ~5s se drží ve vzduchu a míří kurzorem místo dopadu (raycast na terén). Pokud nepotvrdí do 5s, ultimate vyprchá bez efektu. Po potvrzení dopadne na vybrané místo a rozdá AOE damage (`Physics.OverlapSphere` + stejný `RequestDamageServerRpc` vzorec jako u střelby, jen pro víc cílů). Plamenné efekty (Particle System) a zvuky (AudioSource) při vzletu i dopadu — vizuál/audio polish navrch, nedotýká se herní logiky. `AbilityDefinition` bude potřebovat nové pole `radius` (poloměr AOE), protože `power` už je obsazené jako damage u jiných abilit. Během letu se kamera přepne z first-person do **3rd person** (za/nad postavu), ať hráč vidí svoji postavu ve vzduchu — po dopadu zpět na first-person. Samotné přepínání kamery je nezávislé a jde postavit dřív, ale vizuálně bude dávat smysl až s reálnou viditelnou postavou z M8 (do té doby by šlo vidět jen kapsli).
+
+**Stav implementace M7 (kód hotový a ověřený automatickým headless testem na kopii projektu — host + protihráč, střelba/kill/skóre, Ayranův skok s AOE, vyplýtvání ultimate, dash, konec zápasu, restart, přepnutí hrdiny; zbývá už jen ruční test ve 2 lidech přes reálnou LAN):**
+- Hrdinové jako data: `HeroDefinition` (jméno, barva těla, HP, zbraň, typ schopnosti, voice lines) v `Assets/Resources/Heroes/` (Viktor = dash, Ayran = skok+AOE). Hrdina se vybírá v menu před Host/Join (panel vlevo), `PlayerHero` ho pošle serveru a aplikuje zbraň/HP/schopnost na všech klientech. Nový hrdina = nový `HeroDefinition` asset v té složce.
+- Jeden sdílený `Player.prefab` (komponenty schopností se zapínají podle hrdiny) — místo Prefab Variants, jednodušší a bez dalších úprav `NetworkManageru`.
+- Ayranův ultimate `LeapStrikeAbility` (klávesa E): vzlet, 3rd person kamera, míření kurzorem (5 s), klik = dopad + AOE, bez potvrzení = vyplýtváno. AOE nezraňuje vlastní tým, kredit killů jde týmu.
+- Konec zápasu: `MatchManager` (`matchOver`, `winnerTeam`, `RestartMatch`), obrazovka výhry, host restartuje klávesou R / tlačítkem. Friendly fire vypnutý.
+- **Úvodní menu + lobby** (`MainMenuUI`, `LobbyUI`, `GameConnection`, `LanDiscovery`): hráč zadá přezdívku a buď **založí hru** (název hry), nebo se **připojí** — buď z **automaticky nalezeného seznamu her v LAN** (UDP broadcast na portu 47777), nebo ručně přes IP. Host poslouchá na všech rozhraních sám (už není potřeba ručně přepínat `Allow Remote Connections`/`0.0.0.0` na `NetworkManageru`). Po připojení všichni skončí v **lobby**: vidí ostatní, každý si vybere **tým** (nový hráč se automaticky zařadí do menšího) a **hrdinu**, host nastaví počet zabití na výhru a spustí zápas. Po konci zápasu host zvolí nový zápas (stejné týmy) nebo zpět do lobby. V lobby je hráč zmrazený a nedostává damage; hrdinu/tým jde měnit jen v lobby. Odchod ze hry přes Esc → nastavení nebo lobby.
+- Ohnivý dopad v interiéru: vzlet se zastaví u stropu, míří se od hlavy (jen na plochy podlahového typu), kamera 3. osoby nezajede do zdí a výbuch zraní jen cíle s přímou viditelností (ne přes zeď).
+- `MatchUI` (celé UI vytvářené kódem): menu, lobby, skóre týmů, stav schopnosti, zaměřovač, konec zápasu, nastavení (Esc: citlivost, hlasitost). Původní Host/Join tlačítka a HP/Ammo texty ve scéně se nově schovávají (texty se ukazují jen za hry).
+- Zvuky (`ProceduralSfx`) a efekty (`Fx`: plameny, exploze, značka dopadu) jsou zatím generované kódem jako placeholder. Voice lines: přetáhnout nahrávky do polí `Spawn/Kill/Death Lines` v hero assetu (`HeroVoice` je přehraje).
+- `Assets/Editor/M7Setup.cs` při prvním otevření projektu sám vytvoří hrdinské assety, materiál efektů a doplní komponenty do `Player.prefab` (jde spustit i ručně: menu `BrosOverwatch > Setup M7`).
 
 > Gameplay loop je teď ověřený → přechod na škálování art pipeline.
 

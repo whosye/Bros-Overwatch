@@ -9,4 +9,5 @@ public class AbilityDefinition : ScriptableObject
 
     public float duration = 0.2f;
 
+    public float radius = 6f;
 }
