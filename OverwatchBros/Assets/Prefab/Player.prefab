@@ -160,6 +160,15 @@ GameObject:
   - component: {fileID: 2572852570881747774}
   - component: {fileID: 4159225094029200330}
   - component: {fileID: 4138224259697668993}
+  - component: {fileID: 5456673426663445717}
+  - component: {fileID: 3166632248087535334}
+  - component: {fileID: 5463691345871641797}
+  - component: {fileID: 777543930828822488}
+  - component: {fileID: 4516236898758110892}
+  - component: {fileID: 6072253319974558471}
+  - component: {fileID: 2481787938942469396}
+  - component: {fileID: 5757128121169726046}
+  - component: {fileID: 1927158620936253238}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -312,6 +321,8 @@ MonoBehaviour:
   mouseSensitivity: 2
   standHeight: 2
   crouchHeight: 1
+  eyeHeight: 1.62
+  crouchEyeHeight: 1
   footstepDistance: 2.2
 --- !u!114 &7417173623501469966
 MonoBehaviour:
@@ -457,6 +468,59 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: -1
+  playerName:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue:
+      utf8LengthInBytes: 0
+      bytes:
+        offset0000:
+          byte0000: 0
+          byte0001: 0
+          byte0002: 0
+          byte0003: 0
+          byte0004: 0
+          byte0005: 0
+          byte0006: 0
+          byte0007: 0
+          byte0008: 0
+          byte0009: 0
+          byte0010: 0
+          byte0011: 0
+          byte0012: 0
+          byte0013: 0
+          byte0014: 0
+          byte0015: 0
+        byte0016: 0
+        byte0017: 0
+        byte0018: 0
+        byte0019: 0
+        byte0020: 0
+        byte0021: 0
+        byte0022: 0
+        byte0023: 0
+        byte0024: 0
+        byte0025: 0
+        byte0026: 0
+        byte0027: 0
+        byte0028: 0
+        byte0029: 0
+  joining:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  kills:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  deaths:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &4159225094029200330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,3 +553,139 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeroVoice
   volume: 1
+--- !u!114 &5456673426663445717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3687747db23826148a726f7ea453d5aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RushAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+  thirdPersonCameraOffset: {x: 0, y: 2, z: -5.2}
+  pressBuffer: 0.4
+--- !u!114 &3166632248087535334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5ee92fd2b057984b9844f6818e174f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlockAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &5463691345871641797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1951895686e7b5f409f7a800e888dcf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MineAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &777543930828822488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7473f12d1c0ead4e95a1800e23fc921, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrapAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+  placeDistance: 1.8
+  armDelay: 0.6
+--- !u!114 &4516236898758110892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 238d67d4632f45042b6e420ab85ce620, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoulderAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+  boulderHealth: 100
+  boulderRadius: 0.6
+  jumpSpeed: 7
+  gravity: 20
+  cameraDistance: 5
+  cameraHeight: 1.9
+--- !u!114 &6072253319974558471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53aac83b60c729149a6e9192e8c84e2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealFieldAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &2481787938942469396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3123c78258e10a449b5211d87e2a241a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlashAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &5757128121169726046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 490dd5bf17b32ee4abb64bf31e67ab45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisorAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+  maxDistance: 70
+--- !u!114 &1927158620936253238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46c64c694f954184390bb1f1fc8e9377, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PotgRecorder
+  ShowTopMostFoldoutHeaderGroup: 1

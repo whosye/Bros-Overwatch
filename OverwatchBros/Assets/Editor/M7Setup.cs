@@ -20,12 +20,28 @@ public static class M7Setup
     static bool IsReady()
     {
         var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefabPath);
-        bool prefabReady = prefab != null && prefab.GetComponent<PlayerHero>() != null && prefab.GetComponent<LeapStrikeAbility>() != null;
-        bool heroesReady = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset") != null;
-        return prefabReady && heroesReady;
+        bool prefabReady = prefab != null && prefab.GetComponent<PlayerHero>() != null && prefab.GetComponent<LeapStrikeAbility>() != null
+            && prefab.GetComponent<RushAbility>() != null && prefab.GetComponent<BlockAbility>() != null
+            && prefab.GetComponent<MineAbility>() != null && prefab.GetComponent<TrapAbility>() != null && prefab.GetComponent<BoulderAbility>() != null
+            && prefab.GetComponent<HealFieldAbility>() != null && prefab.GetComponent<FlashAbility>() != null && prefab.GetComponent<VisorAbility>() != null
+            && prefab.GetComponent<PotgRecorder>() != null;
+        bool heroesReady = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset") != null
+            && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Honza.asset") != null;
+        var ayranWeapon = AssetDatabase.LoadAssetAtPath<WeaponDefinition>("Assets/Data/Ayran_Weapon.asset");
+        var ayranHero = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset");
+        bool weaponsReady = ayranWeapon != null && ayranWeapon.weaponName != "Těžký revolver"
+            && ayranHero != null && ayranHero.secondaryAbility != null && ayranHero.blockAbility != null
+            && ayranHero.secondaryAbility.duration <= 1.5f;
+        var honzaHero = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Honza.asset");
+        bool honzaReady = honzaHero != null && honzaHero.ability != null && honzaHero.secondaryAbility != null && honzaHero.altAbility != null
+            && honzaHero.weapon != null && honzaHero.weapon.weaponName != "Raketomet" && honzaHero.weapon.reloadAnimation;
+        var viktorHero = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Viktor.asset");
+        bool viktorReady = viktorHero == null || (viktorHero.abilityKind == AbilityKind.Visor && viktorHero.secondaryAbility != null
+            && viktorHero.altAbility != null && viktorHero.rmbAbility != null);
+        return prefabReady && heroesReady && weaponsReady && honzaReady && viktorReady && IconsReady() && AssetDatabase.LoadAssetAtPath<Material>(LitMaterialPath) != null && HeldAxeSetup.IsReady() && CharacterSetup.IsReady() && AyranAvatarSetup.IsReady() && AyranSoundSetup.IsReady();
     }
 
-    static void RunIfNeeded()
+    public static void RunIfNeeded()
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode) return;
         if (IsReady()) return;
@@ -58,8 +74,14 @@ public static class M7Setup
         EnsureFolder("Assets/Resources/Fx");
 
         CreateFxMaterial();
+        CreateLitMaterial();
         CreateHeroAssets();
+        AssignIcons();
+        AyranSoundSetup.Setup();
         SetupPlayerPrefab();
+        HeldAxeSetup.Setup();
+        CharacterSetup.Setup();
+        AyranAvatarSetup.Setup();
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -87,6 +109,20 @@ public static class M7Setup
         AssetDatabase.CreateAsset(new Material(shader), path);
     }
 
+    const string LitMaterialPath = "Assets/Resources/Fx/Lit.mat";
+
+    static void CreateLitMaterial()
+    {
+        if (AssetDatabase.LoadAssetAtPath<Material>(LitMaterialPath) != null) return;
+
+        var shader = Shader.Find("Universal Render Pipeline/Lit");
+        if (shader == null) return;
+
+        var material = new Material(shader);
+        material.SetFloat("_Smoothness", 0.2f);
+        AssetDatabase.CreateAsset(material, LitMaterialPath);
+    }
+
     static T LoadOrCreate<T>(string path, System.Action<T> init) where T : ScriptableObject
     {
         var existing = AssetDatabase.LoadAssetAtPath<T>(path);
@@ -98,19 +134,105 @@ public static class M7Setup
         return created;
     }
 
+    static void ConfigureAxes(WeaponDefinition w)
+    {
+        w.weaponName = "Sekyrky";
+        w.fireMode = FireMode.Melee;
+        w.damage = 35f;
+        w.fireRate = 2.2f;
+        w.maxAmmo = 0;
+        w.range = 2.8f;
+        w.meleeRadius = 0.7f;
+        w.dualWield = true;
+        w.heldModel = HeldModel.Axe;
+        w.projectileColor = new Color(0.95f, 0.55f, 0.20f, 1f);
+    }
+
+    // Ayran mel puvodne revolver; prevedeme ho na sekyry (jen kdyz je asset jeste v puvodnim stavu, at se nepreplsou rucni upravy).
+    static void MigrateAyranToAxes(WeaponDefinition weapon)
+    {
+        if (weapon == null || weapon.weaponName != "Těžký revolver") return;
+
+        ConfigureAxes(weapon);
+        EditorUtility.SetDirty(weapon);
+    }
+
+    static readonly string[,] Icons =
+    {
+        { "Assets/Data/LeapStrike_Data.asset", "Assets/Resources/Icons/ayran_leap.png" },
+        { "Assets/Data/Rush_Data.asset", "Assets/Resources/Icons/ayran_rush.png" },
+        { "Assets/Data/Block_Data.asset", "Assets/Resources/Icons/ayran_block.png" },
+        { "Assets/Data/Dash_Data.asset", "Assets/Resources/Icons/dash.png" },
+        { "Assets/Data/Mine_Data.asset", "Assets/Resources/Icons/honza_mine.png" },
+        { "Assets/Data/Trap_Data.asset", "Assets/Resources/Icons/honza_trap.png" },
+        { "Assets/Data/Boulder_Data.asset", "Assets/Resources/Icons/honza_boulder.png" },
+        { "Assets/Data/Visor_Data.asset", "Assets/Resources/Icons/viktor_visor.png" },
+        { "Assets/Data/HealField_Data.asset", "Assets/Resources/Icons/viktor_heal.png" },
+        { "Assets/Data/Flash_Data.asset", "Assets/Resources/Icons/viktor_flash.png" },
+    };
+
+    static bool IconsReady()
+    {
+        for (int i = 0; i < Icons.GetLength(0); i++)
+        {
+            if (!File.Exists(Icons[i, 1])) continue;
+            var ability = AssetDatabase.LoadAssetAtPath<AbilityDefinition>(Icons[i, 0]);
+            if (ability != null && ability.icon == null) return false;
+        }
+
+        return true;
+    }
+
+    static void AssignIcons()
+    {
+        for (int i = 0; i < Icons.GetLength(0); i++)
+        {
+            var ability = AssetDatabase.LoadAssetAtPath<AbilityDefinition>(Icons[i, 0]);
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(Icons[i, 1]);
+            if (ability == null || icon == null || ability.icon != null) continue;
+
+            ability.icon = icon;
+            EditorUtility.SetDirty(ability);
+        }
+    }
+
+    // Honzuv granatomet: granaty leti obloukem, odrazi se a vybuchnou po chvili nebo o hrace.
+    static void ConfigureGrenades(WeaponDefinition w)
+    {
+        w.weaponName = "Granátomet";
+        w.damage = 60f;
+        w.fireRate = 1.5f;
+        w.maxAmmo = 5;
+        w.reloadTime = 1.8f;
+        w.reloadAnimation = true;
+        w.range = 140f;
+        w.fireMode = FireMode.Projectile;
+        w.projectileSpeed = 24f;
+        w.projectileGravity = 14f;
+        w.projectileRadius = 0.22f;
+        w.projectileBounce = 0.45f;
+        w.projectileFuse = 0.9f;
+        w.explosionRadius = 3.2f;
+        w.projectileColor = new Color(1f, 0.55f, 0.10f, 1f);
+        w.projectileTrail = true;
+    }
+
+    static void ConfigureDash(AbilityDefinition a)
+    {
+        a.range = 12f;
+        a.duration = 0.45f;
+        a.power = 20f;
+        a.radius = 2.2f;
+        a.healRatio = 1f;
+    }
+
     static void CreateHeroAssets()
     {
         var pistol = AssetDatabase.LoadAssetAtPath<WeaponDefinition>("Assets/Data/Pistol_Data.asset");
         var dash = AssetDatabase.LoadAssetAtPath<AbilityDefinition>("Assets/Data/Dash_Data.asset");
 
-        var ayranWeapon = LoadOrCreate<WeaponDefinition>("Assets/Data/Ayran_Weapon.asset", w =>
-        {
-            w.weaponName = "Těžký revolver";
-            w.damage = 28f;
-            w.fireRate = 2.5f;
-            w.maxAmmo = 6;
-            w.range = 100f;
-        });
+        var ayranWeapon = LoadOrCreate<WeaponDefinition>("Assets/Data/Ayran_Weapon.asset", ConfigureAxes);
+        MigrateAyranToAxes(ayranWeapon);
 
         var leap = LoadOrCreate<AbilityDefinition>("Assets/Data/LeapStrike_Data.asset", a =>
         {
@@ -121,15 +243,154 @@ public static class M7Setup
             a.radius = 7f;
         });
 
-        LoadOrCreate<HeroDefinition>("Assets/Resources/Heroes/Viktor.asset", h =>
+        var rush = LoadOrCreate<AbilityDefinition>("Assets/Data/Rush_Data.asset", a =>
+        {
+            a.abilityName = "Modrý plamen";
+            a.cooldown = 10f;
+            ConfigureDash(a);
+        });
+
+        // Drive to byl beh drzenim Shiftu (duration v sekundach); ted je to jeden vypad.
+        if (rush.duration > 1.5f)
+        {
+            ConfigureDash(rush);
+            EditorUtility.SetDirty(rush);
+        }
+
+        var block = LoadOrCreate<AbilityDefinition>("Assets/Data/Block_Data.asset", a =>
+        {
+            a.abilityName = "Zkřížené sekyry";
+            a.blockAbsorb = 0.8f;
+            a.blockSpeed = 0.5f;
+            a.regenDelay = 5f;
+            a.regenTime = 6f;
+        });
+
+        // Honza (inspirace: Junkrat). Cooldowny jsou zatim 1 s kvuli testovani; zamyslene hodnoty: naloz 8 s, past 10 s, balvan 30 s.
+        var rocket = LoadOrCreate<WeaponDefinition>("Assets/Data/Rocket_Data.asset", ConfigureGrenades);
+        if (rocket.weaponName == "Raketomet")
+        {
+            ConfigureGrenades(rocket);
+            EditorUtility.SetDirty(rocket);
+        }
+
+        // Granatomet vznikl driv bez animace prebijeni.
+        if (!rocket.reloadAnimation)
+        {
+            rocket.reloadAnimation = true;
+            rocket.reloadTime = 1.8f;
+            EditorUtility.SetDirty(rocket);
+        }
+
+        var mine = LoadOrCreate<AbilityDefinition>("Assets/Data/Mine_Data.asset", a =>
+        {
+            a.abilityName = "Nálož";
+            a.cooldown = 1f;
+            a.charges = 2;
+            a.power = 60f;
+            a.radius = 4.5f;
+            a.knockback = 12f;
+            a.speed = 17f;
+        });
+
+        var trap = LoadOrCreate<AbilityDefinition>("Assets/Data/Trap_Data.asset", a =>
+        {
+            a.abilityName = "Past na medvědy";
+            a.cooldown = 1f;
+            a.power = 40f;
+            a.radius = 0.9f;
+            a.duration = 2f;
+        });
+
+        var boulder = LoadOrCreate<AbilityDefinition>("Assets/Data/Boulder_Data.asset", a =>
+        {
+            a.abilityName = "Balvan";
+            a.cooldown = 1f;
+            a.power = 150f;
+            a.radius = 7f;
+            a.knockback = 14f;
+            a.duration = 10f;
+            a.speed = 11f;
+        });
+
+        var honza = LoadOrCreate<HeroDefinition>("Assets/Resources/Heroes/Honza.asset", h =>
+        {
+            h.heroName = "Honza";
+            h.color = new Color(0.45f, 0.80f, 0.40f);
+            h.maxHealth = 110f;
+            h.weapon = rocket;
+        });
+
+        // Honza vznikl driv bez schopnosti.
+        if (honza.ability == null && honza.secondaryAbility == null && honza.altAbility == null)
+        {
+            honza.abilityKind = AbilityKind.Boulder;
+            honza.ability = boulder;
+            honza.secondaryAbilityKind = AbilityKind.Mine;
+            honza.secondaryAbility = mine;
+            honza.altAbilityKind = AbilityKind.Trap;
+            honza.altAbility = trap;
+            honza.deathGrenades = 4;
+            EditorUtility.SetDirty(honza);
+        }
+
+        // Viktor (inspirace: Soldier 76 / Cassidy). Cooldowny jsou zatim 1 s kvuli testovani;
+        // zamyslene hodnoty: uskok 6 s, lecive pole 15 s, oslepujici granat 10 s, takticky zamerovac 30 s.
+        var visor = LoadOrCreate<AbilityDefinition>("Assets/Data/Visor_Data.asset", a =>
+        {
+            a.abilityName = "Taktický zaměřovač";
+            a.cooldown = 1f;
+            a.duration = 6f;
+            a.radius = 30f;   // uhel kuzelu ve stupnich
+        });
+
+        var healField = LoadOrCreate<AbilityDefinition>("Assets/Data/HealField_Data.asset", a =>
+        {
+            a.abilityName = "Léčivé pole";
+            a.cooldown = 1f;
+            a.power = 20f;    // zivotu za sekundu
+            a.radius = 5f;
+            a.duration = 5f;
+        });
+
+        var flash = LoadOrCreate<AbilityDefinition>("Assets/Data/Flash_Data.asset", a =>
+        {
+            a.abilityName = "Oslepující granát";
+            a.cooldown = 1f;
+            a.power = 15f;
+            a.radius = 4f;
+            a.range = 7f;
+            a.speed = 22f;
+            a.duration = 0.8f;   // delka omraceni
+        });
+
+        var viktor = LoadOrCreate<HeroDefinition>("Assets/Resources/Heroes/Viktor.asset", h =>
         {
             h.heroName = "Viktor";
             h.color = new Color(0.45f, 0.65f, 0.95f);
             h.maxHealth = 100f;
             h.weapon = pistol;
-            h.abilityKind = AbilityKind.Dash;
-            h.ability = dash;
         });
+
+        // Viktor mel driv jen Dash na Q: ted je uskok na Shiftu a na Q ultimatni schopnost.
+        if (viktor.abilityKind != AbilityKind.Visor && viktor.secondaryAbility == null && viktor.altAbility == null && viktor.rmbAbility == null)
+        {
+            viktor.abilityKind = AbilityKind.Visor;
+            viktor.ability = visor;
+            viktor.secondaryAbilityKind = AbilityKind.Dash;
+            viktor.secondaryAbility = dash;
+            viktor.altAbilityKind = AbilityKind.HealField;
+            viktor.altAbility = healField;
+            viktor.rmbAbilityKind = AbilityKind.Flash;
+            viktor.rmbAbility = flash;
+            EditorUtility.SetDirty(viktor);
+
+            if (dash != null && dash.abilityName != "Úskok")
+            {
+                dash.abilityName = "Úskok";
+                EditorUtility.SetDirty(dash);
+            }
+        }
 
         LoadOrCreate<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset", h =>
         {
@@ -139,7 +400,25 @@ public static class M7Setup
             h.weapon = ayranWeapon;
             h.abilityKind = AbilityKind.LeapStrike;
             h.ability = leap;
+            h.secondaryAbilityKind = AbilityKind.Rush;
+            h.secondaryAbility = rush;
+            h.blockAbility = block;
         });
+
+        // Ayran vznikl driv bez druhe schopnosti.
+        var ayran = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset");
+        if (ayran != null && ayran.secondaryAbility == null && ayran.secondaryAbilityKind == AbilityKind.None)
+        {
+            ayran.secondaryAbilityKind = AbilityKind.Rush;
+            ayran.secondaryAbility = rush;
+            EditorUtility.SetDirty(ayran);
+        }
+
+        if (ayran != null && ayran.blockAbility == null)
+        {
+            ayran.blockAbility = block;
+            EditorUtility.SetDirty(ayran);
+        }
     }
 
     static void SetupPlayerPrefab()
@@ -166,6 +445,15 @@ public static class M7Setup
 
             AddIfMissing<PlayerHero>(contents);
             AddIfMissing<LeapStrikeAbility>(contents);
+            AddIfMissing<RushAbility>(contents);
+            AddIfMissing<BlockAbility>(contents);
+            AddIfMissing<MineAbility>(contents);
+            AddIfMissing<TrapAbility>(contents);
+            AddIfMissing<BoulderAbility>(contents);
+            AddIfMissing<HealFieldAbility>(contents);
+            AddIfMissing<FlashAbility>(contents);
+            AddIfMissing<VisorAbility>(contents);
+            AddIfMissing<PotgRecorder>(contents);
             AddIfMissing<HeroVoice>(contents);
 
             foreach (var behaviour in contents.GetComponents<MonoBehaviour>())

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a39f21388b7624d84e663cff5b4ed3, type: 3}
+  m_Name: Honza
+  m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
+  heroName: Honza
+  color: {r: 0.45, g: 0.8, b: 0.4, a: 1}
+  maxHealth: 110
+  weapon: {fileID: 11400000, guid: 5fafac1122454c7429625a40f68d3e02, type: 2}
+  abilityKind: 6
+  ability: {fileID: 11400000, guid: 069f02c7a6ed80945a6c6744ff4c36ee, type: 2}
+  secondaryAbilityKind: 4
+  secondaryAbility: {fileID: 11400000, guid: 9fe3402203ee97448ae63992941fd5fb, type: 2}
+  blockAbility: {fileID: 0}
+  altAbilityKind: 5
+  altAbility: {fileID: 11400000, guid: f31aac637cf5af64585176dd80a2114e, type: 2}
+  deathGrenades: 4
+  deathGrenadeDamage: 30
+  deathGrenadeRadius: 3.5
+  characterPrefab: {fileID: 7741774874685919537, guid: 66c3458da6154b64eb8bc50b90793943, type: 3}
+  tintCharacter: 0
+  sleeveColor: {r: 0.7, g: 0.8, b: 0.92, a: 1}
+  skinColor: {r: 0.82, g: 0.63, b: 0.52, a: 1}
+  spawnLines: []
+  killLines: []
+  deathLines: []
+  hurtLines: []

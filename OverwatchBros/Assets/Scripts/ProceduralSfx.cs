@@ -6,12 +6,12 @@ public static class ProceduralSfx
 {
     const int Rate = 44100;
 
-    static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep;
+    static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
     {
-        gunshot = empty = reload = hit = dash = leapStart = explosion = death = spawn = footstep = null;
+        gunshot = empty = reload = hit = dash = leapStart = explosion = death = spawn = footstep = hurt = null;
     }
 
     public static AudioClip Gunshot => gunshot ??= Make("gunshot", 0.28f, (t, r) =>
@@ -44,6 +44,38 @@ public static class ProceduralSfx
         float f = t < 0.15f ? 520f : 780f;
         return Mathf.Sin(2f * Mathf.PI * f * t) * 0.35f * Mathf.Exp(-(t % 0.15f) * 12f);
     });
+
+    public static AudioClip Hurt => hurt ??= Make("hurt", 0.22f, (t, r) =>
+    {
+        float f = Mathf.Lerp(230f, 120f, t / 0.22f);
+        return (Mathf.Sin(2f * Mathf.PI * f * t) * 0.6f + Noise(r) * 0.25f) * Mathf.Exp(-t * 14f);
+    });
+
+    // Omraceni: prasknuti a doznivajici piskani v usich (slysi vsichni kolem omraceneho).
+    public static AudioClip Stun => stun ??= Make("stun", 0.9f, (t, r) =>
+        Noise(r) * 0.7f * Mathf.Exp(-t * 45f)
+        + (Mathf.Sin(2f * Mathf.PI * 2900f * t) * 0.30f + Mathf.Sin(2f * Mathf.PI * 3350f * t) * 0.22f) * Mathf.Exp(-t * 3.2f));
+
+    // Potvrzeni pro toho, kdo omracil: dva stoupajici tony.
+    public static AudioClip StunConfirm => stunConfirm ??= Make("stunConfirm", 0.22f, (t, r) =>
+        Mathf.Sin(2f * Mathf.PI * (t < 0.09f ? 880f : 1320f) * t) * 0.55f * Mathf.Exp(-(t < 0.09f ? t : t - 0.09f) * 22f));
+
+    // Dobyvani bodu: tikani pri zabirani, fanfara pri zabrani, znelka pri odemceni bodu.
+    public static AudioClip CaptureTick => captureTick ??= Make("captureTick", 0.12f, (t, r) =>
+        Mathf.Sin(2f * Mathf.PI * 740f * t) * 0.5f * Mathf.Exp(-t * 38f));
+
+    public static AudioClip CaptureWon => captureWon ??= Make("captureWon", 1.1f, (t, r) =>
+    {
+        // Tri stoupajici tony a dozvuk posledniho.
+        float[] notes = { 523.25f, 659.25f, 783.99f, 1046.5f };
+        int index = Mathf.Min(3, (int)(t / 0.16f));
+        float local = t - index * 0.16f;
+        float decay = index < 3 ? Mathf.Exp(-local * 9f) : Mathf.Exp(-local * 3.5f);
+        return (Mathf.Sin(2f * Mathf.PI * notes[index] * t) * 0.45f + Mathf.Sin(2f * Mathf.PI * notes[index] * 2f * t) * 0.12f) * decay;
+    });
+
+    public static AudioClip CaptureUnlock => captureUnlock ??= Make("captureUnlock", 0.4f, (t, r) =>
+        Mathf.Sin(2f * Mathf.PI * (t < 0.15f ? 440f : 660f) * t) * 0.5f * Mathf.Exp(-(t < 0.15f ? t : t - 0.15f) * 12f));
 
     public static AudioClip Footstep => footstep ??= Make("footstep", 0.09f, (t, r) => Noise(r) * 0.35f * Mathf.Exp(-t * 55f));
 

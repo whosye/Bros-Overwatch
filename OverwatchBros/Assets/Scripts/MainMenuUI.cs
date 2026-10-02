@@ -28,31 +28,35 @@ public class MainMenuUI
         root.raycastTarget = true;
         Root = root.gameObject;
 
-        UiKit.MakeText(Root.transform, "Title", "BROS OVERWATCH", 110, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 400f), new Vector2(1400f, 140f), UiKit.Accent);
-        UiKit.MakeText(Root.transform, "Subtitle", "LAN HERO SHOOTER  ·  TEAM DEATHMATCH", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 322f), new Vector2(1400f, 50f), UiKit.Muted);
+        UiKit.MakeText(Root.transform, "Title", "BROS OVERWATCH", 100, TextAlignmentOptions.Center, center,
+            new Vector2(0f, 440f), new Vector2(1400f, 130f), UiKit.Accent);
+        UiKit.MakeText(Root.transform, "Subtitle", "LAN HERO SHOOTER  ·  TEAM DEATHMATCH  ·  DOBÝVÁNÍ BODŮ", 34, TextAlignmentOptions.Center, center,
+            new Vector2(0f, 362f), new Vector2(1400f, 46f), UiKit.Muted);
 
-        UiKit.MakeText(Root.transform, "NickLabel", "PŘEZDÍVKA", 30, TextAlignmentOptions.Right, center,
-            new Vector2(-300f, 236f), new Vector2(240f, 50f), UiKit.Muted);
+        // Prezdivka je nad kartami (karty zacinaji az pod ni), aby se nic neprekryvalo.
+        UiKit.MakeText(Root.transform, "NickLabel", "PŘEZDÍVKA", 34, TextAlignmentOptions.Right, center,
+            new Vector2(-330f, 290f), new Vector2(260f, 60f), Color.white);
         string nick = PlayerPrefs.GetString("nick", "Hráč" + Random.Range(10, 99));
-        nickInput = UiKit.MakeInput(Root.transform, "Tvoje jméno", center, new Vector2(40f, 236f), new Vector2(440f, 60f), nick);
+        nickInput = UiKit.MakeInput(Root.transform, "Tvoje jméno", center, new Vector2(80f, 290f), new Vector2(520f, 66f), nick, 36f);
         nickInput.characterLimit = 20;
 
         BuildHostCard(center, nick);
         BuildJoinCard(center);
 
+        UiKit.MakeButton(Root.transform, "UKONČIT HRU", new Vector2(1f, 1f), new Vector2(-40f, -40f), new Vector2(300f, 70f),
+            QuitGame, new Color(0.45f, 0.18f, 0.18f, 1f), 30f);
+
         statusText = UiKit.MakeText(Root.transform, "Status", "", 34, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -350f), new Vector2(1600f, 50f), new Color(1f, 0.45f, 0.4f));
+            new Vector2(0f, -385f), new Vector2(1600f, 50f), new Color(1f, 0.45f, 0.4f));
 
         UiKit.MakeText(Root.transform, "Controls",
-            "WASD pohyb  ·  Shift běh  ·  Mezerník skok  ·  Ctrl dřep  ·  Myš/LMB střelba  ·  R přebití  ·  Q / E schopnost  ·  Esc nastavení",
-            24, TextAlignmentOptions.Center, center, new Vector2(0f, -440f), new Vector2(1800f, 40f), UiKit.Muted);
+            "WASD pohyb  ·  Shift běh / schopnost  ·  Mezerník skok  ·  Ctrl dřep  ·  LMB útok  ·  PTM blok / odpal  ·  E schopnost  ·  R přebití  ·  Tab tabulka  ·  Q schopnost  ·  Esc nastavení",
+            24, TextAlignmentOptions.Center, center, new Vector2(0f, -470f), new Vector2(1800f, 40f), UiKit.Muted);
     }
 
     void BuildHostCard(Vector2 center, string nick)
     {
-        var card = UiKit.MakeImage(Root.transform, "HostCard", UiKit.PanelLight, center, new Vector2(-470f, -20f), new Vector2(820f, 560f));
+        var card = UiKit.MakeImage(Root.transform, "HostCard", UiKit.PanelLight, center, new Vector2(-470f, -70f), new Vector2(820f, 560f));
 
         UiKit.MakeText(card.transform, "Heading", "ZALOŽIT HRU", 52, TextAlignmentOptions.Center, center,
             new Vector2(0f, 225f), new Vector2(760f, 70f), UiKit.Accent);
@@ -73,7 +77,7 @@ public class MainMenuUI
 
     void BuildJoinCard(Vector2 center)
     {
-        var card = UiKit.MakeImage(Root.transform, "JoinCard", UiKit.PanelLight, center, new Vector2(470f, -20f), new Vector2(820f, 560f));
+        var card = UiKit.MakeImage(Root.transform, "JoinCard", UiKit.PanelLight, center, new Vector2(470f, -70f), new Vector2(820f, 560f));
 
         UiKit.MakeText(card.transform, "Heading", "PŘIPOJIT SE", 52, TextAlignmentOptions.Center, center,
             new Vector2(0f, 225f), new Vector2(760f, 70f), UiKit.Accent);
@@ -161,6 +165,19 @@ public class MainMenuUI
         PlayerHero.PreferredName = nick;
         PlayerPrefs.SetString("nick", nick);
         PlayerPrefs.SetString("gameName", gameNameInput.text.Trim());
+    }
+
+    // Ukonci hru (v editoru zastavi Play mod).
+    void QuitGame()
+    {
+        SaveInputs();
+        PlayerPrefs.Save();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     void OnHostClicked()

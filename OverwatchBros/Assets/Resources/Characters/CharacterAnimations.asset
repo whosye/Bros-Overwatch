@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce56b11b14db7ad40835bae89995055d, type: 3}
+  m_Name: CharacterAnimations
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimSet
+  idle: {fileID: 7994627924475153551, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  walk: {fileID: -7003542030617561338, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  jog: {fileID: -8815886378510225334, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  sprint: {fileID: -4950333804767787469, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  jump: {fileID: -3659967873887649963, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  death: {fileID: 3532616527226485280, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  meleeAttack: {fileID: -2807887025256620907, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  shoot: {fileID: 2564068224262579217, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  reload: {fileID: -4628965742493065687, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  blockPose: {fileID: -718454725414175808, guid: dbf30b503a372934488116106c86d3d7, type: 3}
+  dashPose: {fileID: 1705686167135224321, guid: dbf30b503a372934488116106c86d3d7, type: 3}

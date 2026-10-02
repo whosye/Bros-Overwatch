@@ -3,31 +3,42 @@ using UnityEngine.InputSystem;
 using Unity.Netcode;
 using System.Collections;
 
+// Viktoruv uskok (Left Shift; u starsich hrdinu na Q): kratky rychly uskok ve smeru pohybu (bez pohybu dopredu).
+// Uskok na Shiftu zaroven prebije zbran (jako Cassidyho kotoul).
 public class DashAbility : NetworkBehaviour
 {
     public AbilityDefinition ability;
 
+    const float PressBuffer = 0.4f;
+
     CharacterController controller;
     FirstPersonController fpc;
     float nextDashTime;
+    float bufferedUntil;
     bool isDashing;
+    bool onShift;
 
-    public void Configure(AbilityDefinition definition)
+    public float CooldownRemaining => Mathf.Max(0f, nextDashTime - Time.time);
+    public bool IsActive => isDashing;
+
+    public void Configure(AbilityDefinition definition, bool useShift = false)
     {
         ability = definition;
+        onShift = useShift;
     }
 
     public string StatusText()
     {
         if (ability == null) return "";
 
+        string key = onShift ? "SHIFT" : "Q";
         float remaining = nextDashTime - Time.time;
         return remaining > 0f
-            ? $"[Q] {ability.abilityName}: {remaining:0.0}s"
-            : $"[Q] {ability.abilityName}: PŘIPRAVENO";
+            ? $"[{key}] {ability.abilityName}: {remaining:0.0}s"
+            : $"[{key}] {ability.abilityName}: PŘIPRAVENO";
     }
 
-    void Start()
+    void Awake()
     {
         controller = GetComponent<CharacterController>();
         fpc = GetComponent<FirstPersonController>();
@@ -36,10 +47,30 @@ public class DashAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (fpc != null && fpc.InputBlocked) return;
 
-        if (Keyboard.current.qKey.wasPressedThisFrame && Time.time >= nextDashTime && !isDashing)
-            StartCoroutine(DashRoutine());
+        // Stisk se chvili pamatuje, aby zmacknuti tesne pred koncem cooldownu nepropadlo.
+        var key = onShift ? Keyboard.current.leftShiftKey : Keyboard.current.qKey;
+        if (key.wasPressedThisFrame && GameSettings.CursorLocked)
+            bufferedUntil = Time.time + PressBuffer;
+
+        if (Time.time > bufferedUntil || Time.time < nextDashTime || isDashing) return;
+        if (fpc.InputBlocked || fpc.Rooted) return;
+
+        bufferedUntil = 0f;
+        StartCoroutine(DashRoutine());
+    }
+
+    // Smer podle drzenych klaves pohybu; kdyz hrac stoji, uskoci dopredu.
+    Vector3 DashDirection()
+    {
+        Vector2 input = Vector2.zero;
+        if (Keyboard.current.wKey.isPressed) input.y += 1f;
+        if (Keyboard.current.sKey.isPressed) input.y -= 1f;
+        if (Keyboard.current.dKey.isPressed) input.x += 1f;
+        if (Keyboard.current.aKey.isPressed) input.x -= 1f;
+
+        Vector3 direction = transform.right * input.x + transform.forward * input.y;
+        return direction.sqrMagnitude > 0.01f && onShift ? direction.normalized : transform.forward;
     }
 
     [ServerRpc]
@@ -60,10 +91,18 @@ public class DashAbility : NetworkBehaviour
         isDashing = true;
         nextDashTime = Time.time + ability.cooldown;
 
-        Vector3 direction = transform.forward;
+        Vector3 direction = DashDirection();
 
         ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.7f);
         DashFxServerRpc();
+        GetComponent<PlayerHero>().SayAbility(ability);
+
+        if (onShift)
+        {
+            var shooting = GetComponent<WeaponShooting>();
+            if (shooting != null)
+                shooting.InstantReload();
+        }
 
         if (ability.duration <= 0f)
         {
@@ -77,7 +116,7 @@ public class DashAbility : NetworkBehaviour
 
         while (elapsed < ability.duration)
         {
-            if (fpc != null && fpc.CannotAct) break;
+            if (fpc.CannotAct) break;
 
             controller.Move(direction * speed * Time.deltaTime);
             elapsed += Time.deltaTime;

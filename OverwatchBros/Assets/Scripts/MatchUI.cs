@@ -23,6 +23,11 @@ public class MatchUI : MonoBehaviour
     GameObject restartButton;
     GameObject lobbyButton;
     GameObject crosshair;
+    readonly HudUI hud = new HudUI();
+    readonly MatchOverlayUI overlay = new MatchOverlayUI();
+    readonly CaptureUI capture = new CaptureUI();
+    GameObject blockBar;
+    Image blockFill;
     GameObject settingsPanel;
     TextMeshProUGUI sensText;
     TextMeshProUGUI volumeText;
@@ -79,7 +84,22 @@ public class MatchUI : MonoBehaviour
         abilityText = UiKit.MakeText(root, "Ability", "", 34, TextAlignmentOptions.Center, new Vector2(0.5f, 0f),
             new Vector2(0f, 30f), new Vector2(1000f, 60f));
 
+        overlay.Build(root);
+        capture.Build(root);
+        hud.Build(root);
+
         crosshair = UiKit.MakeImage(root, "Crosshair", new Color(1f, 1f, 1f, 0.9f), center, Vector2.zero, new Vector2(6f, 6f)).gameObject;
+
+        // Bar bloku pod zaměřovačem (velikost = zbývající kapacita bloku).
+        blockBar = UiKit.MakeImage(root, "BlockBar", new Color(0f, 0f, 0f, 0.55f), center, new Vector2(0f, -70f), new Vector2(240f, 14f)).gameObject;
+        blockFill = UiKit.MakeImage(blockBar.transform, "Fill", new Color(0.55f, 0.75f, 1f, 0.95f), center, Vector2.zero, Vector2.zero);
+        var fillRect = blockFill.rectTransform;
+        fillRect.anchorMin = new Vector2(0f, 0f);
+        fillRect.anchorMax = new Vector2(1f, 1f);
+        fillRect.pivot = new Vector2(0f, 0.5f);
+        fillRect.offsetMin = new Vector2(2f, 2f);
+        fillRect.offsetMax = new Vector2(-2f, -2f);
+        blockBar.SetActive(false);
 
         BuildEndPanel(root);
         BuildSettingsPanel(root);
@@ -90,6 +110,9 @@ public class MatchUI : MonoBehaviour
         connectingText = UiKit.MakeText(root, "Connecting", "Připojuji se…", 56, TextAlignmentOptions.Center, center,
             Vector2.zero, new Vector2(1200f, 100f));
         connectingText.gameObject.SetActive(false);
+
+        // Prehravac "play of the game" (vlastni platno nad vsim ostatnim).
+        gameObject.AddComponent<PotgUI>();
     }
 
     void BuildEndPanel(Transform root)
@@ -201,7 +224,9 @@ public class MatchUI : MonoBehaviour
             localHero = network.LocalClient.PlayerObject.GetComponent<PlayerHero>();
 
         bool hasPlayer = localHero != null && match != null && match.IsSpawned;
-        bool inLobby = hasPlayer && match.IsLobby;
+        // Lobby vidi vsichni pred zapasem a taky hrac, ktery se pripojil do rozehraneho zapasu a jeste si vybira.
+        bool joining = hasPlayer && !match.IsLobby && localHero.IsJoining;
+        bool inLobby = hasPlayer && (match.IsLobby || joining);
         bool over = hasPlayer && !inLobby && match.IsOver;
         bool playing = hasPlayer && !inLobby;
 
@@ -221,16 +246,21 @@ public class MatchUI : MonoBehaviour
 
         connectingText.gameObject.SetActive(connected && !hasPlayer);
         lobby.SetVisible(inLobby);
-        lobby.Tick(localHero);
+        lobby.Tick(localHero, joining);
         endPanel.SetActive(over);
 
         UpdateCursor(hasPlayer, inLobby, over);
         UpdateHud(match, localHero, playing, over);
+        hud.SetVisible(playing && !over && localHero != null);
+        hud.Tick(localHero);
+        overlay.Tick(localHero, playing, match);
+        capture.Tick(localHero, playing && !over, match);
         UpdateEndScreen(network, match, over);
         UpdateLegacyHud(playing);
 
         bool locked = GameSettings.CursorLocked;
         crosshair.SetActive(playing && !over && locked);
+        UpdateBlockBar(localHero, playing && !over);
 
         bool showSettings = playing && !over && !locked;
         settingsPanel.SetActive(showSettings);
@@ -239,6 +269,22 @@ public class MatchUI : MonoBehaviour
             sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0}";
             volumeText.text = $"Hlasitost: {Mathf.RoundToInt(GameSettings.Volume * 100f)} %";
         }
+    }
+
+    // Bar bloku se ukazuje, kdyz hrdina blokuje, nebo kdyz bar neni plny (ubyva pri zásazích, po 5 s bez poškození se obnovuje).
+    void UpdateBlockBar(PlayerHero localHero, bool playing)
+    {
+        var block = playing && localHero != null ? localHero.GetComponent<BlockAbility>() : null;
+        bool show = block != null && block.enabled && block.ability != null && (block.IsBlocking || block.Fraction < 0.999f);
+
+        if (blockBar.activeSelf != show)
+            blockBar.SetActive(show);
+
+        if (!show) return;
+
+        float fraction = block.Fraction;
+        blockFill.rectTransform.anchorMax = new Vector2(Mathf.Max(0.001f, fraction), 1f);
+        blockFill.color = fraction > 0.3f ? new Color(0.55f, 0.75f, 1f, 0.95f) : new Color(1f, 0.45f, 0.30f, 0.95f);
     }
 
     // V lobby a na konci zapasu musi byt kurzor volny; pri navratu do hry se znovu zamkne.
@@ -265,20 +311,12 @@ public class MatchUI : MonoBehaviour
 
         scoreText.text =
             $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team0)}>TÝM 0  {match.team0Score.Value}</color>" +
-            $"   <size=60%>do {match.scoreToWinSynced.Value}</size>   " +
+            $"   <size=60%>{(match.IsCapture ? $"body · na {MatchManager.CapturePointsToWin}" : $"do {match.scoreToWinSynced.Value}")}</size>   " +
             $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team1)}>{match.team1Score.Value}  TÝM 1</color>";
 
-        if (localHero.Hero != null)
-        {
-            var team = localHero.GetComponent<PlayerTeam>();
-            infoText.text = $"{localHero.DisplayName}  |  {localHero.Hero.heroName}  |  tým {team.teamId.Value}";
-            abilityText.text = over ? "" : localHero.AbilityStatus();
-        }
-        else
-        {
-            infoText.text = "";
-            abilityText.text = "";
-        }
+        // Zivoty, schopnosti a munici kresli HudUI.
+        infoText.text = "";
+        abilityText.text = "";
     }
 
     void UpdateEndScreen(NetworkManager network, MatchManager match, bool over)
@@ -315,9 +353,10 @@ public class MatchUI : MonoBehaviour
     {
         if (legacyHud == null) return;
 
-        if (legacyHud.healthText != null && legacyHud.healthText.gameObject.activeSelf != playing)
-            legacyHud.healthText.gameObject.SetActive(playing);
-        if (legacyHud.ammoText != null && legacyHud.ammoText.gameObject.activeSelf != playing)
-            legacyHud.ammoText.gameObject.SetActive(playing);
+        // Puvodni texty HP/Ammo ze sceny nahradil HudUI.
+        if (legacyHud.healthText != null && legacyHud.healthText.gameObject.activeSelf)
+            legacyHud.healthText.gameObject.SetActive(false);
+        if (legacyHud.ammoText != null && legacyHud.ammoText.gameObject.activeSelf)
+            legacyHud.ammoText.gameObject.SetActive(false);
     }
 }

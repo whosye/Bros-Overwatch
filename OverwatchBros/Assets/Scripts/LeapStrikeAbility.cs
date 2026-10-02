@@ -30,12 +30,17 @@ public class LeapStrikeAbility : NetworkBehaviour
     Vector3 savedCameraLocalPosition;
 
     GameObject marker;
+    Renderer markerRenderer;
+    Vector3 launchPosition;
     ParticleSystem flame;
 
     readonly NetworkVariable<bool> airborne = new NetworkVariable<bool>(
         false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public bool IsActive => phase != Phase.Idle;
+    public bool IsAirborne => airborne.Value;
+
+    public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
 
     public void Configure(AbilityDefinition definition)
     {
@@ -60,8 +65,8 @@ public class LeapStrikeAbility : NetworkBehaviour
 
         float remaining = nextUseTime - Time.time;
         return remaining > 0f
-            ? $"[E] {ability.abilityName}: {remaining:0.0}s"
-            : $"[E] {ability.abilityName}: PŘIPRAVENO";
+            ? $"[Q] {ability.abilityName}: {remaining:0.0}s"
+            : $"[Q] {ability.abilityName}: PŘIPRAVENO";
     }
 
     void Awake()
@@ -88,8 +93,6 @@ public class LeapStrikeAbility : NetworkBehaviour
     void OnAirborneChanged(bool previous, bool current)
     {
         SetFlame(current);
-        if (current && !IsOwner)
-            ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 1f);
     }
 
     void SetFlame(bool on)
@@ -111,8 +114,8 @@ public class LeapStrikeAbility : NetworkBehaviour
 
         if (phase == Phase.Idle)
         {
-            if (Keyboard.current.eKey.wasPressedThisFrame && Time.time >= nextUseTime
-                && !fpc.InputBlocked && GameSettings.CursorLocked)
+            if (Keyboard.current.qKey.wasPressedThisFrame && Time.time >= nextUseTime
+                && !fpc.InputBlocked && !fpc.RushActive && !fpc.BlockActive && !fpc.Rooted && GameSettings.CursorLocked)
                 Begin();
             return;
         }
@@ -137,28 +140,9 @@ public class LeapStrikeAbility : NetworkBehaviour
 
     Vector3 HeadPosition => transform.TransformPoint(savedCameraLocalPosition);
 
-    // Kamera za zady hrace, ale nikdy ne za zdi/stropem (uvnitr budovy se privede blize k hraci).
     void UpdateThirdPersonCamera()
     {
-        Vector3 head = HeadPosition;
-        Vector3 desired = transform.TransformPoint(thirdPersonCameraOffset);
-        Vector3 direction = desired - head;
-        float distance = direction.magnitude;
-        if (distance < 0.01f) return;
-        direction /= distance;
-
-        float allowed = distance;
-        var hits = Physics.SphereCastAll(head, 0.25f, direction, distance, ~0, QueryTriggerInteraction.Ignore);
-        foreach (var hit in hits)
-        {
-            var owner = hit.collider.GetComponentInParent<NetworkObject>();
-            if (owner != null && owner == NetworkObject) continue;
-            if (hit.distance <= 0f) continue;
-
-            allowed = Mathf.Min(allowed, hit.distance);
-        }
-
-        playerCamera.transform.position = head + direction * Mathf.Max(0.15f, allowed - 0.05f);
+        ThirdPersonCamera.Place(transform, NetworkObject, playerCamera, savedCameraLocalPosition, thirdPersonCameraOffset);
     }
 
     void Begin()
@@ -168,12 +152,13 @@ public class LeapStrikeAbility : NetworkBehaviour
         fpc.ResetVertical();
 
         phase = Phase.Ascending;
+        launchPosition = transform.position;
         targetY = transform.position.y + hoverHeight;
 
         savedCameraLocalPosition = playerCamera.transform.localPosition;
 
         airborne.Value = true;
-        ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 1f);
+        GetComponent<PlayerHero>().SayAbility(ability);
     }
 
     void TickAscending()
@@ -198,13 +183,14 @@ public class LeapStrikeAbility : NetworkBehaviour
 
         UpdateAim();
 
-        bool confirm = Mouse.current.leftButton.wasPressedThisFrame || Keyboard.current.eKey.wasPressedThisFrame;
+        bool confirm = Mouse.current.leftButton.wasPressedThisFrame || Keyboard.current.qKey.wasPressedThisFrame;
 
         if (confirm && aimValid)
         {
             HideMarker();
             phase = Phase.Diving;
             phaseTimer = 5f;
+            DiveStartServerRpc(transform.position);
             return;
         }
 
@@ -240,9 +226,45 @@ public class LeapStrikeAbility : NetworkBehaviour
             break;
         }
 
-        if (marker == null)
-            marker = Fx.CreateMarker();
+        bool clamped = false;
+        if (aimValid)
+        {
+            Vector3 offset = aimPoint - launchPosition;
+            offset.y = 0f;
 
+            // Dolet je omezeny: mirime-li dal, bod dopadu se prichyti na hranu dosahu.
+            if (offset.magnitude > ability.range)
+            {
+                clamped = true;
+                aimValid = false;
+
+                Vector3 flat = offset.normalized * ability.range;
+                Vector3 probe = new Vector3(launchPosition.x + flat.x, origin.y, launchPosition.z + flat.z);
+                var down = Physics.RaycastAll(probe, Vector3.down, 300f, ~0, QueryTriggerInteraction.Ignore);
+                System.Array.Sort(down, (a, b) => a.distance.CompareTo(b.distance));
+
+                foreach (var hit in down)
+                {
+                    var owner = hit.collider.GetComponentInParent<NetworkObject>();
+                    if (owner != null && owner == NetworkObject) continue;
+
+                    if (hit.normal.y >= 0.3f)
+                    {
+                        aimPoint = hit.point;
+                        aimValid = true;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (marker == null)
+        {
+            marker = Fx.CreateMarker();
+            markerRenderer = marker.GetComponent<Renderer>();
+        }
+
+        markerRenderer.material.color = clamped ? new Color(1f, 0.85f, 0.10f) : new Color(1f, 0.25f, 0.05f);
         marker.SetActive(aimValid);
         if (aimValid)
         {
@@ -282,7 +304,6 @@ public class LeapStrikeAbility : NetworkBehaviour
 
         if (controller.isGrounded || phaseTimer <= 0f)
         {
-            ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
             Finish();
         }
     }
@@ -320,53 +341,32 @@ public class LeapStrikeAbility : NetworkBehaviour
     {
         if (MatchManager.Instance != null && MatchManager.Instance.IsOver) return;
 
-        var myTeam = GetComponent<PlayerTeam>();
-        var damaged = new HashSet<Health>();
+        var recorder = GetComponent<PotgRecorder>();
+        if (recorder != null)
+            recorder.ServerNoteUltimate();
 
-        foreach (var col in Physics.OverlapSphere(position, ability.radius, ~0, QueryTriggerInteraction.Ignore))
-        {
-            var target = col.GetComponentInParent<Target>();
-            if (target != null)
-                target.TakeDamage(ability.power);
-
-            var health = col.GetComponentInParent<Health>();
-            if (health == null || !damaged.Add(health)) continue;
-
-            var team = health.GetComponent<PlayerTeam>();
-            if (myTeam != null && team != null && team.teamId.Value == myTeam.teamId.Value) continue;
-
-            // Vybuch nejde skrz zdi: musi byt primy vyhled z mista dopadu na cil.
-            if (!HasLineOfSight(position + Vector3.up * 0.6f, col)) continue;
-
-            float distance = Vector3.Distance(position, health.transform.position);
-            float damage = ability.power * Mathf.Lerp(1f, 0.5f, Mathf.Clamp01(distance / ability.radius));
-
-            bool wasAlive = health.currentHealth.Value > 0f;
-            health.TakeDamage(damage);
-
-            if (wasAlive && health.currentHealth.Value <= 0f && MatchManager.Instance != null)
-                MatchManager.Instance.ReportKill(gameObject);
-        }
+        // Vybuch nejde skrz zdi a nezrani vlastni tym (viz Combat.Explode).
+        Combat.Explode(gameObject, position, ability.radius, ability.power, 0.5f);
 
         ImpactFxClientRpc(position);
-    }
-
-    static bool HasLineOfSight(Vector3 from, Collider target)
-    {
-        Vector3 to = target.bounds.center;
-        if (Vector3.Distance(from, to) < 1.5f) return true;
-        if (!Physics.Linecast(from, to, out RaycastHit hit, ~0, QueryTriggerInteraction.Ignore)) return true;
-
-        if (hit.collider == target) return true;
-
-        var targetOwner = target.GetComponentInParent<NetworkObject>();
-        return targetOwner != null && hit.collider.GetComponentInParent<NetworkObject>() == targetOwner;
     }
 
     [ClientRpc]
     void ImpactFxClientRpc(Vector3 position)
     {
         Fx.Explosion(position, ability.radius);
-        ProceduralSfx.Play(ProceduralSfx.Explosion, position, 1f);
+    }
+
+    // Zvuk schopnosti se prehraje, kdyz se zacne padat dolu (potvrzeni miření), ne az pri dopadu.
+    [ServerRpc]
+    void DiveStartServerRpc(Vector3 position)
+    {
+        DiveStartFxClientRpc(position);
+    }
+
+    [ClientRpc]
+    void DiveStartFxClientRpc(Vector3 position)
+    {
+        Fx.PlaySpatial(ability.sound, position, 1f);
     }
 }

@@ -13,7 +13,17 @@ MonoBehaviour:
   m_Name: LeapStrike_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Ohniv\xFD dopad"
-  cooldown: 25
+  icon: {fileID: 2800000, guid: ca735fa3a1b6aac47bd0fb711e528395, type: 3}
+  cooldown: 1
   power: 60
   duration: 5
   radius: 7
+  range: 25
+  sound: {fileID: 8300000, guid: 3e66d2e569b7dc64ab3c620754cf39b9, type: 3}
+  blockAbsorb: 0.8
+  blockSpeed: 0.5
+  regenDelay: 5
+  regenTime: 6
+  speed: 14
+  tickInterval: 0.25
+  healRatio: 1

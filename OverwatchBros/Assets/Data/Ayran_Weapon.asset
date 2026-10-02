@@ -12,8 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70ebeba9977deef4cb0414f2cfd81e11, type: 3}
   m_Name: Ayran_Weapon
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
-  weaponName: "T\u011B\u017Ek\xFD revolver"
-  damage: 28
-  fireRate: 2.5
-  maxAmmo: 6
-  range: 100
+  weaponName: Sekyrky
+  damage: 35
+  fireRate: 2.2
+  maxAmmo: 0
+  range: 2.8
+  fireMode: 2
+  projectileSpeed: 40
+  projectileGravity: 0
+  projectileRadius: 0.15
+  explosionRadius: 0
+  projectileColor: {r: 0.95, g: 0.55, b: 0.2, a: 1}
+  projectileTrail: 1
+  projectilePrefab: {fileID: 0}
+  meleeRadius: 0.7
+  heldModel: 3
+  dualWield: 1
+  heldPrefab: {fileID: 894994911377203620, guid: 2d9d9a910f3eeb749bf05688a4ede1ba, type: 3}

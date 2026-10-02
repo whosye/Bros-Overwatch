@@ -12,6 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
   m_Name: Dash_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
-  abilityName: Dash
-  cooldown: 8
+  abilityName: "\xDAskok"
+  icon: {fileID: 2800000, guid: beb79cbef5b9e49428560ab9271f1839, type: 3}
+  cooldown: 1
   power: 8
+  duration: 0.2
+  radius: 6
+  range: 25
+  knockback: 0
+  charges: 1
+  sound: {fileID: 0}
+  voiceLines: []
+  blockAbsorb: 0.8
+  blockSpeed: 0.5
+  regenDelay: 5
+  regenTime: 6
+  speed: 14
+  tickInterval: 0.25
+  healRatio: 1

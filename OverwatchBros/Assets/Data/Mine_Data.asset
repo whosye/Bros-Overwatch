@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
+  m_Name: Mine_Data
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
+  abilityName: "N\xE1lo\u017E"
+  icon: {fileID: 2800000, guid: dc62453528dba954baa02dc6beef4710, type: 3}
+  cooldown: 1
+  power: 60
+  duration: 0.2
+  radius: 4.5
+  range: 25
+  knockback: 12
+  charges: 2
+  sound: {fileID: 0}
+  blockAbsorb: 0.8
+  blockSpeed: 0.5
+  regenDelay: 5
+  regenTime: 6
+  speed: 17
+  tickInterval: 0.25
+  healRatio: 1

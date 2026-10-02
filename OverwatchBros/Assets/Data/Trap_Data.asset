@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
+  m_Name: Trap_Data
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
+  abilityName: "Past na medv\u011Bdy"
+  icon: {fileID: 2800000, guid: c7d2152bf05891842bab2231ea7168c0, type: 3}
+  cooldown: 1
+  power: 40
+  duration: 2
+  radius: 0.9
+  range: 25
+  knockback: 0
+  charges: 1
+  sound: {fileID: 0}
+  blockAbsorb: 0.8
+  blockSpeed: 0.5
+  regenDelay: 5
+  regenTime: 6
+  speed: 14
+  tickInterval: 0.25
+  healRatio: 1

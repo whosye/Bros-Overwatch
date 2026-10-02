@@ -43,7 +43,10 @@ public class PlayerTeam : NetworkBehaviour
     [ServerRpc]
     void RequestTeamServerRpc(int team)
     {
-        if (MatchManager.Instance != null && !MatchManager.Instance.IsLobby) return;
+        // Tym jde menit v lobby, nebo dokud si hrac po pripojeni do rozehraneho zapasu jeste vybira.
+        var hero = GetComponent<PlayerHero>();
+        bool joining = hero != null && hero.IsJoining;
+        if (!joining && MatchManager.Instance != null && !MatchManager.Instance.IsLobby) return;
 
         teamId.Value = Mathf.Clamp(team, 0, TeamCount - 1);
     }

@@ -113,7 +113,11 @@ public static class UiKit
     {
         var rect = NewRect(parent, "Input", anchor, position, size, typeof(Image), typeof(TMP_InputField));
         var background = rect.GetComponent<Image>();
-        background.color = new Color(0.03f, 0.04f, 0.07f, 1f);
+        background.color = new Color(0.16f, 0.20f, 0.29f, 1f);
+
+        var outline = rect.gameObject.AddComponent<Outline>();
+        outline.effectColor = Accent;
+        outline.effectDistance = new Vector2(2f, -2f);
 
         var area = NewRect(rect, "Text Area", new Vector2(0.5f, 0.5f), Vector2.zero, size, typeof(RectMask2D));
         Stretch(area);

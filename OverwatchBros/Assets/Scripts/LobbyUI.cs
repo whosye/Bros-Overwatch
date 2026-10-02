@@ -20,6 +20,8 @@ public class LobbyUI
     Button scoreMinus;
     Button scorePlus;
     Button startButton;
+    Button enterButton;
+    Button modeButton;
     TextMeshProUGUI waitText;
 
     float nextRefresh;
@@ -62,8 +64,13 @@ public class LobbyUI
         {
             int index = i;
             string label = heroes[i].heroName;
-            if (heroes[i].ability != null)
-                label += $"\n<size=60%>{heroes[i].ability.abilityName}</size>";
+            var abilityNames = new List<string>();
+            if (heroes[i].ability != null) abilityNames.Add(heroes[i].ability.abilityName);
+            if (heroes[i].secondaryAbility != null) abilityNames.Add(heroes[i].secondaryAbility.abilityName);
+            if (heroes[i].altAbility != null) abilityNames.Add(heroes[i].altAbility.abilityName);
+            if (heroes[i].rmbAbility != null) abilityNames.Add(heroes[i].rmbAbility.abilityName);
+            if (abilityNames.Count > 0)
+                label += $"\n<size=55%>{string.Join(" · ", abilityNames)}</size>";
 
             var button = UiKit.MakeButton(Root.transform, label, center, new Vector2(startX + i * spacing, -195f),
                 new Vector2(320f, 94f), () => SelectHero(index), UiKit.ButtonBase, 34f);
@@ -72,6 +79,9 @@ public class LobbyUI
 
         heroInfo = UiKit.MakeText(Root.transform, "HeroInfo", "", 28, TextAlignmentOptions.Center, center,
             new Vector2(0f, -285f), new Vector2(1500f, 50f), UiKit.Muted);
+
+        modeButton = UiKit.MakeButton(Root.transform, "REŽIM", center, new Vector2(-40f, -352f), new Vector2(760f, 56f),
+            ToggleMode, UiKit.ButtonBase, 28f);
 
         UiKit.MakeButton(Root.transform, "OPUSTIT HRU", center, new Vector2(-640f, -430f), new Vector2(380f, 80f),
             () => onLeave?.Invoke(), new Color(0.45f, 0.18f, 0.18f, 1f), 32f);
@@ -85,6 +95,8 @@ public class LobbyUI
 
         startButton = UiKit.MakeButton(Root.transform, "START ZÁPASU", center, new Vector2(600f, -430f), new Vector2(460f, 90f),
             StartMatch, UiKit.Green, 42f);
+        enterButton = UiKit.MakeButton(Root.transform, "VSTOUPIT DO HRY", center, new Vector2(600f, -430f), new Vector2(460f, 90f),
+            EnterMatch, UiKit.Green, 42f);
         waitText = UiKit.MakeText(Root.transform, "Wait", "Čekáme, až host spustí zápas…", 34, TextAlignmentOptions.Center, center,
             new Vector2(560f, -430f), new Vector2(700f, 60f), UiKit.Muted);
 
@@ -100,7 +112,8 @@ public class LobbyUI
         }
     }
 
-    public void Tick(PlayerHero localHero)
+    // joining = zapas uz bezi a tenhle hrac si po pripojeni teprve vybira tym a hrdinu.
+    public void Tick(PlayerHero localHero, bool joining = false)
     {
         if (Root == null || !Root.activeSelf || Time.unscaledTime < nextRefresh) return;
         nextRefresh = Time.unscaledTime + 0.15f;
@@ -109,17 +122,28 @@ public class LobbyUI
         var network = NetworkManager.Singleton;
         bool isHost = network != null && network.IsServer;
 
-        title.text = match != null && match.gameName.Value.Length > 0 ? $"LOBBY  ·  {match.gameName.Value}" : "LOBBY";
+        string gameTitle = match != null && match.gameName.Value.Length > 0 ? $"  ·  {match.gameName.Value}" : "";
+        title.text = joining ? "ZÁPAS UŽ BĚŽÍ  ·  vyber si tým a hrdinu" : "LOBBY" + gameTitle;
 
         RefreshTeams(localHero);
         RefreshHeroes(localHero);
 
+        // Rezim hry voli host (ostatni ho jen vidi): team deathmatch na pocet zabiti, nebo dobyvani bodu.
+        bool captureMode = match != null && match.IsCapture;
+        UiKit.SetButtonLabel(modeButton, captureMode
+            ? $"REŽIM:  <color=#F28C1A>DOBÝVÁNÍ BODŮ</color>  <size=75%>({MatchManager.CapturePointsToWin} body ze {MatchManager.CapturePointCount})</size>"
+            : "REŽIM:  <color=#F28C1A>TEAM DEATHMATCH</color>");
+        modeButton.interactable = isHost && !joining;
+
         int score = match != null ? match.scoreToWinSynced.Value : 10;
-        scoreText.text = $"Zabití na výhru: <color=#F28C1A>{score}</color>";
-        scoreMinus.gameObject.SetActive(isHost);
-        scorePlus.gameObject.SetActive(isHost);
-        startButton.gameObject.SetActive(isHost);
-        waitText.gameObject.SetActive(!isHost);
+        scoreText.text = captureMode
+            ? $"Zabrání bodu: <color=#F28C1A>{match.captureSeconds.Value} s</color>"
+            : $"Zabití na výhru: <color=#F28C1A>{score}</color>";
+        scoreMinus.gameObject.SetActive(isHost && !joining);
+        scorePlus.gameObject.SetActive(isHost && !joining);
+        startButton.gameObject.SetActive(isHost && !joining);
+        enterButton.gameObject.SetActive(joining);
+        waitText.gameObject.SetActive(!isHost && !joining);
     }
 
     void RefreshTeams(PlayerHero localHero)
@@ -143,7 +167,7 @@ public class LobbyUI
             bool isLocal = player == localHero;
             if (isLocal) localTeam = id;
 
-            string host = player.OwnerClientId == NetworkManager.ServerClientId ? "<color=#F28C1A>★</color> " : "";
+            string host = player.OwnerClientId == NetworkManager.ServerClientId ? "<color=#F28C1A>[HOST]</color> " : "";
             string name = isLocal ? $"<b>{player.DisplayName}</b>" : player.DisplayName;
             string hero = player.Hero != null ? player.Hero.heroName : "…";
             builders[id].AppendLine($"{host}{name}   <size=75%><color=#A6B3C7>{hero}</color></size>");
@@ -173,9 +197,30 @@ public class LobbyUI
             return;
         }
 
-        string ability = hero.ability != null ? hero.ability.abilityName : "—";
-        string key = hero.abilityKind == AbilityKind.LeapStrike ? "E" : "Q";
-        heroInfo.text = $"{hero.heroName}:  {hero.maxHealth:0} HP  ·  {hero.weapon.weaponName} ({hero.weapon.damage:0} dmg)  ·  [{key}] {ability}";
+        string ability = AbilityLabel(hero);
+        string mode = hero.weapon.IsMelee ? "blízký souboj" : hero.weapon.IsProjectile ? "projektil" : "okamžitý zásah";
+        string reach = hero.weapon.IsMelee ? "dosah" : "dostřel";
+        heroInfo.text = $"{hero.heroName}:  {hero.maxHealth:0} HP  ·  {hero.weapon.weaponName} ({hero.weapon.damage:0} dmg, {mode}, {reach} {hero.weapon.range:0} m)  ·  {ability}";
+    }
+
+    static string AbilityLabel(HeroDefinition hero)
+    {
+        var parts = new List<string>();
+        if (hero.ability != null)
+            parts.Add($"[Q] {hero.ability.abilityName}");
+        if (hero.secondaryAbility != null)
+            parts.Add(hero.secondaryAbilityKind == AbilityKind.Mine
+                ? $"[SHIFT hodit, PRAVÉ TL. odpálit] {hero.secondaryAbility.abilityName}"
+                : $"[SHIFT] {hero.secondaryAbility.abilityName}");
+
+        if (hero.blockAbility != null)
+            parts.Add($"[PRAVÉ TL.] {hero.blockAbility.abilityName}");
+        if (hero.altAbility != null)
+            parts.Add($"[E] {hero.altAbility.abilityName}");
+        if (hero.rmbAbility != null)
+            parts.Add($"[PRAVÉ TL.] {hero.rmbAbility.abilityName}");
+
+        return parts.Count > 0 ? string.Join("  ·  ", parts) : "bez schopnosti";
     }
 
     void SelectTeam(int team)
@@ -201,8 +246,26 @@ public class LobbyUI
     void ChangeScore(int delta)
     {
         var match = MatchManager.Instance;
-        if (match != null)
+        if (match == null) return;
+
+        if (match.IsCapture)
+            match.SetCaptureSeconds(match.captureSeconds.Value + delta * 5);
+        else
             match.SetScoreToWin(match.scoreToWinSynced.Value + delta);
+    }
+
+    void ToggleMode()
+    {
+        var match = MatchManager.Instance;
+        if (match != null)
+            match.SetGameMode(match.IsCapture ? MatchManager.ModeDeathmatch : MatchManager.ModeCapture);
+    }
+
+    void EnterMatch()
+    {
+        var local = LocalPlayer();
+        if (local != null)
+            local.ConfirmJoin();
     }
 
     void StartMatch()

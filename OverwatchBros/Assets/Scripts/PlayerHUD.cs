@@ -18,7 +18,7 @@ public class PlayerHUD : MonoBehaviour
         }
 
         healthText.text = $"HP: {health.currentHealth.Value:0} / {health.maxHealth:0}";
-        ammoText.text = $"Ammo: {weapon.CurrentAmmo} / {weapon.weapon.maxAmmo}";
+        ammoText.text = weapon.weapon.IsMelee ? weapon.weapon.weaponName : $"Ammo: {weapon.CurrentAmmo} / {weapon.weapon.maxAmmo}";
     }
 
     void FindLocalPlayer()

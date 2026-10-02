@@ -16,8 +16,25 @@ MonoBehaviour:
   color: {r: 0.45, g: 0.65, b: 0.95, a: 1}
   maxHealth: 100
   weapon: {fileID: 11400000, guid: c0a64531a1b9ffd4bbe5f837139b5fdf, type: 2}
-  abilityKind: 1
-  ability: {fileID: 11400000, guid: c274d57a1a9868941ae150d04588a291, type: 2}
+  abilityKind: 9
+  ability: {fileID: 11400000, guid: 0959ed83f75436a4b830c2dc9916b19b, type: 2}
+  secondaryAbilityKind: 1
+  secondaryAbility: {fileID: 11400000, guid: c274d57a1a9868941ae150d04588a291, type: 2}
+  blockAbility: {fileID: 0}
+  altAbilityKind: 7
+  altAbility: {fileID: 11400000, guid: f3b3b34683619c34cac755477d895447, type: 2}
+  rmbAbilityKind: 8
+  rmbAbility: {fileID: 11400000, guid: 5ab8ab153a823c944a896e71cbd05ee5, type: 2}
+  deathGrenades: 0
+  deathGrenadeDamage: 30
+  deathGrenadeRadius: 3.5
+  characterPrefab: {fileID: 5027208971970856215, guid: 8c23ff938e60f134bac1ac20abe7dddb, type: 3}
+  tintCharacter: 1
+  sleeveColor: {r: 0.25, g: 0.27, b: 0.32, a: 1}
+  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
   spawnLines: []
   killLines: []
   deathLines: []
+  hurtLines: []
+  idleLines: []
+  snareLines: []

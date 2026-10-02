@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class MatchManager : NetworkBehaviour
+public partial class MatchManager : NetworkBehaviour
 {
     public const int PhaseLobby = 0;
     public const int PhasePlaying = 1;
@@ -32,7 +32,12 @@ public class MatchManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsServer) return;
+        // Klient pripojeny do rozehraneho zapasu si vyzada mista oziveni (rezim dobyvani bodu).
+        if (!IsServer)
+        {
+            RequestSpawnsRpc();
+            return;
+        }
 
         scoreToWinSynced.Value = Mathf.Max(1, scoreToWin);
         gameName.Value = new FixedString64Bytes(string.IsNullOrWhiteSpace(PendingGameName) ? "Hra" : PendingGameName);
@@ -59,23 +64,63 @@ public class MatchManager : NetworkBehaviour
     }
 
     // Zavola server, kdyz hrac (killer) zabil protihrace. Pripise bod tymu a spusti kill hlasku.
-    public void ReportKill(GameObject killer)
+    public void ReportKill(GameObject killer, GameObject victim = null)
     {
         if (!IsServer || killer == null) return;
         if (matchOver.Value || IsLobby) return;
 
+        var hero = killer.GetComponent<PlayerHero>();
+        if (hero != null)
+            hero.kills.Value++;
+
+
+        // Seznam zabiti u vsech hracu.
+        var killerObject = killer.GetComponent<NetworkObject>();
+        var victimObject = victim != null ? victim.GetComponent<NetworkObject>() : null;
+        if (killerObject != null && victimObject != null)
+            KillFeedClientRpc(killerObject.NetworkObjectId, victimObject.NetworkObjectId);
+
+        // V dobyvani bodu se skore pocita za zabrane body, ne za zabiti.
         var team = killer.GetComponent<PlayerTeam>();
-        if (team != null)
+        if (team != null && !IsCapture)
             AddScore(team.teamId.Value, 1);
 
-        var hero = killer.GetComponent<PlayerHero>();
+        // Play of the game: hodnoceni akce (az po pripsani bodu, at se vi, jestli zabiti rozhodlo zapas).
+        var recorder = killer.GetComponent<PotgRecorder>();
+        if (recorder != null)
+            recorder.ServerOnKill(victim, matchOver.Value);
+
         if (hero != null)
             hero.NotifyKill();
     }
 
+    [ClientRpc]
+    void KillFeedClientRpc(ulong killerId, ulong victimId)
+    {
+        var spawned = NetworkManager.SpawnManager.SpawnedObjects;
+        spawned.TryGetValue(killerId, out NetworkObject killer);
+        spawned.TryGetValue(victimId, out NetworkObject victim);
+        if (victim == null) return;
+
+        var killerHero = killer != null ? killer.GetComponent<PlayerHero>() : null;
+        var victimHero = victim.GetComponent<PlayerHero>();
+        if (victimHero == null) return;
+
+        var killerTeam = killer != null ? killer.GetComponent<PlayerTeam>() : null;
+        var victimTeam = victim.GetComponent<PlayerTeam>();
+        bool local = (killer != null && killer.IsOwner) || victim.IsOwner;
+
+        MatchOverlayUI.AddKill(
+            killerHero != null ? killerHero.DisplayName : "",
+            killerTeam != null ? killerTeam.teamId.Value : -1,
+            victimHero.DisplayName,
+            victimTeam != null ? victimTeam.teamId.Value : -1,
+            local);
+    }
+
     void CheckWinCondition()
     {
-        int target = scoreToWinSynced.Value;
+        int target = IsCapture ? CapturePointsToWin : scoreToWinSynced.Value;
 
         if (team0Score.Value >= target)
             EndMatch(0);
@@ -88,6 +133,26 @@ public class MatchManager : NetworkBehaviour
         winnerTeam.Value = winner;
         matchOver.Value = true;
         Debug.Log($"Tým {winner} vyhrál zápas!");
+
+        StartCoroutine(PlayOfTheGame());
+    }
+
+    // Chvili po konci zapasu se vsem prehraje zaznam hrace s nejlepsi akci (nejvic zabiti v kratkem case).
+    System.Collections.IEnumerator PlayOfTheGame()
+    {
+        yield return new WaitForSeconds(2.5f);
+        if (!IsSpawned || !matchOver.Value) yield break;
+
+        PotgRecorder best = null;
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            var recorder = client.PlayerObject != null ? client.PlayerObject.GetComponent<PotgRecorder>() : null;
+            if (recorder != null && recorder.ServerBestScore > (best != null ? best.ServerBestScore : 0))
+                best = recorder;
+        }
+
+        if (best != null)
+            best.ServerStartPotg();
     }
 
     // Host spusti zapas z lobby.
@@ -131,14 +196,41 @@ public class MatchManager : NetworkBehaviour
             var health = client.PlayerObject.GetComponent<Health>();
             if (health != null)
                 health.ResetHealth();
+
+            var hero = client.PlayerObject.GetComponent<PlayerHero>();
+            if (hero != null)
+            {
+                hero.ServerClearJoining();
+                hero.ServerResetStats();
+            }
+
+            var recorder = client.PlayerObject.GetComponent<PotgRecorder>();
+            if (recorder != null)
+                recorder.ServerReset();
         }
 
-        ResetPlayersClientRpc();
+        // Dobyvani bodu: vybrat mista a pripravit prvni bod; jinak se ozivuje na zakladnach ze sceny.
+        if (!IsLobby && IsCapture)
+        {
+            ServerBeginCapture();
+        }
+        else
+        {
+            customSpawns = false;
+            pointState.Value = StateLocked;
+        }
+
+        ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
     }
 
     [ClientRpc]
-    void ResetPlayersClientRpc()
+    void ResetPlayersClientRpc(bool custom, Vector3 spawn0, Vector3 spawn1)
     {
+        MatchOverlayUI.ClearKills();
+        customSpawns = custom;
+        customSpawn[0] = spawn0;
+        customSpawn[1] = spawn1;
+
         var local = NetworkManager.Singleton.LocalClient;
         if (local == null || local.PlayerObject == null) return;
 

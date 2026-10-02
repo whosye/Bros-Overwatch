@@ -22,9 +22,8 @@ public class PlayerRespawn : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        Transform spawnPoint = FindSpawnPoint();
-        if (spawnPoint != null)
-            transform.position = spawnPoint.position;
+        if (TryFindSpawn(out Vector3 spawn))
+            transform.position = spawn;
     }
 
     void OnEnable()
@@ -49,6 +48,10 @@ public class PlayerRespawn : NetworkBehaviour
         Teleport();
         health.ResetHealth();
         Debug.Log("Respawn.");
+
+        var hero = GetComponent<PlayerHero>();
+        if (hero != null)
+            hero.Say(VoiceKind.Spawn);
     }
 
     // Vola MatchManager pri restartu zapasu (na vlastniku hrace).
@@ -60,25 +63,59 @@ public class PlayerRespawn : NetworkBehaviour
 
     void Teleport()
     {
-        Transform spawnPoint = FindSpawnPoint();
+        bool hasSpawn = TryFindSpawn(out Vector3 spawn);
 
         var leap = GetComponent<LeapStrikeAbility>();
         if (leap != null)
             leap.Cancel();
 
+        var rush = GetComponent<RushAbility>();
+        if (rush != null)
+            rush.Cancel();
+
+        var mine = GetComponent<MineAbility>();
+        if (mine != null)
+            mine.Cancel();
+
+        var trap = GetComponent<TrapAbility>();
+        if (trap != null)
+            trap.Cancel();
+
+        var boulder = GetComponent<BoulderAbility>();
+        if (boulder != null)
+            boulder.Cancel();
+
+        var visor = GetComponent<VisorAbility>();
+        if (visor != null)
+            visor.Cancel();
+
         controller.enabled = false;
-        if (spawnPoint != null)
-            transform.position = spawnPoint.position;
+        if (hasSpawn)
+            transform.position = spawn;
         controller.enabled = true;
 
         if (fpc != null)
+        {
             fpc.ResetVertical();
+            fpc.ClearForces();
+        }
     }
 
-    Transform FindSpawnPoint()
+    // Misto oziveni: v dobyvani bodu u aktualniho bodu (kazdy hrac kousek vedle, at nestoji v sobe),
+    // jinak zakladna tymu ze sceny.
+    bool TryFindSpawn(out Vector3 position)
     {
+        var match = MatchManager.Instance;
+        if (match != null && match.TryGetSpawn(team.teamId.Value, out position))
+        {
+            float angle = OwnerClientId * 2.4f;
+            position += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 1.4f;
+            return true;
+        }
+
         string spawnPointName = $"SpawnPoint_Team{team.teamId.Value}";
         GameObject spawnPointObject = GameObject.Find(spawnPointName);
-        return spawnPointObject != null ? spawnPointObject.transform : null;
+        position = spawnPointObject != null ? spawnPointObject.transform.position : Vector3.zero;
+        return spawnPointObject != null;
     }
 }
