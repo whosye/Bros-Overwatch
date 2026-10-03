@@ -36,6 +36,14 @@ public class FirstPersonController : NetworkBehaviour
     public bool BlockActive { get; set; }
     public float SpeedMultiplier { get; set; } = 1f;
     public bool ShiftReserved { get; set; }
+
+    // Pasivni schopnosti hrdiny (nastavuje PlayerHero).
+    public bool DoubleJump { get; set; }
+    public bool LedgeClimb { get; set; }
+    bool airJumpUsed;
+    bool mantling;
+    Vector3 mantleTarget;
+    float mantleTimeLeft;
     public bool ThirdPerson => AbilityActive || RushActive;
     public bool IsDead => health != null && health.currentHealth.Value <= 0f;
     public bool MatchOver => MatchManager.Instance != null && MatchManager.Instance.IsOver;
@@ -95,21 +103,23 @@ public class FirstPersonController : NetworkBehaviour
     float stunnedUntil;
     public bool Stunned => Time.time < stunnedUntil;
 
-    public void ServerStun(float seconds, GameObject attacker = null)
+    // blind = oslepujici granat (bila obrazovka a piskani); hak omracuje bez oslepeni.
+    public void ServerStun(float seconds, GameObject attacker = null, bool blind = true)
     {
         if (!IsServer) return;
 
         var attackerObject = attacker != null ? attacker.GetComponent<NetworkObject>() : null;
-        StunClientRpc(seconds, attackerObject != null ? attackerObject.OwnerClientId : ulong.MaxValue);
+        StunClientRpc(seconds, attackerObject != null ? attackerObject.OwnerClientId : ulong.MaxValue, blind);
         if (hero != null)
             hero.Say(VoiceKind.Snare);
     }
 
     [ClientRpc]
-    void StunClientRpc(float seconds, ulong attackerClientId)
+    void StunClientRpc(float seconds, ulong attackerClientId, bool blind)
     {
         // Zvuk omraceni slysi vsichni v okoli; ten, kdo trefil, dostane navic potvrzeni (i kdyz je daleko).
-        ProceduralSfx.Play(ProceduralSfx.Stun, transform.position + Vector3.up * 1.5f, 1f);
+        if (blind)
+            ProceduralSfx.Play(ProceduralSfx.Stun, transform.position + Vector3.up * 1.5f, 1f);
         if (NetworkManager.LocalClientId == attackerClientId && Camera.main != null)
             ProceduralSfx.Play(ProceduralSfx.StunConfirm, Camera.main.transform.position, 0.9f);
 
@@ -117,11 +127,59 @@ public class FirstPersonController : NetworkBehaviour
 
         stunnedUntil = Time.time + seconds;
         externalVelocity = Vector3.zero;
-        HudUI.NotifyFlash(seconds);
+        if (blind)
+            HudUI.NotifyFlash(seconds);
+    }
+
+    // Pritazeni hakem: hrace to plynule dotahne na dane misto (zdi ho zastavi).
+    bool pulling;
+    Vector3 pullTarget;
+    float pullSpeed;
+    float pullTimeLeft;
+
+    public void ServerPull(Vector3 destination, float seconds)
+    {
+        if (IsServer)
+            PullClientRpc(destination, seconds);
+    }
+
+    [ClientRpc]
+    void PullClientRpc(Vector3 destination, float seconds)
+    {
+        if (!IsOwner || IsDead) return;
+
+        pulling = true;
+        pullTarget = destination;
+        pullTimeLeft = Mathf.Max(0.05f, seconds) + 0.15f;
+        pullSpeed = Vector3.Distance(transform.position, destination) / Mathf.Max(0.05f, seconds);
+        externalVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+    }
+
+    // Vraci true, dokud pritahovani bezi (bezny pohyb se v tu chvili neprovadi).
+    bool TickPull()
+    {
+        if (!pulling) return false;
+
+        pullTimeLeft -= Time.deltaTime;
+        Vector3 toTarget = pullTarget - transform.position;
+        float step = pullSpeed * Time.deltaTime;
+
+        if (IsDead || pullTimeLeft <= 0f || toTarget.magnitude <= Mathf.Max(0.25f, step))
+        {
+            pulling = false;
+            verticalVelocity = 0f;
+            return false;
+        }
+
+        controller.Move(toTarget.normalized * step);
+        return true;
     }
 
     public void ClearForces()
     {
+        pulling = false;
+        mantling = false;
         externalVelocity = Vector3.zero;
         rootedUntil = 0f;
         stunnedUntil = 0f;
@@ -177,9 +235,61 @@ public class FirstPersonController : NetworkBehaviour
         playerCamera.transform.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
     }
 
+    // Vytazeni na hranu: pred hracem je zed, nad ni volno a kousek nad hlavou rovna plocha.
+    bool TryStartMantle()
+    {
+        Vector3 feet = transform.position;
+        Vector3 forward = transform.forward;
+
+        // Zed ve vysce hrudi.
+        if (!Physics.Raycast(feet + Vector3.up * 1.0f, forward, out RaycastHit wall, 0.75f, ~0, QueryTriggerInteraction.Ignore)) return false;
+        if (wall.collider.GetComponentInParent<NetworkObject>() != null) return false;
+
+        // Horni plocha prekazky: nejvys 2,3 m nad chodidly a aspon 0,9 m (nizsi schod se prejde sam).
+        Vector3 above = feet + forward * (wall.distance + 0.35f) + Vector3.up * 2.6f;
+        if (!Physics.Raycast(above, Vector3.down, out RaycastHit top, 1.8f, ~0, QueryTriggerInteraction.Ignore)) return false;
+        if (top.normal.y < 0.7f || top.point.y - feet.y < 0.9f) return false;
+
+        // Nahore musi byt misto na stani.
+        if (Physics.CheckCapsule(top.point + Vector3.up * 0.45f, top.point + Vector3.up * 1.6f, 0.3f, ~0, QueryTriggerInteraction.Ignore)) return false;
+
+        mantling = true;
+        mantleTarget = top.point + Vector3.up * 0.05f;
+        mantleTimeLeft = 0.6f;
+        verticalVelocity = 0f;
+        externalVelocity = Vector3.zero;
+        return true;
+    }
+
+    bool TickMantle()
+    {
+        if (!mantling) return false;
+
+        mantleTimeLeft -= Time.deltaTime;
+        Vector3 toTarget = mantleTarget - transform.position;
+
+        // Nejdriv nahoru, pak dopredu na plochu.
+        Vector3 step = toTarget.y > 0.05f
+            ? Vector3.up * Mathf.Min(toTarget.y, 7f * Time.deltaTime)
+            : Vector3.ClampMagnitude(new Vector3(toTarget.x, 0f, toTarget.z), 5f * Time.deltaTime);
+
+        controller.Move(step);
+
+        if (CannotAct || mantleTimeLeft <= 0f || (mantleTarget - transform.position).magnitude < 0.12f)
+        {
+            mantling = false;
+            verticalVelocity = 0f;
+            return false;
+        }
+
+        return true;
+    }
+
     void HandleMovement()
     {
+        if (TickPull()) return;
         if (AbilityActive || Joining) return;
+        if (TickMantle()) return;
 
         bool frozen = CannotAct;
 
@@ -225,8 +335,24 @@ public class FirstPersonController : NetworkBehaviour
             externalVelocity = Vector3.MoveTowards(externalVelocity, Vector3.zero, (isGrounded && verticalVelocity <= 0f ? 28f : 5f) * Time.deltaTime);
         }
 
+        if (isGrounded)
+            airJumpUsed = false;
+
         if (jump && isGrounded)
+        {
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+        else if (jump && DoubleJump && !airJumpUsed)
+        {
+            // Druhy skok ve vzduchu.
+            airJumpUsed = true;
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.35f);
+        }
+
+        // Ve vzduchu a s pohybem dopredu se hrdina chyti hrany a vytahne se na ni.
+        if (LedgeClimb && !isGrounded && !frozen && input.y > 0f && TryStartMantle())
+            return;
 
         verticalVelocity += gravity * Time.deltaTime;
         controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);

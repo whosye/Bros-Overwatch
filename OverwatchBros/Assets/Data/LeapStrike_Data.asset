@@ -14,12 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Ohniv\xFD dopad"
   icon: {fileID: 2800000, guid: ca735fa3a1b6aac47bd0fb711e528395, type: 3}
-  cooldown: 1
+  cooldown: 25
+  ultCost: 350
   power: 60
   duration: 5
   radius: 7
   range: 25
+  knockback: 0
+  charges: 1
   sound: {fileID: 8300000, guid: 3e66d2e569b7dc64ab3c620754cf39b9, type: 3}
+  voiceLines: []
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

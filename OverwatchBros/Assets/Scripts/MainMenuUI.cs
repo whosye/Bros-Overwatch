@@ -50,7 +50,7 @@ public class MainMenuUI
             new Vector2(0f, -385f), new Vector2(1600f, 50f), new Color(1f, 0.45f, 0.4f));
 
         UiKit.MakeText(Root.transform, "Controls",
-            "WASD pohyb  ·  Shift běh / schopnost  ·  Mezerník skok  ·  Ctrl dřep  ·  LMB útok  ·  PTM blok / odpal  ·  E schopnost  ·  R přebití  ·  Tab tabulka  ·  Q schopnost  ·  Esc nastavení",
+            "WASD pohyb  ·  Shift běh / schopnost  ·  Mezerník skok  ·  Ctrl dřep  ·  LMB útok  ·  PTM blok / odpal  ·  E schopnost  ·  R přebití  ·  Tab tabulka  ·  F1 změna hrdiny  ·  Q schopnost  ·  Esc nastavení",
             24, TextAlignmentOptions.Center, center, new Vector2(0f, -470f), new Vector2(1800f, 40f), UiKit.Muted);
     }
 

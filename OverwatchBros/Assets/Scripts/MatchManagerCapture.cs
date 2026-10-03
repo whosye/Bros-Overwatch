@@ -79,6 +79,41 @@ public partial class MatchManager
             ServerCaptureTick();
 
         CapturePointView.Sync(this);
+        SpawnZone.Sync(this);
+    }
+
+    // Vyska, pod kterou je hrac "mimo mapu" a zemre: 20 m pod nizsi ze zakladen
+    // (nebo vyska objektu KillPlane, kdyz ve scene je).
+    static float killHeight = float.NaN;
+
+    public static float KillHeight
+    {
+        get
+        {
+            if (float.IsNaN(killHeight))
+            {
+                var plane = GameObject.Find("KillPlane");
+                if (plane != null)
+                {
+                    killHeight = plane.transform.position.y;
+                }
+                else
+                {
+                    var base0 = GameObject.Find("SpawnPoint_Team0");
+                    var base1 = GameObject.Find("SpawnPoint_Team1");
+                    float lowest = Mathf.Min(base0 != null ? base0.transform.position.y : 0f, base1 != null ? base1.transform.position.y : 0f);
+                    killHeight = lowest - 20f;
+                }
+            }
+
+            return killHeight;
+        }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetKillHeight()
+    {
+        killHeight = float.NaN;
     }
 
     // Vola ResetRound pri startu zapasu: vybere mista a pripravi prvni bod.

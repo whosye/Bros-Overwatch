@@ -37,6 +37,10 @@ public static class Combat
 
         float before = target.currentHealth.Value;
         bool wasAlive = before > 0f;
+
+        var targetHero = target.GetComponent<PlayerHero>();
+        if (targetHero != null)
+            targetHero.ServerNoteAttacker(attacker);
         target.TakeDamage(amount);
 
         bool killed = wasAlive && target.currentHealth.Value <= 0f;
@@ -46,7 +50,10 @@ public static class Combat
         {
             var attackerHero = attacker.GetComponent<PlayerHero>();
             if (attackerHero != null)
+            {
                 attackerHero.ServerNotifyHit(killed);
+                attackerHero.ServerAddUltCharge(before - target.currentHealth.Value);
+            }
 
             var recorder = attacker.GetComponent<PotgRecorder>();
             if (recorder != null)
@@ -119,6 +126,11 @@ public static class Combat
 
             float scale = Mathf.Lerp(1f, 0.5f, Mathf.Clamp01(distance / radius)) * (self ? selfScale : 1f);
             controller.ServerKnockback(direction * force * scale);
+
+            // Kdyz odhozeny spadne z mapy, zabiti patri tomu, kdo ho odhodil.
+            var pushedHero = health.GetComponent<PlayerHero>();
+            if (pushedHero != null && !self)
+                pushedHero.ServerNoteAttacker(attacker);
         }
     }
 }

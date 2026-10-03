@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Past na medv\u011Bdy"
   icon: {fileID: 2800000, guid: c7d2152bf05891842bab2231ea7168c0, type: 3}
-  cooldown: 1
+  cooldown: 10
   power: 40
   duration: 2
   radius: 0.9

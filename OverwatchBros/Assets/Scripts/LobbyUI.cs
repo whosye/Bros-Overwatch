@@ -200,6 +200,8 @@ public class LobbyUI
         string ability = AbilityLabel(hero);
         string mode = hero.weapon.IsMelee ? "blízký souboj" : hero.weapon.IsProjectile ? "projektil" : "okamžitý zásah";
         string reach = hero.weapon.IsMelee ? "dosah" : "dostřel";
+        if (hero.weapon.falloffEnd > hero.weapon.falloffStart && hero.weapon.falloffStart > 0f && !hero.weapon.IsMelee && !hero.weapon.IsProjectile)
+            mode += $", plné poškození do {hero.weapon.falloffStart:0} m";
         heroInfo.text = $"{hero.heroName}:  {hero.maxHealth:0} HP  ·  {hero.weapon.weaponName} ({hero.weapon.damage:0} dmg, {mode}, {reach} {hero.weapon.range:0} m)  ·  {ability}";
     }
 

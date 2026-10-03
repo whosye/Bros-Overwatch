@@ -119,6 +119,10 @@ public class HealFieldAbility : NetworkBehaviour
             var recorder = GetComponent<PotgRecorder>();
             if (recorder != null)
                 recorder.ServerAddHealing(target.currentHealth.Value - before, target.gameObject == gameObject);
+
+            // Leceni spoluhracu nabiji ultimatku (vlastni leceni ne).
+            if (target.gameObject != gameObject)
+                GetComponent<PlayerHero>().ServerAddUltCharge(target.currentHealth.Value - before);
         }
     }
 

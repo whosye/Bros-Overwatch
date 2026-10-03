@@ -169,6 +169,10 @@ GameObject:
   - component: {fileID: 2481787938942469396}
   - component: {fileID: 5757128121169726046}
   - component: {fileID: 1927158620936253238}
+  - component: {fileID: 6913778931485230703}
+  - component: {fileID: 8644616314768656024}
+  - component: {fileID: 2430170537038191072}
+  - component: {fileID: 1887880283413261573}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -521,6 +525,16 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  ultCharge:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  revealed:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &4159225094029200330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -689,3 +703,60 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotgRecorder
   ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &6913778931485230703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 975460a7d2069e4458b3b6e12414c3fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HookAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &8644616314768656024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49b51644a96d2a644915a4feff7687fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoutArrowAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &2430170537038191072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20ca02e4bc864334f94173e48c799cb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RapidFireAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+  interval: 0.22
+--- !u!114 &1887880283413261573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59611329405c1ca4f9b047a7f25c222e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StormAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}

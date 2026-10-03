@@ -9,9 +9,10 @@ public class PotgUI : MonoBehaviour
 {
     enum Phase { Hidden, Intro, Playing, Outro }
 
-    const float IntroSeconds = 2f;
-    const float OutroSeconds = 0.8f;
-    const float MaxWaitSeconds = 8f;
+    // Karta se jmenem hrace trva 5 s (uvod znelky), pak 12 s zaznamu a sekunda dojezdu = 18 s jako znelka.
+    const float IntroSeconds = 5f;
+    const float OutroSeconds = 1f;
+    const float MaxWaitSeconds = 10f;
 
     static PotgUI instance;
 
@@ -22,6 +23,14 @@ public class PotgUI : MonoBehaviour
 
     // Zvuk klipu: 16bit mono PCM, sklada se z kousku.
     AudioSource audioSource;
+    AudioSource introSource;
+
+    // Znelka uvodni karty: vlastni nahravka z Assets/Resources/Audio/potg_intro (mp3 / wav / ogg), jinak generovana.
+    static AudioClip IntroClip()
+    {
+        var custom = Resources.Load<AudioClip>("Audio/potg_intro");
+        return custom != null ? custom : ProceduralSfx.PotgIntro;
+    }
     byte[] audioData;
     int audioReceived;
     int audioRate;
@@ -79,6 +88,10 @@ public class PotgUI : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
+
+        introSource = gameObject.AddComponent<AudioSource>();
+        introSource.playOnAwake = false;
+        introSource.spatialBlend = 0f;
 
         texture = new Texture2D(2, 2, TextureFormat.RGB24, false);
         overlay.SetActive(false);
@@ -171,6 +184,10 @@ public class PotgUI : MonoBehaviour
 
         SetPhase(Phase.Intro);
         overlay.SetActive(true);
+
+        introSource.clip = IntroClip();
+        introSource.volume = 0.9f;
+        introSource.Play();
     }
 
     void SetPhase(Phase next)
@@ -194,6 +211,8 @@ public class PotgUI : MonoBehaviour
         audioData = null;
         if (audioSource != null)
             audioSource.Stop();
+        if (introSource != null)
+            introSource.Stop();
         if (overlay != null)
             overlay.SetActive(false);
     }
@@ -213,11 +232,20 @@ public class PotgUI : MonoBehaviour
 
         float elapsed = Time.unscaledTime - phaseStart;
 
+        // Znelka: pri uvodni karte naplno, pod zaznamem tise (at je slyset zvuk hry), na konci do ztracena.
+        if (introSource != null && introSource.isPlaying)
+        {
+            float wanted = phase == Phase.Intro ? 0.9f : phase == Phase.Playing ? 0.6f : 0.6f * Mathf.Clamp01(1f - elapsed / OutroSeconds);
+            introSource.volume = Mathf.MoveTowards(introSource.volume, wanted, Time.unscaledDeltaTime * 1.5f);
+        }
+
         if (phase == Phase.Intro)
         {
             // Ceka se na vsechny snimky (nejdyl par sekund, pak se prehraje, co dorazilo).
             bool audioReady = audioData == null || audioReceived >= audioData.Length;
-            bool ready = (received >= frames.Length && audioReady) || elapsed > MaxWaitSeconds;
+            // Staci mit par sekund snimku napred, zbytek dorazi behem prehravani (prichazeji rychleji, nez se promitaji).
+            bool enoughFrames = received >= Mathf.Min(frames.Length, fps * 3);
+            bool ready = (enoughFrames && audioReady) || elapsed > MaxWaitSeconds;
             if (elapsed >= IntroSeconds && ready)
             {
                 if (received == 0)

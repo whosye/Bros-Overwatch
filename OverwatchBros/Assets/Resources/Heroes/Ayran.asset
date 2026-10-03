@@ -21,6 +21,13 @@ MonoBehaviour:
   secondaryAbilityKind: 3
   secondaryAbility: {fileID: 11400000, guid: 05a7fec2385728f409649544dc46d44f, type: 2}
   blockAbility: {fileID: 11400000, guid: a8f683e5bd69ed34cac4f5fd59fe5d05, type: 2}
+  altAbilityKind: 10
+  altAbility: {fileID: 11400000, guid: 3f0ce9c6b28296242817d9aa5e849176, type: 2}
+  rmbAbilityKind: 0
+  rmbAbility: {fileID: 0}
+  deathGrenades: 0
+  deathGrenadeDamage: 30
+  deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 855866598642518482, guid: 378fccc575daab7468c21352f55161e3, type: 3}
   tintCharacter: 0
   sleeveColor: {r: 0.62, g: 0.13, b: 0.12, a: 1}
@@ -29,3 +36,6 @@ MonoBehaviour:
   killLines:
   - {fileID: 8300000, guid: f69e7200682c32c42b2bb2e8be290682, type: 3}
   deathLines: []
+  hurtLines: []
+  idleLines: []
+  snareLines: []

@@ -26,7 +26,12 @@ public class VisorAbility : NetworkBehaviour
 
     public bool IsActive => active;
     public bool IsScanning => scanning.Value;
-    public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
+    public float CooldownRemaining => UsesCharge ? 0f : Mathf.Max(0f, nextUseTime - Time.time);
+
+    // Ultimatka: s nastavenou cenou (ultCost) se nabiji hrou, jinak plati cooldown.
+    PlayerHero hero;
+    bool UsesCharge => hero != null && hero.UsesUltCharge;
+    bool CanUse => UsesCharge ? hero.UltReady : Time.time >= nextUseTime;
 
     public void Configure(AbilityDefinition definition)
     {
@@ -36,6 +41,7 @@ public class VisorAbility : NetworkBehaviour
     void Awake()
     {
         fpc = GetComponent<FirstPersonController>();
+        hero = GetComponent<PlayerHero>();
     }
 
     public override void OnNetworkSpawn()
@@ -75,7 +81,7 @@ public class VisorAbility : NetworkBehaviour
 
         if (!active)
         {
-            if (Keyboard.current.qKey.wasPressedThisFrame && Time.time >= nextUseTime && GameSettings.CursorLocked && !fpc.InputBlocked)
+            if (Keyboard.current.qKey.wasPressedThisFrame && CanUse && GameSettings.CursorLocked && !fpc.InputBlocked)
                 Begin();
             return;
         }
@@ -92,6 +98,7 @@ public class VisorAbility : NetworkBehaviour
     void Begin()
     {
         active = true;
+        hero.SpendUlt();
         endTime = Time.time + ability.duration;
         hasTarget = false;
         nextScan = 0f;

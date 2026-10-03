@@ -16,8 +16,9 @@ public class ProjectileSim : MonoBehaviour
     Vector3 velocity;
     float traveled;
     float fuse = -1f;   // granat: bezi od prvniho odrazu
+    float damage;       // poskozeni tohohle projektilu (u luku podle natazeni)
 
-    public static void Spawn(WeaponShooting shooter, WeaponDefinition weapon, int heroId, int id, Vector3 origin, Vector3 velocity)
+    public static void Spawn(WeaponShooting shooter, WeaponDefinition weapon, int heroId, int id, Vector3 origin, Vector3 velocity, float damage = -1f)
     {
         var go = new GameObject("ProjectileSim");
         go.transform.position = origin;
@@ -28,6 +29,7 @@ public class ProjectileSim : MonoBehaviour
         sim.heroId = heroId;
         sim.id = id;
         sim.velocity = velocity;
+        sim.damage = damage >= 0f ? damage : weapon.damage;
     }
 
     void FixedUpdate()
@@ -139,7 +141,7 @@ public class ProjectileSim : MonoBehaviour
         {
             Vector3 center = point + normal * 0.1f;
             var direct = collider != null ? collider.GetComponentInParent<Health>() : null;
-            Combat.Explode(shooter.gameObject, center, weapon.explosionRadius, weapon.damage, 0.4f, direct);
+            Combat.Explode(shooter.gameObject, center, weapon.explosionRadius, damage, 0.4f, direct);
             Finish(center, KindExplosion);
             return;
         }
@@ -152,15 +154,15 @@ public class ProjectileSim : MonoBehaviour
 
         var dummy = collider.GetComponentInParent<Target>();
         if (dummy != null)
-            dummy.TakeDamage(weapon.damage);
+            dummy.TakeDamage(damage);
 
         var boulder = collider.GetComponentInParent<BoulderHitbox>();
         if (boulder != null)
-            boulder.Damage(shooter.gameObject, weapon.damage);
+            boulder.Damage(shooter.gameObject, damage);
 
         var health = collider.GetComponentInParent<Health>();
         if (health != null)
-            Combat.DamagePlayer(shooter.gameObject, health, weapon.damage);
+            Combat.DamagePlayer(shooter.gameObject, health, damage);
 
         Finish(point, KindHit);
     }

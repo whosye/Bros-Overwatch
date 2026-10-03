@@ -56,6 +56,16 @@ public class Health : NetworkBehaviour
         Debug.Log($"{gameObject.name}: {currentHealth.Value}/{maxHealth} HP");
     }
 
+    // Jista smrt (pad mimo mapu): bez ohledu na blok.
+    public void Kill()
+    {
+        if (!IsServer || currentHealth.Value <= 0f) return;
+        if (MatchManager.Instance != null && MatchManager.Instance.IsLobby) return;
+        if (hero != null && hero.IsJoining) return;
+
+        currentHealth.Value = 0f;
+    }
+
     public void Heal(float amount)
     {
         if (!IsServer) return;

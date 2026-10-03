@@ -25,6 +25,7 @@ public static class CharacterSetup
         new Look { hero = "Ayran", lightSkin = false, hair = new[] { "Hair_Buzzed", "Hair_Beard" } },
         new Look { hero = "Viktor", lightSkin = true, hair = new[] { "Hair_SimpleParted" } },
         new Look { hero = "Honza", lightSkin = false, hair = new[] { "Hair_Long" } },
+        new Look { hero = "Mirek", lightSkin = true, hair = new[] { "Hair_Long", "Hair_Beard" } },
     };
 
     static bool Present => System.IO.File.Exists(MaleFbx) && System.IO.File.Exists(AnimFbx);

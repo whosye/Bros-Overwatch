@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a39f21388b7624d84e663cff5b4ed3, type: 3}
+  m_Name: Mirek
+  m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
+  heroName: Mirek
+  color: {r: 0.6, g: 0.45, b: 0.9, a: 1}
+  maxHealth: 100
+  weapon: {fileID: 11400000, guid: e1024bdb9bec1d6469758999e3c4fbbf, type: 2}
+  abilityKind: 13
+  ability: {fileID: 11400000, guid: c6b229434130d8345beedf8b5864bb28, type: 2}
+  secondaryAbilityKind: 1
+  secondaryAbility: {fileID: 11400000, guid: f0a332cd94870eb45be8378d9d446adc, type: 2}
+  blockAbility: {fileID: 0}
+  altAbilityKind: 11
+  altAbility: {fileID: 11400000, guid: 16948374a4408a741be27c36da7fe752, type: 2}
+  rmbAbilityKind: 12
+  rmbAbility: {fileID: 11400000, guid: e3db740e8b8b76a46bcb1c13365cde0b, type: 2}
+  doubleJump: 1
+  ledgeClimb: 1
+  deathGrenades: 0
+  deathGrenadeDamage: 30
+  deathGrenadeRadius: 3.5
+  characterPrefab: {fileID: 7679878268085281538, guid: b3d65e1ff9363624c8f932e892b617aa, type: 3}
+  tintCharacter: 1
+  sleeveColor: {r: 0.25, g: 0.27, b: 0.32, a: 1}
+  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
+  spawnLines:
+  - {fileID: 8300000, guid: 2431047247030134b99f5eb3d94be8c8, type: 3}
+  killLines:
+  - {fileID: 8300000, guid: dc0540c71c9b3184eac3b4d1de013579, type: 3}
+  - {fileID: 8300000, guid: 290b2202fe9f21c46b93221d3aba39b2, type: 3}
+  - {fileID: 8300000, guid: fb41a27635a25114caf1fd0f0baab96e, type: 3}
+  deathLines:
+  - {fileID: 8300000, guid: 1f572b33f12199c49bc225f0a0fb9ecb, type: 3}
+  - {fileID: 8300000, guid: 3d407b84b3827cc4e991ad26677941af, type: 3}
+  hurtLines:
+  - {fileID: 8300000, guid: 5dbf0e8392bd05b45b37f01dbab67d4e, type: 3}
+  - {fileID: 8300000, guid: efbff5528f502524bacc3515965f4d10, type: 3}
+  - {fileID: 8300000, guid: dfa218d2058e0bf4e935eb4d498f0443, type: 3}
+  idleLines:
+  - {fileID: 8300000, guid: ae4b249eb7a9f824caf058eca2a6a114, type: 3}
+  - {fileID: 8300000, guid: dbd01630ce197c64090901753c2b7078, type: 3}
+  snareLines:
+  - {fileID: 8300000, guid: cd26453a1b1ebf243816fa909159f08c, type: 3}
+  - {fileID: 8300000, guid: 1917394b2df5cb542854c34d95d396dc, type: 3}

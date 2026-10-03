@@ -169,6 +169,14 @@ public class HeldWeapons : MonoBehaviour
             if (reloadElapsed < reloadDuration)
                 AnimateReload(reloadElapsed / reloadDuration, hand.side, ref position, ref euler);
 
+            // Luk se pri natahovani pritahne k telu a lehce zvedne.
+            if (builtModel == HeldModel.Bow)
+            {
+                float charge = shooting.ChargeFraction;
+                position += new Vector3(-0.03f, 0.03f, -0.10f) * charge;
+                euler.z += 6f * charge;
+            }
+
             Quaternion rotation = Quaternion.Euler(euler);
 
             // Blok: sekyry se zkrizi pred hracem.
@@ -377,6 +385,8 @@ public class HeldWeapons : MonoBehaviour
 
     static Vector3 GripInWeapon(WeaponDefinition weapon, HeldModel model)
     {
+        if (model == HeldModel.Bow) return new Vector3(0f, 0f, 0.10f);
+
         return model == HeldModel.Axe ? new Vector3(0f, 0.12f, 0f)
             : weapon.IsProjectile ? new Vector3(0f, -0.10f, 0.12f)
             : new Vector3(0f, -0.07f, 0.05f);
@@ -437,7 +447,17 @@ public class HeldWeapons : MonoBehaviour
         var steel = new Color(0.78f, 0.80f, 0.84f);
         var dark = new Color(0.17f, 0.18f, 0.21f);
 
-        if (model == HeldModel.Axe)
+        if (model == HeldModel.Bow)
+        {
+            // Luk z rovnych dilu: madlo, dve ramena a tetiva.
+            Part(holder, new Vector3(0f, 0f, 0.10f), Vector3.zero, new Vector3(0.04f, 0.22f, 0.05f), dark);
+            Part(holder, new Vector3(0f, 0.30f, 0.04f), new Vector3(-22f, 0f, 0f), new Vector3(0.03f, 0.44f, 0.035f), wood);
+            Part(holder, new Vector3(0f, -0.30f, 0.04f), new Vector3(22f, 0f, 0f), new Vector3(0.03f, 0.44f, 0.035f), wood);
+            Part(holder, new Vector3(0f, 0f, -0.045f), Vector3.zero, new Vector3(0.008f, 1.0f, 0.008f), steel);
+            // Sip pripraveny na tetive.
+            Part(holder, new Vector3(0f, 0f, 0.28f), Vector3.zero, new Vector3(0.015f, 0.015f, 0.68f), weapon.projectileColor);
+        }
+        else if (model == HeldModel.Axe)
         {
             Part(holder, new Vector3(0f, 0.25f, 0f), Vector3.zero, new Vector3(0.045f, 0.56f, 0.045f), wood);
             Part(holder, new Vector3(0f, 0.47f, 0.10f), Vector3.zero, new Vector3(0.03f, 0.20f, 0.20f), steel);

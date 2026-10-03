@@ -24,8 +24,14 @@ public class RushAbility : NetworkBehaviour
     Vector3 dashDirection;
     readonly HashSet<Health> hitThisDash = new HashSet<Health>();
     readonly HashSet<Target> hitDummies = new HashSet<Target>();
-    float nextUseTime;
+    // Naboje: vypad jde pouzit tolikrat za sebou, kolik je naboju ('charges'); kazdy se dobiji 'cooldown' sekund.
+    int charges = 1;
+    float rechargeAt;
     float bufferedUntil;
+
+    int MaxCharges => ability != null ? Mathf.Max(1, ability.charges) : 1;
+    public int Charges => charges;
+    public bool HasSeveralCharges => MaxCharges > 1;
     Vector3 savedCameraLocalPosition;
     ParticleSystem aura;
 
@@ -37,11 +43,12 @@ public class RushAbility : NetworkBehaviour
     // Synchronizovano po siti: Modry plamen prave bezi (i u ostatnich hracu).
     public bool IsRushing => rushing.Value;
 
-    public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
+    public float CooldownRemaining => charges > 0 ? 0f : Mathf.Max(0f, rechargeAt - Time.time);
 
     public void Configure(AbilityDefinition definition)
     {
         ability = definition;
+        charges = MaxCharges;
     }
 
     public string StatusText()
@@ -51,7 +58,7 @@ public class RushAbility : NetworkBehaviour
         if (active)
             return $"[SHIFT] {ability.abilityName}: AKTIVNÍ";
 
-        float remaining = nextUseTime - Time.time;
+        float remaining = CooldownRemaining;
         return remaining > 0f
             ? $"[SHIFT] {ability.abilityName}: {remaining:0.0}s"
             : $"[SHIFT] {ability.abilityName}: PŘIPRAVENO";
@@ -132,13 +139,19 @@ public class RushAbility : NetworkBehaviour
     {
         if (ability == null) return;
 
+        if (charges < MaxCharges && Time.time >= rechargeAt)
+        {
+            charges++;
+            rechargeAt = Time.time + ability.cooldown;
+        }
+
         if (!active)
         {
             // Stisk se chvili pamatuje: zmacknuti tesne pred koncem cooldownu se nezahodi. Vypad jde spustit i z bloku.
             if (Keyboard.current.leftShiftKey.wasPressedThisFrame && GameSettings.CursorLocked)
                 bufferedUntil = Time.time + pressBuffer;
 
-            if (Time.time <= bufferedUntil && Time.time >= nextUseTime && !fpc.InputBlocked && !fpc.RushActive && !fpc.Rooted)
+            if (Time.time <= bufferedUntil && charges > 0 && !fpc.InputBlocked && !fpc.RushActive && !fpc.Rooted)
             {
                 bufferedUntil = 0f;
                 Begin();
@@ -198,6 +211,10 @@ public class RushAbility : NetworkBehaviour
 
     void Begin()
     {
+        if (charges == MaxCharges)
+            rechargeAt = Time.time + ability.cooldown;
+        charges--;
+
         active = true;
         elapsed = 0f;
         blockedTime = 0f;
@@ -219,7 +236,6 @@ public class RushAbility : NetworkBehaviour
     void Stop()
     {
         active = false;
-        nextUseTime = Time.time + ability.cooldown;
 
         if (playerCamera != null)
             playerCamera.transform.localPosition = savedCameraLocalPosition;
@@ -238,7 +254,7 @@ public class RushAbility : NetworkBehaviour
         if (!active) return;
 
         Stop();
-        nextUseTime = 0f;
+        charges = MaxCharges;
     }
 
     // ---------------- server: poškození + leceni ----------------

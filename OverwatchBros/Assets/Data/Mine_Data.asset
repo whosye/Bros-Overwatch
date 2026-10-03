@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "N\xE1lo\u017E"
   icon: {fileID: 2800000, guid: dc62453528dba954baa02dc6beef4710, type: 3}
-  cooldown: 1
+  cooldown: 8
   power: 60
   duration: 0.2
   radius: 4.5

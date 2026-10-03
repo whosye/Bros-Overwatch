@@ -4,7 +4,7 @@ using UnityEngine;
 // do OnAudioFilterRead cely smichany zvuk) a drzi si poslednich par sekund jako mono se snizenou vzorkovaci frekvenci.
 public class PotgAudioTap : MonoBehaviour
 {
-    const float RingSeconds = 9f;
+    const float RingSeconds = 16f;
 
     short[] ring;
     long written;          // celkovy pocet zapsanych (zredenych) vzorku

@@ -14,23 +14,45 @@ public class ProjectileVisual : MonoBehaviour
     float bounce;
     float radius;
 
+    // Skutecna draha (stejna jako na serveru) a docasny posun vykresleni: strelci sip vyleti od luku
+    // a behem chvilky se srovna na skutecnou drahu ve stredu obrazovky, takze je videt i jeho stopa.
+    Vector3 position;
+    Vector3 visualOffset;
+    float age;
+    const float OffsetSeconds = 0.22f;
+
+    static Material trailMaterial;
+
+    // Hladka stopa bez textury (material castic ma kulatou tecku, ktera by stopu skoro zneviditelnila).
+    static Material TrailMaterial
+    {
+        get
+        {
+            if (trailMaterial == null)
+                trailMaterial = new Material(Fx.ParticleMaterial) { mainTexture = null };
+            return trailMaterial;
+        }
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
     {
         Active.Clear();
     }
 
-    public static void Spawn(int id, Vector3 position, Vector3 velocity, WeaponDefinition weapon)
+    public static void Spawn(int id, Vector3 position, Vector3 velocity, WeaponDefinition weapon, Vector3 visualOffset = default)
     {
         if (Active.TryGetValue(id, out var old) && old != null)
             Destroy(old.gameObject);
 
         var go = weapon.projectilePrefab != null ? Instantiate(weapon.projectilePrefab) : CreateDefaultVisual(weapon);
         go.name = "ProjectileVisual";
-        go.transform.position = position;
+        go.transform.position = position + visualOffset;
         go.transform.rotation = Quaternion.LookRotation(velocity);
 
         var visual = go.AddComponent<ProjectileVisual>();
+        visual.position = position;
+        visual.visualOffset = visualOffset;
         visual.id = id;
         visual.velocity = velocity;
         visual.gravity = weapon.projectileGravity;
@@ -67,6 +89,13 @@ public class ProjectileVisual : MonoBehaviour
 
         float diameter = Mathf.Max(0.1f, weapon.projectileRadius * 2f);
         go.transform.localScale = Vector3.one * diameter;
+
+        // Sip: uzky a dlouhy ve smeru letu.
+        if (weapon.IsCharged)
+        {
+            diameter = 0.07f;
+            go.transform.localScale = new Vector3(0.07f, 0.07f, 0.85f);
+        }
         Fx.Paint(go, weapon.projectileColor);
 
         var glow = go.AddComponent<Light>();
@@ -75,7 +104,26 @@ public class ProjectileVisual : MonoBehaviour
         glow.range = 3f + diameter * 4f;
         glow.intensity = 2.5f;
 
-        if (weapon.projectileTrail)
+        if (weapon.projectileTrail && weapon.IsCharged)
+        {
+            // Sip: kratka pruhledna stopa s lehkym modrym nadechem, ktera se k chvostu zuzuje a mizi.
+            // Je videt, kudy sip proletel, ale nezakryva vyhled.
+            var trail = go.AddComponent<TrailRenderer>();
+            trail.time = 0.16f;
+            trail.minVertexDistance = 0.05f;
+            trail.widthMultiplier = 0.2f;
+            trail.widthCurve = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 0.2f));
+            trail.material = TrailMaterial;
+            trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+            var tint = new Color(0.62f, 0.84f, 1f);
+            var gradient = new Gradient();
+            gradient.SetKeys(
+                new[] { new GradientColorKey(Color.Lerp(tint, Color.white, 0.35f), 0f), new GradientColorKey(tint, 1f) },
+                new[] { new GradientAlphaKey(0.65f, 0f), new GradientAlphaKey(0.3f, 0.5f), new GradientAlphaKey(0f, 1f) });
+            trail.colorGradient = gradient;
+        }
+        else if (weapon.projectileTrail)
         {
             var trail = go.AddComponent<TrailRenderer>();
             trail.time = 0.35f;
@@ -103,7 +151,7 @@ public class ProjectileVisual : MonoBehaviour
         if (bounce > 0f && step.sqrMagnitude > 0f)
         {
             float distance = step.magnitude;
-            var hits = Physics.SphereCastAll(transform.position, radius, step / distance, distance, ~0, QueryTriggerInteraction.Ignore);
+            var hits = Physics.SphereCastAll(position, radius, step / distance, distance, ~0, QueryTriggerInteraction.Ignore);
             System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
             foreach (var hit in hits)
             {
@@ -115,7 +163,12 @@ public class ProjectileVisual : MonoBehaviour
             }
         }
 
-        transform.position += step;
+        position += step;
+        age += Time.deltaTime;
+
+        // Posun vykresleni plynule mizi.
+        float offsetLeft = 1f - Mathf.SmoothStep(0f, 1f, age / OffsetSeconds);
+        transform.position = position + visualOffset * offsetLeft;
 
         if (velocity.sqrMagnitude > 0.01f)
             transform.rotation = Quaternion.LookRotation(velocity);

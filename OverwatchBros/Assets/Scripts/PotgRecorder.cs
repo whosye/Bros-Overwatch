@@ -12,13 +12,15 @@ using UnityEngine.Rendering;
 // a vsem se prehraji jako video (PotgUI).
 public class PotgRecorder : NetworkBehaviour
 {
-    public const int Width = 640;
-    public const int Height = 360;
+    // Rozliseni zaznamu (540p). Vetsi = ostrejsi obraz, ale vic dat k preneseni po siti.
+    public const int Width = 960;
+    public const int Height = 540;
     public const int Fps = 15;
-    public const float ClipSeconds = 5f;
-    const float RingSeconds = 7f;
-    const float AfterKillSeconds = 1f;   // kolik zaznamu po zabiti se jeste vezme
-    const int JpgQuality = 62;
+    // Klip ma 12 s: s 5s uvodni kartou a sekundou dojezdu to dohromady vyjde na 18s znelku.
+    public const float ClipSeconds = 12f;
+    const float RingSeconds = 14.5f;
+    const float AfterKillSeconds = 1.5f;   // kolik zaznamu po zabiti se jeste vezme
+    const int JpgQuality = 72;
 
     class Frame
     {
@@ -279,7 +281,9 @@ public class PotgRecorder : NetworkBehaviour
         var leap = player.GetComponent<LeapStrikeAbility>();
         var boulder = player.GetComponent<BoulderAbility>();
         var visor = player.GetComponent<VisorAbility>();
-        return (leap != null && leap.enabled && leap.IsAirborne)
+        var storm = player.GetComponent<StormAbility>();
+        return (storm != null && storm.enabled && storm.IsStormActive)
+            || (leap != null && leap.enabled && leap.IsAirborne)
             || (boulder != null && boulder.enabled && boulder.IsRolling)
             || (visor != null && visor.enabled && visor.IsScanning);
     }
@@ -423,11 +427,11 @@ public class PotgRecorder : NetworkBehaviour
             yield return null;
         }
 
-        // Snimky se posilaji postupne, aby se nezahltila sit.
+        // Snimky se posilaji postupne (jeden za snimek hry), aby se nezahltila sit; prehravani zacne,
+        // jakmile je jich dost napred, zbytek dojde behem nej.
         for (int i = 0; i < clip.Count; i++)
         {
             FrameServerRpc(i, clip[i]);
-            yield return null;
             yield return null;
         }
     }

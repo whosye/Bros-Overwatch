@@ -17,3 +17,6 @@ MonoBehaviour:
   fireRate: 8
   maxAmmo: 12
   range: 100
+  falloffMin: 0.4
+  falloffEnd: 45
+  falloffStart: 20

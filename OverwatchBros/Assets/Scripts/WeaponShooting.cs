@@ -91,14 +91,24 @@ public class WeaponShooting : NetworkBehaviour
         }
 
         // Prazdny zasobnik se prebije sam.
-        if (!weapon.IsMelee && currentAmmo <= 0 && (fpc == null || !fpc.CannotAct))
+        if (weapon.HasAmmo && currentAmmo <= 0 && (fpc == null || !fpc.CannotAct))
         {
             Reload();
             return;
         }
 
-        if (fpc != null && (fpc.InputBlocked || fpc.RushActive || fpc.BlockActive)) return;
-        if (!GameSettings.CursorLocked) return;
+        if ((fpc != null && (fpc.InputBlocked || fpc.RushActive || fpc.BlockActive)) || !GameSettings.CursorLocked)
+        {
+            charging = false;
+            return;
+        }
+
+        // Luk: drzenim se natahuje, pustenim vystreli.
+        if (weapon.IsCharged)
+        {
+            UpdateCharged();
+            return;
+        }
 
         if (Keyboard.current.rKey.wasPressedThisFrame)
         {
@@ -110,11 +120,69 @@ public class WeaponShooting : NetworkBehaviour
             Fire();
     }
 
+    // ---------------- luk ----------------
+
+    bool charging;
+    float chargeStart;
+    RapidFireAbility rapid;
+
+    // Jak moc je luk natazeny (0-1), pro HUD a model zbrane.
+    public float ChargeFraction => charging && weapon != null && weapon.chargeTime > 0f
+        ? Mathf.Clamp01((Time.time - chargeStart) / weapon.chargeTime)
+        : 0f;
+
+    void UpdateCharged()
+    {
+        if (rapid == null)
+            rapid = GetComponent<RapidFireAbility>();
+
+        bool down = Mouse.current.leftButton.isPressed;
+
+        // Rychlopalba: sipy leti hned plnou rychlosti, jeden za druhym.
+        if (rapid != null && rapid.enabled && rapid.IsActive)
+        {
+            charging = false;
+            if (down && Time.time >= nextFireTime)
+            {
+                nextFireTime = Time.time + rapid.interval;
+                FireArrow(1f, true);
+                rapid.ConsumeShot();
+            }
+            return;
+        }
+
+        if (down)
+        {
+            if (!charging && Time.time >= nextFireTime)
+            {
+                charging = true;
+                chargeStart = Time.time;
+            }
+        }
+        else if (charging)
+        {
+            float charge = ChargeFraction;
+            charging = false;
+            nextFireTime = Time.time + 1f / Mathf.Max(0.1f, weapon.fireRate);
+            FireArrow(charge, false);
+        }
+    }
+
+    void FireArrow(float charge, bool rapidShot)
+    {
+        ProceduralSfx.Play(ProceduralSfx.Dash, playerCamera.transform.position, 0.45f + 0.3f * charge);
+        ShotFxServerRpc(true);
+        held.Swing();
+
+        Vector3 direction = playerCamera.transform.forward;
+        FireProjectileServerRpc(playerCamera.transform.position + direction * 0.6f, direction, charge, rapidShot);
+    }
+
     void Fire()
     {
         bool melee = weapon.IsMelee;
 
-        if (!melee && currentAmmo <= 0)
+        if (weapon.HasAmmo && currentAmmo <= 0)
         {
             nextFireTime = Time.time + 0.35f;
             ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.6f);
@@ -122,7 +190,7 @@ public class WeaponShooting : NetworkBehaviour
         }
 
         nextFireTime = Time.time + 1f / weapon.fireRate;
-        if (!melee)
+        if (weapon.HasAmmo)
             currentAmmo--;
 
         ProceduralSfx.Play(melee ? ProceduralSfx.Dash : ProceduralSfx.Gunshot, playerCamera.transform.position, melee ? 0.6f : 0.7f);
@@ -133,7 +201,7 @@ public class WeaponShooting : NetworkBehaviour
         {
             // Projektil: server ho spusti a simuluje, klienti dostanou vizual.
             Vector3 direction = playerCamera.transform.forward;
-            FireProjectileServerRpc(playerCamera.transform.position + direction * 0.6f, direction);
+            FireProjectileServerRpc(playerCamera.transform.position + direction * 0.6f, direction, 1f, false);
             return;
         }
 
@@ -177,10 +245,13 @@ public class WeaponShooting : NetworkBehaviour
     // Spolecny zasah pro hitscan i melee: damage, zvuk zasahu a maly vybuch v miste dopadu.
     void ApplyHit(Collider collider, Vector3 point, float fxScale)
     {
+        // Strelba na dalku je slabsi (jen zbrane s nastavenym poklesem poskozeni).
+        float damage = weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, point));
+
         Target target = collider.GetComponent<Target>();
         if (target != null)
         {
-            target.TakeDamage(weapon.damage);
+            target.TakeDamage(damage);
             HudUI.NotifyHit(false);
         }
 
@@ -188,14 +259,14 @@ public class WeaponShooting : NetworkBehaviour
         var boulder = collider.GetComponentInParent<BoulderHitbox>();
         if (boulder != null && boulder.Owner != null && boulder.Owner.NetworkObject != NetworkObject)
         {
-            RequestBoulderDamageServerRpc(boulder.Owner.NetworkObject, weapon.damage);
+            RequestBoulderDamageServerRpc(boulder.Owner.NetworkObject, damage);
             ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.8f);
         }
 
         NetworkObject hitNetworkObject = collider.GetComponentInParent<NetworkObject>();
         if (hitNetworkObject != null && hitNetworkObject != NetworkObject)
         {
-            RequestDamageServerRpc(hitNetworkObject, weapon.damage);
+            RequestDamageServerRpc(hitNetworkObject, damage);
             ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.8f);
         }
 
@@ -260,7 +331,7 @@ public class WeaponShooting : NetworkBehaviour
     static int projectileCounter;
 
     [ServerRpc]
-    void FireProjectileServerRpc(Vector3 origin, Vector3 direction)
+    void FireProjectileServerRpc(Vector3 origin, Vector3 direction, float charge, bool rapidShot)
     {
         var match = MatchManager.Instance;
         if (match != null && (match.IsOver || match.IsLobby)) return;
@@ -273,9 +344,22 @@ public class WeaponShooting : NetworkBehaviour
         direction.Normalize();
         int id = ++projectileCounter;
         int heroId = playerHero != null ? playerHero.heroId.Value : -1;
-        Vector3 velocity = direction * serverWeapon.projectileSpeed;
+        // Luk: rychlost i poskozeni podle natazeni; sip z rychlopalby leti naplno a dava poskozeni schopnosti.
+        float speed = serverWeapon.projectileSpeed;
+        float damage = serverWeapon.damage;
+        if (serverWeapon.IsCharged)
+        {
+            charge = Mathf.Clamp01(charge);
+            var hero = playerHero != null ? playerHero.Hero : null;
+            bool rapidOk = rapidShot && hero != null && hero.rmbAbilityKind == AbilityKind.RapidFire && hero.rmbAbility != null;
 
-        ProjectileSim.Spawn(this, serverWeapon, heroId, id, origin, velocity);
+            speed = rapidOk ? serverWeapon.projectileSpeed : Mathf.Lerp(serverWeapon.minChargeSpeed, serverWeapon.projectileSpeed, charge);
+            damage = rapidOk ? hero.rmbAbility.power : Mathf.Lerp(serverWeapon.minChargeDamage, serverWeapon.damage, charge);
+        }
+
+        Vector3 velocity = direction * speed;
+
+        ProjectileSim.Spawn(this, serverWeapon, heroId, id, origin, velocity, damage);
         SpawnProjectileVisualClientRpc(id, origin, velocity, heroId);
     }
 
@@ -283,8 +367,14 @@ public class WeaponShooting : NetworkBehaviour
     void SpawnProjectileVisualClientRpc(int id, Vector3 origin, Vector3 velocity, int heroId)
     {
         var projectileWeapon = WeaponOfHero(heroId);
-        if (projectileWeapon != null)
-            ProjectileVisual.Spawn(id, origin, velocity, projectileWeapon);
+        if (projectileWeapon == null) return;
+
+        // Strelec vidi svuj sip vyletet od luku (vpravo dole), ne primo ze stredu obrazovky.
+        Vector3 offset = Vector3.zero;
+        if (IsOwner && projectileWeapon.IsCharged && playerCamera != null && (fpc == null || !fpc.ThirdPerson))
+            offset = playerCamera.transform.right * 0.28f - playerCamera.transform.up * 0.22f;
+
+        ProjectileVisual.Spawn(id, origin, velocity, projectileWeapon, offset);
     }
 
     // Vola serverova simulace projektilu, kdyz projektil skoncil (zasah / vybuch / vyprsel dostrel).
@@ -309,7 +399,7 @@ public class WeaponShooting : NetworkBehaviour
     // Prebiti trva weapon.reloadTime; naboje pribydou az na konci.
     void Reload()
     {
-        if (weapon.IsMelee || reloading || currentAmmo == weapon.maxAmmo) return;
+        if (!weapon.HasAmmo || reloading || currentAmmo == weapon.maxAmmo) return;
 
         float duration = Mathf.Max(0.05f, weapon.reloadTime);
         reloading = true;

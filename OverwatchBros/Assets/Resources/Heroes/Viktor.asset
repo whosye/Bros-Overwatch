@@ -28,13 +28,23 @@ MonoBehaviour:
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
-  characterPrefab: {fileID: 5027208971970856215, guid: 8c23ff938e60f134bac1ac20abe7dddb, type: 3}
-  tintCharacter: 1
-  sleeveColor: {r: 0.25, g: 0.27, b: 0.32, a: 1}
-  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
-  spawnLines: []
-  killLines: []
-  deathLines: []
-  hurtLines: []
-  idleLines: []
-  snareLines: []
+  characterPrefab: {fileID: 6597849430519105893, guid: 59332dacda2a5b54fbcb0c50d60d4657, type: 3}
+  tintCharacter: 0
+  sleeveColor: {r: 0.1, g: 0.1, b: 0.12, a: 1}
+  skinColor: {r: 0.8, g: 0.62, b: 0.5, a: 1}
+  spawnLines:
+  - {fileID: 8300000, guid: e43447cb878cc0244a73cb1030654b41, type: 3}
+  killLines:
+  - {fileID: 8300000, guid: 1db3bbd3464f81d4eada5b8c3f10d3c9, type: 3}
+  - {fileID: 8300000, guid: a2d98da1fba01cc42bc7fe8f23f6a522, type: 3}
+  deathLines:
+  - {fileID: 8300000, guid: dac50d304e2b6da4bbc9e2dac37ca3ef, type: 3}
+  hurtLines:
+  - {fileID: 8300000, guid: 5a3d864b8ae29684ab824b6ae5745230, type: 3}
+  - {fileID: 8300000, guid: c714061c08ab64d499273cba039825a1, type: 3}
+  idleLines:
+  - {fileID: 8300000, guid: d0cc161946dfc4847a8504898fd934ea, type: 3}
+  - {fileID: 8300000, guid: 2827768468c64af4397900b3ddb9afc5, type: 3}
+  - {fileID: 8300000, guid: e18e9e51d9d398347b200cf52d850911, type: 3}
+  snareLines:
+  - {fileID: 8300000, guid: a990250b84d0f3045a6a97ff4f416b37, type: 3}

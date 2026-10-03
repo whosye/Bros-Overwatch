@@ -12,7 +12,8 @@ public enum HeldModel
     Auto,
     None,
     Gun,
-    Axe
+    Axe,
+    Bow
 }
 
 [CreateAssetMenu(fileName = "NewWeapon", menuName = "BrosOverwatch/Weapon")]
@@ -31,6 +32,22 @@ public class WeaponDefinition : ScriptableObject
 
     // Hitscan: dosah okamziteho paprsku. Projectile: nejvetsi vzdalenost, kterou projektil preleti.
     public float range = 100f;
+
+    [Header("Natahování (luk; jen projektil)")]
+    [Tooltip("Jak dlouho (s) se zbran natahuje do plne sily. 0 = strili se hned. Drzenim tlacitka se natahuje, pustenim vystreli.")]
+    public float chargeTime = 0f;
+    [Tooltip("Poskozeni nenatazene strely (plne natazena dava 'damage').")]
+    public float minChargeDamage = 20f;
+    [Tooltip("Rychlost nenatazene strely (plne natazena leti 'projectileSpeed').")]
+    public float minChargeSpeed = 25f;
+
+    [Header("Pokles poškození s dálkou (jen okamžitý zásah)")]
+    [Tooltip("Do teto vzdalenosti (m) dava zbran plne poskozeni. 0 = poskozeni s dalkou neklesa.")]
+    public float falloffStart = 0f;
+    [Tooltip("Od teto vzdalenosti (m) dava zbran uz jen nejmensi poskozeni; mezi obema hodnotami klesa plynule.")]
+    public float falloffEnd = 0f;
+    [Tooltip("Nejmensi poskozeni na velkou dalku jako cast plneho (0.4 = 40 %).")]
+    public float falloffMin = 0.4f;
 
     [Header("Projektil (jen kdyz Fire Mode = Projectile)")]
     public FireMode fireMode = FireMode.Hitscan;
@@ -64,5 +81,17 @@ public class WeaponDefinition : ScriptableObject
 
     public bool IsProjectile => fireMode == FireMode.Projectile;
     public bool IsMelee => fireMode == FireMode.Melee;
+    public bool IsCharged => IsProjectile && chargeTime > 0f;
+    // Zbran bez zasobniku (luk): nikdy se neprebiji.
+    public bool HasAmmo => !IsMelee && maxAmmo > 0;
+
+    // Poskozeni okamziteho zasahu na danou vzdalenost.
+    public float DamageAt(float distance)
+    {
+        if (fireMode != FireMode.Hitscan || falloffEnd <= falloffStart || falloffStart <= 0f) return damage;
+
+        float t = Mathf.InverseLerp(falloffStart, falloffEnd, distance);
+        return damage * Mathf.Lerp(1f, Mathf.Clamp01(falloffMin), t);
+    }
     public bool Bounces => IsProjectile && projectileBounce > 0f;
 }

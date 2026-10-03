@@ -6,7 +6,7 @@ public static class ProceduralSfx
 {
     const int Rate = 44100;
 
-    static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock;
+    static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock, potgIntro;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
@@ -76,6 +76,27 @@ public static class ProceduralSfx
 
     public static AudioClip CaptureUnlock => captureUnlock ??= Make("captureUnlock", 0.4f, (t, r) =>
         Mathf.Sin(2f * Mathf.PI * (t < 0.15f ? 440f : 660f) * t) * 0.5f * Mathf.Exp(-(t < 0.15f ? t : t - 0.15f) * 12f));
+
+    // Znelka k uvodni karte "play of the game" (vlastni, generovana): buben a stoupajici akord s dozvukem.
+    public static AudioClip PotgIntro => potgIntro ??= Make("potgIntro", 2.2f, (t, r) =>
+    {
+        float drum = Mathf.Sin(2f * Mathf.PI * (90f - 40f * Mathf.Min(1f, t * 6f)) * t) * Mathf.Exp(-t * 7f) * 0.7f;
+
+        float[] notes = { 293.66f, 369.99f, 440f, 587.33f };
+        float chord = 0f;
+        for (int i = 0; i < notes.Length; i++)
+        {
+            float start = 0.12f + i * 0.14f;
+            if (t < start) continue;
+
+            float local = t - start;
+            float envelope = Mathf.Min(1f, local * 25f) * Mathf.Exp(-local * 1.4f);
+            chord += (Mathf.Sin(2f * Mathf.PI * notes[i] * t) + 0.35f * Mathf.Sin(2f * Mathf.PI * notes[i] * 2f * t)
+                + 0.15f * Mathf.Sin(2f * Mathf.PI * notes[i] * 3f * t)) * envelope;
+        }
+
+        return Mathf.Clamp(drum + chord * 0.16f, -1f, 1f);
+    });
 
     public static AudioClip Footstep => footstep ??= Make("footstep", 0.09f, (t, r) => Noise(r) * 0.35f * Mathf.Exp(-t * 55f));
 

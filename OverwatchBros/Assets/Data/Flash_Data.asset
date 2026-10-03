@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Oslepuj\xEDc\xED gran\xE1t"
   icon: {fileID: 2800000, guid: b1d14064f1818444a970f2da644f54b9, type: 3}
-  cooldown: 1
+  cooldown: 10
+  ultCost: 0
   power: 15
   duration: 0.8
   radius: 4
@@ -22,7 +23,8 @@ MonoBehaviour:
   knockback: 0
   charges: 1
   sound: {fileID: 0}
-  voiceLines: []
+  voiceLines:
+  - {fileID: 8300000, guid: c3cbaefea3512d34e88f1a852257e0d3, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

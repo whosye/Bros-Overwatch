@@ -89,6 +89,10 @@ public class PlayerRespawn : NetworkBehaviour
         if (visor != null)
             visor.Cancel();
 
+        var rapidFire = GetComponent<RapidFireAbility>();
+        if (rapidFire != null)
+            rapidFire.Cancel();
+
         controller.enabled = false;
         if (hasSpawn)
             transform.position = spawn;

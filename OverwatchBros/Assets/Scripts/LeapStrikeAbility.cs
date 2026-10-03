@@ -40,7 +40,12 @@ public class LeapStrikeAbility : NetworkBehaviour
     public bool IsActive => phase != Phase.Idle;
     public bool IsAirborne => airborne.Value;
 
-    public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
+    public float CooldownRemaining => UsesCharge ? 0f : Mathf.Max(0f, nextUseTime - Time.time);
+
+    // Ultimatka: s nastavenou cenou (ultCost) se nabiji hrou, jinak plati cooldown.
+    PlayerHero hero;
+    bool UsesCharge => hero != null && hero.UsesUltCharge;
+    bool CanUse => UsesCharge ? hero.UltReady : Time.time >= nextUseTime;
 
     public void Configure(AbilityDefinition definition)
     {
@@ -73,6 +78,7 @@ public class LeapStrikeAbility : NetworkBehaviour
     {
         controller = GetComponent<CharacterController>();
         fpc = GetComponent<FirstPersonController>();
+        hero = GetComponent<PlayerHero>();
     }
 
     public override void OnNetworkSpawn()
@@ -114,7 +120,7 @@ public class LeapStrikeAbility : NetworkBehaviour
 
         if (phase == Phase.Idle)
         {
-            if (Keyboard.current.qKey.wasPressedThisFrame && Time.time >= nextUseTime
+            if (Keyboard.current.qKey.wasPressedThisFrame && CanUse
                 && !fpc.InputBlocked && !fpc.RushActive && !fpc.BlockActive && !fpc.Rooted && GameSettings.CursorLocked)
                 Begin();
             return;
@@ -148,6 +154,7 @@ public class LeapStrikeAbility : NetworkBehaviour
     void Begin()
     {
         nextUseTime = Time.time + ability.cooldown;
+        hero.SpendUlt();
         fpc.AbilityActive = true;
         fpc.ResetVertical();
 

@@ -27,6 +27,128 @@ public class PlayerHero : NetworkBehaviour
         if (!IsServer) return;
         kills.Value = 0;
         deaths.Value = 0;
+        ultCharge.Value = 0f;
+    }
+
+    // ---------------- pad mimo mapu ----------------
+
+    // Kdo hrace naposledy zranil nebo odhodil (kdyz pak spadne z mapy, zabiti se pripise jemu).
+    GameObject lastAttacker;
+    float lastAttackTime = -100f;
+    float nextFallCheck;
+
+    public void ServerNoteAttacker(GameObject attacker)
+    {
+        if (!IsServer || attacker == null || attacker == gameObject) return;
+
+        lastAttacker = attacker;
+        lastAttackTime = Time.time;
+    }
+
+    void ServerCheckFall()
+    {
+        if (joining.Value || Time.time < nextFallCheck) return;
+        if (transform.position.y > MatchManager.KillHeight) return;
+
+        nextFallCheck = Time.time + 1f;
+
+        var match = MatchManager.Instance;
+        bool playing = match != null && !match.IsLobby && !match.IsOver;
+
+        // V lobby a po konci zapasu se neumira: hrac se jen vrati na zakladnu.
+        if (!playing)
+        {
+            ReturnToSpawnClientRpc();
+            return;
+        }
+
+        if (health.currentHealth.Value <= 0f) return;
+
+        if (lastAttacker != null && Time.time - lastAttackTime < 6f)
+            Combat.DamagePlayer(lastAttacker, health, 100000f);
+
+        if (health.currentHealth.Value > 0f)
+            health.Kill();
+    }
+
+    [ClientRpc]
+    void ReturnToSpawnClientRpc()
+    {
+        if (!IsOwner) return;
+
+        var respawn = GetComponent<PlayerRespawn>();
+        if (respawn != null)
+            respawn.ResetToSpawn();
+    }
+
+    // ---------------- nabijeni ultimatky (Q) ----------------
+
+    // Ultimatka se nenabiji casem (cooldownem), ale hrou: 1 bod za kazdy bod zpusobeneho poskozeni, 1 bod za kazdy
+    // zivot vyleceny spoluhraci a k tomu pomalu sama (UltPassivePerSecond). Cena je u schopnosti (AbilityDefinition.ultCost).
+    // Po smrti nabiti zustava, nuluje se pouzitim a s novym zapasem.
+    public const float UltPassivePerSecond = 2f;
+
+    public NetworkVariable<float> ultCharge = new NetworkVariable<float>();
+    bool ultSpentLocally;
+
+    public float UltCost => Hero != null && Hero.ability != null ? Hero.ability.ultCost : 0f;
+    public bool UsesUltCharge => UltCost > 0f;
+    public float UltFraction => UsesUltCharge ? Mathf.Clamp01(ultCharge.Value / UltCost) : 1f;
+    public bool UltReady => !UsesUltCharge || (ultCharge.Value >= UltCost - 0.01f && !ultSpentLocally);
+
+    // Vola ultimatni schopnost na vlastnikovi, kdyz se pouzije.
+    public void SpendUlt()
+    {
+        if (!UsesUltCharge) return;
+
+        ultSpentLocally = true;
+        SpendUltServerRpc();
+    }
+
+    [ServerRpc]
+    void SpendUltServerRpc()
+    {
+        ultCharge.Value = 0f;
+    }
+
+    void OnUltChargeChanged(float previous, float current)
+    {
+        if (current < previous)
+            ultSpentLocally = false;
+    }
+
+    // Dokud ultimatka bezi, dalsi nabiti se nepocita (ani za poskozeni, ktere sama zpusobi).
+    bool ServerUltActive()
+    {
+        return (leap != null && leap.enabled && leap.IsAirborne)
+            || (boulder != null && boulder.enabled && boulder.IsRolling)
+            || (visor != null && visor.enabled && visor.IsScanning)
+            || (storm != null && storm.enabled && storm.IsStormActive);
+    }
+
+    // ---------------- odhaleni pruzkumnym sipem ----------------
+
+    // Odhaleny hrac je videt souperum i pres zdi (jmenovka se zivoty).
+    public NetworkVariable<bool> revealed = new NetworkVariable<bool>(false);
+    float revealUntil;
+
+    public void ServerReveal(float seconds)
+    {
+        if (!IsServer) return;
+
+        revealUntil = Mathf.Max(revealUntil, Time.time + seconds);
+        if (!revealed.Value)
+            revealed.Value = true;
+    }
+
+    public void ServerAddUltCharge(float points)
+    {
+        if (!IsServer || points <= 0f || !UsesUltCharge || ServerUltActive()) return;
+
+        var match = MatchManager.Instance;
+        if (match != null && (match.IsLobby || match.IsOver)) return;
+
+        ultCharge.Value = Mathf.Min(UltCost, ultCharge.Value + points);
     }
 
     public HeroDefinition Hero { get; private set; }
@@ -44,6 +166,10 @@ public class PlayerHero : NetworkBehaviour
     HealFieldAbility healField;
     FlashAbility flash;
     VisorAbility visor;
+    HookAbility hook;
+    ScoutArrowAbility scout;
+    RapidFireAbility rapidFire;
+    StormAbility storm;
     HeroVoice voice;
 
     void Awake()
@@ -60,12 +186,17 @@ public class PlayerHero : NetworkBehaviour
         healField = GetComponent<HealFieldAbility>();
         flash = GetComponent<FlashAbility>();
         visor = GetComponent<VisorAbility>();
+        hook = GetComponent<HookAbility>();
+        scout = GetComponent<ScoutArrowAbility>();
+        rapidFire = GetComponent<RapidFireAbility>();
+        storm = GetComponent<StormAbility>();
         voice = GetComponent<HeroVoice>();
     }
 
     public override void OnNetworkSpawn()
     {
         heroId.OnValueChanged += OnHeroChanged;
+        ultCharge.OnValueChanged += OnUltChargeChanged;
         health.OnDeath += OnDeath;
         health.currentHealth.OnValueChanged += OnHealthChanged;
 
@@ -85,6 +216,7 @@ public class PlayerHero : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         heroId.OnValueChanged -= OnHeroChanged;
+        ultCharge.OnValueChanged -= OnUltChargeChanged;
         health.OnDeath -= OnDeath;
         health.currentHealth.OnValueChanged -= OnHealthChanged;
     }
@@ -99,6 +231,18 @@ public class PlayerHero : NetworkBehaviour
     // Vlastnik: dokud si vybira, stoji vysoko nad mapou; po vstupu do hry se objevi na spawnu sveho tymu.
     void Update()
     {
+        if (IsServer && IsSpawned)
+        {
+            ServerCheckFall();
+
+            if (revealed.Value && Time.time >= revealUntil)
+                revealed.Value = false;
+        }
+
+        // Server: ultimatka se pomalu nabiji i sama (jen zivemu hraci behem zapasu).
+        if (IsServer && IsSpawned && UsesUltCharge && !joining.Value && health.currentHealth.Value > 0f && ultCharge.Value < UltCost)
+            ServerAddUltCharge(UltPassivePerSecond * Time.deltaTime);
+
         if (!IsOwner || !IsSpawned) return;
 
         TickIdleLines();
@@ -165,6 +309,44 @@ public class PlayerHero : NetworkBehaviour
         playerName.Value = new FixedString32Bytes(name);
     }
 
+    // Zmena hrdiny behem zapasu (F1): skore zustava, nabiti ultimatky se nuluje, hrac se objevi na zakladne.
+    public void SwapHero(int index)
+    {
+        if (IsOwner && IsSpawned)
+            SwapHeroServerRpc(index);
+    }
+
+    [ServerRpc]
+    void SwapHeroServerRpc(int index)
+    {
+        var match = MatchManager.Instance;
+        if (match == null || match.IsLobby || match.IsOver || joining.Value) return;
+        if (HeroRegistry.Get(index) == null || index == heroId.Value) return;
+
+        // Zivy hrac musi stat na zakladne sveho tymu (mrtvy ceka na oziveni, ten muze).
+        var team = GetComponent<PlayerTeam>();
+        bool alive = health.currentHealth.Value > 0f;
+        if (alive && team != null && !SpawnZone.Contains(team.teamId.Value, transform.position)) return;
+
+        // Zmena hodnoty spusti Apply u vsech (zbran, schopnosti, model; zivemu hraci plne zdravi noveho hrdiny).
+        heroId.Value = index;
+        ultCharge.Value = 0f;
+
+        // Mrtvy hrac se ozivi beznym zpusobem uz jako novy hrdina.
+        if (health.currentHealth.Value > 0f)
+            SwapDoneClientRpc();
+    }
+
+    [ClientRpc]
+    void SwapDoneClientRpc()
+    {
+        if (!IsOwner) return;
+
+        var respawn = GetComponent<PlayerRespawn>();
+        if (respawn != null)
+            respawn.ResetToSpawn();
+    }
+
     [ServerRpc]
     void RequestHeroServerRpc(int index)
     {
@@ -192,8 +374,9 @@ public class PlayerHero : NetworkBehaviour
         bool firstTime = Hero == null;
         Hero = definition;
 
+        // Mrtvemu hraci (zmena hrdiny behem cekani na oziveni) se zdravi nevraci, to udela az oziveni.
         health.maxHealth = definition.maxHealth;
-        if (IsServer)
+        if (IsServer && (firstTime || health.currentHealth.Value > 0f))
             health.ResetHealth();
 
         var bodyRenderer = GetComponent<Renderer>();
@@ -226,6 +409,30 @@ public class PlayerHero : NetworkBehaviour
         {
             flash.Configure(definition.rmbAbility);
             flash.enabled = definition.rmbAbilityKind == AbilityKind.Flash && definition.rmbAbility != null;
+        }
+
+        if (scout != null)
+        {
+            scout.Configure(definition.altAbility);
+            scout.enabled = definition.altAbilityKind == AbilityKind.ScoutArrow && definition.altAbility != null;
+        }
+
+        if (rapidFire != null)
+        {
+            rapidFire.Configure(definition.rmbAbility);
+            rapidFire.enabled = definition.rmbAbilityKind == AbilityKind.RapidFire && definition.rmbAbility != null;
+        }
+
+        if (storm != null)
+        {
+            storm.Configure(definition.ability);
+            storm.enabled = definition.abilityKind == AbilityKind.Storm && definition.ability != null;
+        }
+
+        if (hook != null)
+        {
+            hook.Configure(definition.altAbility);
+            hook.enabled = definition.altAbilityKind == AbilityKind.Hook && definition.altAbility != null;
         }
 
         if (visor != null)
@@ -274,7 +481,11 @@ public class PlayerHero : NetworkBehaviour
 
         var controller = GetComponent<FirstPersonController>();
         if (controller != null)
+        {
             controller.ShiftReserved = hasRush || hasMine || dashOnShift;
+            controller.DoubleJump = definition.doubleJump;
+            controller.LedgeClimb = definition.ledgeClimb;
+        }
 
         if (firstTime)
         {
@@ -292,6 +503,15 @@ public class PlayerHero : NetworkBehaviour
         public bool active;       // schopnost prave bezi
         public float charge;      // 0-1 u schopnosti s barem (blok), jinak -1
         public int count;         // pocet naboju (naloz), 0 = nezobrazovat
+        public bool fullOnly;     // schopnost jde pouzit az pri plnem nabiti (ultimatka)
+    }
+
+    // Slot ultimatky: bud nabijena hrou (procenta), nebo na cooldown.
+    AbilitySlot UltSlot(float cooldownRemaining, bool active)
+    {
+        return UsesUltCharge
+            ? new AbilitySlot { key = "Q", ability = Hero.ability, remaining = 0f, active = active, charge = UltFraction, fullOnly = true }
+            : new AbilitySlot { key = "Q", ability = Hero.ability, remaining = cooldownRemaining, active = active, charge = -1f };
     }
 
     // Schopnosti hrdiny pro HUD, v poradi zprava doleva (ultimatni na Q prvni).
@@ -301,14 +521,23 @@ public class PlayerHero : NetworkBehaviour
         if (Hero == null) return;
 
         if (Hero.abilityKind == AbilityKind.LeapStrike && leap != null && Hero.ability != null)
-            slots.Add(new AbilitySlot { key = "Q", ability = Hero.ability, remaining = leap.CooldownRemaining, active = leap.IsActive, charge = -1f });
+            slots.Add(UltSlot(leap.CooldownRemaining, leap.IsActive));
         else if (Hero.abilityKind == AbilityKind.Dash && dash != null && Hero.ability != null)
             slots.Add(new AbilitySlot { key = "Q", ability = Hero.ability, remaining = dash.CooldownRemaining, active = dash.IsActive, charge = -1f });
         else if (Hero.abilityKind == AbilityKind.Boulder && boulder != null && Hero.ability != null)
-            slots.Add(new AbilitySlot { key = "Q", ability = Hero.ability, remaining = boulder.CooldownRemaining, active = boulder.IsActive, charge = -1f });
+            slots.Add(UltSlot(boulder.CooldownRemaining, boulder.IsActive));
 
         else if (Hero.abilityKind == AbilityKind.Visor && visor != null && Hero.ability != null)
-            slots.Add(new AbilitySlot { key = "Q", ability = Hero.ability, remaining = visor.CooldownRemaining, active = visor.IsActive, charge = -1f });
+            slots.Add(UltSlot(visor.CooldownRemaining, visor.IsActive));
+
+        else if (Hero.abilityKind == AbilityKind.Storm && storm != null && Hero.ability != null)
+            slots.Add(UltSlot(storm.CooldownRemaining, false));
+
+        if (Hero.rmbAbilityKind == AbilityKind.RapidFire && rapidFire != null && Hero.rmbAbility != null)
+            slots.Add(new AbilitySlot { key = "PTM", ability = Hero.rmbAbility, remaining = rapidFire.CooldownRemaining, active = rapidFire.IsActive, charge = -1f, count = rapidFire.ShotsLeft });
+
+        if (Hero.altAbilityKind == AbilityKind.ScoutArrow && scout != null && Hero.altAbility != null)
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = scout.CooldownRemaining, active = scout.IsActive, charge = -1f });
 
         if (Hero.rmbAbilityKind == AbilityKind.Flash && flash != null && Hero.rmbAbility != null)
             slots.Add(new AbilitySlot { key = "PTM", ability = Hero.rmbAbility, remaining = flash.CooldownRemaining, active = false, charge = -1f });
@@ -323,7 +552,10 @@ public class PlayerHero : NetworkBehaviour
             slots.Add(new AbilitySlot { key = "PTM", ability = Hero.blockAbility, remaining = 0f, active = block.IsBlocking, charge = block.Fraction });
 
         if (Hero.secondaryAbilityKind == AbilityKind.Rush && rush != null && Hero.secondaryAbility != null)
-            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = rush.CooldownRemaining, active = rush.IsActive, charge = -1f });
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = rush.CooldownRemaining, active = rush.IsActive, charge = -1f, count = rush.HasSeveralCharges ? rush.Charges : 0 });
+
+        if (Hero.altAbilityKind == AbilityKind.Hook && hook != null && Hero.altAbility != null)
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = hook.CooldownRemaining, active = false, charge = -1f });
 
         if (Hero.altAbilityKind == AbilityKind.Trap && trap != null && Hero.altAbility != null)
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = trap.CooldownRemaining, active = false, charge = -1f });

@@ -121,7 +121,14 @@ public class MatchOverlayUI
         board.SetActive(false);
     }
 
-    public void Tick(PlayerHero local, bool playing, MatchManager match)
+    // Tabulka ma byt videt i nad panelem konce zapasu.
+    public void PlaceBoardAbove(Transform panel)
+    {
+        if (board != null && panel != null)
+            board.transform.SetSiblingIndex(panel.GetSiblingIndex() + 1);
+    }
+
+    public void Tick(PlayerHero local, bool playing, MatchManager match, bool alwaysShowBoard = false)
     {
         if (canvasRect == null) return;
 
@@ -135,7 +142,7 @@ public class MatchOverlayUI
         int localTeam = TeamOf(local);
         UpdatePlates(local, localTeam, playing);
         UpdateFeed(localTeam, playing);
-        UpdateBoard(local, playing, match);
+        UpdateBoard(local, playing, match, alwaysShowBoard);
     }
 
     static int TeamOf(PlayerHero hero)
@@ -169,7 +176,8 @@ public class MatchOverlayUI
                 float distance = screen.z;
 
                 // Nepritel jen kdyz je opravdu videt (ne pres zed) a neni moc daleko; spoluhrac vzdy.
-                if (!ally && (distance > 60f || !Visible(camera.transform.position, player, local))) continue;
+                // Nepritel odhaleny pruzkumnym sipem je videt vzdy.
+                if (!ally && !player.revealed.Value && (distance > 60f || !Visible(camera.transform.position, player, local))) continue;
 
                 if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(plateRoot, screen, null, out Vector2 point)) continue;
 
@@ -282,9 +290,9 @@ public class MatchOverlayUI
 
     // ---------------- tabulka hracu ----------------
 
-    void UpdateBoard(PlayerHero local, bool playing, MatchManager match)
+    void UpdateBoard(PlayerHero local, bool playing, MatchManager match, bool always)
     {
-        bool show = playing && match != null && Keyboard.current != null && Keyboard.current.tabKey.isPressed;
+        bool show = playing && match != null && (always || (Keyboard.current != null && Keyboard.current.tabKey.isPressed));
         if (board.activeSelf != show)
         {
             board.SetActive(show);
@@ -295,7 +303,9 @@ public class MatchOverlayUI
         nextBoardRefresh = Time.unscaledTime + 0.2f;
 
         string gameName = match.gameName.Value.Length > 0 ? match.gameName.Value.ToString() : "Zápas";
-        boardTitle.text = $"{gameName}  ·  do {match.scoreToWinSynced.Value} zabití";
+        boardTitle.text = match.IsCapture
+            ? $"{gameName}  ·  dobývání bodů ({MatchManager.CapturePointsToWin} ze {MatchManager.CapturePointCount})"
+            : $"{gameName}  ·  do {match.scoreToWinSynced.Value} zabití";
 
         var sorted = new List<PlayerHero>();
         foreach (var player in players)

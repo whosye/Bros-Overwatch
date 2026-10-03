@@ -45,7 +45,12 @@ public class BoulderAbility : NetworkBehaviour
     public bool IsActive => active;
     public bool IsRolling => rolling.Value;
     public Vector3 BoulderPosition => boulder != null ? boulder.transform.position : position.Value;
-    public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
+    public float CooldownRemaining => UsesCharge ? 0f : Mathf.Max(0f, nextUseTime - Time.time);
+
+    // Ultimatka: s nastavenou cenou (ultCost) se nabiji hrou, jinak plati cooldown.
+    PlayerHero hero;
+    bool UsesCharge => hero != null && hero.UsesUltCharge;
+    bool CanUse => UsesCharge ? hero.UltReady : Time.time >= nextUseTime;
     public float TimeLeft => ability != null ? Mathf.Max(0f, ability.duration - elapsed) : 0f;
 
     public void Configure(AbilityDefinition definition)
@@ -56,6 +61,7 @@ public class BoulderAbility : NetworkBehaviour
     void Awake()
     {
         fpc = GetComponent<FirstPersonController>();
+        hero = GetComponent<PlayerHero>();
     }
 
     public override void OnNetworkSpawn()
@@ -112,7 +118,7 @@ public class BoulderAbility : NetworkBehaviour
 
         if (!active)
         {
-            if (Keyboard.current.qKey.wasPressedThisFrame && Time.time >= nextUseTime && GameSettings.CursorLocked
+            if (Keyboard.current.qKey.wasPressedThisFrame && CanUse && GameSettings.CursorLocked
                 && !fpc.InputBlocked && !fpc.RushActive && !fpc.BlockActive)
                 Begin();
             return;
@@ -130,6 +136,7 @@ public class BoulderAbility : NetworkBehaviour
     void Begin()
     {
         active = true;
+        hero.SpendUlt();
         elapsed = 0f;
         verticalSpeed = 0f;
         savedCameraLocalPosition = playerCamera.transform.localPosition;

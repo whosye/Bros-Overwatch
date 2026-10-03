@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: Balvan
   icon: {fileID: 2800000, guid: 6e41ed76c33630943b6f92039ad41052, type: 3}
-  cooldown: 1
+  cooldown: 30
+  ultCost: 500
   power: 150
   duration: 10
   radius: 7
@@ -22,6 +23,7 @@ MonoBehaviour:
   knockback: 14
   charges: 1
   sound: {fileID: 0}
+  voiceLines: []
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

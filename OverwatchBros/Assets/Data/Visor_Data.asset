@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Taktick\xFD zam\u011B\u0159ova\u010D"
   icon: {fileID: 2800000, guid: 35ce6daba2c24c74c98b5f04bba1ecb6, type: 3}
-  cooldown: 1
+  cooldown: 30
+  ultCost: 450
   power: 0
   duration: 6
   radius: 30
@@ -22,7 +23,8 @@ MonoBehaviour:
   knockback: 0
   charges: 1
   sound: {fileID: 0}
-  voiceLines: []
+  voiceLines:
+  - {fileID: 8300000, guid: cbbc0d7aeceb9bb438dc0c056f79e1f4, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

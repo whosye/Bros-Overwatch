@@ -97,6 +97,10 @@ public class DashAbility : NetworkBehaviour
         DashFxServerRpc();
         GetComponent<PlayerHero>().SayAbility(ability);
 
+        // Vyskok (Mirek): k uskoku se prida i odraz nahoru ('knockback' = rychlost nahoru).
+        if (ability.knockback > 0f)
+            fpc.AddImpulse(Vector3.up * ability.knockback);
+
         if (onShift)
         {
             var shooting = GetComponent<WeaponShooting>();

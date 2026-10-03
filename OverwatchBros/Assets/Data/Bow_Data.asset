@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ebeba9977deef4cb0414f2cfd81e11, type: 3}
+  m_Name: Bow_Data
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  weaponName: Luk
+  damage: 75
+  fireRate: 2.5
+  maxAmmo: 0
+  reloadTime: 1.5
+  reloadAnimation: 0
+  range: 160
+  chargeTime: 1
+  minChargeDamage: 20
+  minChargeSpeed: 55
+  falloffStart: 0
+  falloffEnd: 0
+  falloffMin: 0.4
+  fireMode: 1
+  projectileSpeed: 110
+  projectileGravity: 9
+  projectileRadius: 0.22
+  explosionRadius: 0
+  projectileBounce: 0
+  projectileFuse: 1
+  projectileColor: {r: 0.55, g: 0.85, b: 1, a: 1}
+  projectileTrail: 1
+  projectilePrefab: {fileID: 0}
+  meleeRadius: 0.6
+  heldModel: 4
+  dualWield: 0
+  heldPrefab: {fileID: 0}

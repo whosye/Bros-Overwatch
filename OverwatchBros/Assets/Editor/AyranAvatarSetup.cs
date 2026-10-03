@@ -24,6 +24,8 @@ public static class AyranAvatarSetup
         new Entry { hero = "Ayran", sleeve = new Color(0.62f, 0.13f, 0.12f, 1f), skin = new Color(0.80f, 0.60f, 0.48f) },
         // Svetle modre tricko s potiskem (kratky rukav).
         new Entry { hero = "Honza", sleeve = new Color(0.70f, 0.80f, 0.92f, 1f), skin = new Color(0.82f, 0.63f, 0.52f) },
+        // Cerne tricko (kratky rukav).
+        new Entry { hero = "Viktor", sleeve = new Color(0.10f, 0.10f, 0.12f, 1f), skin = new Color(0.80f, 0.62f, 0.50f) },
     };
 
     public static bool IsReady()
@@ -40,7 +42,51 @@ public static class AyranAvatarSetup
 
         var hero = AssetDatabase.LoadAssetAtPath<HeroDefinition>(entry.HeroPath);
         var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(entry.PrefabPath);
-        return hero != null && prefab != null && hero.characterPrefab == prefab && !hero.tintCharacter && hero.sleeveColor == entry.sleeve;
+        return hero != null && prefab != null && hero.characterPrefab == prefab && !hero.tintCharacter && hero.sleeveColor == entry.sleeve
+            && !PrefabIsStale(entry);
+    }
+
+    // Otisk souboru modelu (velikost + hash obsahu): podle nej se pozna, ze uzivatel model vymenil nebo upravil.
+    // Zamerne ne cas zmeny souboru - ten se meni i pri kopirovani projektu nebo stazeni z gitu.
+    static readonly System.Collections.Generic.Dictionary<string, string> stampCache = new System.Collections.Generic.Dictionary<string, string>();
+
+    static string Stamp(Entry entry)
+    {
+        var info = new System.IO.FileInfo(entry.Fbx);
+        string key = $"{entry.Fbx}|{info.Length}|{info.LastWriteTimeUtc.Ticks}";
+        if (stampCache.TryGetValue(key, out string cached)) return cached;
+
+        using (var md5 = System.Security.Cryptography.MD5.Create())
+        using (var stream = System.IO.File.OpenRead(entry.Fbx))
+        {
+            string hash = System.BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
+            string stamp = $"{info.Length}:{hash}";
+            stampCache[key] = stamp;
+            return stamp;
+        }
+    }
+
+    // Otisk v soucasnem tvaru "velikost:32 znaku hashe". Starsi tvar (s casem zmeny) se bere jako neznamy.
+    static bool IsCurrentStamp(string stamp)
+    {
+        if (string.IsNullOrEmpty(stamp)) return false;
+
+        int colon = stamp.IndexOf(':');
+        return colon > 0 && stamp.Length - colon - 1 == 32;
+    }
+
+    // Prefab postavy je zastaraly, kdyz byl postaveny z jineho souboru (model nekdo nahradil novym)
+    // nebo se soubor modelu od te doby zmenil.
+    static bool PrefabIsStale(Entry entry)
+    {
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(entry.PrefabPath) == null) return false;
+
+        var importer = AssetImporter.GetAtPath(entry.Fbx) as ModelImporter;
+        if (importer == null) return false;
+
+        // Bez ulozeneho otisku (prefab z doby pred touhle kontrolou) se pozna jen vymena souboru za jiny.
+        bool usesModel = System.Array.IndexOf(AssetDatabase.GetDependencies(entry.PrefabPath, false), entry.Fbx) >= 0;
+        return !usesModel || (IsCurrentStamp(importer.userData) && importer.userData != Stamp(entry));
     }
 
     public static void Setup()
@@ -56,24 +102,54 @@ public static class AyranAvatarSetup
         var importer = AssetImporter.GetAtPath(entry.Fbx) as ModelImporter;
         if (importer == null) return;
 
-        if (importer.animationType != ModelImporterAnimationType.Human || importer.importAnimation)
+        // Modely upravene v Blenderu si s sebou casto nesou kameru a svetlo ze sceny - ty do postavy nepatri.
+        if (importer.animationType != ModelImporterAnimationType.Human || importer.importAnimation
+            || importer.importCameras || importer.importLights)
         {
             importer.animationType = ModelImporterAnimationType.Human;
             importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
             importer.importAnimation = false;
+            importer.importCameras = false;
+            importer.importLights = false;
             importer.SaveAndReimport();
         }
 
-        if (!AssetDatabase.IsValidFolder(entry.TextureDir))
+        bool stale = PrefabIsStale(entry);
+
+        // Novy nebo upraveny model muze mit nove textury (napr. pridany predmet): vytahnout znovu.
+        if (!AssetDatabase.IsValidFolder(entry.TextureDir) || stale)
         {
             importer.ExtractTextures(entry.TextureDir);
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         }
 
+        // Textury, ktere v modelu nejsou vlozene (napr. z Blenderu) a uzivatel je dodal do slozky Textures,
+        // si materialy najdou podle nazvu az pri novem importu modelu.
+        if (stale)
+            AssetDatabase.ImportAsset(entry.Fbx, ImportAssetOptions.ForceUpdate);
+
         var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(entry.PrefabPath);
-        if (prefab == null)
-            prefab = BuildPrefab(entry);
+        if (prefab == null || stale)
+        {
+            // Prefab se prepise na stejnem miste, takze odkaz u hrdiny zustava platny.
+            var rebuilt = BuildPrefab(entry);
+            if (rebuilt != null)
+            {
+                prefab = rebuilt;
+                importer.userData = Stamp(entry);
+                EditorUtility.SetDirty(importer);
+                AssetDatabase.WriteImportSettingsIfDirty(entry.Fbx);
+            }
+        }
         if (prefab == null) return;
+
+        // Prvni beh s touhle kontrolou: jen si zapamatovat otisk soucasneho modelu.
+        if (!IsCurrentStamp(importer.userData))
+        {
+            importer.userData = Stamp(entry);
+            EditorUtility.SetDirty(importer);
+            AssetDatabase.WriteImportSettingsIfDirty(entry.Fbx);
+        }
 
         var hero = AssetDatabase.LoadAssetAtPath<HeroDefinition>(entry.HeroPath);
         if (hero != null && (hero.characterPrefab != prefab || hero.tintCharacter || hero.sleeveColor != entry.sleeve))
@@ -108,6 +184,12 @@ public static class AyranAvatarSetup
             animator.avatar = avatar;
             animator.applyRootMotion = false;
             animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+
+            // Pojistka: kamery a svetla z exportu do postavy nepatri.
+            foreach (var camera in root.GetComponentsInChildren<Camera>(true))
+                Object.DestroyImmediate(camera.gameObject);
+            foreach (var light in root.GetComponentsInChildren<Light>(true))
+                Object.DestroyImmediate(light.gameObject);
 
             // Model ma po importu obcas kosti jako prvni v hierarchii a rendery maji male bounds; pri animaci by mizel.
             foreach (var smr in root.GetComponentsInChildren<SkinnedMeshRenderer>())

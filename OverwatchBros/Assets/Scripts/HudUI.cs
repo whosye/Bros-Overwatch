@@ -59,6 +59,8 @@ public class HudUI
     public static Vector3 LockPoint;
     public static int LockFrame = -1;
     RectTransform lockMarker;
+    GameObject chargeBar;
+    Image chargeFill;
 
     public static void NotifyHit(bool kill)
     {
@@ -163,6 +165,11 @@ public class HudUI
         UiKit.MakeImage(lockMarker, "L", yellow, center, new Vector2(-22f, 0f), new Vector2(4f, 48f));
         UiKit.MakeImage(lockMarker, "R", yellow, center, new Vector2(22f, 0f), new Vector2(4f, 48f));
         lockObject.SetActive(false);
+
+        var chargeBackground = UiKit.MakeImage(root.transform, "ChargeBar", new Color(0f, 0f, 0f, 0.55f), center, new Vector2(0f, -42f), new Vector2(160f, 10f));
+        chargeBar = chargeBackground.gameObject;
+        chargeFill = UiKit.MakeImage(chargeBar.transform, "Fill", Color.white, new Vector2(0f, 0.5f), new Vector2(2f, 0f), new Vector2(0f, 6f));
+        chargeBar.SetActive(false);
 
         flashImage = UiKit.MakeImage(root.transform, "Flash", new Color(1f, 1f, 1f, 0f), center, Vector2.zero, Vector2.zero);
         UiKit.Stretch(flashImage.rectTransform);
@@ -285,9 +292,20 @@ public class HudUI
         UpdateHitMarker();
         UpdateFlashAndLock(hero);
 
+        // Natazeni luku: pruh pod zamerovacem.
+        float charge = weapon != null ? weapon.ChargeFraction : 0f;
+        bool showCharge = charge > 0.01f;
+        if (chargeBar.activeSelf != showCharge)
+            chargeBar.SetActive(showCharge);
+        if (showCharge)
+        {
+            chargeFill.rectTransform.sizeDelta = new Vector2(156f * charge, 6f);
+            chargeFill.color = charge >= 0.999f ? UiKit.Accent : Color.white;
+        }
+
         if (weapon != null && weapon.weapon != null)
         {
-            ammoText.text = weapon.weapon.IsMelee
+            ammoText.text = !weapon.weapon.HasAmmo
                 ? $"<size=50%>{weapon.weapon.weaponName}</size>"
                 : weapon.IsReloading
                     ? "<size=50%>PŘEBÍJÍM…</size>"
@@ -377,7 +395,7 @@ public class HudUI
 
             bool charging = info.charge >= 0f && info.charge < 0.999f;
             bool onCooldown = info.remaining > 0.05f && !info.active;
-            bool ready = !onCooldown && !info.active && !(info.charge >= 0f && info.charge <= 0.01f);
+            bool ready = !onCooldown && !info.active && !(info.charge >= 0f && info.charge <= 0.01f) && !(info.fullOnly && charging);
 
             float total = info.ability != null ? Mathf.Max(0.1f, info.ability.cooldown) : 1f;
             slot.cooldown.fillAmount = onCooldown ? Mathf.Clamp01(info.remaining / total) : (charging ? 1f - info.charge : 0f);

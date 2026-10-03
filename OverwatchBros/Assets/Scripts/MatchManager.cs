@@ -134,14 +134,23 @@ public partial class MatchManager : NetworkBehaviour
         matchOver.Value = true;
         Debug.Log($"Tým {winner} vyhrál zápas!");
 
+        PotgPending = true;
         StartCoroutine(PlayOfTheGame());
     }
+
+    // Host nemuze spustit novy zapas ani se vratit do lobby, dokud se neprehraje play of the game
+    // (nebo dokud neni jasne, ze zadny nebude).
+    public bool PotgPending { get; private set; }
 
     // Chvili po konci zapasu se vsem prehraje zaznam hrace s nejlepsi akci (nejvic zabiti v kratkem case).
     System.Collections.IEnumerator PlayOfTheGame()
     {
         yield return new WaitForSeconds(2.5f);
-        if (!IsSpawned || !matchOver.Value) yield break;
+        if (!IsSpawned || !matchOver.Value)
+        {
+            PotgPending = false;
+            yield break;
+        }
 
         PotgRecorder best = null;
         foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
@@ -151,8 +160,30 @@ public partial class MatchManager : NetworkBehaviour
                 best = recorder;
         }
 
-        if (best != null)
-            best.ServerStartPotg();
+        if (best == null)
+        {
+            PotgPending = false;
+            yield break;
+        }
+
+        best.ServerStartPotg();
+
+        // Pockat, az se klip u hosta objevi (kdyby nedorazil, po chvili se ovladani uvolni) a az dohraje.
+        float waited = 0f;
+        while (!PotgUI.IsShowing && waited < 8f)
+        {
+            waited += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        waited = 0f;
+        while (PotgUI.IsShowing && waited < 30f)
+        {
+            waited += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        PotgPending = false;
     }
 
     // Host spusti zapas z lobby.
@@ -167,7 +198,7 @@ public partial class MatchManager : NetworkBehaviour
     // Novy zapas se stejnymi tymy a hrdiny.
     public void RestartMatch()
     {
-        if (!IsServer) return;
+        if (!IsServer || PotgPending) return;
 
         phase.Value = PhasePlaying;
         ResetRound();
@@ -176,7 +207,7 @@ public partial class MatchManager : NetworkBehaviour
     // Zpet do lobby (zmena tymu / hrdiny).
     public void BackToLobby()
     {
-        if (!IsServer) return;
+        if (!IsServer || PotgPending) return;
 
         phase.Value = PhaseLobby;
         ResetRound();

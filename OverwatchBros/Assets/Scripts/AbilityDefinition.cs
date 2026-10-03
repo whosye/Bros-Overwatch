@@ -7,6 +7,9 @@ public class AbilityDefinition : ScriptableObject
     [Tooltip("Ikona schopnosti v HUD (bily piktogram na pruhlednem pozadi).")]
     public Texture2D icon;
     public float cooldown;
+    [Tooltip("Ultimatni schopnost (Q): kolik bodu nabiti stoji. Nabiji se zpusobenym poskozenim (1 bod za bod poskozeni), "
+        + "lecenim spoluhracu a pomalu sama casem. 0 = schopnost se ridi jen cooldownem.")]
+    public float ultCost = 0f;
     public float power;
 
     public float duration = 0.2f;

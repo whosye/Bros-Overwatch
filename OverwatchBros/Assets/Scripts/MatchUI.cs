@@ -26,6 +26,7 @@ public class MatchUI : MonoBehaviour
     readonly HudUI hud = new HudUI();
     readonly MatchOverlayUI overlay = new MatchOverlayUI();
     readonly CaptureUI capture = new CaptureUI();
+    readonly HeroPickerUI heroPicker = new HeroPickerUI();
     GameObject blockBar;
     Image blockFill;
     GameObject settingsPanel;
@@ -103,6 +104,7 @@ public class MatchUI : MonoBehaviour
 
         BuildEndPanel(root);
         BuildSettingsPanel(root);
+        heroPicker.Build(root);
 
         lobby.Build(root, LeaveGame);
         menu.Build(root);
@@ -124,17 +126,21 @@ public class MatchUI : MonoBehaviour
         panel.raycastTarget = true;
         endPanel = panel.gameObject;
 
-        endTitle = UiKit.MakeText(endPanel.transform, "EndTitle", "", 96, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 110f), new Vector2(1600f, 130f));
-        endHint = UiKit.MakeText(endPanel.transform, "EndHint", "", 38, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 10f), new Vector2(1600f, 60f), UiKit.Muted);
+        // Nahore vitez, uprostred tabulka hracu (kresli MatchOverlayUI), dole ovladani hosta.
+        endTitle = UiKit.MakeText(endPanel.transform, "EndTitle", "", 84, TextAlignmentOptions.Center, center,
+            new Vector2(0f, 400f), new Vector2(1600f, 110f));
+        endHint = UiKit.MakeText(endPanel.transform, "EndHint", "", 32, TextAlignmentOptions.Center, center,
+            new Vector2(0f, -365f), new Vector2(1600f, 50f), UiKit.Muted);
 
-        restartButton = UiKit.MakeButton(endPanel.transform, "NOVÝ ZÁPAS", center, new Vector2(-230f, -110f), new Vector2(420f, 84f),
+        restartButton = UiKit.MakeButton(endPanel.transform, "NOVÝ ZÁPAS", center, new Vector2(-230f, -450f), new Vector2(420f, 84f),
             RestartMatch, UiKit.Green, 36f).gameObject;
-        lobbyButton = UiKit.MakeButton(endPanel.transform, "ZPĚT DO LOBBY", center, new Vector2(230f, -110f), new Vector2(420f, 84f),
+        lobbyButton = UiKit.MakeButton(endPanel.transform, "ZPĚT DO LOBBY", center, new Vector2(230f, -450f), new Vector2(420f, 84f),
             BackToLobby, UiKit.ButtonBase, 36f).gameObject;
 
         endPanel.SetActive(false);
+
+        // Tabulka hracu se na konci zapasu ukazuje nad timhle panelem.
+        overlay.PlaceBoardAbove(endPanel.transform);
     }
 
     void BuildSettingsPanel(Transform root)
@@ -154,9 +160,9 @@ public class MatchUI : MonoBehaviour
             new Vector2(0f, -35f), new Vector2(500f, 60f));
 
         UiKit.MakeButton(settingsPanel.transform, "−", center, new Vector2(-300f, 65f), new Vector2(70f, 70f),
-            () => GameSettings.Sensitivity -= 0.1f, UiKit.ButtonBase, 40f);
+            () => GameSettings.Sensitivity -= GameSettings.SensitivityStep(GameSettings.Sensitivity, false), UiKit.ButtonBase, 40f);
         UiKit.MakeButton(settingsPanel.transform, "+", center, new Vector2(300f, 65f), new Vector2(70f, 70f),
-            () => GameSettings.Sensitivity += 0.1f, UiKit.ButtonBase, 40f);
+            () => GameSettings.Sensitivity += GameSettings.SensitivityStep(GameSettings.Sensitivity, true), UiKit.ButtonBase, 40f);
         UiKit.MakeButton(settingsPanel.transform, "−", center, new Vector2(-300f, -35f), new Vector2(70f, 70f),
             () => GameSettings.Volume -= 0.1f, UiKit.ButtonBase, 40f);
         UiKit.MakeButton(settingsPanel.transform, "+", center, new Vector2(300f, -35f), new Vector2(70f, 70f),
@@ -249,11 +255,15 @@ public class MatchUI : MonoBehaviour
         lobby.Tick(localHero, joining);
         endPanel.SetActive(over);
 
-        UpdateCursor(hasPlayer, inLobby, over);
+        // Zmena hrdiny behem zapasu (F1).
+        heroPicker.Tick(localHero, playing && !over && !PotgUI.IsShowing);
+
+        UpdateCursor(hasPlayer, inLobby, over || heroPicker.IsOpen);
         UpdateHud(match, localHero, playing, over);
         hud.SetVisible(playing && !over && localHero != null);
         hud.Tick(localHero);
-        overlay.Tick(localHero, playing, match);
+        // Po konci zapasu (a po dohrani play of the game) je tabulka hracu videt porad, ne jen na Tab.
+        overlay.Tick(localHero, playing, match, over && !PotgUI.IsShowing);
         capture.Tick(localHero, playing && !over, match);
         UpdateEndScreen(network, match, over);
         UpdateLegacyHud(playing);
@@ -262,11 +272,11 @@ public class MatchUI : MonoBehaviour
         crosshair.SetActive(playing && !over && locked);
         UpdateBlockBar(localHero, playing && !over);
 
-        bool showSettings = playing && !over && !locked;
+        bool showSettings = playing && !over && !locked && !heroPicker.IsOpen;
         settingsPanel.SetActive(showSettings);
         if (showSettings)
         {
-            sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0}";
+            sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0#}  <size=65%>(max {GameSettings.MaxSensitivity:0})</size>";
             volumeText.text = $"Hlasitost: {Mathf.RoundToInt(GameSettings.Volume * 100f)} %";
         }
     }
@@ -309,6 +319,15 @@ public class MatchUI : MonoBehaviour
             return;
         }
 
+        // Na konci zapasu je skore v tabulce pod jmenem viteze.
+        if (over)
+        {
+            scoreText.text = "";
+            infoText.text = "";
+            abilityText.text = "";
+            return;
+        }
+
         scoreText.text =
             $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team0)}>TÝM 0  {match.team0Score.Value}</color>" +
             $"   <size=60%>{(match.IsCapture ? $"body · na {MatchManager.CapturePointsToWin}" : $"do {match.scoreToWinSynced.Value}")}</size>   " +
@@ -327,9 +346,13 @@ public class MatchUI : MonoBehaviour
         endTitle.text = $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(winner))}>TÝM {winner} VYHRÁL</color>";
 
         bool isHost = network.IsServer;
-        restartButton.SetActive(isHost);
-        lobbyButton.SetActive(isHost);
-        endHint.text = isHost
+        // Dokud nedobehne play of the game, host nemuze zapas ukoncit.
+        bool waitingForPotg = isHost && match.PotgPending;
+        restartButton.SetActive(isHost && !waitingForPotg);
+        lobbyButton.SetActive(isHost && !waitingForPotg);
+        endHint.text = waitingForPotg
+            ? "Za chvíli se přehraje play of the game…"
+            : isHost
             ? "Stiskni R pro nový zápas, nebo se vrať do lobby změnit tým / hrdinu"
             : "Čekáme, až host rozhodne, co dál…";
 

@@ -11,7 +11,11 @@ public enum AbilityKind
     Boulder,   // Honza: riditelny balvan (Q)
     HealField, // Viktor: lecive pole (E)
     Flash,     // Viktor: oslepujici granat (prave tlacitko)
-    Visor      // Viktor: takticky zamerovac (Q)
+    Visor,     // Viktor: takticky zamerovac (Q)
+    Hook,      // Ayran: hak, ktery pritahne nepritele (E)
+    ScoutArrow, // Mirek: pruzkumny sip - odhali nepratele pres zdi (E)
+    RapidFire,  // Mirek: rychlopalba z luku (prave tlacitko)
+    Storm       // Mirek: smrst letici skrz zdi (Q)
 }
 
 [CreateAssetMenu(fileName = "NewHero", menuName = "BrosOverwatch/Hero")]
@@ -38,6 +42,12 @@ public class HeroDefinition : ScriptableObject
     [Header("Čtvrtá schopnost (pravé tlačítko myši, např. oslepující granát)")]
     public AbilityKind rmbAbilityKind = AbilityKind.None;
     public AbilityDefinition rmbAbility;
+
+    [Header("Pasivní: pohyb")]
+    [Tooltip("Druhy skok ve vzduchu (mezernik).")]
+    public bool doubleJump = false;
+    [Tooltip("Kdyz hrac ve skoku narazi na hranu, vytahne se na ni.")]
+    public bool ledgeClimb = false;
 
     [Header("Pasivní: granáty po smrti (0 = žádné)")]
     public int deathGrenades = 0;
