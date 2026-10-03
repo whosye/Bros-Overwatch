@@ -89,6 +89,10 @@ public class PlayerRespawn : NetworkBehaviour
         if (visor != null)
             visor.Cancel();
 
+        var storm = GetComponent<StormAbility>();
+        if (storm != null)
+            storm.Cancel();
+
         var rapidFire = GetComponent<RapidFireAbility>();
         if (rapidFire != null)
             rapidFire.Cancel();

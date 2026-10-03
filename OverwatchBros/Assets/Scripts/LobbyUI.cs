@@ -22,6 +22,7 @@ public class LobbyUI
     Button startButton;
     Button enterButton;
     Button modeButton;
+    Button testButton;
     TextMeshProUGUI waitText;
 
     float nextRefresh;
@@ -80,6 +81,10 @@ public class LobbyUI
         heroInfo = UiKit.MakeText(Root.transform, "HeroInfo", "", 28, TextAlignmentOptions.Center, center,
             new Vector2(0f, -285f), new Vector2(1500f, 50f), UiKit.Muted);
 
+        // Pro testovani: vsechny cooldowny 1 s (prepina host, plati pro vsechny hrace).
+        testButton = UiKit.MakeButton(Root.transform, "TEST", new Vector2(1f, 1f), new Vector2(-30f, -30f), new Vector2(470f, 58f),
+            ToggleTestCooldowns, UiKit.ButtonBase, 26f);
+
         modeButton = UiKit.MakeButton(Root.transform, "REŽIM", center, new Vector2(-40f, -352f), new Vector2(760f, 56f),
             ToggleMode, UiKit.ButtonBase, 28f);
 
@@ -134,6 +139,11 @@ public class LobbyUI
             ? $"REŽIM:  <color=#F28C1A>DOBÝVÁNÍ BODŮ</color>  <size=75%>({MatchManager.CapturePointsToWin} body ze {MatchManager.CapturePointCount})</size>"
             : "REŽIM:  <color=#F28C1A>TEAM DEATHMATCH</color>");
         modeButton.interactable = isHost && !joining;
+
+        bool testOn = match != null && match.testCooldowns.Value;
+        UiKit.SetButtonLabel(testButton, testOn ? "TESTOVACÍ COOLDOWNY 1 s: <color=#7CFC9A>ZAP</color>" : "TESTOVACÍ COOLDOWNY 1 s: VYP");
+        UiKit.SetButtonColor(testButton, testOn ? new Color(0.20f, 0.42f, 0.26f, 1f) : UiKit.ButtonBase);
+        testButton.interactable = isHost && !joining;
 
         int score = match != null ? match.scoreToWinSynced.Value : 10;
         scoreText.text = captureMode
@@ -254,6 +264,13 @@ public class LobbyUI
             match.SetCaptureSeconds(match.captureSeconds.Value + delta * 5);
         else
             match.SetScoreToWin(match.scoreToWinSynced.Value + delta);
+    }
+
+    void ToggleTestCooldowns()
+    {
+        var match = MatchManager.Instance;
+        if (match != null)
+            match.SetTestCooldowns(!match.testCooldowns.Value);
     }
 
     void ToggleMode()

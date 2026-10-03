@@ -51,7 +51,11 @@ public class FirstPersonController : NetworkBehaviour
     // Hrac se pripojil do rozehraneho zapasu a jeste si vybira tym / hrdinu.
     public bool Joining => hero != null && hero.IsJoining;
     public bool CannotAct => IsDead || MatchOver || InLobby || Joining || Stunned;
-    public bool InputBlocked => CannotAct || AbilityActive;
+    public bool InputBlocked => CannotAct || AbilityActive || UltCasting;
+
+    // Priprava ultimatky (viz UltWindup): hrac chodi, ale nestrili a nepouziva schopnosti; UltWindup = postup 0-1.
+    public bool UltCasting { get; set; }
+    public float UltWindup { get; set; }
 
     // Odhozeni vybuchem (naloz, balvan) a znehybneni (past). Server je posila vlastnikovi hrace.
     Vector3 externalVelocity;

@@ -142,7 +142,7 @@ public class RushAbility : NetworkBehaviour
         if (charges < MaxCharges && Time.time >= rechargeAt)
         {
             charges++;
-            rechargeAt = Time.time + ability.cooldown;
+            rechargeAt = Time.time + ability.Cooldown;
         }
 
         if (!active)
@@ -212,7 +212,7 @@ public class RushAbility : NetworkBehaviour
     void Begin()
     {
         if (charges == MaxCharges)
-            rechargeAt = Time.time + ability.cooldown;
+            rechargeAt = Time.time + ability.Cooldown;
         charges--;
 
         active = true;

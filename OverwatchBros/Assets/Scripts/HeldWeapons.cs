@@ -79,6 +79,14 @@ public class HeldWeapons : MonoBehaviour
             visual.PlayReload(reloadDuration);
     }
 
+    public void StopReload()
+    {
+        reloadElapsed = reloadDuration;
+
+        if (visual != null && visual.HasModel)
+            visual.StopReload();
+    }
+
     void PlayBodyAttack(WeaponDefinition weapon)
     {
         if (visual != null && visual.HasModel)
@@ -168,6 +176,15 @@ public class HeldWeapons : MonoBehaviour
 
             if (reloadElapsed < reloadDuration)
                 AnimateReload(reloadElapsed / reloadDuration, hand.side, ref position, ref euler);
+
+            // Priprava ultimatky: zbran se lehce zvedne a naklopi nahoru (luk se misto toho natahuje).
+            if (fpc != null && fpc.UltCasting && builtModel != HeldModel.Bow)
+            {
+                float raise = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(fpc.UltWindup * 2.5f));
+                position += new Vector3(-0.04f * hand.side, 0.08f, -0.05f) * raise;
+                euler.x -= 22f * raise;
+                euler.z += 8f * hand.side * raise;
+            }
 
             // Luk se pri natahovani pritahne k telu a lehce zvedne.
             if (builtModel == HeldModel.Bow)

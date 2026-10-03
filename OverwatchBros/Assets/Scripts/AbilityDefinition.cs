@@ -7,6 +7,11 @@ public class AbilityDefinition : ScriptableObject
     [Tooltip("Ikona schopnosti v HUD (bily piktogram na pruhlednem pozadi).")]
     public Texture2D icon;
     public float cooldown;
+
+    // Testovaci rezim (prepina host v lobby): vsechny schopnosti maji cooldown nejvys 1 s a ultimatky se nenabijeji,
+    // ale ridi se taky 1s cooldownem. Nastavuje MatchManager u vsech hracu.
+    public static bool TestCooldowns;
+    public float Cooldown => TestCooldowns ? Mathf.Min(cooldown, 1f) : cooldown;
     [Tooltip("Ultimatni schopnost (Q): kolik bodu nabiti stoji. Nabiji se zpusobenym poskozenim (1 bod za bod poskozeni), "
         + "lecenim spoluhracu a pomalu sama casem. 0 = schopnost se ridi jen cooldownem.")]
     public float ultCost = 0f;

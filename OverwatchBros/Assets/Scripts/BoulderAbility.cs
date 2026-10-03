@@ -118,9 +118,21 @@ public class BoulderAbility : NetworkBehaviour
 
         if (!active)
         {
+            if (windup.Active)
+            {
+                if (windup.Tick(fpc))
+                    Begin();
+                return;
+            }
+
             if (Keyboard.current.qKey.wasPressedThisFrame && CanUse && GameSettings.CursorLocked
                 && !fpc.InputBlocked && !fpc.RushActive && !fpc.BlockActive)
-                Begin();
+            {
+                // Priprava: Honza zvedne zbran, ozve se zvuk ultimatky a pak teprve vyrazi balvan.
+                windup.Begin(fpc, WindupSeconds);
+                PlayWindupSound(0.8f);
+                WindupServerRpc();
+            }
             return;
         }
 
@@ -131,6 +143,32 @@ public class BoulderAbility : NetworkBehaviour
         }
 
         Tick();
+    }
+
+    const float WindupSeconds = 1f;
+    readonly UltWindup windup = new UltWindup();
+
+    // Zvuk pripravy: vlastni nahravka ze schopnosti (pole Sound u Boulder_Data), jinak zastupny generovany.
+    void PlayWindupSound(float volume)
+    {
+        // Ultimatku slysi vsichni po cele mape.
+        if (ability != null && ability.sound != null)
+            Fx.PlayGlobal(ability.sound, volume);
+        else
+            Fx.PlayGlobal(ProceduralSfx.UltCharge, volume * 0.7f);
+    }
+
+    [ServerRpc]
+    void WindupServerRpc()
+    {
+        WindupClientRpc();
+    }
+
+    [ClientRpc]
+    void WindupClientRpc()
+    {
+        if (!IsOwner)
+            PlayWindupSound(0.8f);
     }
 
     void Begin()
@@ -231,7 +269,7 @@ public class BoulderAbility : NetworkBehaviour
         if (!active) return;
 
         active = false;
-        nextUseTime = Time.time + (ability != null ? ability.cooldown : 0f);
+        nextUseTime = Time.time + (ability != null ? ability.Cooldown : 0f);
 
         if (boulder != null)
             Destroy(boulder);
@@ -255,6 +293,8 @@ public class BoulderAbility : NetworkBehaviour
     // Vola PlayerRespawn / reset kola: balvan zmizi bez vybuchu a bez cooldownu.
     public void Cancel()
     {
+        if (windup.Active)
+            windup.Cancel(fpc);
         if (!active) return;
 
         End();

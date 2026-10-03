@@ -96,7 +96,7 @@ public class MineAbility : NetworkBehaviour
         if (charges < MaxCharges && Time.time >= rechargeAt)
         {
             charges++;
-            rechargeAt = Time.time + ability.cooldown;
+            rechargeAt = Time.time + ability.Cooldown;
         }
 
         if (!GameSettings.CursorLocked || fpc.CannotAct) return;
@@ -118,7 +118,7 @@ public class MineAbility : NetworkBehaviour
         bufferedUntil = 0f;
 
         if (charges == MaxCharges)
-            rechargeAt = Time.time + ability.cooldown;
+            rechargeAt = Time.time + ability.Cooldown;
         charges--;
         minesOut++;
 

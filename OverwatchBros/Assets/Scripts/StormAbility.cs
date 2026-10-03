@@ -11,8 +11,9 @@ public class StormAbility : NetworkBehaviour
     public AbilityDefinition ability;
 
     const float TickInterval = 0.2f;
-    // Stred telesa je ve vysce hrudi nad zemi, po ktere leti.
-    const float CenterHeight = 1.4f;
+
+    // Delka valce smrsti jako nasobek polomeru (radius 3 -> 18 m). Valec zacina v bode vystrelu a miri dopredu.
+    public const float LengthFactor = 6f;
     static readonly Color StormColor = new Color(0.55f, 0.75f, 1f, 1f);
 
     FirstPersonController fpc;
@@ -53,22 +54,79 @@ public class StormAbility : NetworkBehaviour
             ServerTick();
     }
 
+    const float WindupSeconds = 2f;
+    readonly UltWindup windup = new UltWindup();
+    WeaponShooting shooting;
+
     void OwnerUpdate()
     {
         if (ability == null) return;
+
+        if (shooting == null)
+            shooting = GetComponent<WeaponShooting>();
+
+        // Priprava: 2 s se sam natahuje luk az na maximum (bez drzeni tlacitka), pak vyleti smrst.
+        if (windup.Active)
+        {
+            bool done = windup.Tick(fpc);
+            if (shooting != null)
+                shooting.ForcedCharge = windup.Active ? windup.Progress : 0f;
+            if (done)
+                Fire();
+            return;
+        }
+
         if (!Keyboard.current.qKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
         if (fpc.InputBlocked || !CanUse) return;
 
-        nextUseTime = Time.time + ability.cooldown;
+        windup.Begin(fpc, WindupSeconds);
+        hero.SayAbility(ability);
+        Fx.PlayGlobal(ProceduralSfx.UltCharge, 0.5f);
+        WindupServerRpc();
+    }
+
+    void Fire()
+    {
+        if (shooting != null)
+            shooting.ForcedCharge = 0f;
+
+        nextUseTime = Time.time + ability.Cooldown;
         hero.SpendUlt();
 
-        // Vir leti vodorovne smerem, kam se hrac diva.
-        Vector3 direction = fpc.playerCamera.transform.forward;
-        direction.y = 0f;
-        direction = direction.sqrMagnitude > 0.01f ? direction.normalized : transform.forward;
+        // Smrst leti presne tam, kam miri zamerovac (i nahoru nebo dolu).
+        var eye = fpc.playerCamera.transform;
+        Vector3 direction = eye.forward;
+        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.9f);
+        LaunchServerRpc(eye.position + direction * 2.5f, direction);
+    }
 
-        hero.SayAbility(ability);
-        LaunchServerRpc(transform.position + direction * 2f, direction);
+    // Vola PlayerRespawn / reset kola.
+    public void Cancel()
+    {
+        if (!windup.Active) return;
+
+        windup.Cancel(fpc);
+        if (shooting != null)
+            shooting.ForcedCharge = 0f;
+    }
+
+    void OnDisable()
+    {
+        if (windup.Active && fpc != null)
+            Cancel();
+    }
+
+    [ServerRpc]
+    void WindupServerRpc()
+    {
+        WindupClientRpc();
+    }
+
+    [ClientRpc]
+    void WindupClientRpc()
+    {
+        if (!IsOwner)
+            Fx.PlayGlobal(ProceduralSfx.UltCharge, 0.5f);
     }
 
     // ---------------- server ----------------
@@ -110,8 +168,11 @@ public class StormAbility : NetworkBehaviour
 
         // Zamerne bez kontroly vyhledu: smrst prochazi zdmi.
         var hit = new HashSet<Health>();
-        Vector3 center = stormPosition + Vector3.up * CenterHeight;
-        foreach (var col in Physics.OverlapSphere(center, ability.radius * 1.1f, ~0, QueryTriggerInteraction.Ignore))
+        Vector3 center = stormPosition;
+        float length = ability.radius * LengthFactor;
+        Vector3 tail = center + stormDirection * ability.radius;
+        Vector3 head = center + stormDirection * Mathf.Max(ability.radius, length - ability.radius);
+        foreach (var col in Physics.OverlapCapsule(tail, head, ability.radius * 1.1f, ~0, QueryTriggerInteraction.Ignore))
         {
             var boulder = col.GetComponentInParent<BoulderHitbox>();
             if (boulder != null)
@@ -131,7 +192,7 @@ public class StormAbility : NetworkBehaviour
     void LaunchedClientRpc(Vector3 origin, Vector3 direction, float speed, float seconds, float radius)
     {
         var go = new GameObject("Storm");
-        go.transform.position = origin + Vector3.up * CenterHeight;
+        go.transform.position = origin;
         go.AddComponent<StormVisual>().Init(direction, speed, seconds, radius, StormColor);
         ProceduralSfx.Play(ProceduralSfx.LeapStart, origin, 1f);
     }
@@ -144,7 +205,7 @@ public class StormVisual : MonoBehaviour
     Vector3 direction;
     float speed, seconds, age;
     Transform body;
-    readonly Transform[] rings = new Transform[3];
+    readonly Transform[] rings = new Transform[5];
     ParticleSystem trail;
     Light glow;
     float fullScale = 1f;
@@ -158,12 +219,17 @@ public class StormVisual : MonoBehaviour
         if (direction.sqrMagnitude > 0.001f)
             transform.rotation = Quaternion.LookRotation(direction);
 
+        float length = radius * StormAbility.LengthFactor;
+
+        // Telo zacina v bode vystrelu a tahne se dopredu (stejne jako zasahova oblast na serveru).
         body = new GameObject("Body").transform;
         body.SetParent(transform, false);
+        body.localPosition = new Vector3(0f, 0f, length * 0.5f);
 
-        // Jadro: plna koule protazena ve smeru letu.
-        var core = Solid(PrimitiveType.Sphere, body, Vector3.zero, new Vector3(radius * 1.25f, radius * 1.25f, radius * 2.1f),
+        // Jadro: dlouhy valec se zakulacenymi konci, osou ve smeru letu.
+        var core = Solid(PrimitiveType.Capsule, body, Vector3.zero, new Vector3(radius * 1.25f, length * 0.5f, radius * 1.25f),
             Color.Lerp(color, Color.white, 0.55f));
+        core.localRotation = Quaternion.Euler(90f, 0f, 0f);
         core.name = "Core";
 
         // Prstence z hranolu kolem jadra.
@@ -172,11 +238,11 @@ public class StormVisual : MonoBehaviour
         {
             var ring = new GameObject("Ring").transform;
             ring.SetParent(body, false);
-            ring.localPosition = new Vector3(0f, 0f, (r - 1) * radius * 0.75f);
+            ring.localPosition = new Vector3(0f, 0f, (r / (rings.Length - 1f) - 0.5f) * (length - radius * 1.2f));
             rings[r] = ring;
 
             const int pieces = 10;
-            float ringRadius = radius * (r == 1 ? 1.05f : 0.9f);
+            float ringRadius = radius * (r % 2 == 0 ? 0.9f : 1.05f);
             for (int i = 0; i < pieces; i++)
             {
                 float angle = i * Mathf.PI * 2f / pieces;
@@ -206,8 +272,11 @@ public class StormVisual : MonoBehaviour
         emission.rateOverTime = 160f;
 
         var shape = trail.shape;
-        shape.shapeType = ParticleSystemShapeType.Sphere;
-        shape.radius = radius * 0.9f;
+        // Castice se sypou po cele delce valce.
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.scale = new Vector3(radius * 1.4f, radius * 1.4f, length);
+        shape.position = new Vector3(0f, 0f, length * 0.5f);
+        emission.rateOverTime = 260f;
 
         var fade = trail.colorOverLifetime;
         fade.enabled = true;
@@ -225,7 +294,8 @@ public class StormVisual : MonoBehaviour
         glow = lightObject.AddComponent<Light>();
         glow.type = LightType.Point;
         glow.color = color;
-        glow.range = radius * 7f;
+        glow.range = radius * 9f;
+        lightObject.transform.localPosition = new Vector3(0f, 0f, length * 0.5f);
         glow.intensity = 6f;
 
         body.localScale = Vector3.zero;
@@ -255,7 +325,7 @@ public class StormVisual : MonoBehaviour
 
         // Prstence se toci kolem osy letu, prostredni proti smeru krajnich; jadro pulzuje.
         for (int r = 0; r < rings.Length; r++)
-            rings[r].Rotate(0f, 0f, (r == 1 ? -300f : 220f) * Time.deltaTime, Space.Self);
+            rings[r].Rotate(0f, 0f, (r % 2 == 1 ? -300f : 220f) * Time.deltaTime, Space.Self);
         glow.intensity = 5f + Mathf.Sin(age * 14f) * 1.5f;
 
         if (age >= seconds && trail.isEmitting)

@@ -91,7 +91,7 @@ public class PlayerHero : NetworkBehaviour
     public NetworkVariable<float> ultCharge = new NetworkVariable<float>();
     bool ultSpentLocally;
 
-    public float UltCost => Hero != null && Hero.ability != null ? Hero.ability.ultCost : 0f;
+    public float UltCost => Hero != null && Hero.ability != null && !AbilityDefinition.TestCooldowns ? Hero.ability.ultCost : 0f;
     public bool UsesUltCharge => UltCost > 0f;
     public float UltFraction => UsesUltCharge ? Mathf.Clamp01(ultCharge.Value / UltCost) : 1f;
     public bool UltReady => !UsesUltCharge || (ultCharge.Value >= UltCost - 0.01f && !ultSpentLocally);

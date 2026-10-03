@@ -15,6 +15,7 @@ public class MainMenuUI
     TMP_InputField ipInput;
     TextMeshProUGUI statusText;
     TextMeshProUGUI noGamesText;
+    Button testButton;
     readonly List<Button> gameRows = new List<Button>();
     readonly List<LanDiscovery.Game> shownGames = new List<LanDiscovery.Game>();
     float nextRefresh;
@@ -42,6 +43,11 @@ public class MainMenuUI
 
         BuildHostCard(center, nick);
         BuildJoinCard(center);
+
+        // Pro testovani: zalozena hra bude mit vsechny cooldowny 1 s (jde prepnout i pozdeji v lobby).
+        testButton = UiKit.MakeButton(Root.transform, "TEST", new Vector2(0f, 1f), new Vector2(40f, -40f), new Vector2(470f, 70f),
+            ToggleTestCooldowns, UiKit.ButtonBase, 26f);
+        RefreshTestButton();
 
         UiKit.MakeButton(Root.transform, "UKONČIT HRU", new Vector2(1f, 1f), new Vector2(-40f, -40f), new Vector2(300f, 70f),
             QuitGame, new Color(0.45f, 0.18f, 0.18f, 1f), 30f);
@@ -165,6 +171,19 @@ public class MainMenuUI
         PlayerHero.PreferredName = nick;
         PlayerPrefs.SetString("nick", nick);
         PlayerPrefs.SetString("gameName", gameNameInput.text.Trim());
+    }
+
+    void ToggleTestCooldowns()
+    {
+        MatchManager.PendingTestCooldowns = !MatchManager.PendingTestCooldowns;
+        RefreshTestButton();
+    }
+
+    void RefreshTestButton()
+    {
+        bool on = MatchManager.PendingTestCooldowns;
+        UiKit.SetButtonLabel(testButton, on ? "TESTOVACÍ COOLDOWNY 1 s: <color=#7CFC9A>ZAP</color>" : "TESTOVACÍ COOLDOWNY 1 s: VYP");
+        UiKit.SetButtonColor(testButton, on ? new Color(0.20f, 0.42f, 0.26f, 1f) : UiKit.ButtonBase);
     }
 
     // Ukonci hru (v editoru zastavi Play mod).

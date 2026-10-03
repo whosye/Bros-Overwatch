@@ -15,6 +15,22 @@ public class WeaponShooting : NetworkBehaviour
     FirstPersonController fpc;
 
     public int CurrentAmmo => currentAmmo;
+
+    // Velikost zasobniku; schopnost ji muze docasne zvetsit (Viktorova ultimatka: 20 naboju).
+    public int MaxAmmo => weapon == null ? 0 : ammoOverride > 0 ? ammoOverride : weapon.maxAmmo;
+    int ammoOverride;
+
+    // Zvetsi zasobnik a rovnou ho naplni; 0 vrati normalni velikost (naboje navic propadnou).
+    public void SetMagazineOverride(int ammo)
+    {
+        ammoOverride = ammo;
+        if (weapon == null || !weapon.HasAmmo) return;
+
+        if (ammo > 0)
+            InstantReload();
+        else
+            currentAmmo = Mathf.Min(currentAmmo, weapon.maxAmmo);
+    }
     public bool IsReloading => reloading;
 
     HeldWeapons held;
@@ -31,7 +47,7 @@ public class WeaponShooting : NetworkBehaviour
     {
         if (!ammoInitialized && weapon != null)
         {
-            currentAmmo = weapon.maxAmmo;
+            currentAmmo = MaxAmmo;
             ammoInitialized = true;
         }
     }
@@ -39,10 +55,30 @@ public class WeaponShooting : NetworkBehaviour
     // Uskok (Viktor) zbran rovnou prebije.
     public void InstantReload()
     {
-        if (weapon == null || weapon.IsMelee) return;
+        if (weapon == null || !weapon.HasAmmo) return;
+
+        // Prebijeni, ktere zrovna bezi, se ukonci i vizualne (jinak by zbran zustala sklopena mimo obraz).
+        if (reloading)
+        {
+            held.StopReload();
+            StopReloadServerRpc();
+        }
 
         reloading = false;
-        currentAmmo = weapon.maxAmmo;
+        currentAmmo = MaxAmmo;
+    }
+
+    [ServerRpc]
+    void StopReloadServerRpc()
+    {
+        StopReloadClientRpc();
+    }
+
+    [ClientRpc]
+    void StopReloadClientRpc()
+    {
+        if (!IsOwner)
+            held.StopReload();
     }
 
     VisorAbility visor;
@@ -70,6 +106,7 @@ public class WeaponShooting : NetworkBehaviour
         if (newWeapon == null) return;
 
         weapon = newWeapon;
+        ammoOverride = 0;
         currentAmmo = newWeapon.maxAmmo;
         ammoInitialized = true;
         reloading = false;
@@ -86,7 +123,7 @@ public class WeaponShooting : NetworkBehaviour
             if (Time.time < reloadEndTime) return;
 
             reloading = false;
-            currentAmmo = weapon.maxAmmo;
+            currentAmmo = MaxAmmo;
             ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.8f);
         }
 
@@ -127,9 +164,12 @@ public class WeaponShooting : NetworkBehaviour
     RapidFireAbility rapid;
 
     // Jak moc je luk natazeny (0-1), pro HUD a model zbrane.
-    public float ChargeFraction => charging && weapon != null && weapon.chargeTime > 0f
+    public float ChargeFraction => Mathf.Max(ForcedCharge, charging && weapon != null && weapon.chargeTime > 0f
         ? Mathf.Clamp01((Time.time - chargeStart) / weapon.chargeTime)
-        : 0f;
+        : 0f);
+
+    // Natazeni ridi schopnost (priprava Mirkovy ultimatky), ne hrac.
+    public float ForcedCharge { get; set; }
 
     void UpdateCharged()
     {
@@ -247,6 +287,14 @@ public class WeaponShooting : NetworkBehaviour
     {
         // Strelba na dalku je slabsi (jen zbrane s nastavenym poklesem poskozeni).
         float damage = weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, point));
+
+        // Mimo ucinny dosah strela nic nezpusobi (jen dopad na povrchu, bez zvuku zasahu).
+        if (damage <= 0f)
+        {
+            Fx.BulletImpact(point, weapon.projectileColor, fxScale);
+            ImpactFxServerRpc(point, fxScale);
+            return;
+        }
 
         Target target = collider.GetComponent<Target>();
         if (target != null)
@@ -399,7 +447,7 @@ public class WeaponShooting : NetworkBehaviour
     // Prebiti trva weapon.reloadTime; naboje pribydou az na konci.
     void Reload()
     {
-        if (!weapon.HasAmmo || reloading || currentAmmo == weapon.maxAmmo) return;
+        if (!weapon.HasAmmo || reloading || currentAmmo == MaxAmmo) return;
 
         float duration = Mathf.Max(0.05f, weapon.reloadTime);
         reloading = true;

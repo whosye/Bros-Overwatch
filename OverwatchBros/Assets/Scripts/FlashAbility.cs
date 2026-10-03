@@ -33,7 +33,7 @@ public class FlashAbility : NetworkBehaviour
         if (!Mouse.current.rightButton.wasPressedThisFrame || !GameSettings.CursorLocked) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
-        nextUseTime = Time.time + ability.cooldown;
+        nextUseTime = Time.time + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
         ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.5f);

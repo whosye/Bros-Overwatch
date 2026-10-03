@@ -281,6 +281,11 @@ public class CharacterVisual : MonoBehaviour
         upperBody = null;
     }
 
+    public void StopReload()
+    {
+        reloadTime = -1f;
+    }
+
     public void PlayReload(float duration)
     {
         if (!graph.IsValid()) return;

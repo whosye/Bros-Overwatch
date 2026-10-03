@@ -534,7 +534,7 @@ public static class M7Setup
             a.abilityName = "Smršť";
             a.cooldown = 30f;
             a.ultCost = 550f;
-            a.power = 90f;       // poskozeni za sekundu
+            a.power = 120f;      // poskozeni za sekundu
             a.radius = 3f;
             a.speed = 12f;
             a.duration = 6f;

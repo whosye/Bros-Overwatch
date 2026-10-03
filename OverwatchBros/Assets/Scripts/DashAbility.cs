@@ -89,7 +89,7 @@ public class DashAbility : NetworkBehaviour
     IEnumerator DashRoutine()
     {
         isDashing = true;
-        nextDashTime = Time.time + ability.cooldown;
+        nextDashTime = Time.time + ability.Cooldown;
 
         Vector3 direction = DashDirection();
 

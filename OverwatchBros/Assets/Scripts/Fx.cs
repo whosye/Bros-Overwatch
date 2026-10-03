@@ -314,6 +314,23 @@ public static class Fx
         Object.Destroy(go, clip.length + 0.1f);
     }
 
+    // Zvuk pres celou mapu (ultimatky): bez prostoroveho utlumu, kazdy hrac ho slysi stejne hlasite.
+    public static void PlayGlobal(AudioClip clip, float volume)
+    {
+        if (clip == null) return;
+
+        var go = new GameObject("SFX_Global_" + clip.name);
+        Object.DontDestroyOnLoad(go);
+
+        var source = go.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.volume = volume;
+        source.spatialBlend = 0f;
+        source.Play();
+
+        Object.Destroy(go, clip.length + 0.1f);
+    }
+
     public static GameObject CreateMarker()
     {
         var marker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);

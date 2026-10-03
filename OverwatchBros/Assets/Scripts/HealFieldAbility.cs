@@ -60,7 +60,7 @@ public class HealFieldAbility : NetworkBehaviour
         if (!Keyboard.current.eKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
-        nextUseTime = Time.time + ability.cooldown;
+        nextUseTime = Time.time + ability.Cooldown;
         activeUntil = Time.time + ability.duration;
         ProceduralSfx.Play(ProceduralSfx.Reload, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);

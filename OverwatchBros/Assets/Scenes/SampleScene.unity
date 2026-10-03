@@ -93297,7 +93297,7 @@ Transform:
   m_GameObject: {fileID: 1593270581}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 43.1, y: 9, z: -8.2}
+  m_LocalPosition: {x: 33.01, y: 0, z: -8.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -99171,6 +99171,11 @@ MonoBehaviour:
         byte0059: 0
         byte0060: 0
         byte0061: 0
+  testCooldowns:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   gameMode:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

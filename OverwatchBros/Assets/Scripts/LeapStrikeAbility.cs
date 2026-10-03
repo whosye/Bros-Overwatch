@@ -153,7 +153,7 @@ public class LeapStrikeAbility : NetworkBehaviour
 
     void Begin()
     {
-        nextUseTime = Time.time + ability.cooldown;
+        nextUseTime = Time.time + ability.Cooldown;
         hero.SpendUlt();
         fpc.AbilityActive = true;
         fpc.ResetVertical();
@@ -374,6 +374,7 @@ public class LeapStrikeAbility : NetworkBehaviour
     [ClientRpc]
     void DiveStartFxClientRpc(Vector3 position)
     {
-        Fx.PlaySpatial(ability.sound, position, 1f);
+        // Ultimatku slysi vsichni po cele mape.
+        Fx.PlayGlobal(ability.sound, 1f);
     }
 }

@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Pistol
   damage: 10
-  fireRate: 8
-  maxAmmo: 12
+  fireRate: 6.5
+  maxAmmo: 10
   range: 100
   falloffMin: 0.4
+  farFalloffEnd: 60
+  farFalloffMin: 0.1
+  maxDamageRange: 60
   falloffEnd: 45
   falloffStart: 20

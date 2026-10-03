@@ -81,8 +81,21 @@ public class VisorAbility : NetworkBehaviour
 
         if (!active)
         {
+            if (windup.Active)
+            {
+                if (windup.Tick(fpc))
+                    Begin();
+                return;
+            }
+
             if (Keyboard.current.qKey.wasPressedThisFrame && CanUse && GameSettings.CursorLocked && !fpc.InputBlocked)
-                Begin();
+            {
+                // Priprava: Viktor zvedne zbran a ozve se hlaska, zamerovac nabehne az po ni.
+                windup.Begin(fpc, WindupSeconds);
+                GetComponent<PlayerHero>().SayAbility(ability);
+                Fx.PlayGlobal(ProceduralSfx.UltCharge, 0.5f);
+                WindupServerRpc();
+            }
             return;
         }
 
@@ -104,16 +117,43 @@ public class VisorAbility : NetworkBehaviour
         nextScan = 0f;
         scanning.Value = true;
 
+        // Behem ultimatky ma Viktor zasobnik na 20 naboju (hned plny).
+        var shooting = GetComponent<WeaponShooting>();
+        if (shooting != null)
+            shooting.SetMagazineOverride(UltAmmo);
+
         ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 0.7f);
-        GetComponent<PlayerHero>().SayAbility(ability);
+    }
+
+    const int UltAmmo = 20;
+
+    const float WindupSeconds = 1f;
+    readonly UltWindup windup = new UltWindup();
+
+    [ServerRpc]
+    void WindupServerRpc()
+    {
+        WindupClientRpc();
+    }
+
+    [ClientRpc]
+    void WindupClientRpc()
+    {
+        if (!IsOwner)
+            Fx.PlayGlobal(ProceduralSfx.UltCharge, 0.5f);
     }
 
     void End(bool startCooldown)
     {
         active = false;
+
+        var shooting = GetComponent<WeaponShooting>();
+        if (shooting != null)
+            shooting.SetMagazineOverride(0);
+
         hasTarget = false;
         if (startCooldown && ability != null)
-            nextUseTime = Time.time + ability.cooldown;
+            nextUseTime = Time.time + ability.Cooldown;
 
         if (IsSpawned && IsOwner)
             scanning.Value = false;
@@ -122,6 +162,8 @@ public class VisorAbility : NetworkBehaviour
     // Vola PlayerRespawn / reset kola.
     public void Cancel()
     {
+        if (windup.Active)
+            windup.Cancel(fpc);
         if (active)
             End(false);
     }

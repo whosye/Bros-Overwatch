@@ -22,6 +22,35 @@ public partial class MatchManager : NetworkBehaviour
     public NetworkVariable<int> phase = new NetworkVariable<int>(PhaseLobby);
     public NetworkVariable<FixedString64Bytes> gameName = new NetworkVariable<FixedString64Bytes>();
 
+    // Testovaci cooldowny (1 s) pro vsechny hrace; prepina host v lobby.
+    public NetworkVariable<bool> testCooldowns = new NetworkVariable<bool>(false);
+
+    // Volba z hlavniho menu: se zapnutymi testovacimi cooldowny se hra rovnou zalozi.
+    public static bool PendingTestCooldowns
+    {
+        get => PlayerPrefs.GetInt("testCooldowns", 0) == 1;
+        set => PlayerPrefs.SetInt("testCooldowns", value ? 1 : 0);
+    }
+
+    public void SetTestCooldowns(bool on)
+    {
+        if (!IsServer) return;
+
+        testCooldowns.Value = on;
+        PendingTestCooldowns = on;
+    }
+
+    void OnTestCooldownsChanged(bool previous, bool current)
+    {
+        AbilityDefinition.TestCooldowns = current;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        testCooldowns.OnValueChanged -= OnTestCooldownsChanged;
+        AbilityDefinition.TestCooldowns = false;
+    }
+
     public bool IsOver => matchOver.Value;
     public bool IsLobby => phase.Value == PhaseLobby;
 
@@ -32,12 +61,17 @@ public partial class MatchManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        testCooldowns.OnValueChanged += OnTestCooldownsChanged;
+        AbilityDefinition.TestCooldowns = testCooldowns.Value;
+
         // Klient pripojeny do rozehraneho zapasu si vyzada mista oziveni (rezim dobyvani bodu).
         if (!IsServer)
         {
             RequestSpawnsRpc();
             return;
         }
+
+        testCooldowns.Value = PendingTestCooldowns;
 
         scoreToWinSynced.Value = Mathf.Max(1, scoreToWin);
         gameName.Value = new FixedString64Bytes(string.IsNullOrWhiteSpace(PendingGameName) ? "Hra" : PendingGameName);

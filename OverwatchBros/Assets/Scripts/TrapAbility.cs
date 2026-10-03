@@ -68,7 +68,7 @@ public class TrapAbility : NetworkBehaviour
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
         if (!FindGround(out Vector3 point)) return;
 
-        nextUseTime = Time.time + ability.cooldown;
+        nextUseTime = Time.time + ability.Cooldown;
         placed = true;
         ProceduralSfx.Play(ProceduralSfx.Reload, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);

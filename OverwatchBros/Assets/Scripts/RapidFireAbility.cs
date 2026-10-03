@@ -72,7 +72,7 @@ public class RapidFireAbility : NetworkBehaviour
     void End()
     {
         active = false;
-        nextUseTime = Time.time + (ability != null ? ability.cooldown : 0f);
+        nextUseTime = Time.time + (ability != null ? ability.Cooldown : 0f);
     }
 
     // Vola PlayerRespawn / reset kola.

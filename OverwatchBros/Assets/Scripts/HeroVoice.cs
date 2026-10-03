@@ -117,6 +117,8 @@ public class HeroVoice : MonoBehaviour
         source.Stop();
         source.clip = clip;
         source.volume = volume;
+        // Hlaska k ultimatce (Q) je slyset pres celou mapu, ostatni jen v okoli.
+        source.spatialBlend = kind == VoiceKind.Ability && slot == 0 ? 0f : 1f;
         source.Play();
         playingPriority = priority;
     }

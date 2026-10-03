@@ -48,6 +48,12 @@ public class WeaponDefinition : ScriptableObject
     public float falloffEnd = 0f;
     [Tooltip("Nejmensi poskozeni na velkou dalku jako cast plneho (0.4 = 40 %).")]
     public float falloffMin = 0.4f;
+    [Tooltip("Druhy krok: od 'Falloff End' do teto vzdalenosti (m) klesa poskozeni dal az na 'Far Falloff Min'. 0 = bez druheho kroku.")]
+    public float farFalloffEnd = 0f;
+    [Tooltip("Poskozeni na konci druheho kroku jako cast plneho (0.1 = 10 %).")]
+    public float farFalloffMin = 0.1f;
+    [Tooltip("Za touto vzdalenosti (m) zasah nedava zadne poskozeni. 0 = bez omezeni.")]
+    public float maxDamageRange = 0f;
 
     [Header("Projektil (jen kdyz Fire Mode = Projectile)")]
     public FireMode fireMode = FireMode.Hitscan;
@@ -88,7 +94,15 @@ public class WeaponDefinition : ScriptableObject
     // Poskozeni okamziteho zasahu na danou vzdalenost.
     public float DamageAt(float distance)
     {
+        if (fireMode == FireMode.Hitscan && maxDamageRange > 0f && distance > maxDamageRange) return 0f;
         if (fireMode != FireMode.Hitscan || falloffEnd <= falloffStart || falloffStart <= 0f) return damage;
+
+        // Druhy krok: za 'Falloff End' klesa dal az na 'Far Falloff Min'.
+        if (farFalloffEnd > falloffEnd && distance > falloffEnd)
+        {
+            float far = Mathf.InverseLerp(falloffEnd, farFalloffEnd, distance);
+            return damage * Mathf.Lerp(Mathf.Clamp01(falloffMin), Mathf.Clamp01(farFalloffMin), far);
+        }
 
         float t = Mathf.InverseLerp(falloffStart, falloffEnd, distance);
         return damage * Mathf.Lerp(1f, Mathf.Clamp01(falloffMin), t);

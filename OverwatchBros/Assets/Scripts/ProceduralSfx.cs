@@ -6,7 +6,7 @@ public static class ProceduralSfx
 {
     const int Rate = 44100;
 
-    static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock, potgIntro;
+    static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock, potgIntro, ultCharge;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
@@ -96,6 +96,15 @@ public static class ProceduralSfx
         }
 
         return Mathf.Clamp(drum + chord * 0.16f, -1f, 1f);
+    });
+
+    // Priprava ultimatky (zastupny zvuk, dokud hrdina nema vlastni nahravku): stoupajici ton s chvenim.
+    public static AudioClip UltCharge => ultCharge ??= Make("ultCharge", 1.0f, (t, r) =>
+    {
+        // Kmitocet stoupa ze 180 na 720 Hz (faze je integral kmitoctu).
+        float phase = 2f * Mathf.PI * (180f * t + 270f * t * t);
+        float tremolo = 0.75f + 0.25f * Mathf.Sin(2f * Mathf.PI * 14f * t);
+        return (Mathf.Sin(phase) * 0.5f + Noise(r) * 0.08f) * tremolo * Mathf.Min(1f, t * 8f) * Mathf.Min(1f, (1f - t) * 10f + 0.2f);
     });
 
     public static AudioClip Footstep => footstep ??= Make("footstep", 0.09f, (t, r) => Noise(r) * 0.35f * Mathf.Exp(-t * 55f));
