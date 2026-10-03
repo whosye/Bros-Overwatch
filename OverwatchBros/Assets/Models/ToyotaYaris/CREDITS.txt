@@ -1,0 +1,11 @@
+Model Information:
+* title:	2009 Toyota Yaris
+* source:	https://sketchfab.com/3d-models/2009-toyota-yaris-8c66eb592afb4ea7872fc219a5c467e8
+* author:	ImperialBlue (https://sketchfab.com/efemetin)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "2009 Toyota Yaris" (https://sketchfab.com/3d-models/2009-toyota-yaris-8c66eb592afb4ea7872fc219a5c467e8) by ImperialBlue (https://sketchfab.com/efemetin) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
