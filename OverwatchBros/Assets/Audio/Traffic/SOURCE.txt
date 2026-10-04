@@ -1,0 +1,3 @@
+YarisHorn.wav: original synthesized two-tone traffic warning horn.
+Created for this project; no external audio sample used.
+Mono PCM 22050 Hz, 1.05 seconds.

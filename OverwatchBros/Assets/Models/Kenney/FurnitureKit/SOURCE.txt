@@ -1,0 +1,5 @@
+Kenney FurnitureKit
+Source: https://kenney.nl/assets/furniture-kit
+License: CC0; see License.txt
+Format: self-contained GLB (glTF 2.0)
+Downloaded: 2026-10-04
