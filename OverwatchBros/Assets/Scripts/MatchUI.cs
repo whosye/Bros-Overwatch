@@ -32,6 +32,8 @@ public class MatchUI : MonoBehaviour
     GameObject settingsPanel;
     TextMeshProUGUI sensText;
     TextMeshProUGUI volumeText;
+    Slider sensitivitySlider;
+    Slider volumeSlider;
 
     NetworkUI legacyMenu;
     PlayerHUD legacyHud;
@@ -155,18 +157,18 @@ public class MatchUI : MonoBehaviour
             new Vector2(0f, 180f), new Vector2(700f, 70f), UiKit.Accent);
 
         sensText = UiKit.MakeText(settingsPanel.transform, "Sens", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 65f), new Vector2(500f, 60f));
+            new Vector2(0f, 100f), new Vector2(700f, 50f));
         volumeText = UiKit.MakeText(settingsPanel.transform, "Volume", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -35f), new Vector2(500f, 60f));
+            new Vector2(0f, -10f), new Vector2(700f, 50f));
 
-        UiKit.MakeButton(settingsPanel.transform, "−", center, new Vector2(-300f, 65f), new Vector2(70f, 70f),
-            () => GameSettings.Sensitivity -= GameSettings.SensitivityStep(GameSettings.Sensitivity, false), UiKit.ButtonBase, 40f);
-        UiKit.MakeButton(settingsPanel.transform, "+", center, new Vector2(300f, 65f), new Vector2(70f, 70f),
-            () => GameSettings.Sensitivity += GameSettings.SensitivityStep(GameSettings.Sensitivity, true), UiKit.ButtonBase, 40f);
-        UiKit.MakeButton(settingsPanel.transform, "−", center, new Vector2(-300f, -35f), new Vector2(70f, 70f),
-            () => GameSettings.Volume -= 0.1f, UiKit.ButtonBase, 40f);
-        UiKit.MakeButton(settingsPanel.transform, "+", center, new Vector2(300f, -35f), new Vector2(70f, 70f),
-            () => GameSettings.Volume += 0.1f, UiKit.ButtonBase, 40f);
+        // Logarithmic sensitivity keeps low values easy to adjust across the full range.
+        sensitivitySlider = UiKit.MakeSlider(settingsPanel.transform, "SensitivitySlider", center,
+            new Vector2(0f, 55f), new Vector2(620f, 44f), 0f, 1f, SensitivityToSlider(),
+            value => GameSettings.Sensitivity = Mathf.Round(GameSettings.MinSensitivity
+                * Mathf.Pow(GameSettings.MaxSensitivity / GameSettings.MinSensitivity, value) * 100f) / 100f);
+        volumeSlider = UiKit.MakeSlider(settingsPanel.transform, "VolumeSlider", center,
+            new Vector2(0f, -55f), new Vector2(620f, 44f), 0f, 100f, GameSettings.Volume * 100f,
+            value => GameSettings.Volume = value / 100f, wholeNumbers: true);
 
         UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -150f), new Vector2(340f, 76f),
             () => Cursor.lockState = CursorLockMode.Locked, UiKit.Green, 32f);
@@ -174,6 +176,13 @@ public class MatchUI : MonoBehaviour
             LeaveGame, new Color(0.45f, 0.18f, 0.18f, 1f), 32f);
 
         settingsPanel.SetActive(false);
+    }
+
+    static float SensitivityToSlider()
+    {
+        float sensitivity = Mathf.Clamp(GameSettings.Sensitivity, GameSettings.MinSensitivity, GameSettings.MaxSensitivity);
+        return Mathf.Log(sensitivity / GameSettings.MinSensitivity)
+            / Mathf.Log(GameSettings.MaxSensitivity / GameSettings.MinSensitivity);
     }
 
     void RestartMatch()
@@ -276,6 +285,8 @@ public class MatchUI : MonoBehaviour
         settingsPanel.SetActive(showSettings);
         if (showSettings)
         {
+            sensitivitySlider.SetValueWithoutNotify(SensitivityToSlider());
+            volumeSlider.SetValueWithoutNotify(GameSettings.Volume * 100f);
             sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0#}  <size=65%>(max {GameSettings.MaxSensitivity:0})</size>";
             volumeText.text = $"Hlasitost: {Mathf.RoundToInt(GameSettings.Volume * 100f)} %";
         }

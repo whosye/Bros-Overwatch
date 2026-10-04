@@ -112,3 +112,16 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Local JetBrains Rider / IntelliJ workspace and caches
+.idea/
+
+# Operating system metadata
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+Thumbs.db.meta
+Desktop.ini
+Desktop.ini.meta
+$RECYCLE.BIN/

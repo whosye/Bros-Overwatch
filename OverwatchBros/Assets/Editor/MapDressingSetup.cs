@@ -462,7 +462,7 @@ public static class MapDressingSetup
     {
         var props = map.Find("Props");
         var existing = props != null ? props.Find(CarName) : null;
-        if (existing != null && !force) return false;
+        if (existing != null && !force) return RepairCarCollider(existing);
 
         var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CarPath);
         if (prefab == null) return false;   // model se jeste neimportoval, zkusi se priste
@@ -515,6 +515,29 @@ public static class MapDressingSetup
             Object.DestroyImmediate(c);
 
         GameObjectUtility.SetStaticEditorFlags(root.gameObject, StaticEditorFlags.BatchingStatic);
+        return true;
+    }
+
+    // The model can be moved, rotated or resized independently of its parent.
+    // Refit existing cars too, rather than leaving collision at the original parking spot.
+    static bool RepairCarCollider(Transform root)
+    {
+        var model = root.Find("Model");
+        if (model == null) return false;
+        Bounds bounds = LocalBounds(root, model.gameObject);
+        if (bounds.size.sqrMagnitude < 0.0001f) return false;
+
+        var collider = root.GetComponent<BoxCollider>();
+        bool changed = collider == null;
+        if (collider == null) collider = root.gameObject.AddComponent<BoxCollider>();
+        changed |= !collider.enabled || collider.isTrigger
+            || (collider.center - bounds.center).sqrMagnitude > 0.000001f
+            || (collider.size - bounds.size).sqrMagnitude > 0.000001f;
+        if (!changed) return false;
+        collider.center = bounds.center;
+        collider.size = bounds.size;
+        collider.enabled = true;
+        collider.isTrigger = false;
         return true;
     }
 

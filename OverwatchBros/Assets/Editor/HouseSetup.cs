@@ -42,7 +42,12 @@ public static class HouseSetup
         if (house == null) return;
 
         bool built = house.Find(ExteriorName + "/" + Version) != null && map.transform.Find(SurroundingsName + "/" + Version) != null;
-        if (built && !NeedsMaterials(house)) return;
+        if (built && !NeedsMaterials(house))
+        {
+            if (RepairDormerCollision(house))
+                EditorSceneManager.MarkSceneDirty(map.scene);
+            return;
+        }
 
         if (Build(map.transform, house, false))
         {
@@ -327,7 +332,41 @@ public static class HouseSetup
             new GameObject(Version).transform.SetParent(surroundings, false);
             BuildSurroundings(map, surroundings, shape, m);
         }
+        RepairDormerCollision(house);
         return true;
+    }
+
+    // Upgrade existing decoration without rebuilding the house or its surroundings.
+    static bool RepairDormerCollision(Transform house)
+    {
+        var exterior = house.Find(ExteriorName);
+        if (exterior == null) return false;
+        bool changed = false;
+        foreach (var meshFilter in exterior.GetComponentsInChildren<MeshFilter>(true))
+        {
+            var part = meshFilter.transform;
+            if (part.parent == null || part.parent.name != "Vikyr" || meshFilter.sharedMesh == null) continue;
+            if (part.name != "Telo" && part.name != "Striska" && part.name != "Stit") continue;
+
+            Collider collider = part.GetComponent<Collider>();
+            if (collider == null)
+            {
+                if (part.name == "Stit")
+                    part.gameObject.AddComponent<MeshCollider>().sharedMesh = meshFilter.sharedMesh;
+                else
+                {
+                    var box = part.gameObject.AddComponent<BoxCollider>();
+                    box.center = meshFilter.sharedMesh.bounds.center;
+                    box.size = meshFilter.sharedMesh.bounds.size;
+                }
+                collider = part.GetComponent<Collider>();
+                changed = true;
+            }
+            changed |= !collider.enabled || collider.isTrigger;
+            collider.enabled = true;
+            collider.isTrigger = false;
+        }
+        return changed;
     }
 
     static void BuildExterior(Transform root, Shape s, Mats m)
@@ -553,7 +592,7 @@ public static class HouseSetup
 
         float bottom = ySlope - 1.2f;
         MapBuildKit.Box(group, "Telo", new Vector3(cx, (bottom + top) * 0.5f, (zBack + zFront) * 0.5f),
-            new Vector3(half * 2f, top - bottom, zFront - zBack), m.boards, false);
+            new Vector3(half * 2f, top - bottom, zFront - zBack), m.boards, true);
 
         // Okna ve celni stene.
         foreach (float side in new[] { -1f, 1f })
@@ -574,11 +613,12 @@ public static class HouseSetup
         {
             var rotation = Quaternion.Euler(0f, 0f, -side * a);
             Vector3 mid = new Vector3(cx + side * roofHalf * 0.5f, top + rise * 0.5f, zMid) + rotation * new Vector3(0f, 0.06f, 0f);
-            MapBuildKit.Box(group, "Striska", mid, new Vector3(slant, 0.12f, length), rotation, m.roof, false);
+            MapBuildKit.Box(group, "Striska", mid, new Vector3(slant, 0.12f, length), rotation, m.roof, true);
         }
         var gable = new[] { new Vector3(cx - half, top, zFront + 0.01f), new Vector3(cx + half, top, zFront + 0.01f), new Vector3(cx, top + rise - 0.05f, zFront + 0.01f) };
         var uv = new[] { new Vector2(-half, 0f), new Vector2(half, 0f), new Vector2(0f, rise) };
-        MapBuildKit.MeshObject(group, "Stit", MapBuildKit.FlatMesh("VikyrStit", gable, uv), Vector3.zero, Quaternion.identity, Vector3.one, m.boards);
+        var front = MapBuildKit.MeshObject(group, "Stit", MapBuildKit.FlatMesh("VikyrStit", gable, uv), Vector3.zero, Quaternion.identity, Vector3.one, m.boards);
+        front.AddComponent<MeshCollider>().sharedMesh = front.GetComponent<MeshFilter>().sharedMesh;
     }
 
     // ---------------- okoli ----------------

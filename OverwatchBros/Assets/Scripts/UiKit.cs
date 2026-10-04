@@ -94,6 +94,35 @@ public static class UiKit
         return button;
     }
 
+    public static Slider MakeSlider(Transform parent, string name, Vector2 anchor, Vector2 position, Vector2 size,
+        float min, float max, float initial, UnityAction<float> onChanged, bool wholeNumbers = false)
+    {
+        var rect = NewRect(parent, name, anchor, position, size, typeof(Image), typeof(Slider));
+        // Transparent hit area makes the whole row clickable, not just the thin track.
+        rect.GetComponent<Image>().color = Color.clear;
+        var center = new Vector2(0.5f, 0.5f);
+        MakeImage(rect, "Track", ButtonBase, center, Vector2.zero, new Vector2(size.x, 10f));
+
+        var fillArea = NewRect(rect, "FillArea", center, Vector2.zero, new Vector2(size.x - 28f, 10f));
+        var fill = MakeImage(fillArea, "Fill", Accent, center, Vector2.zero, Vector2.zero);
+        Stretch(fill.rectTransform);
+        var handleArea = NewRect(rect, "HandleArea", center, Vector2.zero, new Vector2(size.x - 28f, size.y));
+        var handle = MakeImage(handleArea, "Handle", Color.white, center, Vector2.zero, new Vector2(28f, 34f));
+        handle.raycastTarget = true;
+
+        var slider = rect.GetComponent<Slider>();
+        slider.direction = Slider.Direction.LeftToRight;
+        slider.fillRect = fill.rectTransform;
+        slider.handleRect = handle.rectTransform;
+        slider.targetGraphic = handle;
+        slider.minValue = min;
+        slider.maxValue = max;
+        slider.wholeNumbers = wholeNumbers;
+        slider.SetValueWithoutNotify(initial);
+        if (onChanged != null) slider.onValueChanged.AddListener(onChanged);
+        return slider;
+    }
+
     public static void SetButtonLabel(Button button, string label)
     {
         var text = button.GetComponentInChildren<TextMeshProUGUI>();
