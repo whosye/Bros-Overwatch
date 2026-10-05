@@ -165,7 +165,8 @@ public class LeapStrikeAbility : NetworkBehaviour
         savedCameraLocalPosition = playerCamera.transform.localPosition;
 
         airborne.Value = true;
-        GetComponent<PlayerHero>().SayAbility(ability);
+        // Faze 1 hlasky: vzlet do vzduchu.
+        GetComponent<PlayerHero>().SayAbility(ability, 1);
     }
 
     void TickAscending()
@@ -198,6 +199,8 @@ public class LeapStrikeAbility : NetworkBehaviour
             phase = Phase.Diving;
             phaseTimer = 5f;
             DiveStartServerRpc(transform.position);
+            // Faze 2 hlasky: hrac potvrdil dopad a Ayran se rite k zemi.
+            GetComponent<PlayerHero>().SayAbility(ability, 2);
             return;
         }
 

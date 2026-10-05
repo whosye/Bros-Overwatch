@@ -50,7 +50,7 @@ public class PlayerRespawn : NetworkBehaviour
         Debug.Log("Respawn.");
 
         var hero = GetComponent<PlayerHero>();
-        if (hero != null)
+        if (hero != null && MatchManager.Instance != null && !MatchManager.Instance.IsLobby)
             hero.Say(VoiceKind.Spawn);
     }
 

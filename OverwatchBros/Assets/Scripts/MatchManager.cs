@@ -286,6 +286,15 @@ public partial class MatchManager : NetworkBehaviour
         }
 
         ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
+
+        // Start zapasu: kazdy hrdina rekne svou spawn hlasku (v lobby ne).
+        if (!IsLobby)
+            foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+            {
+                var hero = client.PlayerObject != null ? client.PlayerObject.GetComponent<PlayerHero>() : null;
+                if (hero != null)
+                    hero.Say(VoiceKind.Spawn);
+            }
     }
 
     [ClientRpc]

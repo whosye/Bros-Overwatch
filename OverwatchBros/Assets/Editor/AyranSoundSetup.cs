@@ -2,13 +2,14 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-// Priradi Ayranovy nahrane zvuky (OverwatchBros/Sound/pova, mimo Assets) k jeho schopnostem a kill hlasce.
+// Priradi Ayranovu nahranou kill hlasku (OverwatchBros/Sound/pova, mimo Assets).
 // Soubory se zkopiruji do Assets/Audio/Ayran, aby je Unity mohlo importovat jako AudioClip.
+// Shift (pova_shift) se tu uz neresi: je to hlaska ve slozce Audio/Ayran/ability_Shift a strida se s druhou hlaskou
+// (schopnost Shift proto nema vlastni zvuk - jinak by hraly oba naraz). Q (pova_q) take ne: u ultimatky hraji
+// jen hlasky step_1 (vzlet) a step_2 (dopad) ze slozky Audio/Ayran/ability_Q.
 public static class AyranSoundSetup
 {
     const string AssetDir = "Assets/Audio/Ayran";
-    const string QFile = "pova_q_boosted_240.mp3";
-    const string ShiftFile = "pova_shift_boosted_300.mp3";
     const string KillFile = "pova_kill_boosted_160.mp3";
 
     static string SourceDir => Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Sound", "pova"));
@@ -18,13 +19,8 @@ public static class AyranSoundSetup
         // Nahravky jeste nikdo nepridal - neblokuje zbytek setupu.
         if (!Directory.Exists(SourceDir)) return true;
 
-        var leap = AssetDatabase.LoadAssetAtPath<AbilityDefinition>("Assets/Data/LeapStrike_Data.asset");
-        var rush = AssetDatabase.LoadAssetAtPath<AbilityDefinition>("Assets/Data/Rush_Data.asset");
         var ayran = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset");
-
-        return leap != null && leap.sound != null
-            && rush != null && rush.sound != null
-            && ayran != null && HasKillClip(ayran);
+        return ayran != null && HasKillClip(ayran);
     }
 
     static bool HasKillClip(HeroDefinition ayran)
@@ -43,7 +39,7 @@ public static class AyranSoundSetup
         EnsureFolder(AssetDir);
 
         bool copied = false;
-        foreach (var file in new[] { QFile, ShiftFile, KillFile })
+        foreach (var file in new[] { KillFile })
         {
             string src = Path.Combine(SourceDir, file);
             string dst = $"{AssetDir}/{file}";
@@ -56,23 +52,7 @@ public static class AyranSoundSetup
         if (copied)
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
-        var qClip = AssetDatabase.LoadAssetAtPath<AudioClip>($"{AssetDir}/{QFile}");
-        var shiftClip = AssetDatabase.LoadAssetAtPath<AudioClip>($"{AssetDir}/{ShiftFile}");
         var killClip = AssetDatabase.LoadAssetAtPath<AudioClip>($"{AssetDir}/{KillFile}");
-
-        var leap = AssetDatabase.LoadAssetAtPath<AbilityDefinition>("Assets/Data/LeapStrike_Data.asset");
-        if (leap != null && leap.sound == null && qClip != null)
-        {
-            leap.sound = qClip;
-            EditorUtility.SetDirty(leap);
-        }
-
-        var rush = AssetDatabase.LoadAssetAtPath<AbilityDefinition>("Assets/Data/Rush_Data.asset");
-        if (rush != null && rush.sound == null && shiftClip != null)
-        {
-            rush.sound = shiftClip;
-            EditorUtility.SetDirty(rush);
-        }
 
         var ayran = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset");
         if (ayran != null && killClip != null && !HasKillClip(ayran))

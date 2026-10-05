@@ -332,9 +332,12 @@ public class PlayerHero : NetworkBehaviour
         heroId.Value = index;
         ultCharge.Value = 0f;
 
-        // Mrtvy hrac se ozivi beznym zpusobem uz jako novy hrdina.
+        // Mrtvy hrac se ozivi beznym zpusobem uz jako novy hrdina (spawn hlasku rekne pri oziveni).
         if (health.currentHealth.Value > 0f)
+        {
             SwapDoneClientRpc();
+            Say(VoiceKind.Spawn);   // Apply uz probehlo, takze mluvi novy hrdina
+        }
     }
 
     [ClientRpc]
@@ -376,8 +379,13 @@ public class PlayerHero : NetworkBehaviour
 
         // Mrtvemu hraci (zmena hrdiny behem cekani na oziveni) se zdravi nevraci, to udela az oziveni.
         health.maxHealth = definition.maxHealth;
+        // (snizeni zdravi na mensi maximum noveho hrdiny neni zasah - zadna hurt hlaska)
         if (IsServer && (firstTime || health.currentHealth.Value > 0f))
+        {
+            applyingHero = true;
             health.ResetHealth();
+            applyingHero = false;
+        }
 
         var bodyRenderer = GetComponent<Renderer>();
         if (bodyRenderer != null)
@@ -490,7 +498,9 @@ public class PlayerHero : NetworkBehaviour
         if (firstTime)
         {
             ProceduralSfx.Play(ProceduralSfx.Spawn, transform.position, 0.5f);
-            if (IsServer)
+            // Spawn hlaska jen v rozbehnutem zapase (v lobby ne; na startu zapasu ji spusti MatchManager).
+            var match = MatchManager.Instance;
+            if (IsServer && match != null && !match.IsLobby && !match.IsOver)
                 Say(VoiceKind.Spawn);
         }
     }
@@ -588,11 +598,16 @@ public class PlayerHero : NetworkBehaviour
     }
 
     float nextHurtSound;
+    bool applyingHero;
 
     // Zvuk zasahu slysi vsichni v okoli (ne casteji nez jednou za chvili, aby prubezne poskozeni nedrncelo).
     void OnHealthChanged(float previous, float current)
     {
-        if (current >= previous - 0.01f || current <= 0f || Time.time < nextHurtSound) return;
+        if (current >= previous - 0.01f || current <= 0f || Time.time < nextHurtSound || applyingHero) return;
+
+        // Zmena hrdiny na nekoho s mensim maximem zdravi: zdravi spadne na plne nove maximum - to neni zasah.
+        var heroNow = HeroRegistry.Get(heroId.Value);
+        if (heroNow != null && current >= heroNow.maxHealth - 0.01f) return;
 
         // Bez nahravek: kratky generovany zvuk zasahu u vsech. S nahravkami: hlaska nejvys jednou za par sekund.
         if (!HeroVoice.HasLines(Hero, VoiceKind.Hurt, 0))
@@ -610,29 +625,49 @@ public class PlayerHero : NetworkBehaviour
     // ---------------- hlasky ----------------
 
     // Prehraje hlasku u vsech hracu (nahodny vyber dela server). Volat na serveru nebo na vlastnikovi hrace.
-    public void Say(VoiceKind kind, int slot = 0)
+    // phase > 0: konkretni faze schopnosti (nahravka step_<phase>), jinak nahodna hlaska.
+    public void Say(VoiceKind kind, int slot = 0, int phase = 0)
     {
         if (!IsSpawned || !HeroVoice.HasLines(Hero, kind, slot)) return;
 
         if (IsServer)
-            SayClientRpc((int)kind, slot, Random.Range(0, 100000));
+            SayClientRpc((int)kind, slot, PickFor(kind, slot, phase));
         else if (IsOwner)
-            SayServerRpc((int)kind, slot);
+            SayServerRpc((int)kind, slot, phase);
     }
 
-    // Hlaska ke schopnosti (vola schopnost na vlastnikovi, kdyz se spusti).
-    public void SayAbility(AbilityDefinition ability)
+    // Hlaska ke schopnosti (vola schopnost na vlastnikovi, kdyz se spusti). Viceprazova schopnost posila cislo faze.
+    public void SayAbility(AbilityDefinition ability, int phase = 0)
     {
         int slot = HeroVoice.SlotOf(Hero, ability);
         if (slot >= 0)
-            Say(VoiceKind.Ability, slot);
+            Say(VoiceKind.Ability, slot, phase);
+    }
+
+    // Zaporne cislo = faze (vsichni prehraji stejnou nahravku), jinak nahodny vyber, ktery nikdy nezopakuje
+    // stejnou hlasku dvakrat po sobe (pri dvou nahravkach se tedy pravidelne stridaji). Vola jen server.
+    readonly System.Collections.Generic.Dictionary<int, int> lastPick = new System.Collections.Generic.Dictionary<int, int>();
+
+    int PickFor(VoiceKind kind, int slot, int phase)
+    {
+        if (phase > 0) return -phase;
+
+        int count = HeroVoice.NormalLineCount(Hero, kind, slot);
+        if (count <= 1) return Random.Range(0, 100000);
+
+        int key = (int)kind * 10 + slot;
+        int pick = lastPick.TryGetValue(key, out int last)
+            ? (last + 1 + Random.Range(0, count - 1)) % count
+            : Random.Range(0, count);
+        lastPick[key] = pick;
+        return pick;
     }
 
     [ServerRpc]
-    void SayServerRpc(int kind, int slot)
+    void SayServerRpc(int kind, int slot, int phase)
     {
         if (kind < 0 || kind > (int)VoiceKind.Snare) return;
-        SayClientRpc(kind, slot, Random.Range(0, 100000));
+        SayClientRpc(kind, slot, PickFor((VoiceKind)kind, slot, Mathf.Clamp(phase, 0, 9)));
     }
 
     [ClientRpc]

@@ -25,6 +25,8 @@ MonoBehaviour:
   altAbility: {fileID: 11400000, guid: 3f0ce9c6b28296242817d9aa5e849176, type: 2}
   rmbAbilityKind: 0
   rmbAbility: {fileID: 0}
+  doubleJump: 0
+  ledgeClimb: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
@@ -32,10 +34,23 @@ MonoBehaviour:
   tintCharacter: 0
   sleeveColor: {r: 0.62, g: 0.13, b: 0.12, a: 1}
   skinColor: {r: 0.8, g: 0.6, b: 0.48, a: 1}
-  spawnLines: []
+  spawnLines:
+  - {fileID: 8300000, guid: f5e562c0ae27cd44e96e8553c685cd39, type: 3}
+  - {fileID: 8300000, guid: 9b42a877b37c9d849aa56f77a7848dcf, type: 3}
+  - {fileID: 8300000, guid: ea6c15342f743e04c9007e5607ed3893, type: 3}
   killLines:
   - {fileID: 8300000, guid: f69e7200682c32c42b2bb2e8be290682, type: 3}
+  - {fileID: 8300000, guid: 20577f11616c1794e99523be8fd6ed5d, type: 3}
+  - {fileID: 8300000, guid: a882444aeb0c3b845a2661c5a7168597, type: 3}
+  - {fileID: 8300000, guid: 55de25943cc77404dab8f552cedc92f8, type: 3}
   deathLines: []
-  hurtLines: []
-  idleLines: []
-  snareLines: []
+  hurtLines:
+  - {fileID: 8300000, guid: d4bdbc9344b8bee4fa143fde1438c141, type: 3}
+  - {fileID: 8300000, guid: a964d06ea88a26d4daa49a0621ca0ce5, type: 3}
+  idleLines:
+  - {fileID: 8300000, guid: 630e82b320602c349b6de9cf28285c73, type: 3}
+  - {fileID: 8300000, guid: 3902e3bd8c63c724e96b65406eb59f6f, type: 3}
+  - {fileID: 8300000, guid: c8cd74ee529408347a4a41de4d3e8f1f, type: 3}
+  snareLines:
+  - {fileID: 8300000, guid: d8fb27a500a994441b2a56033b6bf5e9, type: 3}
+  - {fileID: 8300000, guid: d1e8a1d3af79d9848ab8d522dac21a86, type: 3}

@@ -20,6 +20,7 @@ public class HeroVoice : MonoBehaviour
 
     AudioSource source;
     int playingPriority = -1;
+    bool playingUlt;
 
     // Dulezitejsi hlaska prerusi mene dulezitou; opacne se mene dulezita preskoci.
     static int Priority(VoiceKind kind)
@@ -87,18 +88,42 @@ public class HeroVoice : MonoBehaviour
         return -1;
     }
 
+    // Pocet beznych hlasek (bez fazi step_N), mezi kterymi se nahodne vybira.
+    public static int NormalLineCount(HeroDefinition hero, VoiceKind kind, int slot)
+    {
+        var lines = Lines(hero, kind, slot);
+        return lines == null ? 0 : System.Array.FindAll(lines, c => c != null && !c.name.ToLowerInvariant().StartsWith("step_")).Length;
+    }
+
+    // Nahravky pojmenovane step_1, step_2, ... jsou faze schopnosti (napr. Ayranuv skok: vzlet / dopad).
+    // pick < 0 = konkretni faze; jinak nahodny vyber z ostatnich nahravek (kdyz zadne nejsou, hraje faze 1).
+    static AudioClip Pick(AudioClip[] lines, int pick)
+    {
+        if (pick < 0)
+            return System.Array.Find(lines, c => c != null && c.name.ToLowerInvariant() == "step_" + (-pick));
+
+        var normal = System.Array.FindAll(lines, c => c != null && !c.name.ToLowerInvariant().StartsWith("step_"));
+        if (normal.Length > 0)
+            return normal[pick % normal.Length];
+
+        return System.Array.Find(lines, c => c != null && c.name.ToLowerInvariant() == "step_1") ?? lines[pick % lines.Length];
+    }
+
     // 'pick' je nahodne cislo od serveru, aby vsichni hraci slyseli stejnou nahravku.
     public void Play(HeroDefinition hero, VoiceKind kind, int slot, int pick)
     {
         var lines = Lines(hero, kind, slot);
         if (lines == null || lines.Length == 0) return;
 
-        var clip = lines[Mathf.Abs(pick) % lines.Length];
+        var clip = Pick(lines, pick);
         if (clip == null) return;
 
         int priority = Priority(kind);
         bool busy = source != null && source.isPlaying;
+        bool ult = kind == VoiceKind.Ability && slot == 0;
         if (busy && (priority < playingPriority || (priority == playingPriority && priority < 4))) return;
+        // Hlasku k ultimatce neprerusi jina schopnost ani zabiti; jen dalsi faze ultimatky nebo smrt.
+        if (busy && playingUlt && !ult && kind != VoiceKind.Death) return;
 
         if (source == null)
         {
@@ -121,5 +146,6 @@ public class HeroVoice : MonoBehaviour
         source.spatialBlend = kind == VoiceKind.Ability && slot == 0 ? 0f : 1f;
         source.Play();
         playingPriority = priority;
+        playingUlt = ult;
     }
 }

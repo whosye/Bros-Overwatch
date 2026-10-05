@@ -15,11 +15,16 @@ MonoBehaviour:
   abilityName: "Zk\u0159\xED\u017Een\xE9 sekyry"
   icon: {fileID: 2800000, guid: d7b212322e4b23b4eba0272a450e8362, type: 3}
   cooldown: 0
+  ultCost: 0
   power: 0
   duration: 0.2
   radius: 6
   range: 25
+  knockback: 0
+  charges: 1
   sound: {fileID: 0}
+  voiceLines:
+  - {fileID: 8300000, guid: 421ddc069da9a724680953b94d5e1dd7, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5
