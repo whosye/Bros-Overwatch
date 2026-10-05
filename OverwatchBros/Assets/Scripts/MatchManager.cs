@@ -287,14 +287,35 @@ public partial class MatchManager : NetworkBehaviour
 
         ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
 
-        // Start zapasu: kazdy hrdina rekne svou spawn hlasku (v lobby ne).
+        // Start zapasu: spawn hlasku rekne jen jeden nahodny hrac z kazdeho tymu, s odstupem (ne vsichni naraz).
         if (!IsLobby)
+        {
+            StopCoroutine(nameof(StartLines));
+            StartCoroutine(nameof(StartLines));
+        }
+    }
+
+    System.Collections.IEnumerator StartLines()
+    {
+        float[] delays = { 0.6f, 2.4f };
+        int first = Random.Range(0, PlayerTeam.TeamCount);
+        for (int i = 0; i < PlayerTeam.TeamCount; i++)
+        {
+            int team = (first + i) % PlayerTeam.TeamCount;
+            var heroes = new System.Collections.Generic.List<PlayerHero>();
             foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
             {
-                var hero = client.PlayerObject != null ? client.PlayerObject.GetComponent<PlayerHero>() : null;
-                if (hero != null)
-                    hero.Say(VoiceKind.Spawn);
+                var player = client.PlayerObject;
+                var hero = player != null ? player.GetComponent<PlayerHero>() : null;
+                var playerTeam = player != null ? player.GetComponent<PlayerTeam>() : null;
+                if (hero != null && playerTeam != null && playerTeam.teamId.Value == team)
+                    heroes.Add(hero);
             }
+
+            yield return new WaitForSeconds(i < delays.Length ? delays[i] - (i > 0 ? delays[i - 1] : 0f) : 2f);
+            if (heroes.Count > 0 && !IsLobby && !IsOver)
+                heroes[Random.Range(0, heroes.Count)].Say(VoiceKind.Spawn);
+        }
     }
 
     [ClientRpc]

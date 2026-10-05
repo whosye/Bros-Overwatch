@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum VoiceKind
@@ -21,6 +22,33 @@ public class HeroVoice : MonoBehaviour
     AudioSource source;
     int playingPriority = -1;
     bool playingUlt;
+
+    // Vsichni hrdinove na tomto klientovi - aby nemluvilo prilis mnoho postav naraz.
+    static readonly List<HeroVoice> all = new List<HeroVoice>();
+    static AudioListener listener;
+
+    void OnEnable() => all.Add(this);
+    void OnDisable() => all.Remove(this);
+
+    bool IsSpeaking => source != null && source.isPlaying;
+
+    // Kolik jinych hrdinu prave mluvi tak, ze je tento hrac slysi (ultimatky pres celou mapu, ostatni do dosahu hlasu).
+    int OthersAudible()
+    {
+        if (listener == null)
+            listener = FindAnyObjectByType<AudioListener>();
+        Vector3 ear = listener != null ? listener.transform.position : transform.position;
+
+        int count = 0;
+        foreach (var other in all)
+        {
+            if (other == this || !other.IsSpeaking) continue;
+            bool global = other.source.spatialBlend < 0.5f;
+            if (global || Vector3.Distance(other.source.transform.position, ear) <= other.source.maxDistance)
+                count++;
+        }
+        return count;
+    }
 
     // Dulezitejsi hlaska prerusi mene dulezitou; opacne se mene dulezita preskoci.
     static int Priority(VoiceKind kind)
@@ -124,6 +152,14 @@ public class HeroVoice : MonoBehaviour
         if (busy && (priority < playingPriority || (priority == playingPriority && priority < 4))) return;
         // Hlasku k ultimatce neprerusi jina schopnost ani zabiti; jen dalsi faze ultimatky nebo smrt.
         if (busy && playingUlt && !ult && kind != VoiceKind.Death) return;
+
+        // Proti zvukovemu chaosu, kdyz mluvi vic postav u sebe: mene dulezite hlasky (spawn, chuze, zraneni, past)
+        // se preskoci, kdyz uz mluvi nekdo jiny; schopnosti a zabiti hraji nejvys dve naraz. Ultimatka a smrt vzdy.
+        if (!ult && kind != VoiceKind.Death)
+        {
+            int others = OthersAudible();
+            if (priority < 4 ? others > 0 : others >= 2) return;
+        }
 
         if (source == null)
         {
