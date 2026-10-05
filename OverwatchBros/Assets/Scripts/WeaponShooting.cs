@@ -354,7 +354,7 @@ public class WeaponShooting : NetworkBehaviour
             if (weapon.headshotMultiplier > 1f && !weapon.HasScopedShot && hit.collider.GetComponentInParent<Health>() != null
                 && hit.point.y >= hit.collider.bounds.max.y - HeadHeight)
             {
-                float body = weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, hit.point));
+                float body = DamageFor(hit.collider, hit.point);
                 ProceduralSfx.Play(ProceduralSfx.StunConfirm, playerCamera.transform.position, 0.8f);
                 ApplyHit(hit.collider, hit.point, 1.3f, body * weapon.headshotMultiplier);
                 break;
@@ -383,12 +383,21 @@ public class WeaponShooting : NetworkBehaviour
         }
     }
 
+    // Poskozeni podle vzdalenosti. Sindel pri kazani ve vzduchu (ultimatka) je terc: bez poklesu vzdalenosti.
+    float DamageFor(Collider collider, Vector3 point)
+    {
+        var preacher = collider.GetComponentInParent<EzekielAbility>();
+        if (preacher != null && preacher.enabled && preacher.IsCasting)
+            return weapon.damage;
+        return weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, point));
+    }
+
     // Spolecny zasah pro hitscan i melee: damage, zvuk zasahu a maly vybuch v miste dopadu.
     // damageOverride >= 0: pevne poskozeni (odstrel s pribliseni), jinak podle zbrane a vzdalenosti.
     void ApplyHit(Collider collider, Vector3 point, float fxScale, float damageOverride = -1f)
     {
         // Strelba na dalku je slabsi (jen zbrane s nastavenym poklesem poskozeni).
-        float damage = damageOverride >= 0f ? damageOverride : weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, point));
+        float damage = damageOverride >= 0f ? damageOverride : DamageFor(collider, point);
 
         // Mimo ucinny dosah strela nic nezpusobi (jen dopad na povrchu, bez zvuku zasahu).
         if (damage <= 0f)
