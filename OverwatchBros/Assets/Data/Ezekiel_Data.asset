@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
+  m_Name: Ezekiel_Data
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
+  abilityName: Ezechiel 25:17
+  icon: {fileID: 2800000, guid: 391a2c0da87433948a7825fb002b1ebc, type: 3}
+  cooldown: 30
+  ultCost: 450
+  power: 220
+  duration: 7
+  radius: 5
+  range: 70
+  knockback: 0
+  charges: 1
+  sound: {fileID: 0}
+  voiceLines:
+  - {fileID: 8300000, guid: d9258fa920810964da3c039d3cecad34, type: 3}
+  blockAbsorb: 0.8
+  blockSpeed: 0.5
+  regenDelay: 5
+  regenTime: 6
+  speed: 14
+  tickInterval: 0.25
+  healRatio: 1

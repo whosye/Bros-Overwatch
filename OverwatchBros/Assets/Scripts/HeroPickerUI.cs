@@ -21,7 +21,7 @@ public class HeroPickerUI
     {
         var center = new Vector2(0.5f, 0.5f);
 
-        var background = UiKit.MakeImage(canvas, "HeroPicker", new Color(0.03f, 0.04f, 0.07f, 0.92f), center, Vector2.zero, new Vector2(Mathf.Max(1240f, HeroRegistry.All.Length * 330f + 120f), 420f));
+        var background = UiKit.MakeImage(canvas, "HeroPicker", new Color(0.03f, 0.04f, 0.07f, 0.92f), center, Vector2.zero, new Vector2(Mathf.Clamp(HeroRegistry.All.Length * 330f + 120f, 1240f, 1900f), 420f));
         background.raycastTarget = true;
         panel = background.gameObject;
 
@@ -29,13 +29,13 @@ public class HeroPickerUI
             new Vector2(0f, 150f), new Vector2(1100f, 70f), UiKit.Accent);
 
         var heroes = HeroRegistry.All;
-        float spacing = 330f;
+        float spacing = Mathf.Min(330f, 1780f / Mathf.Max(1, heroes.Length));
         float startX = -(heroes.Length - 1) * spacing / 2f;
         for (int i = 0; i < heroes.Length; i++)
         {
             int index = i;
             string label = $"{heroes[i].heroName}\n<size=50%>{heroes[i].maxHealth:0} HP  ·  {(heroes[i].weapon != null ? heroes[i].weapon.weaponName : "")}</size>";
-            var button = UiKit.MakeButton(panel.transform, label, center, new Vector2(startX + i * spacing, 20f), new Vector2(310f, 130f),
+            var button = UiKit.MakeButton(panel.transform, label, center, new Vector2(startX + i * spacing, 20f), new Vector2(spacing - 20f, 130f),
                 () => Choose(index), UiKit.ButtonBase, 40f);
             buttons.Add(button);
         }

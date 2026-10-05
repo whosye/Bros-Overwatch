@@ -87,6 +87,13 @@ public class ProjectileSim : MonoBehaviour
         transform.position = start + step;
         traveled += distance;
 
+        // Bezdotykovy zapalovac: tesne minuti nepritele taky odpali granat.
+        if (weapon.proximityRadius > 0f && weapon.explosionRadius > 0f && NearEnemy(transform.position))
+        {
+            Detonate(transform.position, Vector3.up, null);
+            return;
+        }
+
         if (traveled >= weapon.range)
             Finish(transform.position, KindExpired);
     }
@@ -101,12 +108,14 @@ public class ProjectileSim : MonoBehaviour
             var owner = hit.collider.GetComponentInParent<NetworkObject>();
             if (owner != null && owner == shooter.NetworkObject) continue;
 
-            // Spoluhraci projektil propousti.
-            if (owner != null && Combat.SameTeam(shooter.gameObject, owner.gameObject)) continue;
+            // Spoluhraci projektil propousti (lecive sipy ne - ty spoluhrace leci).
+            if (owner != null && Combat.SameTeam(shooter.gameObject, owner.gameObject) && weapon.allyHeal <= 0f) continue;
 
-            // Vlastni (a tymovy) balvan taky.
+            // Vlastni (a tymovy) balvan a past taky.
             var boulder = hit.collider.GetComponentInParent<BoulderHitbox>();
             if (boulder != null && boulder.IsFriendly(shooter.gameObject)) continue;
+            var trap = hit.collider.GetComponentInParent<TrapHitbox>();
+            if (trap != null && trap.IsFriendly(shooter.gameObject)) continue;
 
             result = hit;
             return true;
@@ -120,7 +129,20 @@ public class ProjectileSim : MonoBehaviour
     {
         return collider.GetComponentInParent<Health>() != null
             || collider.GetComponentInParent<Target>() != null
-            || collider.GetComponentInParent<BoulderHitbox>() != null;
+            || collider.GetComponentInParent<BoulderHitbox>() != null
+            || collider.GetComponentInParent<TrapHitbox>() != null;
+    }
+
+    bool NearEnemy(Vector3 position)
+    {
+        foreach (var col in Physics.OverlapSphere(position, weapon.proximityRadius, ~0, QueryTriggerInteraction.Ignore))
+        {
+            var health = col.GetComponentInParent<Health>();
+            if (health == null || health.currentHealth.Value <= 0f || health.gameObject == shooter.gameObject) continue;
+            if (Combat.SameTeam(shooter.gameObject, health.gameObject)) continue;
+            return true;
+        }
+        return false;
     }
 
     // Odraz granatu: kolma slozka rychlosti se otoci a ztlumi, tecna se pribrzdi (spolecne pro server i vizual).
@@ -160,8 +182,14 @@ public class ProjectileSim : MonoBehaviour
         if (boulder != null)
             boulder.Damage(shooter.gameObject, damage);
 
+        var trapHit = collider.GetComponentInParent<TrapHitbox>();
+        if (trapHit != null)
+            trapHit.Damage(shooter.gameObject, damage);
+
         var health = collider.GetComponentInParent<Health>();
-        if (health != null)
+        if (health != null && weapon.allyHeal > 0f && Combat.SameTeam(shooter.gameObject, health.gameObject))
+            Combat.HealPlayer(shooter.gameObject, health, weapon.allyHeal);
+        else if (health != null)
             Combat.DamagePlayer(shooter.gameObject, health, damage);
 
         Finish(point, KindHit);

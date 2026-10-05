@@ -16,7 +16,7 @@ public class WeaponShooting : NetworkBehaviour
 
     public int CurrentAmmo => currentAmmo;
 
-    // Velikost zasobniku; schopnost ji muze docasne zvetsit (Viktorova ultimatka: 20 naboju).
+    // Velikost zasobniku; schopnost ji muze docasne zvetsit (Viktorova ultimatka: 30 naboju).
     public int MaxAmmo => weapon == null ? 0 : ammoOverride > 0 ? ammoOverride : weapon.maxAmmo;
     int ammoOverride;
 
@@ -105,6 +105,7 @@ public class WeaponShooting : NetworkBehaviour
     {
         if (newWeapon == null) return;
 
+        scopedCharge = 0f;
         weapon = newWeapon;
         ammoOverride = 0;
         currentAmmo = newWeapon.maxAmmo;
@@ -153,8 +154,98 @@ public class WeaponShooting : NetworkBehaviour
             return;
         }
 
+        // Sniper: s pribliseni se rana nabiji a strili se po jedne; bez nej je to obycejny samopal.
+        if (weapon.HasScopedShot)
+        {
+            if (scope == null)
+                scope = GetComponent<ScopeZoom>();
+            if (scope != null && scope.Zoomed)
+            {
+                UpdateScoped();
+                return;
+            }
+            scopedCharge = 0f;
+        }
+
         if (Mouse.current.leftButton.isPressed && Time.time >= nextFireTime)
             Fire();
+    }
+
+    // ---------------- odstrel s pribliseni ----------------
+
+    ScopeZoom scope;
+    float scopedCharge;
+
+    // Jak hlava vysoko: horni cast kapsle hrace.
+    const float HeadHeight = 0.38f;
+
+    void UpdateScoped()
+    {
+        scopedCharge = Mathf.Clamp01(scopedCharge + Time.deltaTime / Mathf.Max(0.05f, weapon.scopedChargeTime));
+
+        if (!Mouse.current.leftButton.wasPressedThisFrame || Time.time < nextFireTime) return;
+
+        int cost = Mathf.Max(1, weapon.scopedAmmoCost);
+        if (weapon.HasAmmo && currentAmmo < cost)
+        {
+            nextFireTime = Time.time + 0.35f;
+            ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.6f);
+            if (currentAmmo <= 0) Reload();
+            return;
+        }
+
+        float charge = scopedCharge;
+        bool full = charge >= 0.999f;
+        scopedCharge = 0f;
+        nextFireTime = Time.time + 0.6f;
+        if (weapon.HasAmmo)
+            currentAmmo -= cost;
+
+        ProceduralSfx.Play(ProceduralSfx.Gunshot, playerCamera.transform.position, 1f);
+        ShotFxServerRpc(false);
+        held.Swing();
+
+        Vector3 origin = playerCamera.transform.position;
+        Vector3 direction = playerCamera.transform.forward;
+        Vector3 end = origin + direction * weapon.range;
+        var hits = Physics.RaycastAll(origin, direction, weapon.range, ~0, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (var hit in hits)
+        {
+            var owner = hit.collider.GetComponentInParent<NetworkObject>();
+            if (owner != null && owner == NetworkObject) continue;
+
+            float damage = Mathf.Lerp(weapon.scopedMinDamage, weapon.scopedMaxDamage, charge);
+            bool headshot = full && weapon.headshotMultiplier > 1f && hit.collider.GetComponentInParent<Health>() != null
+                && hit.point.y >= hit.collider.bounds.max.y - HeadHeight;
+            if (headshot)
+            {
+                damage *= weapon.headshotMultiplier;
+                ProceduralSfx.Play(ProceduralSfx.StunConfirm, playerCamera.transform.position, 1f);
+            }
+
+            ApplyHit(hit.collider, hit.point, full ? 2f : 1.2f, damage);
+            end = hit.point;
+            break;
+        }
+
+        // Stopa vystrelu (vidi ji vsichni, at je jasne, odkud sniper strili).
+        Vector3 muzzle = origin + playerCamera.transform.right * 0.15f - playerCamera.transform.up * 0.12f;
+        Fx.Tracer(muzzle, end, weapon.projectileColor, full);
+        TracerServerRpc(muzzle, end, full);
+    }
+
+    [ServerRpc]
+    void TracerServerRpc(Vector3 from, Vector3 to, bool full)
+    {
+        TracerClientRpc(from, to, full);
+    }
+
+    [ClientRpc]
+    void TracerClientRpc(Vector3 from, Vector3 to, bool full)
+    {
+        if (IsOwner) return;
+        Fx.Tracer(from, to, weapon != null ? weapon.projectileColor : Color.white, full);
     }
 
     // ---------------- luk ----------------
@@ -164,7 +255,7 @@ public class WeaponShooting : NetworkBehaviour
     RapidFireAbility rapid;
 
     // Jak moc je luk natazeny (0-1), pro HUD a model zbrane.
-    public float ChargeFraction => Mathf.Max(ForcedCharge, charging && weapon != null && weapon.chargeTime > 0f
+    public float ChargeFraction => Mathf.Max(Mathf.Max(ForcedCharge, scopedCharge), charging && weapon != null && weapon.chargeTime > 0f
         ? Mathf.Clamp01((Time.time - chargeStart) / weapon.chargeTime)
         : 0f);
 
@@ -259,6 +350,16 @@ public class WeaponShooting : NetworkBehaviour
             var owner = hit.collider.GetComponentInParent<NetworkObject>();
             if (owner != null && owner == NetworkObject) continue;
 
+            // Zasah do hlavy u bezne hitscan zbrane (napr. Sindelova pistole; sniper ma vlastni odstrel s pribliseni).
+            if (weapon.headshotMultiplier > 1f && !weapon.HasScopedShot && hit.collider.GetComponentInParent<Health>() != null
+                && hit.point.y >= hit.collider.bounds.max.y - HeadHeight)
+            {
+                float body = weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, hit.point));
+                ProceduralSfx.Play(ProceduralSfx.StunConfirm, playerCamera.transform.position, 0.8f);
+                ApplyHit(hit.collider, hit.point, 1.3f, body * weapon.headshotMultiplier);
+                break;
+            }
+
             ApplyHit(hit.collider, hit.point, 1f);
             break;
         }
@@ -283,10 +384,11 @@ public class WeaponShooting : NetworkBehaviour
     }
 
     // Spolecny zasah pro hitscan i melee: damage, zvuk zasahu a maly vybuch v miste dopadu.
-    void ApplyHit(Collider collider, Vector3 point, float fxScale)
+    // damageOverride >= 0: pevne poskozeni (odstrel s pribliseni), jinak podle zbrane a vzdalenosti.
+    void ApplyHit(Collider collider, Vector3 point, float fxScale, float damageOverride = -1f)
     {
         // Strelba na dalku je slabsi (jen zbrane s nastavenym poklesem poskozeni).
-        float damage = weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, point));
+        float damage = damageOverride >= 0f ? damageOverride : weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, point));
 
         // Mimo ucinny dosah strela nic nezpusobi (jen dopad na povrchu, bez zvuku zasahu).
         if (damage <= 0f)
@@ -309,6 +411,15 @@ public class WeaponShooting : NetworkBehaviour
         {
             RequestBoulderDamageServerRpc(boulder.Owner.NetworkObject, damage);
             ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.8f);
+        }
+
+        // Nepratelska past na medvedy jde rozstrilet.
+        var trap = collider.GetComponentInParent<TrapHitbox>();
+        if (trap != null && trap.Owner != null && !trap.IsFriendly(gameObject))
+        {
+            RequestTrapDamageServerRpc(trap.Owner.NetworkObject, damage);
+            ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.8f);
+            HudUI.NotifyHit(false);
         }
 
         NetworkObject hitNetworkObject = collider.GetComponentInParent<NetworkObject>();
@@ -374,6 +485,16 @@ public class WeaponShooting : NetworkBehaviour
         var boulder = ownerObject.GetComponent<BoulderAbility>();
         if (boulder != null)
             boulder.ServerDamage(gameObject, amount);
+    }
+
+    [ServerRpc]
+    void RequestTrapDamageServerRpc(NetworkObjectReference ownerRef, float amount)
+    {
+        if (!ownerRef.TryGet(out NetworkObject ownerObject)) return;
+
+        var trap = ownerObject.GetComponent<TrapAbility>();
+        if (trap != null)
+            trap.ServerDamage(gameObject, amount);
     }
 
     static int projectileCounter;

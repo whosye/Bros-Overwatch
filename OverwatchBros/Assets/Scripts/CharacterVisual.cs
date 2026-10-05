@@ -10,6 +10,15 @@ public class CharacterVisual : MonoBehaviour
     const int Idle = 0, Walk = 1, Jog = 2, Sprint = 3, Jump = 4, Death = 5, StateCount = 6;
 
     public int Version { get; private set; }
+
+    // Duch pro prehravani "play of the game" (bez site): stav nastavuje ReplayPlayer.
+    public bool IsGhost;
+    public bool GhostHidden, GhostDead, GhostFrenzy, GhostBlocking;
+
+    public void SetFeetOffset(float y)
+    {
+        feetLocalY = y;
+    }
     public Transform ModelRoot { get; private set; }
     public bool HasModel => ModelRoot != null;
 
@@ -146,6 +155,11 @@ public class CharacterVisual : MonoBehaviour
     }
 
     // ---------------- ruce (pro zbrane) ----------------
+
+    public Transform GetBone(HumanBodyBones bone)
+    {
+        return animator != null && animator.isHuman ? animator.GetBoneTransform(bone) : null;
+    }
 
     public Transform GetHand(bool right)
     {
@@ -294,6 +308,50 @@ public class CharacterVisual : MonoBehaviour
         reloadTime = 0f;
     }
 
+    // ---------------- kop (sniperovo odkopnuti) ----------------
+    // Knihovna animaci kop nema, tak se po animaci natoci kosti prave nohy (a trup lehce dozadu).
+    float kickTime = -1f, kickDuration = 0.4f;
+
+    public void PlayKick(float duration)
+    {
+        if (!IsGhost)
+            ReplayLog.Kick(this, duration);
+        if (animator == null || !animator.isHuman) return;
+        kickDuration = Mathf.Max(0.1f, duration);
+        kickTime = 0f;
+    }
+
+    void LateUpdate()
+    {
+        if (kickTime < 0f || animator == null || ModelRoot == null) return;
+
+        kickTime += Time.deltaTime;
+        float t = kickTime / kickDuration;
+        if (t >= 1f)
+        {
+            kickTime = -1f;
+            return;
+        }
+
+        // Stehno: nadechnuti dozadu, rychle vykopnuti dopredu, drzeni, navrat. Koleno se pri nadechnuti pokrci.
+        float thigh, knee;
+        if (t < 0.18f) { thigh = Mathf.Lerp(0f, -20f, t / 0.18f); knee = Mathf.Lerp(0f, 70f, t / 0.18f); }
+        else if (t < 0.4f) { float k = Mathf.SmoothStep(0f, 1f, (t - 0.18f) / 0.22f); thigh = Mathf.Lerp(-20f, 95f, k); knee = Mathf.Lerp(70f, 0f, k); }
+        else if (t < 0.6f) { thigh = 95f; knee = 0f; }
+        else { float k = (t - 0.6f) / 0.4f; thigh = Mathf.Lerp(95f, 0f, k); knee = Mathf.Lerp(0f, 0f, k); }
+
+        Vector3 right = ModelRoot.right;
+        var upper = animator.GetBoneTransform(HumanBodyBones.RightUpperLeg);
+        var lower = animator.GetBoneTransform(HumanBodyBones.RightLowerLeg);
+        var spine = animator.GetBoneTransform(HumanBodyBones.Spine);
+        if (upper != null)
+            upper.rotation = Quaternion.AngleAxis(-thigh, right) * upper.rotation;
+        if (lower != null)
+            lower.rotation = Quaternion.AngleAxis(knee, right) * lower.rotation;
+        if (spine != null)
+            spine.rotation = Quaternion.AngleAxis(-thigh * 0.12f, right) * spine.rotation;   // zaklon
+    }
+
     public void PlayAttack(bool melee, float duration)
     {
         if (!graph.IsValid()) return;
@@ -309,7 +367,8 @@ public class CharacterVisual : MonoBehaviour
         if (ModelRoot == null) return;
 
         bool owner = fpc != null && fpc.IsSpawned && fpc.IsOwner;
-        bool visible = !owner || fpc.ThirdPerson;
+        // Behem prehravani POTG jsou zivi hraci skryti (misto nich hraji duchove).
+        bool visible = IsGhost ? !GhostHidden : (!owner || fpc.ThirdPerson) && !ReplayPlayer.Active;
         foreach (var r in renderers)
             if (r != null && r.enabled != visible)
                 r.enabled = visible;
@@ -322,7 +381,7 @@ public class CharacterVisual : MonoBehaviour
         float dt = Time.deltaTime;
         UpdateSpeed(dt);
 
-        bool dead = health != null && health.currentHealth.Value <= 0f;
+        bool dead = IsGhost ? GhostDead : health != null && health.currentHealth.Value <= 0f;
         if (dead && !wasDead)
             stateTimes[Death] = 0f;
         wasDead = dead;
@@ -330,7 +389,7 @@ public class CharacterVisual : MonoBehaviour
         bool grounded = IsGrounded();
 
         // Modry plamen: vypad v utocne poze.
-        bool frenzy = !dead && rush != null && rush.enabled && rush.IsSpawned && rush.IsRushing;
+        bool frenzy = !dead && (IsGhost ? GhostFrenzy : rush != null && rush.enabled && rush.IsSpawned && rush.IsRushing);
 
         for (int i = 0; i < StateCount; i++)
         {
@@ -389,7 +448,7 @@ public class CharacterVisual : MonoBehaviour
             states[i].SetTime(stateTimes[i]);
         }
 
-        bool blocking = !dead && block != null && block.IsBlocking;
+        bool blocking = !dead && (IsGhost ? GhostBlocking : block != null && block.IsBlocking);
         blockWeight = Mathf.MoveTowards(blockWeight, blocking ? 1f : 0f, dt * 8f);
         layers.SetInputWeight(3, blockWeight);
 

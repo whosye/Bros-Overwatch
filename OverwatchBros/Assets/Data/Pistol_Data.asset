@@ -15,11 +15,39 @@ MonoBehaviour:
   weaponName: Pistol
   damage: 10
   fireRate: 6.5
-  maxAmmo: 10
+  maxAmmo: 20
+  reloadTime: 1.5
+  reloadAnimation: 0
   range: 100
+  chargeTime: 0
+  minChargeDamage: 20
+  minChargeSpeed: 25
+  falloffStart: 20
+  falloffEnd: 45
   falloffMin: 0.4
   farFalloffEnd: 60
   farFalloffMin: 0.1
   maxDamageRange: 60
-  falloffEnd: 45
-  falloffStart: 20
+  allyHeal: 0
+  scopeFov: 0
+  scopedChargeTime: 0
+  scopedMinDamage: 30
+  scopedMaxDamage: 120
+  headshotMultiplier: 2
+  scopedAmmoCost: 2
+  scopedMoveSpeed: 0.5
+  proximityRadius: 0
+  fireMode: 0
+  projectileSpeed: 40
+  projectileGravity: 0
+  projectileRadius: 0.15
+  explosionRadius: 0
+  projectileBounce: 0
+  projectileFuse: 1
+  projectileColor: {r: 1, g: 0.8, b: 0.2, a: 1}
+  projectileTrail: 1
+  projectilePrefab: {fileID: 0}
+  meleeRadius: 0.6
+  heldModel: 0
+  dualWield: 0
+  heldPrefab: {fileID: 5783223463912948960, guid: 83e204c8db133154384a8423f2b836df, type: 3}

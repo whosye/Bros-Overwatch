@@ -105,17 +105,17 @@ public class MatchOverlayUI
         }
 
         // Tabulka hracu (Tab).
-        var boardImage = UiKit.MakeImage(canvas, "Scoreboard", new Color(0.03f, 0.04f, 0.07f, 0.90f), center, Vector2.zero, new Vector2(1300f, 640f));
+        var boardImage = UiKit.MakeImage(canvas, "Scoreboard", new Color(0.03f, 0.04f, 0.07f, 0.90f), center, Vector2.zero, new Vector2(1500f, 640f));
         board = boardImage.gameObject;
-        boardTitle = UiKit.MakeText(board.transform, "Title", "", 40, TextAlignmentOptions.Center, center, new Vector2(0f, 270f), new Vector2(1200f, 56f), UiKit.Accent);
+        boardTitle = UiKit.MakeText(board.transform, "Title", "", 40, TextAlignmentOptions.Center, center, new Vector2(0f, 270f), new Vector2(1400f, 56f), UiKit.Accent);
         for (int team = 0; team < PlayerTeam.TeamCount; team++)
         {
-            float x = team == 0 ? -320f : 320f;
-            boardHeads[team] = UiKit.MakeText(board.transform, "Head", "", 34, TextAlignmentOptions.Left, center, new Vector2(x, 195f), new Vector2(600f, 50f), UiKit.TeamColor(team));
-            var columns = UiKit.MakeText(board.transform, "Columns", "<pos=0%>HRÁČ<pos=50%>HRDINA<pos=74%>ZABITÍ<pos=88%>SMRTI", 20, TextAlignmentOptions.Left, center,
-                new Vector2(x, 150f), new Vector2(600f, 30f), UiKit.Muted);
+            float x = team == 0 ? -370f : 370f;
+            boardHeads[team] = UiKit.MakeText(board.transform, "Head", "", 34, TextAlignmentOptions.Left, center, new Vector2(x, 195f), new Vector2(700f, 50f), UiKit.TeamColor(team));
+            var columns = UiKit.MakeText(board.transform, "Columns", "<pos=0%>HRÁČ<pos=40%>HRDINA<pos=63%>ZABITÍ<pos=76%>SMRTI<pos=88%>LÉČENÍ", 20, TextAlignmentOptions.Left, center,
+                new Vector2(x, 150f), new Vector2(700f, 30f), UiKit.Muted);
             columns.textWrappingMode = TextWrappingModes.NoWrap;
-            boardLists[team] = UiKit.MakeText(board.transform, "List", "", 28, TextAlignmentOptions.TopLeft, center, new Vector2(x, -60f), new Vector2(600f, 380f));
+            boardLists[team] = UiKit.MakeText(board.transform, "List", "", 28, TextAlignmentOptions.TopLeft, center, new Vector2(x, -60f), new Vector2(700f, 380f));
             boardLists[team].textWrappingMode = TextWrappingModes.NoWrap;
         }
         board.SetActive(false);
@@ -140,8 +140,11 @@ public class MatchOverlayUI
         }
 
         int localTeam = TeamOf(local);
-        UpdatePlates(local, localTeam, playing);
-        UpdateFeed(localTeam, playing);
+        if (ReplayPlayer.Active)
+            UpdateReplayPlates();
+        else
+            UpdatePlates(local, localTeam, playing);
+        UpdateFeed(localTeam, playing && !ReplayPlayer.Active);
         UpdateBoard(local, playing, match, alwaysShowBoard);
     }
 
@@ -200,6 +203,60 @@ public class MatchOverlayUI
             if (plates[i].root.gameObject.activeSelf != active)
                 plates[i].root.gameObject.SetActive(active);
         }
+    }
+
+    // Prehravani "play of the game": jmenovky nad duchy z pohledu hrace, ktery akci predvedl (stejna pravidla jako v zapase).
+    readonly List<ReplayPlayer.Plate> replayPlates = new List<ReplayPlayer.Plate>();
+
+    void UpdateReplayPlates()
+    {
+        int used = 0;
+        var camera = ReplayPlayer.Camera;
+        int povTeam = ReplayPlayer.PovTeam;
+        ReplayPlayer.GetPlates(replayPlates);
+
+        if (camera != null)
+            foreach (var p in replayPlates)
+            {
+                Vector3 screen = camera.WorldToScreenPoint(p.head);
+                if (screen.z <= 0.3f) continue;
+
+                bool ally = p.team == povTeam;
+                float distance = screen.z;
+                if (!ally && !p.revealed && (distance > 60f || !ReplayVisible(camera.transform.position, p.head - Vector3.up * 0.8f))) continue;
+
+                if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(plateRoot, screen, null, out Vector2 point)) continue;
+
+                var plate = GetPlate(used++);
+                plate.root.anchoredPosition = point;
+                plate.root.localScale = Vector3.one * Mathf.Clamp(14f / Mathf.Max(1f, distance), 0.55f, 1f);
+
+                var color = ally ? Ally : Enemy;
+                plate.name.text = p.name;
+                plate.name.color = color;
+                plate.fill.color = color;
+                plate.fill.rectTransform.sizeDelta = new Vector2(BarWidth * p.health01, 8f);
+            }
+
+        for (int i = 0; i < plates.Count; i++)
+        {
+            bool active = i < used;
+            if (plates[i].root.gameObject.activeSelf != active)
+                plates[i].root.gameObject.SetActive(active);
+        }
+    }
+
+    // Prima viditelnost v prehravani: duchove nemaji kolize, zivi (skryti) hraci se nepocitaji.
+    static bool ReplayVisible(Vector3 eye, Vector3 chest)
+    {
+        Vector3 direction = chest - eye;
+        float distance = direction.magnitude;
+        if (distance < 0.5f) return true;
+
+        foreach (var hit in Physics.RaycastAll(eye, direction / distance, distance, ~0, QueryTriggerInteraction.Ignore))
+            if (hit.collider.GetComponentInParent<NetworkObject>() == null)
+                return false;
+        return true;
     }
 
     static bool Visible(Vector3 eye, PlayerHero target, PlayerHero local)
@@ -326,7 +383,7 @@ public class MatchOverlayUI
                 string name = player == local ? $"<b><color=#F28C1A>{player.DisplayName}</color></b>" : player.DisplayName;
                 string hero = player.Hero != null ? player.Hero.heroName : "…";
                 if (player.IsJoining) hero = "vybírá…";
-                text.AppendLine($"<pos=0%>{name}<pos=50%><color=#A6B3C7>{hero}</color><pos=78%>{player.kills.Value}<pos=92%>{player.deaths.Value}");
+                text.AppendLine($"<pos=0%>{name}<pos=40%><color=#A6B3C7>{hero}</color><pos=66%>{player.kills.Value}<pos=79%>{player.deaths.Value}<pos=89%><color=#7CE08A>{Mathf.RoundToInt(player.healing.Value)}</color>");
             }
 
             boardLists[team].text = text.ToString();

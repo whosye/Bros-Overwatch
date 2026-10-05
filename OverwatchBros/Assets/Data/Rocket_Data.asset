@@ -19,10 +19,28 @@ MonoBehaviour:
   reloadTime: 1.8
   reloadAnimation: 1
   range: 140
+  chargeTime: 0
+  minChargeDamage: 20
+  minChargeSpeed: 25
+  falloffStart: 0
+  falloffEnd: 0
+  falloffMin: 0.4
+  farFalloffEnd: 0
+  farFalloffMin: 0.1
+  maxDamageRange: 0
+  allyHeal: 0
+  scopeFov: 0
+  scopedChargeTime: 0
+  scopedMinDamage: 30
+  scopedMaxDamage: 120
+  headshotMultiplier: 2
+  scopedAmmoCost: 2
+  scopedMoveSpeed: 0.5
+  proximityRadius: 1
   fireMode: 1
-  projectileSpeed: 24
+  projectileSpeed: 32
   projectileGravity: 14
-  projectileRadius: 0.22
+  projectileRadius: 0.35
   explosionRadius: 3.2
   projectileBounce: 0.45
   projectileFuse: 0.9
@@ -32,4 +50,4 @@ MonoBehaviour:
   meleeRadius: 0.6
   heldModel: 0
   dualWield: 0
-  heldPrefab: {fileID: 0}
+  heldPrefab: {fileID: 7302944645326007207, guid: af1d3d5a1e027b34ba5f8605606e788d, type: 3}

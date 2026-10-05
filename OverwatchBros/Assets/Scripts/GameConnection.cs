@@ -21,6 +21,8 @@ public static class GameConnection
         MatchManager.PendingGameName = gameName;
 
         var transport = network.GetComponent<UnityTransport>();
+        // Vetsi fronta paketu: s 10 hraci (pohyb, strely, schopnosti, prenos POTG) by vychozich 128 nestacilo.
+        transport.MaxPacketQueueSize = 1024;
         transport.SetConnectionData("127.0.0.1", Port, "0.0.0.0");
 
         if (!network.StartHost())
@@ -46,6 +48,8 @@ public static class GameConnection
         }
 
         var transport = network.GetComponent<UnityTransport>();
+        // Vetsi fronta paketu: s 10 hraci (pohyb, strely, schopnosti, prenos POTG) by vychozich 128 nestacilo.
+        transport.MaxPacketQueueSize = 1024;
         transport.SetConnectionData(address, port);
         transport.MaxConnectAttempts = 10;
 

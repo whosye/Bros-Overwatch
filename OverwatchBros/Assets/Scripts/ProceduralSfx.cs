@@ -111,8 +111,9 @@ public static class ProceduralSfx
 
     public static void Play(AudioClip clip, Vector3 position, float volume = 1f)
     {
-        if (clip != null)
-            AudioSource.PlayClipAtPoint(clip, position, volume);
+        if (clip == null) return;
+        ReplayLog.Sfx(clip, position, volume);
+        AudioSource.PlayClipAtPoint(clip, position, volume);
     }
 
     static float Noise(System.Random r) => (float)(r.NextDouble() * 2.0 - 1.0);

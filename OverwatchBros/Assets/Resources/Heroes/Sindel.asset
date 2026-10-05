@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a39f21388b7624d84e663cff5b4ed3, type: 3}
+  m_Name: Sindel
+  m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
+  heroName: "\u0160indel"
+  color: {r: 0.85, g: 0.7, b: 0.3, a: 1}
+  maxHealth: 100
+  weapon: {fileID: 11400000, guid: 2c41b1fd8923d4943a3171e611c4f207, type: 2}
+  abilityKind: 29
+  ability: {fileID: 11400000, guid: 5edecbcd316748e4aa6a22c62a5d71ae, type: 2}
+  secondaryAbilityKind: 27
+  secondaryAbility: {fileID: 11400000, guid: 27f65ea8c1cbd6849949125d7186e2af, type: 2}
+  blockAbility: {fileID: 0}
+  altAbilityKind: 28
+  altAbility: {fileID: 11400000, guid: 2b6beac6cd90658458c7074be38b3746, type: 2}
+  rmbAbilityKind: 0
+  rmbAbility: {fileID: 0}
+  doubleJump: 0
+  ledgeClimb: 0
+  deathGrenades: 0
+  deathGrenadeDamage: 30
+  deathGrenadeRadius: 3.5
+  characterPrefab: {fileID: 903988112565318085, guid: f4bc1276d3327cf48ad692f996539397, type: 3}
+  tintCharacter: 0
+  sleeveColor: {r: 0.07, g: 0.07, b: 0.08, a: 1}
+  skinColor: {r: 0.88, g: 0.72, b: 0.6, a: 1}
+  spawnLines:
+  - {fileID: 8300000, guid: db1148339ad65ef4983f19ac2adea2d2, type: 3}
+  killLines:
+  - {fileID: 8300000, guid: 417ab6c6e72bdb94f8b0b98bda05d084, type: 3}
+  - {fileID: 8300000, guid: 344a25cbbab0e0f43b3baca8f46dcc05, type: 3}
+  deathLines: []
+  hurtLines:
+  - {fileID: 8300000, guid: 2d54e1095f74e5b4a89aae2829c4f42f, type: 3}
+  idleLines:
+  - {fileID: 8300000, guid: b51d19d482685514f994fab41c962bb2, type: 3}
+  - {fileID: 8300000, guid: 98389558563b39f46985956a12484224, type: 3}
+  - {fileID: 8300000, guid: 04cbda7ba510393498c300beeee4d143, type: 3}
+  snareLines:
+  - {fileID: 8300000, guid: 97386fd59f9840749949630399594e56, type: 3}
+  - {fileID: 8300000, guid: 7803c5aa0e6670342b3fa327746b554b, type: 3}

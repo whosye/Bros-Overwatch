@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ebeba9977deef4cb0414f2cfd81e11, type: 3}
+  m_Name: SniperRifle_Data
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  weaponName: "Odst\u0159elova\u010Dka"
+  damage: 7
+  fireRate: 8
+  maxAmmo: 16
+  reloadTime: 1.8
+  reloadAnimation: 0
+  range: 250
+  chargeTime: 0
+  minChargeDamage: 20
+  minChargeSpeed: 25
+  falloffStart: 12
+  falloffEnd: 30
+  falloffMin: 0.25
+  farFalloffEnd: 0
+  farFalloffMin: 0.1
+  maxDamageRange: 40
+  allyHeal: 0
+  scopeFov: 25
+  scopedChargeTime: 1.2
+  scopedMinDamage: 30
+  scopedMaxDamage: 65
+  headshotMultiplier: 2
+  scopedAmmoCost: 2
+  scopedMoveSpeed: 0.5
+  proximityRadius: 0
+  fireMode: 0
+  projectileSpeed: 40
+  projectileGravity: 0
+  projectileRadius: 0.15
+  explosionRadius: 0
+  projectileBounce: 0
+  projectileFuse: 1
+  projectileColor: {r: 1, g: 0.35, b: 0.3, a: 1}
+  projectileTrail: 1
+  projectilePrefab: {fileID: 0}
+  meleeRadius: 0.6
+  heldModel: 2
+  dualWield: 0
+  heldPrefab: {fileID: 2811407784632665609, guid: 81469f333866d914ca66b93642a80f32, type: 3}

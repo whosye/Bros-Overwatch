@@ -55,6 +55,30 @@ public class WeaponDefinition : ScriptableObject
     [Tooltip("Za touto vzdalenosti (m) zasah nedava zadne poskozeni. 0 = bez omezeni.")]
     public float maxDamageRange = 0f;
 
+    [Header("Léčení a dalekohled (Anna)")]
+    [Tooltip("Kolik HP vyleci zasah spoluhrace (projektil spoluhrace neprolétne). 0 = zbran neleci.")]
+    public float allyHeal = 0f;
+    [Tooltip("Zorne pole pri drzeni praveho tlacitka (pribliseni). 0 = bez dalekohledu.")]
+    public float scopeFov = 0f;
+
+    [Header("Odstřel s přiblížením (sniper; jen okamžitý zásah a Scope Fov > 0)")]
+    [Tooltip("Jak dlouho (s) se pri pribliseni nabiji rana do plne sily. 0 = pribliseni jen meni zorne pole.")]
+    public float scopedChargeTime = 0f;
+    [Tooltip("Poskozeni nenabite rany s pribliseni.")]
+    public float scopedMinDamage = 30f;
+    [Tooltip("Poskozeni plne nabite rany s pribliseni (bez poklesu s dalkou).")]
+    public float scopedMaxDamage = 120f;
+    [Tooltip("Nasobek pri zasahu do hlavy (jen plne nabita rana). 1 = bez zasahu do hlavy.")]
+    public float headshotMultiplier = 2f;
+    [Tooltip("Kolik naboju spotrebuje rana s pribliseni.")]
+    public int scopedAmmoCost = 2;
+    [Tooltip("Pomer rychlosti chuze pri pribliseni (0.5 = polovicni).")]
+    public float scopedMoveSpeed = 0.5f;
+
+    [Header("Bezdotykový zapalovač (výbušné projektily)")]
+    [Tooltip("Vybusny projektil vybuchne, kdyz proleti blize nez tolik metru od nepritele (i kdyz ho tesne mine). 0 = vypnuto.")]
+    public float proximityRadius = 0f;
+
     [Header("Projektil (jen kdyz Fire Mode = Projectile)")]
     public FireMode fireMode = FireMode.Hitscan;
     public float projectileSpeed = 40f;
@@ -108,4 +132,5 @@ public class WeaponDefinition : ScriptableObject
         return damage * Mathf.Lerp(1f, Mathf.Clamp01(falloffMin), t);
     }
     public bool Bounces => IsProjectile && projectileBounce > 0f;
+    public bool HasScopedShot => fireMode == FireMode.Hitscan && scopeFov > 0f && scopedChargeTime > 0f;
 }

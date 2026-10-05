@@ -173,6 +173,19 @@ GameObject:
   - component: {fileID: 8644616314768656024}
   - component: {fileID: 2430170537038191072}
   - component: {fileID: 1887880283413261573}
+  - component: {fileID: 8044994910529656534}
+  - component: {fileID: 1816102242197772913}
+  - component: {fileID: 4474970103841795114}
+  - component: {fileID: 2471577858849859165}
+  - component: {fileID: 6615127781046077956}
+  - component: {fileID: 6480262220455826633}
+  - component: {fileID: 7161076528736106155}
+  - component: {fileID: 8198129275863101464}
+  - component: {fileID: 5030010977058031100}
+  - component: {fileID: 188493231531005411}
+  - component: {fileID: 1792325043084606660}
+  - component: {fileID: 8753729545128356338}
+  - component: {fileID: 53562669911337371}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -362,6 +375,11 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  shield:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &856219777043907810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -525,12 +543,22 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  healing:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   ultCharge:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
   revealed:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  boosted:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
@@ -625,7 +653,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrapAbility
   ShowTopMostFoldoutHeaderGroup: 1
   ability: {fileID: 0}
-  placeDistance: 1.8
   armDelay: 0.6
 --- !u!114 &4516236898758110892
 MonoBehaviour:
@@ -760,3 +787,202 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StormAbility
   ShowTopMostFoldoutHeaderGroup: 1
   ability: {fileID: 0}
+--- !u!114 &8044994910529656534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c40d31bd7527524facc0a9837cd0b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SleepDartAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &1816102242197772913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0e9ccd461a3304ebc815816fbee5fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BioticGrenadeAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &4474970103841795114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c2b79dbfa46efa48965e1b32b2134fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NanoBoostAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &2471577858849859165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cb9231f28664064d959b4299a96a6cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScopeZoom
+--- !u!114 &6615127781046077956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14de6c4e29f866b4db5cf74c3dce575b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GrappleAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &6480262220455826633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6493d630670688f42a0ca0be2b919cdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KickAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &7161076528736106155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5f16303231e22a4aba2984642d61396, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InfraAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &8198129275863101464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f738db77a6bfd049b74830ccacd704a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlinkAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &5030010977058031100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42338727e58956444b42e96921af34ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RecallAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &188493231531005411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 600444d5e987e21488735c3b626a05cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PulseBombAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &1792325043084606660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 968705b66c5c14641831856ca82e942d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BardAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  crossfade: {fileID: 0}
+  amp: {fileID: 0}
+  concert: {fileID: 0}
+  wave: {fileID: 0}
+  speedMode:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  amped:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &8753729545128356338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c19bacb03909874485811330ef98841, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SindelAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  leap: {fileID: 0}
+  grenade: {fileID: 0}
+--- !u!114 &53562669911337371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9622ebc12db71142a8e378582b53fb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EzekielAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+  hoverHeight: 7
+  riseTime: 0.8
+  hoverSpeed: 3.5
+  cameraDistance: 6.5
+  cameraLift: 1.2

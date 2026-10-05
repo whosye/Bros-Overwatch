@@ -35,8 +35,17 @@ public static class Combat
         if (match != null && (match.IsOver || match.IsLobby)) return;
         if (SameTeam(attacker, target.gameObject)) return;
 
-        float before = target.currentHealth.Value;
-        bool wasAlive = before > 0f;
+        // Posileni (Annina ultimatka): posileny utoci silneji a dostava mensi poskozeni.
+        var boostedAttacker = attacker != null ? attacker.GetComponent<PlayerHero>() : null;
+        if (boostedAttacker != null && boostedAttacker.IsBoosted)
+            amount *= NanoBoostAbility.DamageMultiplier;
+        var boostedTarget = target.GetComponent<PlayerHero>();
+        if (boostedTarget != null && boostedTarget.IsBoosted)
+            amount *= NanoBoostAbility.DamageTakenMultiplier;
+
+
+        float before = target.Effective;   // vcetne stitu (zasah do stitu se taky pocita)
+        bool wasAlive = target.currentHealth.Value > 0f;
 
         var targetHero = target.GetComponent<PlayerHero>();
         if (targetHero != null)
@@ -46,22 +55,45 @@ public static class Combat
         bool killed = wasAlive && target.currentHealth.Value <= 0f;
 
         // Utocnik dostane potvrzeni zasahu (krizek u zamerovace, pri zabiti lebka).
-        if (attacker != null && attacker != target.gameObject && target.currentHealth.Value < before)
+        if (attacker != null && attacker != target.gameObject && target.Effective < before)
         {
             var attackerHero = attacker.GetComponent<PlayerHero>();
             if (attackerHero != null)
             {
                 attackerHero.ServerNotifyHit(killed);
-                attackerHero.ServerAddUltCharge(before - target.currentHealth.Value);
+                attackerHero.ServerAddUltCharge(before - target.Effective);
             }
 
             var recorder = attacker.GetComponent<PotgRecorder>();
             if (recorder != null)
-                recorder.ServerAddDamage(before - target.currentHealth.Value);
+                recorder.ServerAddDamage(before - target.Effective);
         }
 
         if (killed && match != null)
             match.ReportKill(attacker, target.gameObject);
+    }
+
+    // Leceni spoluhrace (jen server): lecitel dostane potvrzeni zasahu a nabiti ultimatky za vylecene HP.
+    public static float HealPlayer(GameObject healer, Health target, float amount)
+    {
+        var network = NetworkManager.Singleton;
+        if (network == null || !network.IsServer || target == null) return 0f;
+
+        var match = MatchManager.Instance;
+        if (match != null && (match.IsOver || match.IsLobby)) return 0f;
+
+        float healed = target.Heal(amount);
+        if (healer != null && healed > 0f && healer != target.gameObject)
+        {
+            var healerHero = healer.GetComponent<PlayerHero>();
+            if (healerHero != null)
+            {
+                healerHero.ServerNotifyHit(false);
+                healerHero.ServerAddUltCharge(healed);
+                healerHero.ServerAddHealingStat(healed);
+            }
+        }
+        return healed;
     }
 
     // Plosny vybuch (jen server): damage klesa od stredu (100 %) po okraj (edgeFactor), neprochazi zdmi, nevraci vlastni tym.
@@ -84,6 +116,10 @@ public static class Combat
             var boulder = col.GetComponentInParent<BoulderHitbox>();
             if (boulder != null)
                 boulder.Damage(attacker, damage);
+
+            var trap = col.GetComponentInParent<TrapHitbox>();
+            if (trap != null)
+                trap.Damage(attacker, damage);
 
             var health = col.GetComponentInParent<Health>();
             if (health == null || !damaged.Add(health)) continue;

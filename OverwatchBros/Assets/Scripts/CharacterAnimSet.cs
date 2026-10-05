@@ -14,4 +14,8 @@ public class CharacterAnimSet : ScriptableObject
     public AnimationClip reload;
     public AnimationClip blockPose;
     public AnimationClip dashPose;
+
+    // Pro uvodni scenky pred "play of the game".
+    public AnimationClip sitIdle;
+    public AnimationClip hitChest;
 }

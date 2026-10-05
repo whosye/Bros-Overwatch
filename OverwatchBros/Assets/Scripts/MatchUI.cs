@@ -91,7 +91,14 @@ public class MatchUI : MonoBehaviour
         capture.Build(root);
         hud.Build(root);
 
-        crosshair = UiKit.MakeImage(root, "Crosshair", new Color(1f, 1f, 1f, 0.9f), center, Vector2.zero, new Vector2(6f, 6f)).gameObject;
+        // Zamerovac: maly bily krizek s jemnym tmavym obrysem (at je videt i na svetlem pozadi).
+        var cross = UiKit.MakeImage(root, "Crosshair", new Color(0f, 0f, 0f, 0f), center, Vector2.zero, new Vector2(20f, 20f));
+        var outline = new Color(0f, 0f, 0f, 0.45f);
+        UiKit.MakeImage(cross.transform, "OutlineH", outline, center, Vector2.zero, new Vector2(18f, 4f));
+        UiKit.MakeImage(cross.transform, "OutlineV", outline, center, Vector2.zero, new Vector2(4f, 18f));
+        UiKit.MakeImage(cross.transform, "H", new Color(1f, 1f, 1f, 0.95f), center, Vector2.zero, new Vector2(16f, 2f));
+        UiKit.MakeImage(cross.transform, "V", new Color(1f, 1f, 1f, 0.95f), center, Vector2.zero, new Vector2(2f, 16f));
+        crosshair = cross.gameObject;
 
         // Bar bloku pod zaměřovačem (velikost = zbývající kapacita bloku).
         blockBar = UiKit.MakeImage(root, "BlockBar", new Color(0f, 0f, 0f, 0.55f), center, new Vector2(0f, -70f), new Vector2(240f, 14f)).gameObject;
@@ -256,29 +263,35 @@ public class MatchUI : MonoBehaviour
             everHadPlayer = false;
         wasConnected = connected;
 
-        menu.SetVisible(!connected);
+        menu.SetVisible(!connected && !PotgIntro.Active);   // (ukazka POTG uvodu z editoru bezi pres menu)
         menu.Tick();
 
         connectingText.gameObject.SetActive(connected && !hasPlayer);
         lobby.SetVisible(inLobby);
         lobby.Tick(localHero, joining);
-        endPanel.SetActive(over);
+        // Behem prehravani "play of the game" se koncova obrazovka neukazuje (hraje se ve scene).
+        bool replay = ReplayPlayer.Active;
+        endPanel.SetActive(over && !replay && !PotgIntro.Active);
 
         // Zmena hrdiny behem zapasu (F1).
         heroPicker.Tick(localHero, playing && !over && !PotgUI.IsShowing);
 
         UpdateCursor(hasPlayer, inLobby, over || heroPicker.IsOpen);
         UpdateHud(match, localHero, playing, over);
-        hud.SetVisible(playing && !over && localHero != null);
-        hud.Tick(localHero);
+        // HUD: zivy hrac, nebo pri prehravani POTG HUD hrace, ktery akci predvedl (podle zaznamu).
+        hud.SetVisible(replay || (playing && !over && localHero != null));
+        if (replay)
+            hud.TickReplay(ReplayPlayer.Frame, ReplayPlayer.Camera);
+        else
+            hud.Tick(localHero);
         // Po konci zapasu (a po dohrani play of the game) je tabulka hracu videt porad, ne jen na Tab.
-        overlay.Tick(localHero, playing, match, over && !PotgUI.IsShowing);
+        overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing);
         capture.Tick(localHero, playing && !over, match);
         UpdateEndScreen(network, match, over);
         UpdateLegacyHud(playing);
 
         bool locked = GameSettings.CursorLocked;
-        crosshair.SetActive(playing && !over && locked);
+        crosshair.SetActive((playing && !over && locked) || (replay && ReplayPlayer.Frame != null && !ReplayPlayer.Frame.thirdPerson));
         UpdateBlockBar(localHero, playing && !over);
 
         bool showSettings = playing && !over && !locked && !heroPicker.IsOpen;

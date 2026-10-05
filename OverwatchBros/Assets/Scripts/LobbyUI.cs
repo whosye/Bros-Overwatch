@@ -59,7 +59,9 @@ public class LobbyUI
             new Vector2(0f, -110f), new Vector2(600f, 50f), UiKit.Accent);
 
         var heroes = HeroRegistry.All;
-        float spacing = 340f;
+        // Karty se zuzi, aby se vesly vsechny postavy (sirka obrazovky 1920).
+        float spacing = Mathf.Min(340f, 1820f / Mathf.Max(1, heroes.Length));
+        float cardWidth = spacing - 20f;
         float startX = -(heroes.Length - 1) * spacing / 2f;
         for (int i = 0; i < heroes.Length; i++)
         {
@@ -74,7 +76,7 @@ public class LobbyUI
                 label += $"\n<size=55%>{string.Join(" · ", abilityNames)}</size>";
 
             var button = UiKit.MakeButton(Root.transform, label, center, new Vector2(startX + i * spacing, -195f),
-                new Vector2(320f, 94f), () => SelectHero(index), UiKit.ButtonBase, 34f);
+                new Vector2(cardWidth, 94f), () => SelectHero(index), UiKit.ButtonBase, cardWidth < 300f ? 30f : 34f);
             heroButtons.Add(button);
         }
 
@@ -212,7 +214,8 @@ public class LobbyUI
         string reach = hero.weapon.IsMelee ? "dosah" : "dostřel";
         if (hero.weapon.falloffEnd > hero.weapon.falloffStart && hero.weapon.falloffStart > 0f && !hero.weapon.IsMelee && !hero.weapon.IsProjectile)
             mode += $", plné poškození do {hero.weapon.falloffStart:0} m";
-        heroInfo.text = $"{hero.heroName}:  {hero.maxHealth:0} HP  ·  {hero.weapon.weaponName} ({hero.weapon.damage:0} dmg, {mode}, {reach} {hero.weapon.range:0} m)  ·  {ability}";
+        string heal = hero.weapon.allyHeal > 0f ? $", léčí spoluhráče +{hero.weapon.allyHeal:0} HP" : "";
+        heroInfo.text = $"{hero.heroName}:  {hero.maxHealth:0} HP  ·  {hero.weapon.weaponName} ({hero.weapon.damage:0} dmg{heal}, {mode}, {reach} {hero.weapon.range:0} m)  ·  {ability}";
     }
 
     static string AbilityLabel(HeroDefinition hero)
@@ -231,6 +234,10 @@ public class LobbyUI
             parts.Add($"[E] {hero.altAbility.abilityName}");
         if (hero.rmbAbility != null)
             parts.Add($"[PRAVÉ TL.] {hero.rmbAbility.abilityName}");
+        else if (hero.blockAbility == null && hero.weapon != null && hero.weapon.scopeFov > 0f)
+            parts.Add(hero.weapon.HasScopedShot
+                ? $"[PRAVÉ TL.] Odstřel ({hero.weapon.scopedMinDamage:0}-{hero.weapon.scopedMaxDamage:0} dmg, hlava ×{hero.weapon.headshotMultiplier:0.#})"
+                : "[PRAVÉ TL.] Dalekohled");
 
         return parts.Count > 0 ? string.Join("  ·  ", parts) : "bez schopnosti";
     }

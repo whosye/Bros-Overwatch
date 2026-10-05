@@ -122,7 +122,11 @@ public class HealFieldAbility : NetworkBehaviour
 
             // Leceni spoluhracu nabiji ultimatku (vlastni leceni ne).
             if (target.gameObject != gameObject)
-                GetComponent<PlayerHero>().ServerAddUltCharge(target.currentHealth.Value - before);
+            {
+                var hero = GetComponent<PlayerHero>();
+                hero.ServerAddUltCharge(target.currentHealth.Value - before);
+                hero.ServerAddHealingStat(target.currentHealth.Value - before);
+            }
         }
     }
 

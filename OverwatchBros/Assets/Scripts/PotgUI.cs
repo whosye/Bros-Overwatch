@@ -3,8 +3,8 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Prehravani "play of the game" na konci zapasu: uvodni karta se jmenem hrace a pak 5 s zaznamu jeho obrazovky
-// (snimky posila PotgRecorder). Kresli se pres vsechno ostatni UI.
+// Prehravani "play of the game" na konci zapasu: uvodni karta se jmenem hrace a pak jeho akce prehrana primo ve hre
+// (data posila PotgRecorder, prehrava ReplayPlayer - v plnem rozliseni, s jeho HUD a zvuky hry).
 public class PotgUI : MonoBehaviour
 {
     enum Phase { Hidden, Intro, Playing, Outro }
@@ -17,12 +17,14 @@ public class PotgUI : MonoBehaviour
     static PotgUI instance;
 
     GameObject overlay;
-    RawImage video;
-    TextMeshProUGUI introTitle, introName, introCategory, cornerLabel;
-    Texture2D texture;
+    Image background;
+    Image bottomShade;
 
-    // Zvuk klipu: 16bit mono PCM, sklada se z kousku.
-    AudioSource audioSource;
+    // Uvodni scenka hrdiny (PotgIntro) misto cerne karty: texty pak vjedou zleva dole v detailu obliceje.
+    bool cinematic;
+    const float TextInAt = 3.0f;
+    TextMeshProUGUI introTitle, introName, introCategory, cornerLabel;
+
     AudioSource introSource;
 
     // Znelka uvodni karty: vlastni nahravka z Assets/Resources/Audio/potg_intro (mp3 / wav / ogg), jinak generovana.
@@ -31,25 +33,16 @@ public class PotgUI : MonoBehaviour
         var custom = Resources.Load<AudioClip>("Audio/potg_intro");
         return custom != null ? custom : ProceduralSfx.PotgIntro;
     }
-    byte[] audioData;
-    int audioReceived;
-    int audioRate;
-    AudioClip audioClip;
 
-    public static bool AudioPlaying => instance != null && instance.audioSource != null && instance.audioSource.isPlaying;
-    public static float AudioSeconds => instance != null && instance.audioClip != null ? instance.audioClip.length : 0f;
-    public static float AudioPeak { get; private set; }
+    // Data zaznamu (prichazeji po kouscich), pak se prehraji ve scene (ReplayPlayer).
+    byte[] data;
+    int received;
 
     Phase phase = Phase.Hidden;
-    byte[][] frames;
-    int received;
-    int fps = 15;
     float phaseStart;
-    int shown = -1;
 
     public static bool IsShowing => instance != null && instance.phase != Phase.Hidden;
     public static bool IsPlaying => instance != null && instance.phase == Phase.Playing;
-    public static int ReceivedFrames => instance != null ? instance.received : 0;
 
     void Awake()
     {
@@ -66,15 +59,9 @@ public class PotgUI : MonoBehaviour
         scaler.matchWidthOrHeight = 0.5f;
 
         var center = new Vector2(0.5f, 0.5f);
-        var background = UiKit.MakeImage(canvasObject.transform, "PotgOverlay", Color.black, center, Vector2.zero, Vector2.zero);
+        background = UiKit.MakeImage(canvasObject.transform, "PotgOverlay", Color.black, center, Vector2.zero, Vector2.zero);
         UiKit.Stretch(background.rectTransform);
         overlay = background.gameObject;
-
-        var videoObject = new GameObject("Video", typeof(RectTransform), typeof(RawImage));
-        videoObject.transform.SetParent(overlay.transform, false);
-        video = videoObject.GetComponent<RawImage>();
-        video.raycastTarget = false;
-        UiKit.Stretch(video.rectTransform);
 
         introTitle = UiKit.MakeText(overlay.transform, "Title", "PLAY OF THE GAME", 96, TextAlignmentOptions.Center, center,
             new Vector2(0f, 70f), new Vector2(1700f, 130f), UiKit.Accent);
@@ -85,15 +72,16 @@ public class PotgUI : MonoBehaviour
         cornerLabel = UiKit.MakeText(overlay.transform, "Corner", "", 34, TextAlignmentOptions.TopLeft, new Vector2(0f, 1f),
             new Vector2(40f, -30f), new Vector2(1200f, 100f));
 
-        audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0f;
+        // Tmavy pruh dole pod texty scenky (at jsou citelne).
+        bottomShade = UiKit.MakeImage(overlay.transform, "BottomShade", new Color(0f, 0f, 0f, 0.6f), new Vector2(0.5f, 0f),
+            new Vector2(0f, 150f), new Vector2(4000f, 300f));
+        bottomShade.transform.SetSiblingIndex(0);
+        bottomShade.gameObject.SetActive(false);
 
         introSource = gameObject.AddComponent<AudioSource>();
         introSource.playOnAwake = false;
         introSource.spatialBlend = 0f;
 
-        texture = new Texture2D(2, 2, TextureFormat.RGB24, false);
         overlay.SetActive(false);
     }
 
@@ -103,60 +91,47 @@ public class PotgUI : MonoBehaviour
             instance = null;
     }
 
-    public static void Begin(string playerName, string heroName, int team, int count, int framesPerSecond, bool flipped, string category = "",
-        int audioBytes = 0, int audioSampleRate = 0)
+    public static void Begin(string playerName, string heroName, int team, int totalBytes, string category = "", int heroIndex = -1)
     {
         if (instance == null) return;
+        instance.BeginInternal(playerName, heroName, team, totalBytes, category);
 
-        instance.BeginInternal(playerName, heroName, team, count, framesPerSecond, flipped, category);
-        instance.audioData = audioBytes > 0 ? new byte[audioBytes] : null;
-        instance.audioReceived = 0;
-        instance.audioRate = audioSampleRate;
+        // Scenka hrdiny; kdyz nejde (hrdina bez modelu), zustane cerna karta.
+        instance.cinematic = PotgIntro.Play(heroIndex);
+        instance.LayoutIntro();
     }
 
-    public static void AddAudio(int offset, byte[] pcm)
+    // Rozlozeni textu uvodu: na cerne karte uprostred, pri scence vlevo dole.
+    void LayoutIntro()
     {
-        if (instance == null || instance.audioData == null || pcm == null) return;
-        if (offset < 0 || offset + pcm.Length > instance.audioData.Length) return;
+        var center = new Vector2(0.5f, 0.5f);
+        var left = new Vector2(0f, 0f);
+        Place(introTitle, cinematic ? left : center, cinematic ? new Vector2(110f, 230f) : new Vector2(0f, 70f), cinematic ? 84 : 96);
+        Place(introName, cinematic ? left : center, cinematic ? new Vector2(110f, 140f) : new Vector2(0f, -50f), cinematic ? 58 : 60);
+        Place(introCategory, cinematic ? left : center, cinematic ? new Vector2(110f, 78f) : new Vector2(0f, -130f), 40);
 
-        System.Buffer.BlockCopy(pcm, 0, instance.audioData, offset, pcm.Length);
-        instance.audioReceived += pcm.Length;
+        var alignment = cinematic ? TMPro.TextAlignmentOptions.Left : TMPro.TextAlignmentOptions.Center;
+        introTitle.alignment = introName.alignment = introCategory.alignment = alignment;
+        background.color = cinematic ? new Color(0f, 0f, 0f, 0f) : Color.black;
+        bottomShade.gameObject.SetActive(false);
     }
 
-    // Slozi zvuk klipu a pusti ho spolu s videem.
-    void StartAudio()
+    static void Place(TMPro.TextMeshProUGUI text, Vector2 anchor, Vector2 position, float size)
     {
-        AudioPeak = 0f;
-        if (audioData == null || audioReceived < audioData.Length || audioRate <= 0) return;
-
-        int count = audioData.Length / 2;
-        if (count < audioRate / 10) return;
-
-        var samples = new float[count];
-        for (int i = 0; i < count; i++)
-        {
-            short value = (short)(audioData[i * 2] | (audioData[i * 2 + 1] << 8));
-            samples[i] = value / 32768f;
-            AudioPeak = Mathf.Max(AudioPeak, Mathf.Abs(samples[i]));
-        }
-
-        if (audioClip != null)
-            Destroy(audioClip);
-        audioClip = AudioClip.Create("potg", count, 1, audioRate, false);
-        audioClip.SetData(samples, 0);
-
-        audioSource.clip = audioClip;
-        audioSource.volume = 1f;
-        audioSource.Play();
+        var rect = text.rectTransform;
+        rect.anchorMin = rect.anchorMax = anchor;
+        rect.pivot = new Vector2(anchor.x, 0.5f);
+        rect.anchoredPosition = position;
+        text.fontSize = size;
     }
 
-    public static void AddFrame(int index, byte[] jpg)
+    public static void AddChunk(int offset, byte[] chunk)
     {
-        if (instance == null || instance.frames == null || index < 0 || index >= instance.frames.Length) return;
+        if (instance == null || instance.data == null || chunk == null) return;
+        if (offset < 0 || offset + chunk.Length > instance.data.Length) return;
 
-        if (instance.frames[index] == null)
-            instance.received++;
-        instance.frames[index] = jpg;
+        System.Buffer.BlockCopy(chunk, 0, instance.data, offset, chunk.Length);
+        instance.received += chunk.Length;
     }
 
     public static void Stop()
@@ -165,13 +140,11 @@ public class PotgUI : MonoBehaviour
             instance.Hide();
     }
 
-    void BeginInternal(string playerName, string heroName, int team, int count, int framesPerSecond, bool flipped, string category)
+    void BeginInternal(string playerName, string heroName, int team, int totalBytes, string category)
     {
         introCategory.text = category;
-        frames = new byte[count][];
+        data = new byte[totalBytes];
         received = 0;
-        fps = Mathf.Max(1, framesPerSecond);
-        shown = -1;
 
         string color = ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(team));
         string who = string.IsNullOrEmpty(heroName) ? playerName : $"{playerName}  ·  {heroName}";
@@ -179,15 +152,19 @@ public class PotgUI : MonoBehaviour
         cornerLabel.text = $"<color=#F28C1A>PLAY OF THE GAME</color>\n<size=80%><color=#{color}>{who}</color></size>"
             + (string.IsNullOrEmpty(category) ? "" : $"\n<size=65%><color=#A6B3C7>{category}</color></size>");
 
-        // Zaznam obrazovky je na nekterych grafickych API vzhuru nohama.
-        video.uvRect = flipped ? new Rect(0f, 1f, 1f, -1f) : new Rect(0f, 0f, 1f, 1f);
-
         SetPhase(Phase.Intro);
         overlay.SetActive(true);
 
         introSource.clip = IntroClip();
         introSource.volume = 0.9f;
         introSource.Play();
+    }
+
+    static void SlideIn(TMPro.TextMeshProUGUI text, float y, float k, float unused)
+    {
+        float ease = 1f - Mathf.Pow(1f - Mathf.Clamp01(k), 3f);
+        text.rectTransform.anchoredPosition = new Vector2(Mathf.Lerp(-500f, 110f, ease), y);
+        text.alpha = ease;
     }
 
     void SetPhase(Phase next)
@@ -200,17 +177,23 @@ public class PotgUI : MonoBehaviour
         introName.gameObject.SetActive(intro);
         introCategory.gameObject.SetActive(intro);
         cornerLabel.gameObject.SetActive(!intro);
-        video.enabled = !intro;
+
+        // Uvodni karta na cernem pozadi (pri scence pruhledna); pri prehravani je pozadi pruhledne (hraje se ve scene).
+        background.color = intro && !cinematic ? Color.black : new Color(0f, 0f, 0f, 0f);
+        if (!intro)
+        {
+            introTitle.alpha = introName.alpha = introCategory.alpha = 1f;
+        }
     }
 
     void Hide()
     {
         phase = Phase.Hidden;
-        frames = null;
+        data = null;
         received = 0;
-        audioData = null;
-        if (audioSource != null)
-            audioSource.Stop();
+        cinematic = false;
+        PotgIntro.Stop();
+        ReplayPlayer.Stop();
         if (introSource != null)
             introSource.Stop();
         if (overlay != null)
@@ -232,7 +215,7 @@ public class PotgUI : MonoBehaviour
 
         float elapsed = Time.unscaledTime - phaseStart;
 
-        // Znelka: pri uvodni karte naplno, pod zaznamem tise (at je slyset zvuk hry), na konci do ztracena.
+        // Znelka: pri uvodni karte naplno, pod akci tise (at je slyset zvuk hry), na konci do ztracena.
         if (introSource != null && introSource.isPlaying)
         {
             float wanted = phase == Phase.Intro ? 0.9f : phase == Phase.Playing ? 0.6f : 0.6f * Mathf.Clamp01(1f - elapsed / OutroSeconds);
@@ -241,44 +224,51 @@ public class PotgUI : MonoBehaviour
 
         if (phase == Phase.Intro)
         {
-            // Ceka se na vsechny snimky (nejdyl par sekund, pak se prehraje, co dorazilo).
-            bool audioReady = audioData == null || audioReceived >= audioData.Length;
-            // Staci mit par sekund snimku napred, zbytek dorazi behem prehravani (prichazeji rychleji, nez se promitaji).
-            bool enoughFrames = received >= Mathf.Min(frames.Length, fps * 3);
-            bool ready = (enoughFrames && audioReady) || elapsed > MaxWaitSeconds;
-            if (elapsed >= IntroSeconds && ready)
+            // Scenka: texty vjedou zleva v detailu obliceje.
+            if (cinematic)
             {
-                if (received == 0)
+                float k = Mathf.Clamp01((elapsed - TextInAt) / 0.35f);
+                float ease = 1f - Mathf.Pow(1f - k, 3f);
+                bottomShade.gameObject.SetActive(k > 0f);
+                bottomShade.color = new Color(0f, 0f, 0f, 0.6f * ease);
+                SlideIn(introTitle, 230f, ease, 0f);
+                SlideIn(introName, 140f, Mathf.Clamp01((elapsed - TextInAt - 0.12f) / 0.35f), 0f);
+                SlideIn(introCategory, 78f, Mathf.Clamp01((elapsed - TextInAt - 0.24f) / 0.35f), 0f);
+            }
+
+            bool complete = data != null && received >= data.Length;
+            if (elapsed >= IntroSeconds && (complete || elapsed > MaxWaitSeconds))
+            {
+                ReplayClip clip = null;
+                if (complete)
+                {
+                    try { clip = ReplayClip.Deserialize(data); }
+                    catch (System.Exception e) { Debug.LogWarning("[POTG] Zaznam nejde precist: " + e.Message); }
+                }
+
+                if (clip == null)
                 {
                     Hide();
+                    return;
                 }
-                else
-                {
-                    SetPhase(Phase.Playing);
-                    StartAudio();
-                }
+
+                PotgIntro.Stop();
+                bottomShade.gameObject.SetActive(false);
+                SetPhase(Phase.Playing);
+                ReplayPlayer.Play(clip);
             }
             return;
         }
 
         if (phase == Phase.Playing)
         {
-            int index = Mathf.FloorToInt(elapsed * fps);
-            if (index >= frames.Length)
-            {
+            if (ReplayPlayer.Finished)
                 SetPhase(Phase.Outro);
-                return;
-            }
-
-            if (index != shown && frames[index] != null)
-            {
-                shown = index;
-                texture.LoadImage(frames[index]);
-                video.texture = texture;
-            }
             return;
         }
 
+        // Dojezd: obraz plynule zcerna a konec.
+        background.color = new Color(0f, 0f, 0f, Mathf.Clamp01(elapsed / OutroSeconds));
         if (elapsed >= OutroSeconds)
             Hide();
     }

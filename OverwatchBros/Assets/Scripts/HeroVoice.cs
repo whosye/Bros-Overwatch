@@ -140,6 +140,7 @@ public class HeroVoice : MonoBehaviour
     // 'pick' je nahodne cislo od serveru, aby vsichni hraci slyseli stejnou nahravku.
     public void Play(HeroDefinition hero, VoiceKind kind, int slot, int pick)
     {
+        ReplayLog.Voice(this, kind, slot, pick);
         var lines = Lines(hero, kind, slot);
         if (lines == null || lines.Length == 0) return;
 

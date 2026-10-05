@@ -35,6 +35,38 @@ public class FirstPersonController : NetworkBehaviour
     // Blok (zkrizene sekery): pomalejsi pohyb, nejde utocit.
     public bool BlockActive { get; set; }
     public float SpeedMultiplier { get; set; } = 1f;
+    // Zpomaleni pri pribliseni (sniper) a docasne zpomaleni od schopnosti (odkopnuti).
+    public float ScopeSpeedScale { get; set; } = 1f;
+    float slowUntil;
+    float slowFactor = 1f;
+    float SlowScale => Time.time < slowUntil ? slowFactor : 1f;
+
+    public void ServerSlow(float seconds, float factor)
+    {
+        if (IsServer)
+            SlowClientRpc(seconds, factor);
+    }
+
+    [ClientRpc]
+    void SlowClientRpc(float seconds, float factor)
+    {
+        if (!IsOwner) return;
+        slowUntil = Time.time + seconds;
+        slowFactor = Mathf.Clamp(factor, 0.1f, 1f);
+    }
+
+    // Vlastni pritazeni (sniperuv hak): hrac se plynule pritahne na misto.
+    public void OwnerPull(Vector3 destination, float seconds)
+    {
+        if (!IsOwner || IsDead) return;
+
+        pulling = true;
+        pullTarget = destination;
+        pullTimeLeft = Mathf.Max(0.05f, seconds) + 0.15f;
+        pullSpeed = Vector3.Distance(transform.position, destination) / Mathf.Max(0.05f, seconds);
+        externalVelocity = Vector3.zero;
+        verticalVelocity = 0f;
+    }
     public bool ShiftReserved { get; set; }
 
     // Pasivni schopnosti hrdiny (nastavuje PlayerHero).
@@ -70,6 +102,16 @@ public class FirstPersonController : NetworkBehaviour
             verticalVelocity = Mathf.Min(Mathf.Max(verticalVelocity, 0f) + impulse.y, 13f);
     }
 
+    // Vyskok se vznasenim (Sindeluv Shift): hned nahoru, po vrcholu pomaly pad, dokud nevyprsi 'seconds'.
+    float hoverUntil;
+
+    public void OwnerHover(float upSpeed, float seconds)
+    {
+        if (!IsOwner || IsDead) return;
+        verticalVelocity = Mathf.Max(verticalVelocity, upSpeed);
+        hoverUntil = Time.time + seconds;
+    }
+
     public void ServerKnockback(Vector3 impulse)
     {
         if (IsServer)
@@ -101,6 +143,56 @@ public class FirstPersonController : NetworkBehaviour
 
         rootedUntil = Time.time + seconds;
         externalVelocity = Vector3.zero;
+    }
+
+    // Nasobek citlivosti mysi (pribliseni dalekohledem ji snizi, aby se dalo presne mirit).
+    public float LookScale { get; set; } = 1f;
+
+    // Uspani (Annina sipka): jako omraceni bez oslepeni, ale zasah hrace hned probudi.
+    float serverSleepUntil;
+    public bool ServerSleeping => IsServer && Time.time < serverSleepUntil;
+
+    public void ServerSleep(float seconds, GameObject attacker)
+    {
+        if (!IsServer) return;
+
+        serverSleepUntil = Time.time + seconds;
+        var attackerObject = attacker != null ? attacker.GetComponent<NetworkObject>() : null;
+        SleepClientRpc(seconds, attackerObject != null ? attackerObject.OwnerClientId : ulong.MaxValue);
+        if (hero != null)
+            hero.Say(VoiceKind.Snare);
+    }
+
+    public void ServerWake()
+    {
+        if (!ServerSleeping) return;
+
+        serverSleepUntil = 0f;
+        WakeClientRpc();
+    }
+
+    [ClientRpc]
+    void SleepClientRpc(float seconds, ulong attackerClientId)
+    {
+        SleepMarker.Show(transform, seconds);
+        if (NetworkManager.LocalClientId == attackerClientId && Camera.main != null)
+            ProceduralSfx.Play(ProceduralSfx.StunConfirm, Camera.main.transform.position, 0.9f);
+
+        if (!IsOwner || IsDead) return;
+
+        stunnedUntil = Time.time + seconds;
+        externalVelocity = Vector3.zero;
+        HudUI.NotifySleep(seconds);
+    }
+
+    [ClientRpc]
+    void WakeClientRpc()
+    {
+        SleepMarker.Hide(transform);
+        if (!IsOwner) return;
+
+        stunnedUntil = 0f;
+        HudUI.EndOverlay();
     }
 
     // Omraceni (oslepujici granat): hrac se chvili nemuze hybat, utocit ani pouzivat schopnosti; rozbehle schopnosti se prerusi.
@@ -230,7 +322,7 @@ public class FirstPersonController : NetworkBehaviour
 
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
-        float sensitivity = mouseSensitivity * GameSettings.Sensitivity;
+        float sensitivity = mouseSensitivity * GameSettings.Sensitivity * LookScale;
 
         transform.Rotate(Vector3.up * mouseDelta.x * sensitivity * Time.deltaTime);
 
@@ -328,7 +420,7 @@ public class FirstPersonController : NetworkBehaviour
         Vector3 move = transform.right * input.x + transform.forward * input.y;
         move = Vector3.ClampMagnitude(move, 1f);
 
-        float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier;
+        float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * ScopeSpeedScale * SlowScale * BardAbility.SpeedScaleFor(gameObject);
         var flags = controller.Move((move * speed + externalVelocity) * Time.deltaTime);
 
         // Odhozeni postupne odezni: na zemi rychle (treni), ve vzduchu pomalu; naraz do zdi ho zastavi.
@@ -358,7 +450,10 @@ public class FirstPersonController : NetworkBehaviour
         if (LedgeClimb && !isGrounded && !frozen && input.y > 0f && TryStartMantle())
             return;
 
-        verticalVelocity += gravity * Time.deltaTime;
+        if (Time.time < hoverUntil && verticalVelocity <= 0f && !isGrounded)
+            verticalVelocity = Mathf.Max(verticalVelocity + gravity * 0.1f * Time.deltaTime, -1.2f);
+        else
+            verticalVelocity += gravity * Time.deltaTime;
         controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
 
         // Kapsle se pri drepu zkracuje shora: spodek zustava u chodidel, jinak by se postava zaborila do zeme.

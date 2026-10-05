@@ -29,6 +29,7 @@ public class HudUI
     TextMeshProUGUI nameText;
     TextMeshProUGUI ammoText;
     Image healthFill;
+    Image shieldFill;
     RectTransform healthBar;
     readonly List<GameObject> separators = new List<GameObject>();
     float separatorsFor = -1f;
@@ -49,10 +50,38 @@ public class HudUI
     static float flashDuration = 1f;
     Image flashImage;
 
+    static Color flashColor = Color.white;
+
     public static void NotifyFlash(float seconds)
     {
+        ReplayLog.HudFlash(seconds);
         flashStart = Time.unscaledTime;
         flashDuration = Mathf.Max(0.2f, seconds) + 0.5f;
+        flashColor = Color.white;
+    }
+
+    // Uspani: tmava obrazovka, ktera na konci rychle zmizi.
+    public static void NotifySleep(float seconds)
+    {
+        ReplayLog.HudSleep(seconds);
+        flashStart = Time.unscaledTime;
+        flashDuration = Mathf.Max(0.2f, seconds);
+        flashColor = new Color(0.02f, 0.03f, 0.09f);
+    }
+
+    // Kratky barevny zablesk (napr. posileni od Anny).
+    public static void NotifyTint(Color color, float seconds)
+    {
+        ReplayLog.HudTint(color, seconds);
+        flashStart = Time.unscaledTime;
+        flashDuration = Mathf.Max(0.1f, seconds);
+        flashColor = color;
+    }
+
+    public static void EndOverlay()
+    {
+        ReplayLog.HudEnd();
+        flashStart = -10f;
     }
 
     // Znacka cile taktickeho zamerovace (nastavuje VisorAbility kazdy snimek, kdy ma cil).
@@ -65,6 +94,7 @@ public class HudUI
 
     public static void NotifyHit(bool kill)
     {
+        ReplayLog.HudHit(kill);
         hitTime = Time.unscaledTime;
         if (kill)
             killTime = Time.unscaledTime;
@@ -73,7 +103,28 @@ public class HudUI
     static Sprite whiteSprite;
     float lastHealth = -1f;
     float flash;
-    PlayerHero trackedHero;
+    object trackedHero;
+
+    // Data, ze kterych se HUD kresli: zivy hrac, nebo prehravani "play of the game" (ReplayPlayer).
+    class HudData
+    {
+        public object key;
+        public HeroDefinition hero;
+        public int team = -1;
+        public float health, maxHealth = 100f;
+        public float shield;
+        public readonly List<PlayerHero.AbilitySlot> slots = new List<PlayerHero.AbilitySlot>();
+        public float charge;
+        public WeaponDefinition weapon;
+        public int ammo, maxAmmo;
+        public bool reloading;
+        public bool locked;
+        public Vector3 lockPoint;
+        public Camera camera;
+    }
+
+    readonly HudData liveData = new HudData();
+    readonly HudData replayData = new HudData();
 
     static readonly Color Dark = new Color(0.05f, 0.07f, 0.10f, 0.72f);
     static readonly Color HealthColor = new Color(0.95f, 0.96f, 1f, 0.95f);
@@ -117,6 +168,10 @@ public class HudUI
         healthBar = barBackground.rectTransform;
         healthFill = UiKit.MakeImage(healthBar, "Fill", HealthColor, bottomLeft, new Vector2(3f, 3f), new Vector2(HealthBarWidth, 24f));
         healthFill.rectTransform.pivot = new Vector2(0f, 0f);
+        // Docasny stit (Bardova ultimatka): modra cast pres pravy konec baru.
+        shieldFill = UiKit.MakeImage(healthBar, "Shield", new Color(Health.ShieldColor.r, Health.ShieldColor.g, Health.ShieldColor.b, 0.85f),
+            bottomLeft, new Vector2(3f, 3f), new Vector2(0f, 24f));
+        shieldFill.rectTransform.pivot = new Vector2(0f, 0f);
 
         // Schopnosti vpravo dole (zprava doleva), munice nad nimi.
         var bottomRight = new Vector2(1f, 0f);
@@ -183,7 +238,7 @@ public class HudUI
         root.SetActive(false);
     }
 
-    void UpdateFlashAndLock(PlayerHero hero)
+    void UpdateFlashAndLock(HudData d)
     {
         float since = Time.unscaledTime - flashStart;
         bool flashing = since >= 0f && since < flashDuration;
@@ -192,14 +247,14 @@ public class HudUI
         if (flashing)
         {
             float t = since / flashDuration;
-            flashImage.color = new Color(1f, 1f, 1f, 0.92f * (1f - t * t));
+            float alpha = flashColor.a < 1f ? flashColor.a : 0.92f;
+            flashImage.color = new Color(flashColor.r, flashColor.g, flashColor.b, alpha * (1f - t * t));
         }
 
         bool locked = false;
-        var fpc = hero.GetComponent<FirstPersonController>();
-        if (LockFrame >= Time.frameCount - 1 && fpc != null && fpc.playerCamera != null)
+        if (d.locked && d.camera != null)
         {
-            Vector3 screen = fpc.playerCamera.WorldToScreenPoint(LockPoint);
+            Vector3 screen = d.camera.WorldToScreenPoint(d.lockPoint);
             if (screen.z > 0.2f && RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)root.transform, screen, null, out Vector2 point))
             {
                 locked = true;
@@ -290,18 +345,74 @@ public class HudUI
         var health = hero.GetComponent<Health>();
         var weapon = hero.GetComponent<WeaponShooting>();
         var team = hero.GetComponent<PlayerTeam>();
+        var fpc = hero.GetComponent<FirstPersonController>();
 
-        UpdateHealth(hero, health, team);
-        UpdateVignette(hero, health);
-        UpdateAbilities(hero);
+        var d = liveData;
+        d.key = hero;
+        d.hero = hero.Hero;
+        d.team = team != null ? team.teamId.Value : -1;
+        d.health = health != null ? health.currentHealth.Value : 0f;
+        d.maxHealth = health != null ? health.maxHealth : 100f;
+        d.shield = health != null ? health.shield.Value : 0f;
+        hero.GetAbilitySlots(d.slots);
+        d.charge = weapon != null ? weapon.ChargeFraction : 0f;
+        d.weapon = weapon != null ? weapon.weapon : null;
+        d.ammo = weapon != null ? weapon.CurrentAmmo : 0;
+        d.maxAmmo = weapon != null ? weapon.MaxAmmo : 0;
+        d.reloading = weapon != null && weapon.IsReloading;
+        d.camera = fpc != null ? fpc.playerCamera : null;
+        d.locked = LockFrame >= Time.frameCount - 1;
+        d.lockPoint = LockPoint;
+        Render(d);
+    }
+
+    // HUD hrace, ktery predvedl "play of the game", podle zaznamu.
+    public void TickReplay(ReplayFrame frame, Camera camera)
+    {
+        if (root == null || !root.activeSelf || frame == null) return;
+
+        var hero = HeroRegistry.Get(frame.hudHero);
+        if (hero == null) return;
+
+        var d = replayData;
+        d.key = this;
+        d.hero = hero;
+        d.team = frame.hudTeam;
+        d.health = frame.health;
+        d.maxHealth = frame.maxHealth;
+        d.slots.Clear();
+        if (frame.slots != null)
+            foreach (var s in frame.slots)
+                d.slots.Add(new PlayerHero.AbilitySlot
+                {
+                    key = ReplaySlot.Keys[Mathf.Clamp(s.key, 0, ReplaySlot.Keys.Length - 1)],
+                    ability = HeroVoice.AbilityInSlot(hero, s.abilitySlot),
+                    remaining = s.remaining, active = s.active, charge = s.charge, count = s.count, fullOnly = s.fullOnly,
+                });
+        d.charge = frame.charge;
+        d.weapon = hero.weapon;
+        d.ammo = frame.ammo;
+        d.maxAmmo = frame.maxAmmo;
+        d.reloading = frame.reloading;
+        d.camera = camera;
+        d.locked = frame.locked;
+        d.lockPoint = frame.lockPoint;
+        Render(d);
+    }
+
+    void Render(HudData d)
+    {
+        UpdateHealth(d);
+        UpdateVignette(d);
+        UpdateAbilities(d);
         UpdateHitMarker();
-        UpdateFlashAndLock(hero);
+        UpdateFlashAndLock(d);
 
         if (testLabel.gameObject.activeSelf != AbilityDefinition.TestCooldowns)
             testLabel.gameObject.SetActive(AbilityDefinition.TestCooldowns);
 
         // Natazeni luku: pruh pod zamerovacem.
-        float charge = weapon != null ? weapon.ChargeFraction : 0f;
+        float charge = d.charge;
         bool showCharge = charge > 0.01f;
         if (chargeBar.activeSelf != showCharge)
             chargeBar.SetActive(showCharge);
@@ -311,30 +422,38 @@ public class HudUI
             chargeFill.color = charge >= 0.999f ? UiKit.Accent : Color.white;
         }
 
-        if (weapon != null && weapon.weapon != null)
+        if (d.weapon != null)
         {
-            ammoText.text = !weapon.weapon.HasAmmo
-                ? $"<size=50%>{weapon.weapon.weaponName}</size>"
-                : weapon.IsReloading
+            ammoText.text = !d.weapon.HasAmmo
+                ? $"<size=50%>{d.weapon.weaponName}</size>"
+                : d.reloading
                     ? "<size=50%>PŘEBÍJÍM…</size>"
-                    : $"{weapon.CurrentAmmo}<size=50%> / {weapon.MaxAmmo}</size>";
+                    : $"{d.ammo}<size=50%> / {d.maxAmmo}</size>";
         }
     }
 
-    void UpdateHealth(PlayerHero hero, Health health, PlayerTeam team)
+    void UpdateHealth(HudData d)
     {
-        float max = Mathf.Max(1f, health.maxHealth);
-        float current = Mathf.Clamp(health.currentHealth.Value, 0f, max);
+        float max = Mathf.Max(1f, d.maxHealth);
+        float current = Mathf.Clamp(d.health, 0f, max);
         float fraction = current / max;
 
-        nameText.text = team != null
-            ? $"{hero.Hero.heroName.ToUpperInvariant()}  ·  <color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(team.teamId.Value))}>TÝM {team.teamId.Value}</color>"
-            : hero.Hero.heroName.ToUpperInvariant();
-        healthText.text = $"{Mathf.CeilToInt(current)}<size=45%> / {max:0}</size>";
+        nameText.text = d.team >= 0
+            ? $"{d.hero.heroName.ToUpperInvariant()}  ·  <color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(d.team))}>TÝM {d.team}</color>"
+            : d.hero.heroName.ToUpperInvariant();
+        healthText.text = d.shield >= 0.5f
+            ? $"{Mathf.CeilToInt(current)}<color=#{ColorUtility.ToHtmlStringRGB(Health.ShieldColor)}>+{Mathf.CeilToInt(d.shield)}</color><size=45%> / {max:0}</size>"
+            : $"{Mathf.CeilToInt(current)}<size=45%> / {max:0}</size>";
         healthText.color = fraction < 0.3f ? LowColor : Color.white;
 
         healthFill.rectTransform.sizeDelta = new Vector2(HealthBarWidth * fraction, 24f);
         healthFill.color = fraction < 0.3f ? LowColor : HealthColor;
+
+        // Stit: zobrazi se pres bar od konce zdravi (kdyz se nevejde, pres jeho pravou cast).
+        float shieldWidth = HealthBarWidth * Mathf.Clamp01(d.shield / max);
+        float shieldStart = Mathf.Min(HealthBarWidth * fraction, HealthBarWidth - shieldWidth);
+        shieldFill.rectTransform.anchoredPosition = new Vector2(3f + shieldStart, 3f);
+        shieldFill.rectTransform.sizeDelta = new Vector2(shieldWidth, 24f);
 
         // Dilky po 25 zivotech jako v Overwatch.
         if (!Mathf.Approximately(separatorsFor, max))
@@ -353,14 +472,14 @@ public class HudUI
         }
     }
 
-    void UpdateVignette(PlayerHero hero, Health health)
+    void UpdateVignette(HudData d)
     {
-        float max = Mathf.Max(1f, health.maxHealth);
-        float current = health.currentHealth.Value;
+        float max = Mathf.Max(1f, d.maxHealth);
+        float current = d.health;
 
-        if (hero != trackedHero)
+        if (d.key != trackedHero)
         {
-            trackedHero = hero;
+            trackedHero = d.key;
             lastHealth = current;
             flash = 0f;
         }
@@ -382,9 +501,10 @@ public class HudUI
         vignette.color = color;
     }
 
-    void UpdateAbilities(PlayerHero hero)
+    void UpdateAbilities(HudData d)
     {
-        hero.GetAbilitySlots(abilities);
+        abilities.Clear();
+        abilities.AddRange(d.slots);
 
         for (int i = 0; i < MaxSlots; i++)
         {

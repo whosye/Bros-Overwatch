@@ -76,6 +76,7 @@ public static class Fx
 
     public static void Explosion(Vector3 position, float radius)
     {
+        ReplayLog.Explosion(position, radius);
         var go = new GameObject("FX_Explosion");
         go.transform.position = position;
 
@@ -133,6 +134,7 @@ public static class Fx
     // Kratky vyprsk jisker pri primem zasahu projektilu.
     public static void Sparks(Vector3 position, Color color)
     {
+        ReplayLog.Sparks(position, color);
         var go = new GameObject("FX_Sparks");
         go.transform.position = position;
 
@@ -166,6 +168,7 @@ public static class Fx
     // Maly vybuch v miste dopadu strely (hitscan) nebo uderu (melee).
     public static void BulletImpact(Vector3 position, Color tint, float scale = 1f)
     {
+        ReplayLog.Impact(position, tint, scale);
         var go = new GameObject("FX_BulletImpact");
         go.transform.position = position;
 
@@ -295,9 +298,31 @@ public static class Fx
     // Prostorovy zvuk vychazejici z pozice hrace: plna hlasitost poblíž (vlastnik i blizci spoluhraci),
     // pak plynuly utlum az k tichu v maxDistance. Na rozdil od AudioSource.PlayClipAtPoint (vychozi logaritmicky
     // rolloff s dosahem 500 m) jde o falloff prizpusobeny velikosti mapy.
+    // Stopa vystrelu (sniper): tenka svitici cara, ktera rychle zmizi. Plne nabita rana je silnejsi.
+    public static void Tracer(Vector3 from, Vector3 to, Color color, bool strong)
+    {
+        ReplayLog.Tracer(from, to, color, strong);
+        var go = new GameObject("Tracer");
+        var line = go.AddComponent<LineRenderer>();
+        line.positionCount = 2;
+        line.SetPosition(0, from);
+        line.SetPosition(1, to);
+        line.useWorldSpace = true;
+        line.material = ParticleMaterial;
+        line.startWidth = strong ? 0.06f : 0.035f;
+        line.endWidth = strong ? 0.03f : 0.02f;
+        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        var c = color;
+        c.a = 0.9f;
+        line.startColor = c;
+        line.endColor = new Color(c.r, c.g, c.b, 0.4f);
+        go.AddComponent<TracerFade>().Init(line, strong ? 0.35f : 0.2f);
+    }
+
     public static void PlaySpatial(AudioClip clip, Vector3 position, float volume, float minDistance = 4f, float maxDistance = 30f)
     {
         if (clip == null) return;
+        ReplayLog.SpatialSound(clip, position, volume, minDistance, maxDistance);
 
         var go = new GameObject("SFX_" + clip.name);
         go.transform.position = position;
@@ -318,6 +343,7 @@ public static class Fx
     public static void PlayGlobal(AudioClip clip, float volume)
     {
         if (clip == null) return;
+        ReplayLog.GlobalSound(clip, volume);
 
         var go = new GameObject("SFX_Global_" + clip.name);
         Object.DontDestroyOnLoad(go);
@@ -360,5 +386,31 @@ public class FxLifetime : MonoBehaviour
         age += Time.deltaTime;
         if (flash != null)
             flash.intensity = Mathf.Lerp(12f, 0f, age / flashTime);
+    }
+}
+
+// Postupne zmizeni stopy vystrelu.
+public class TracerFade : MonoBehaviour
+{
+    LineRenderer line;
+    float seconds, age;
+    Color start, end;
+
+    public void Init(LineRenderer renderer, float lifetime)
+    {
+        line = renderer;
+        seconds = lifetime;
+        start = line.startColor;
+        end = line.endColor;
+    }
+
+    void Update()
+    {
+        age += Time.deltaTime;
+        float k = 1f - Mathf.Clamp01(age / seconds);
+        line.startColor = new Color(start.r, start.g, start.b, start.a * k);
+        line.endColor = new Color(end.r, end.g, end.b, end.a * k);
+        if (age >= seconds)
+            Destroy(gameObject);
     }
 }

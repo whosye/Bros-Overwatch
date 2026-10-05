@@ -26,6 +26,10 @@ public static class CharacterSetup
         new Look { hero = "Viktor", lightSkin = true, hair = new[] { "Hair_SimpleParted" } },
         new Look { hero = "Honza", lightSkin = false, hair = new[] { "Hair_Long" } },
         new Look { hero = "Mirek", lightSkin = true, hair = new[] { "Hair_Long", "Hair_Beard" } },
+        new Look { hero = "Anna", lightSkin = true, hair = new[] { "Hair_Buns" } },
+        new Look { hero = "Sniper", lightSkin = true, hair = new[] { "Hair_Buzzed" } },
+        new Look { hero = "Flanker", lightSkin = true, hair = new[] { "Hair_BuzzedFemale" } },
+        new Look { hero = "Bard", lightSkin = false, hair = new[] { "Hair_SimpleParted", "Hair_Beard" } },
     };
 
     static bool Present => System.IO.File.Exists(MaleFbx) && System.IO.File.Exists(AnimFbx);
@@ -36,7 +40,8 @@ public static class CharacterSetup
 
         if (!ImporterOk(MaleFbx) || !ImporterOk(AnimFbx)) return false;
         var animSet = AssetDatabase.LoadAssetAtPath<CharacterAnimSet>(AnimSetPath);
-        if (animSet == null || animSet.blockPose == null || animSet.dashPose == null || animSet.reload == null) return false;
+        if (animSet == null || animSet.blockPose == null || animSet.dashPose == null || animSet.reload == null
+            || animSet.sitIdle == null || animSet.hitChest == null) return false;
 
         foreach (var look in Looks)
         {
@@ -135,6 +140,13 @@ public static class CharacterSetup
                 EditorUtility.SetDirty(existing);
             }
 
+            if (existing.sitIdle == null || existing.hitChest == null)
+            {
+                existing.sitIdle = Clip("Sitting_Idle_Loop");
+                existing.hitChest = Clip("Hit_Chest");
+                EditorUtility.SetDirty(existing);
+            }
+
             return existing;
         }
 
@@ -157,6 +169,8 @@ public static class CharacterSetup
         set.reload = Clip("Pistol_Reload");
         set.blockPose = Clip("Pistol_Aim_Neutral");
         set.dashPose = Clip("Punch_Cross");
+        set.sitIdle = Clip("Sitting_Idle_Loop");
+        set.hitChest = Clip("Hit_Chest");
 
         EnsureFolder("Assets/Resources");
         EnsureFolder("Assets/Resources/Characters");

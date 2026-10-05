@@ -20,7 +20,17 @@ public class HeldWeapons : MonoBehaviour
         public Vector3 idlePosition, blockPosition;
         public Quaternion idleRotation, blockRotation;
         public bool hasBlockPose;
+
+        // Luk: sip na tetive (pri natahovani se posouva dozadu).
+        public Transform arrow;
+        public Vector3 arrowRest, arrowBack;
     }
+
+    // Jak daleko se sip pri plnem natazeni posune dozadu (m) a jak dlouho po vystrelu chybi.
+    const float DrawLength = 0.24f;
+    const float ArrowHiddenAfterShot = 0.3f;
+    float lastCharge;
+    float arrowHiddenUntil;
 
     WeaponShooting shooting;
     FirstPersonController fpc;
@@ -44,6 +54,8 @@ public class HeldWeapons : MonoBehaviour
     Vector3 lastPosition;
     float reloadElapsed = 99f;
     float reloadDuration = 1f;
+    float throwElapsed = 99f;
+    const float ThrowDuration = 0.45f;
 
     void Awake()
     {
@@ -51,15 +63,49 @@ public class HeldWeapons : MonoBehaviour
         fpc = GetComponent<FirstPersonController>();
     }
 
+    // ---------------- duch pro prehravani POTG (bez site) ----------------
+    bool ghost;
+    WeaponDefinition ghostWeapon;
+    HeroDefinition ghostHero;
+    Transform ghostCamera;
+    bool ghostFirstPerson;
+    public bool GhostDead, GhostThirdPerson, GhostBlocking, GhostUltCasting;
+    public float GhostUltWindup, GhostCharge;
+
+    public void SetGhost(HeroDefinition hero, bool firstPerson, Transform camera)
+    {
+        ghost = true;
+        ghostHero = hero;
+        ghostWeapon = hero != null ? hero.weapon : null;
+        ghostFirstPerson = firstPerson && camera != null;
+        ghostCamera = camera;
+        built = false;
+    }
+
+    WeaponDefinition CurrentWeapon => ghost ? ghostWeapon : shooting != null ? shooting.weapon : null;
+
+    HeroDefinition CurrentHero
+    {
+        get
+        {
+            if (ghost) return ghostHero;
+            var playerHero = GetComponent<PlayerHero>();
+            return playerHero != null ? playerHero.Hero : null;
+        }
+    }
+
     public void Swing()
     {
+        if (!ghost)
+            ReplayLog.Swing(this);
+
         if (hands.Length == 0)
         {
-            PlayBodyAttack(shooting.weapon);
+            PlayBodyAttack(CurrentWeapon);
             return;
         }
 
-        var weapon = shooting.weapon;
+        var weapon = CurrentWeapon;
         swingDuration = weapon != null && weapon.IsMelee ? Mathf.Clamp(0.9f / Mathf.Max(0.5f, weapon.fireRate), 0.18f, 0.4f) : 0.14f;
 
         var hand = hands[nextHand % hands.Length];
@@ -72,6 +118,8 @@ public class HeldWeapons : MonoBehaviour
     // Animace prebijeni: zbran u kamery (majitel) a horni polovina tela postavy (ostatni).
     public void PlayReload(float duration)
     {
+        if (!ghost)
+            ReplayLog.Reload(this, duration);
         reloadDuration = Mathf.Max(0.05f, duration);
         reloadElapsed = 0f;
 
@@ -81,10 +129,20 @@ public class HeldWeapons : MonoBehaviour
 
     public void StopReload()
     {
+        if (!ghost)
+            ReplayLog.StopReload(this);
         reloadElapsed = reloadDuration;
 
         if (visual != null && visual.HasModel)
             visual.StopReload();
+    }
+
+    // Hod (Honzova past): zbran u kamery uhne dolu a stranou, postava mavne rukou.
+    public void PlayThrow()
+    {
+        throwElapsed = 0f;
+        if (visual != null && visual.HasModel)
+            visual.PlayAttack(true, ThrowDuration);
     }
 
     void PlayBodyAttack(WeaponDefinition weapon)
@@ -95,28 +153,35 @@ public class HeldWeapons : MonoBehaviour
 
     void Update()
     {
-        if (shooting == null || !shooting.IsSpawned) return;
+        if (!ghost && (shooting == null || !shooting.IsSpawned)) return;
 
         if (visual == null)
             visual = GetComponent<CharacterVisual>();
 
-        bool owner = shooting.IsOwner;
+        bool owner = ghost ? ghostFirstPerson : shooting.IsOwner;
         bool visualChanged = visual != null && visual.Version != builtVersion;
-        if (!built || builtWeapon != shooting.weapon || builtAsOwner != owner || visualChanged)
+        if (!built || builtWeapon != CurrentWeapon || builtAsOwner != owner || visualChanged)
             Rebuild(owner);
 
-        bool dead = fpc != null && fpc.IsDead;
-        bool thirdPerson = fpc != null && fpc.ThirdPerson;
+        bool dead = ghost ? GhostDead : fpc != null && fpc.IsDead;
+        bool thirdPerson = ghost ? GhostThirdPerson : fpc != null && fpc.ThirdPerson;
 
         if (reloadElapsed < reloadDuration)
             reloadElapsed += Time.deltaTime;
+        if (throwElapsed < ThrowDuration)
+            throwElapsed += Time.deltaTime;
+
+        if (builtModel == HeldModel.Bow)
+            UpdateArrows();
 
         // Zbrane u kamery (majitel v 1. osobe) a zbrane v rukou postavy (ostatni, majitel ve 3. osobe).
-        bool cameraHandsVisible = !dead && !(owner && thirdPerson);
+        // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
+        bool hiddenByReplay = !ghost && ReplayPlayer.Active;
+        bool cameraHandsVisible = !dead && !(owner && thirdPerson) && !hiddenByReplay;
         if (root != null && root.activeSelf != cameraHandsVisible)
             root.SetActive(cameraHandsVisible);
 
-        bool bodyVisible = !dead && (!owner || thirdPerson);
+        bool bodyVisible = !dead && (!owner || thirdPerson) && !hiddenByReplay;
         float bodyBlock = visual != null ? visual.BlockBlend : 0f;
         foreach (var hand in bodyHands)
         {
@@ -134,7 +199,8 @@ public class HeldWeapons : MonoBehaviour
 
         if (block == null)
             block = GetComponent<BlockAbility>();
-        blockBlend = Mathf.MoveTowards(blockBlend, block != null && block.IsBlocking ? 1f : 0f, Time.deltaTime * 8f);
+        bool blockingNow = ghost ? GhostBlocking : block != null && block.IsBlocking;
+        blockBlend = Mathf.MoveTowards(blockBlend, blockingNow ? 1f : 0f, Time.deltaTime * 8f);
 
         if (root == null || !cameraHandsVisible) return;
 
@@ -142,12 +208,12 @@ public class HeldWeapons : MonoBehaviour
         // Rychlost z posunu (CharacterController.velocity ma jen posledni, svisly pohyb).
         float speed = 0f;
         Vector3 position3 = transform.position;
-        if (owner && fpc != null && fpc.Controller != null && Time.deltaTime > 0f)
+        if (owner && (ghost || (fpc != null && fpc.Controller != null)) && Time.deltaTime > 0f)
         {
             Vector3 delta = position3 - lastPosition;
             delta.y = 0f;
             speed = delta.magnitude > 3f ? 0f : delta.magnitude / Time.deltaTime;
-            if (!fpc.Controller.isGrounded) speed *= 0.3f;
+            if (!ghost && !fpc.Controller.isGrounded) speed *= 0.3f;
         }
 
         lastPosition = position3;
@@ -177,10 +243,18 @@ public class HeldWeapons : MonoBehaviour
             if (reloadElapsed < reloadDuration)
                 AnimateReload(reloadElapsed / reloadDuration, hand.side, ref position, ref euler);
 
-            // Priprava ultimatky: zbran se lehce zvedne a naklopi nahoru (luk se misto toho natahuje).
-            if (fpc != null && fpc.UltCasting && builtModel != HeldModel.Bow)
+            if (throwElapsed < ThrowDuration)
             {
-                float raise = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(fpc.UltWindup * 2.5f));
+                float u = Mathf.Sin(Mathf.Clamp01(throwElapsed / ThrowDuration) * Mathf.PI);
+                position += new Vector3(0.10f * hand.side, -0.22f, -0.06f) * u;
+                euler += new Vector3(28f, 10f * hand.side, -18f * hand.side) * u;
+            }
+
+            // Priprava ultimatky: zbran se lehce zvedne a naklopi nahoru (luk se misto toho natahuje).
+            bool ultCasting = ghost ? GhostUltCasting : fpc != null && fpc.UltCasting;
+            if (ultCasting && builtModel != HeldModel.Bow)
+            {
+                float raise = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((ghost ? GhostUltWindup : fpc.UltWindup) * 2.5f));
                 position += new Vector3(-0.04f * hand.side, 0.08f, -0.05f) * raise;
                 euler.x -= 22f * raise;
                 euler.z += 8f * hand.side * raise;
@@ -189,7 +263,7 @@ public class HeldWeapons : MonoBehaviour
             // Luk se pri natahovani pritahne k telu a lehce zvedne.
             if (builtModel == HeldModel.Bow)
             {
-                float charge = shooting.ChargeFraction;
+                float charge = ghost ? GhostCharge : shooting.ChargeFraction;
                 position += new Vector3(-0.03f, 0.03f, -0.10f) * charge;
                 euler.z += 6f * charge;
             }
@@ -218,6 +292,41 @@ public class HeldWeapons : MonoBehaviour
                 hand.forearm.localRotation = Quaternion.FromToRotation(Vector3.up, along.normalized);
                 hand.forearm.localScale = new Vector3(0.095f, along.magnitude * 0.5f, 0.095f);
             }
+        }
+    }
+
+    // Sip se natahuje s tetivou; po vystrelu chvili chybi, pak se objevi novy.
+    void UpdateArrows()
+    {
+        float charge = ghost ? GhostCharge : shooting != null ? shooting.ChargeFraction : 0f;
+        if (lastCharge > 0.05f && charge <= 0.001f)
+            arrowHiddenUntil = Time.time + ArrowHiddenAfterShot;
+        lastCharge = charge;
+
+        bool show = Time.time >= arrowHiddenUntil;
+        float draw = DrawLength * Mathf.SmoothStep(0f, 1f, charge);
+        foreach (var hand in hands) DrawArrow(hand, draw, show);
+        foreach (var hand in bodyHands) DrawArrow(hand, draw, show);
+    }
+
+    static void DrawArrow(Hand hand, float draw, bool show)
+    {
+        if (hand == null || hand.arrow == null) return;
+        if (hand.arrow.gameObject.activeSelf != show)
+            hand.arrow.gameObject.SetActive(show);
+        hand.arrow.localPosition = hand.arrowRest + hand.arrowBack * draw;
+    }
+
+    static void FindArrow(Hand hand)
+    {
+        foreach (var child in hand.holder.GetComponentsInChildren<Transform>(true))
+        {
+            if (child == hand.holder || child.name.IndexOf("arrow", System.StringComparison.OrdinalIgnoreCase) < 0) continue;
+            hand.arrow = child;
+            hand.arrowRest = child.localPosition;
+            // smer "dozadu" (k hraci) v prostoru rodice sipu, vcetne meritka
+            hand.arrowBack = child.parent.InverseTransformVector(hand.holder.TransformVector(Vector3.back));
+            return;
         }
     }
 
@@ -284,7 +393,7 @@ public class HeldWeapons : MonoBehaviour
         bodyHands = new Hand[0];
         built = true;
         builtVersion = visual != null ? visual.Version : 0;
-        builtWeapon = shooting.weapon;
+        builtWeapon = CurrentWeapon;
         builtAsOwner = owner;
         nextHand = 0;
 
@@ -304,7 +413,8 @@ public class HeldWeapons : MonoBehaviour
         // Zbrane u kamery: majitel vzdy, ostatni jen kdyz postava nema model (kapsle).
         if (owner || !hasModel)
         {
-            Transform parent = owner && fpc != null && fpc.playerCamera != null ? fpc.playerCamera.transform : transform;
+            Transform parent = owner && ghost ? ghostCamera
+                : owner && fpc != null && fpc.playerCamera != null ? fpc.playerCamera.transform : transform;
             root = new GameObject("HeldWeapons");
             root.transform.SetParent(parent, false);
 
@@ -325,6 +435,7 @@ public class HeldWeapons : MonoBehaviour
                 hand.restEuler = model == HeldModel.Axe ? new Vector3(15f, 0f, -9f * side) : Vector3.zero;
 
                 BuildModel(holder, weapon, model, side);
+                FindArrow(hand);
                 holder.localPosition = hand.restPosition;
                 holder.localRotation = Quaternion.Euler(hand.restEuler);
                 hands[i] = hand;
@@ -335,8 +446,8 @@ public class HeldWeapons : MonoBehaviour
             // Ruce z prvni osoby: skutecne paze modelu postavy, jinak jednoducha pest s rukavem.
             if (owner)
             {
-                var playerHero = GetComponent<PlayerHero>();
-                var prefab = playerHero != null && playerHero.Hero != null ? playerHero.Hero.characterPrefab : null;
+                var currentHero = CurrentHero;
+                var prefab = currentHero != null ? currentHero.characterPrefab : null;
                 fpArms = FirstPersonArms.Create(root.transform, prefab);
                 if (fpArms == null)
                     foreach (var hand in hands)
@@ -356,6 +467,7 @@ public class HeldWeapons : MonoBehaviour
                 var holder = new GameObject(i == 0 ? "BodyRightHand" : "BodyLeftHand").transform;
                 hand.holder = holder;
                 BuildModel(holder, weapon, model, side);
+                FindArrow(hand);
                 AttachToBone(hand, weapon, model);
                 bodyHands[i] = hand;
             }
@@ -374,8 +486,7 @@ public class HeldWeapons : MonoBehaviour
 
     void BuildArm(Hand hand, WeaponDefinition weapon, HeldModel model)
     {
-        var playerHero = GetComponent<PlayerHero>();
-        var hero = playerHero != null ? playerHero.Hero : null;
+        var hero = CurrentHero;
         Color sleeve = hero != null ? hero.sleeveColor : new Color(0.25f, 0.27f, 0.32f);
         Color skin = hero != null ? hero.skinColor : new Color(0.87f, 0.67f, 0.55f);
 
@@ -473,6 +584,7 @@ public class HeldWeapons : MonoBehaviour
             Part(holder, new Vector3(0f, 0f, -0.045f), Vector3.zero, new Vector3(0.008f, 1.0f, 0.008f), steel);
             // Sip pripraveny na tetive.
             Part(holder, new Vector3(0f, 0f, 0.28f), Vector3.zero, new Vector3(0.015f, 0.015f, 0.68f), weapon.projectileColor);
+            holder.GetChild(holder.childCount - 1).name = "Arrow";
         }
         else if (model == HeldModel.Axe)
         {

@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a39f21388b7624d84e663cff5b4ed3, type: 3}
+  m_Name: Sniper
+  m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
+  heroName: Sniper
+  color: {r: 0.75, g: 0.3, b: 0.35, a: 1}
+  maxHealth: 90
+  weapon: {fileID: 11400000, guid: 0e445e55f8bb1334a8b95911d17091c9, type: 2}
+  abilityKind: 19
+  ability: {fileID: 11400000, guid: e57acb6473729244c9c80dbfeaa86ab5, type: 2}
+  secondaryAbilityKind: 17
+  secondaryAbility: {fileID: 11400000, guid: bbb7b2d72f7f52f449f8979a1fa433b1, type: 2}
+  blockAbility: {fileID: 0}
+  altAbilityKind: 18
+  altAbility: {fileID: 11400000, guid: 4a6ec90b2ab00ca47919fafb29c20d26, type: 2}
+  rmbAbilityKind: 0
+  rmbAbility: {fileID: 0}
+  doubleJump: 0
+  ledgeClimb: 0
+  deathGrenades: 0
+  deathGrenadeDamage: 30
+  deathGrenadeRadius: 3.5
+  characterPrefab: {fileID: 5910829736394420469, guid: 7de1140a1a4f4a3499ad84de0507cfe4, type: 3}
+  tintCharacter: 1
+  sleeveColor: {r: 0.2, g: 0.18, b: 0.22, a: 1}
+  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
+  spawnLines: []
+  killLines: []
+  deathLines: []
+  hurtLines: []
+  idleLines: []
+  snareLines: []

@@ -1,47 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering;
 
-// Play of the game: kazdy hrac si u sebe prubezne nahrava poslednich par sekund sveho obrazu (pohled z prvni osoby
-// i s HUD) jako zmenšené JPG snimky. Kdyz zabije, server mu rekne skore te akce a klient si odlozi 5 s zaznam
-// (nejlepsi akce zapasu prepise slabsi). Na konci zapasu server vybere hrace s nejlepsi akci, ten posle sve snimky
-// a vsem se prehraji jako video (PotgUI).
+// Play of the game: kazdy hrac si u sebe prubezne nahrava poslednich par sekund hry jako ZAZNAM (ReplayCapture:
+// polohy hracu, vlastni kamera a HUD, efekty, vystrely, zvuky - ne video). Kdyz zabije, server mu rekne skore te
+// akce a klient si odlozi 12 s zaznamu (nejlepsi akce zapasu prepise slabsi). Na konci zapasu server vybere hrace
+// s nejlepsi akci, ten posle sva data (par set kB) a vsem se akce prehraje primo ve hre v plnem rozliseni (PotgUI + ReplayPlayer).
 public class PotgRecorder : NetworkBehaviour
 {
-    // Rozliseni zaznamu (540p). Vetsi = ostrejsi obraz, ale vic dat k preneseni po siti.
-    public const int Width = 960;
-    public const int Height = 540;
-    public const int Fps = 15;
     // Klip ma 12 s: s 5s uvodni kartou a sekundou dojezdu to dohromady vyjde na 18s znelku.
     public const float ClipSeconds = 12f;
-    const float RingSeconds = 14.5f;
     const float AfterKillSeconds = 1.5f;   // kolik zaznamu po zabiti se jeste vezme
-    const int JpgQuality = 72;
-
-    class Frame
-    {
-        public float time;
-        public long audio;   // pozice ve zvukovem zaznamu v okamziku snimku
-        public byte[] jpg;
-    }
-
-    const int AudioChunkBytes = 30000;
+    const int ChunkBytes = 30000;
+    const int MaxClipBytes = 16 * 1024 * 1024;
 
     // vlastnik: prubezny zaznam a nejlepsi odlozeny klip
-    readonly List<Frame> ring = new List<Frame>();
-    List<byte[]> bestClip;
-    byte[] bestAudio;
-    int bestAudioRate;
-    PotgAudioTap audioTap;
+    ReplayCapture capture;
+    ReplayClip bestClip;
     int bestScore;
     int pendingScore;
     float pendingAt = -1f;
-    RenderTexture screenTarget, smallTarget;
-    float nextCapture;
     PlayerHero hero;
 
     // server: udalosti hrace za posledni chvili (zabiti, poskozeni, leceni, bonusy) a nejlepsi dosazene skore akce
@@ -83,95 +62,11 @@ public class PotgRecorder : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
-            StartCoroutine(CaptureLoop());
-    }
-
-    public override void OnNetworkDespawn()
-    {
-        Release(ref screenTarget);
-        Release(ref smallTarget);
-    }
-
-    static void Release(ref RenderTexture target)
-    {
-        if (target == null) return;
-
-        target.Release();
-        Destroy(target);
-        target = null;
-    }
-
-    // ---------------- vlastnik: nahravani ----------------
-
-    bool ShouldRecord()
-    {
-        var match = MatchManager.Instance;
-        return match != null && !match.IsLobby && !match.IsOver && hero != null && !hero.IsJoining
-            && Screen.width > 16 && Screen.height > 16 && SystemInfo.supportsAsyncGPUReadback;
-    }
-
-    IEnumerator CaptureLoop()
-    {
-        var endOfFrame = new WaitForEndOfFrame();
-        while (true)
         {
-            yield return endOfFrame;
-
-            if (!ShouldRecord() || Time.unscaledTime < nextCapture) continue;
-            nextCapture = Time.unscaledTime + 1f / Fps;
-
-            if (screenTarget == null || screenTarget.width != Screen.width || screenTarget.height != Screen.height)
-            {
-                Release(ref screenTarget);
-                screenTarget = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB32);
-            }
-
-            if (smallTarget == null)
-                smallTarget = new RenderTexture(Width, Height, 0, RenderTextureFormat.ARGB32);
-
-            ScreenCapture.CaptureScreenshotIntoRenderTexture(screenTarget);
-            Graphics.Blit(screenTarget, smallTarget);
-
-            // Zvuk hry se odposlouchava u AudioListeneru (kamera hrace).
-            if (audioTap == null)
-            {
-                // Prednostne posluchac na kamere tohohle hrace (ve scene muze byt i jiny).
-                var controller = GetComponent<FirstPersonController>();
-                var listener = controller != null && controller.playerCamera != null
-                    ? controller.playerCamera.GetComponent<AudioListener>()
-                    : null;
-                if (listener == null || !listener.isActiveAndEnabled)
-                    listener = FindAnyObjectByType<AudioListener>();
-                if (listener != null)
-                {
-                    audioTap = listener.GetComponent<PotgAudioTap>();
-                    if (audioTap == null)
-                        audioTap = listener.gameObject.AddComponent<PotgAudioTap>();
-                }
-            }
-
-            float stamp = Time.unscaledTime;
-            long audioPosition = audioTap != null ? audioTap.Position : 0;
-            AsyncGPUReadback.Request(smallTarget, 0, TextureFormat.RGB24, request => OnReadback(request, stamp, audioPosition));
+            capture = GetComponent<ReplayCapture>();
+            if (capture == null)
+                capture = gameObject.AddComponent<ReplayCapture>();
         }
-    }
-
-    void OnReadback(AsyncGPUReadbackRequest request, float stamp, long audioPosition)
-    {
-        if (request.hasError) return;
-
-        byte[] pixels = request.GetData<byte>().ToArray();
-
-        // Komprese bezi mimo hlavni vlakno, at nahravani nebrzdi hru.
-        Task.Run(() =>
-        {
-            byte[] jpg = ImageConversion.EncodeArrayToJPG(pixels, GraphicsFormat.R8G8B8_UNorm, Width, Height, 0, JpgQuality);
-            lock (ring)
-            {
-                ring.Add(new Frame { time = stamp, audio = audioPosition, jpg = jpg });
-                ring.RemoveAll(frame => frame.time < stamp - RingSeconds);
-            }
-        });
     }
 
     void Update()
@@ -186,37 +81,13 @@ public class PotgRecorder : NetworkBehaviour
     // Odlozi poslednich ClipSeconds zaznamu jako klip s danym skore (kdyz neni horsi nez uz odlozeny).
     void SaveClip(int score)
     {
-        if (score < bestScore) return;
+        if (score < bestScore || capture == null) return;
 
-        List<Frame> frames;
-        lock (ring)
-            frames = new List<Frame>(ring);
-        if (frames.Count < Fps) return;
-
-        frames.Sort((a, b) => a.time.CompareTo(b.time));
-        float from = frames[frames.Count - 1].time - ClipSeconds;
-
-        var clip = new List<byte[]>();
-        long audioFrom = -1, audioTo = 0;
-        foreach (var frame in frames)
-        {
-            if (frame.time < from) continue;
-
-            clip.Add(frame.jpg);
-            if (audioFrom < 0) audioFrom = frame.audio;
-            audioTo = frame.audio;
-        }
+        var clip = capture.Extract(ClipSeconds);
+        if (clip == null) return;
 
         bestClip = clip;
         bestScore = score;
-
-        // Zvuk ke stejnemu useku (plus delka posledniho snimku).
-        bestAudio = null;
-        if (audioTap != null && audioFrom >= 0)
-        {
-            bestAudioRate = audioTap.SampleRate;
-            bestAudio = audioTap.Extract(audioFrom, audioTo + bestAudioRate / Fps);
-        }
     }
 
     // ---------------- server: hodnoceni akci ----------------
@@ -380,21 +251,30 @@ public class PotgRecorder : NetworkBehaviour
         if (!IsOwner) return;
 
         bestClip = null;
-        bestAudio = null;
         bestScore = 0;
         pendingAt = -1f;
         pendingScore = 0;
-        lock (ring)
-            ring.Clear();
+        if (capture != null)
+            capture.Clear();
     }
 
     // ---------------- konec zapasu: prenos a prehrani klipu ----------------
 
+    // Server: jak daleko je prenos zaznamu (MatchManager podle toho pozna, ze hrac odpadl, a vezme dalsiho v poradi).
+    public bool ServerClipStarted { get; private set; }
+    public bool ServerClipComplete => ServerClipStarted && serverReceived >= serverExpected;
+    public float ServerLastProgress { get; private set; }
+    int serverExpected, serverReceived;
+
     // Vola MatchManager na serveru u hrace s nejlepsi akci.
     public void ServerStartPotg()
     {
-        if (IsServer)
-            RequestClipClientRpc();
+        if (!IsServer) return;
+
+        ServerClipStarted = false;
+        serverExpected = serverReceived = 0;
+        ServerLastProgress = Time.unscaledTime;
+        RequestClipClientRpc();
     }
 
     [ClientRpc]
@@ -409,63 +289,58 @@ public class PotgRecorder : NetworkBehaviour
             SaveClip(pendingScore);
         }
 
-        if (bestClip != null && bestClip.Count > 0)
-            StartCoroutine(SendClip(new List<byte[]>(bestClip), bestAudio));
+        if (bestClip != null && bestClip.frames.Count > 1)
+            StartCoroutine(SendClip(bestClip.Serialize()));
     }
 
-    IEnumerator SendClip(List<byte[]> clip, byte[] audio)
+    // Zaznam se posila po kouscich (jeden za snimek hry), at se nezahlti sit.
+    IEnumerator SendClip(byte[] data)
     {
-        int audioBytes = audio != null ? audio.Length : 0;
-        BeginClipServerRpc(clip.Count, Fps, SystemInfo.graphicsUVStartsAtTop, audioBytes, bestAudioRate);
-
-        // Nejdriv zvuk (je maly), pak snimky.
-        for (int offset = 0; offset < audioBytes; offset += AudioChunkBytes)
+        BeginClipServerRpc(data.Length);
+        for (int offset = 0; offset < data.Length; offset += ChunkBytes)
         {
-            var chunk = new byte[Mathf.Min(AudioChunkBytes, audioBytes - offset)];
-            System.Buffer.BlockCopy(audio, offset, chunk, 0, chunk.Length);
-            AudioServerRpc(offset, chunk);
-            yield return null;
-        }
-
-        // Snimky se posilaji postupne (jeden za snimek hry), aby se nezahltila sit; prehravani zacne,
-        // jakmile je jich dost napred, zbytek dojde behem nej.
-        for (int i = 0; i < clip.Count; i++)
-        {
-            FrameServerRpc(i, clip[i]);
+            var chunk = new byte[Mathf.Min(ChunkBytes, data.Length - offset)];
+            System.Buffer.BlockCopy(data, offset, chunk, 0, chunk.Length);
+            ChunkServerRpc(offset, chunk);
             yield return null;
         }
     }
 
     [ServerRpc]
-    void BeginClipServerRpc(int count, int fps, bool flipped, int audioBytes, int audioRate)
+    void BeginClipServerRpc(int totalBytes)
     {
         var match = MatchManager.Instance;
-        if (match == null || !match.IsOver || count <= 0 || count > 400) return;
-        if (audioBytes < 0 || audioBytes > 2000000 || audioRate < 8000 || audioRate > 48000)
-            audioBytes = 0;
+        if (match == null || !match.IsOver || totalBytes <= 0 || totalBytes > MaxClipBytes) return;
 
-        BeginClipClientRpc(count, Mathf.Clamp(fps, 5, 60), flipped, ServerBestCategory, audioBytes, audioRate);
+        ServerClipStarted = true;
+        serverExpected = totalBytes;
+        serverReceived = 0;
+        ServerLastProgress = Time.unscaledTime;
+        BeginClipClientRpc(totalBytes, ServerBestCategory);
     }
 
     [ClientRpc]
-    void BeginClipClientRpc(int count, int fps, bool flipped, int category, int audioBytes, int audioRate)
+    void BeginClipClientRpc(int totalBytes, int category)
     {
         var team = GetComponent<PlayerTeam>();
         PotgUI.Begin(hero != null ? hero.DisplayName : "?", hero != null && hero.Hero != null ? hero.Hero.heroName : "",
-            team != null ? team.teamId.Value : 0, count, fps, flipped, CategoryName(category), audioBytes, audioRate);
+            team != null ? team.teamId.Value : 0, totalBytes, CategoryName(category), hero != null ? hero.heroId.Value : -1);
     }
 
     [ServerRpc]
-    void AudioServerRpc(int offset, byte[] pcm)
+    void ChunkServerRpc(int offset, byte[] data)
     {
-        if (pcm == null || pcm.Length > 100000) return;
-        AudioClientRpc(offset, pcm);
+        if (data == null || data.Length > ChunkBytes || offset < 0 || offset > MaxClipBytes) return;
+
+        serverReceived += data.Length;
+        ServerLastProgress = Time.unscaledTime;
+        ChunkClientRpc(offset, data);
     }
 
     [ClientRpc]
-    void AudioClientRpc(int offset, byte[] pcm)
+    void ChunkClientRpc(int offset, byte[] data)
     {
-        PotgUI.AddAudio(offset, pcm);
+        PotgUI.AddChunk(offset, data);
     }
 
     static string CategoryName(int category)
@@ -482,16 +357,4 @@ public class PotgRecorder : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
-    void FrameServerRpc(int index, byte[] jpg)
-    {
-        if (jpg == null || jpg.Length > 300000) return;
-        FrameClientRpc(index, jpg);
-    }
-
-    [ClientRpc]
-    void FrameClientRpc(int index, byte[] jpg)
-    {
-        PotgUI.AddFrame(index, jpg);
-    }
 }

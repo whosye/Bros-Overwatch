@@ -15,7 +15,7 @@ public static class LivingRoomSetup
 {
     const string MapName = "Map-Domasov";
     const string RoomName = "Obyvak";
-    const string Version = "_v7";
+    const string Version = "_v8";
     const string Folder = "Assets/Materials/Interior";
 
     static LivingRoomSetup()
@@ -423,7 +423,11 @@ public static class LivingRoomSetup
         player.targetMaterialProperty = "_BaseMap";
         if (m.video.audioTrackCount > 0)
         {
-            var speaker = display.AddComponent<AudioSource>();
+            // Reproduktor u obrazovky (displej sam stoji v pocatku sveta - jeho body jsou ve svetovych souradnicich).
+            var speakerObject = new GameObject("Reproduktor");
+            speakerObject.transform.SetParent(display.transform, true);
+            speakerObject.transform.position = p.TransformPoint(new Vector3(0f, screenY, 0.1f));
+            var speaker = speakerObject.AddComponent<AudioSource>();
             speaker.playOnAwake = false;
             speaker.spatialBlend = 1f;
             speaker.rolloffMode = AudioRolloffMode.Linear;

@@ -42,10 +42,21 @@ public class ProjectileVisual : MonoBehaviour
 
     public static void Spawn(int id, Vector3 position, Vector3 velocity, WeaponDefinition weapon, Vector3 visualOffset = default)
     {
+        ReplayLog.ProjectileSpawn(id, position, velocity, weapon, visualOffset);
         if (Active.TryGetValue(id, out var old) && old != null)
             Destroy(old.gameObject);
 
-        var go = weapon.projectilePrefab != null ? Instantiate(weapon.projectilePrefab) : CreateDefaultVisual(weapon);
+        GameObject go;
+        if (weapon.projectilePrefab != null)
+        {
+            // Vlastni model (napr. sip): stejna stopa jako u vychoziho vzhledu.
+            go = Instantiate(weapon.projectilePrefab);
+            AddTrail(go, weapon, Mathf.Max(0.1f, weapon.projectileRadius * 2f));
+        }
+        else
+        {
+            go = CreateDefaultVisual(weapon);
+        }
         go.name = "ProjectileVisual";
         go.transform.position = position + visualOffset;
         go.transform.rotation = Quaternion.LookRotation(velocity);
@@ -58,11 +69,20 @@ public class ProjectileVisual : MonoBehaviour
         visual.gravity = weapon.projectileGravity;
         visual.bounce = weapon.Bounces ? weapon.projectileBounce : 0f;
         visual.radius = weapon.projectileRadius;
+        visual.spins = go.transform.Find("Band") != null;
         visual.lifetime = weapon.range / Mathf.Max(0.1f, weapon.projectileSpeed) + 1f + (weapon.Bounces ? weapon.projectileFuse + 3f : 0f);
         Active[id] = visual;
     }
 
     public static void End(int id, Vector3 position, int kind, WeaponDefinition weapon)
+    {
+        // (vybuch a jiskry, ktere konec sam vyvola, se zvlast nezapisuji)
+        ReplayLog.ProjectileEnd(id, position, kind, weapon);
+        using (ReplayLog.Mute())
+            EndInternal(id, position, kind, weapon);
+    }
+
+    static void EndInternal(int id, Vector3 position, int kind, WeaponDefinition weapon)
     {
         if (Active.TryGetValue(id, out var visual) && visual != null)
             Destroy(visual.gameObject);
@@ -98,12 +118,30 @@ public class ProjectileVisual : MonoBehaviour
         }
         Fx.Paint(go, weapon.projectileColor);
 
+        // Granat: cerny pruh kolem stredu (koule se v letu otaci, aby pruh bylo videt).
+        if (weapon.Bounces)
+        {
+            var band = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            Destroy(band.GetComponent<Collider>());
+            band.name = "Band";
+            band.transform.SetParent(go.transform, false);
+            band.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            band.transform.localScale = new Vector3(1.04f, 0.13f, 1.04f);
+            Fx.Paint(band, new Color(0.05f, 0.05f, 0.06f));
+        }
+
         var glow = go.AddComponent<Light>();
         glow.type = LightType.Point;
         glow.color = weapon.projectileColor;
         glow.range = 3f + diameter * 4f;
         glow.intensity = 2.5f;
 
+        AddTrail(go, weapon, diameter);
+        return go;
+    }
+
+    static void AddTrail(GameObject go, WeaponDefinition weapon, float diameter)
+    {
         if (weapon.projectileTrail && weapon.IsCharged)
         {
             // Sip: kratka pruhledna stopa s lehkym modrym nadechem, ktera se k chvostu zuzuje a mizi.
@@ -138,9 +176,11 @@ public class ProjectileVisual : MonoBehaviour
                 new[] { new GradientAlphaKey(0.9f, 0f), new GradientAlphaKey(0f, 1f) });
             trail.colorGradient = gradient;
         }
-
-        return go;
     }
+
+    // Otaceni granatu v letu (at je videt cerny pruh).
+    bool spins;
+    float spin;
 
     void Update()
     {
@@ -171,7 +211,14 @@ public class ProjectileVisual : MonoBehaviour
         transform.position = position + visualOffset * offsetLeft;
 
         if (velocity.sqrMagnitude > 0.01f)
+        {
             transform.rotation = Quaternion.LookRotation(velocity);
+            if (spins)
+            {
+                spin += Time.deltaTime * 720f;
+                transform.rotation *= Quaternion.Euler(spin, 0f, 0f);
+            }
+        }
 
         lifetime -= Time.deltaTime;
         if (lifetime <= 0f)

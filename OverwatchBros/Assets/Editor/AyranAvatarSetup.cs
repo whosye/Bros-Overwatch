@@ -26,6 +26,8 @@ public static class AyranAvatarSetup
         new Entry { hero = "Honza", sleeve = new Color(0.70f, 0.80f, 0.92f, 1f), skin = new Color(0.82f, 0.63f, 0.52f) },
         // Cerne tricko (kratky rukav).
         new Entry { hero = "Viktor", sleeve = new Color(0.10f, 0.10f, 0.12f, 1f), skin = new Color(0.80f, 0.62f, 0.50f) },
+        // Cerny oblek (Jules z Pulp Fiction).
+        new Entry { hero = "Sindel", sleeve = new Color(0.07f, 0.07f, 0.08f, 1f), skin = new Color(0.88f, 0.72f, 0.60f) },
     };
 
     public static bool IsReady()

@@ -186,21 +186,46 @@ public partial class MatchManager : NetworkBehaviour
             yield break;
         }
 
-        PotgRecorder best = null;
+        // Poradi hracu podle nejlepsi akce. Kdyz nejlepsi hrac odpadne (nebo zaznam neposle), vezme se dalsi v poradi.
+        var ranked = new System.Collections.Generic.List<PotgRecorder>();
         foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
         {
             var recorder = client.PlayerObject != null ? client.PlayerObject.GetComponent<PotgRecorder>() : null;
-            if (recorder != null && recorder.ServerBestScore > (best != null ? best.ServerBestScore : 0))
-                best = recorder;
+            if (recorder != null && recorder.ServerBestScore > 0)
+                ranked.Add(recorder);
+        }
+        ranked.Sort((a, b) => b.ServerBestScore.CompareTo(a.ServerBestScore));
+
+        bool delivered = false;
+        foreach (var candidate in ranked)
+        {
+            if (candidate == null || !candidate.IsSpawned) continue;
+
+            candidate.ServerStartPotg();
+            while (true)
+            {
+                yield return null;
+
+                // Hrac se odpojil (jeho objekt zmizel).
+                if (candidate == null || !candidate.IsSpawned) break;
+                if (candidate.ServerClipComplete) { delivered = true; break; }
+
+                // Nezacal posilat do 4 s, nebo se prenos na 4 s zasekl.
+                if (Time.unscaledTime - candidate.ServerLastProgress > 4f) break;
+            }
+
+            if (delivered) break;
+
+            // Zrusit rozpracovane prehravani u vsech a zkusit dalsiho.
+            CancelPotgClientRpc();
+            if (!IsSpawned || !matchOver.Value) break;
         }
 
-        if (best == null)
+        if (!delivered)
         {
             PotgPending = false;
             yield break;
         }
-
-        best.ServerStartPotg();
 
         // Pockat, az se klip u hosta objevi (kdyby nedorazil, po chvili se ovladani uvolni) a az dohraje.
         float waited = 0f;
@@ -218,6 +243,12 @@ public partial class MatchManager : NetworkBehaviour
         }
 
         PotgPending = false;
+    }
+
+    [ClientRpc]
+    void CancelPotgClientRpc()
+    {
+        PotgUI.Stop();
     }
 
     // Host spusti zapas z lobby.

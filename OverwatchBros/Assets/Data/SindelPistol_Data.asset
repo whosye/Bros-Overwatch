@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ebeba9977deef4cb0414f2cfd81e11, type: 3}
+  m_Name: SindelPistol_Data
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  weaponName: "Dev\xEDtka"
+  damage: 38
+  fireRate: 2.4
+  maxAmmo: 8
+  reloadTime: 1.5
+  reloadAnimation: 0
+  range: 120
+  chargeTime: 0
+  minChargeDamage: 20
+  minChargeSpeed: 25
+  falloffStart: 25
+  falloffEnd: 45
+  falloffMin: 0.5
+  farFalloffEnd: 0
+  farFalloffMin: 0.1
+  maxDamageRange: 0
+  allyHeal: 0
+  scopeFov: 0
+  scopedChargeTime: 0
+  scopedMinDamage: 30
+  scopedMaxDamage: 120
+  headshotMultiplier: 2
+  scopedAmmoCost: 2
+  scopedMoveSpeed: 0.5
+  proximityRadius: 0
+  fireMode: 0
+  projectileSpeed: 40
+  projectileGravity: 0
+  projectileRadius: 0.15
+  explosionRadius: 0
+  projectileBounce: 0
+  projectileFuse: 1
+  projectileColor: {r: 1, g: 0.85, b: 0.45, a: 1}
+  projectileTrail: 1
+  projectilePrefab: {fileID: 0}
+  meleeRadius: 0.6
+  heldModel: 2
+  dualWield: 0
+  heldPrefab: {fileID: 1089338439108150065, guid: bfc2c4c036df15142822d8d8a476dac7, type: 3}

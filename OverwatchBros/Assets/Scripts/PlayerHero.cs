@@ -21,12 +21,19 @@ public class PlayerHero : NetworkBehaviour
     // Statistiky do tabulky hracu (Tab). Pocita server, nuluji se s kazdym novym zapasem.
     public NetworkVariable<int> kills = new NetworkVariable<int>();
     public NetworkVariable<int> deaths = new NetworkVariable<int>();
+    public NetworkVariable<float> healing = new NetworkVariable<float>();   // vylecene HP spoluhracum (bez sebe)
+
+    public void ServerAddHealingStat(float amount)
+    {
+        if (IsServer && amount > 0f) healing.Value += amount;
+    }
 
     public void ServerResetStats()
     {
         if (!IsServer) return;
         kills.Value = 0;
         deaths.Value = 0;
+        healing.Value = 0f;
         ultCharge.Value = 0f;
     }
 
@@ -123,13 +130,26 @@ public class PlayerHero : NetworkBehaviour
         return (leap != null && leap.enabled && leap.IsAirborne)
             || (boulder != null && boulder.enabled && boulder.IsRolling)
             || (visor != null && visor.enabled && visor.IsScanning)
-            || (storm != null && storm.enabled && storm.IsStormActive);
+            || (storm != null && storm.enabled && storm.IsStormActive)
+            || (ezekiel != null && ezekiel.enabled && ezekiel.IsCasting);
     }
 
     // ---------------- odhaleni pruzkumnym sipem ----------------
 
     // Odhaleny hrac je videt souperum i pres zdi (jmenovka se zivoty).
     public NetworkVariable<bool> revealed = new NetworkVariable<bool>(false);
+
+    // Posileni od Anny (ultimatka): vetsi poskozeni, mensi prijimane poskozeni, viditelna aura.
+    public NetworkVariable<bool> boosted = new NetworkVariable<bool>(false);
+    public bool IsBoosted => boosted.Value;
+    float boostUntil;
+
+    public void ServerBoost(float seconds)
+    {
+        if (!IsServer) return;
+        boostUntil = Time.time + seconds;
+        boosted.Value = true;
+    }
     float revealUntil;
 
     public void ServerReveal(float seconds)
@@ -170,6 +190,18 @@ public class PlayerHero : NetworkBehaviour
     ScoutArrowAbility scout;
     RapidFireAbility rapidFire;
     StormAbility storm;
+    SleepDartAbility sleepDart;
+    BioticGrenadeAbility bioGrenade;
+    NanoBoostAbility nano;
+    GrappleAbility grapple;
+    KickAbility kick;
+    InfraAbility infra;
+    BlinkAbility blink;
+    RecallAbility recall;
+    PulseBombAbility pulseBomb;
+    BardAbility bard;
+    SindelAbility sindel;
+    EzekielAbility ezekiel;
     HeroVoice voice;
 
     void Awake()
@@ -190,6 +222,18 @@ public class PlayerHero : NetworkBehaviour
         scout = GetComponent<ScoutArrowAbility>();
         rapidFire = GetComponent<RapidFireAbility>();
         storm = GetComponent<StormAbility>();
+        sleepDart = GetComponent<SleepDartAbility>();
+        bioGrenade = GetComponent<BioticGrenadeAbility>();
+        nano = GetComponent<NanoBoostAbility>();
+        grapple = GetComponent<GrappleAbility>();
+        kick = GetComponent<KickAbility>();
+        infra = GetComponent<InfraAbility>();
+        blink = GetComponent<BlinkAbility>();
+        recall = GetComponent<RecallAbility>();
+        pulseBomb = GetComponent<PulseBombAbility>();
+        bard = GetComponent<BardAbility>();
+        sindel = GetComponent<SindelAbility>();
+        ezekiel = GetComponent<EzekielAbility>();
         voice = GetComponent<HeroVoice>();
     }
 
@@ -197,6 +241,9 @@ public class PlayerHero : NetworkBehaviour
     {
         heroId.OnValueChanged += OnHeroChanged;
         ultCharge.OnValueChanged += OnUltChargeChanged;
+        boosted.OnValueChanged += OnBoostedChanged;
+        if (boosted.Value)
+            OnBoostedChanged(false, true);
         health.OnDeath += OnDeath;
         health.currentHealth.OnValueChanged += OnHealthChanged;
 
@@ -217,6 +264,8 @@ public class PlayerHero : NetworkBehaviour
     {
         heroId.OnValueChanged -= OnHeroChanged;
         ultCharge.OnValueChanged -= OnUltChargeChanged;
+        boosted.OnValueChanged -= OnBoostedChanged;
+        NanoAura.Set(transform, false);
         health.OnDeath -= OnDeath;
         health.currentHealth.OnValueChanged -= OnHealthChanged;
     }
@@ -237,6 +286,9 @@ public class PlayerHero : NetworkBehaviour
 
             if (revealed.Value && Time.time >= revealUntil)
                 revealed.Value = false;
+
+            if (boosted.Value && (Time.time >= boostUntil || health.currentHealth.Value <= 0f))
+                boosted.Value = false;
         }
 
         // Server: ultimatka se pomalu nabiji i sama (jen zivemu hraci behem zapasu).
@@ -487,10 +539,91 @@ public class PlayerHero : NetworkBehaviour
             boulder.enabled = definition.abilityKind == AbilityKind.Boulder && definition.ability != null;
         }
 
+        bool hasSleepDart = definition.secondaryAbilityKind == AbilityKind.SleepDart && definition.secondaryAbility != null;
+        if (sleepDart != null)
+        {
+            sleepDart.Configure(definition.secondaryAbility);
+            sleepDart.enabled = hasSleepDart;
+        }
+
+        if (bioGrenade != null)
+        {
+            bioGrenade.Configure(definition.altAbility);
+            bioGrenade.enabled = definition.altAbilityKind == AbilityKind.BioticGrenade && definition.altAbility != null;
+        }
+
+        if (nano != null)
+        {
+            nano.Configure(definition.ability);
+            nano.enabled = definition.abilityKind == AbilityKind.NanoBoost && definition.ability != null;
+        }
+
+        bool hasGrapple = definition.secondaryAbilityKind == AbilityKind.Grapple && definition.secondaryAbility != null;
+        if (grapple != null)
+        {
+            grapple.Configure(definition.secondaryAbility);
+            grapple.enabled = hasGrapple;
+        }
+
+        if (kick != null)
+        {
+            kick.Configure(definition.altAbility);
+            kick.enabled = definition.altAbilityKind == AbilityKind.Kick && definition.altAbility != null;
+        }
+
+        if (infra != null)
+        {
+            infra.Configure(definition.ability);
+            infra.enabled = definition.abilityKind == AbilityKind.Infra && definition.ability != null;
+        }
+
+        bool hasBlink = definition.secondaryAbilityKind == AbilityKind.Blink && definition.secondaryAbility != null;
+        if (blink != null)
+        {
+            blink.Configure(definition.secondaryAbility);
+            blink.enabled = hasBlink;
+        }
+
+        if (recall != null)
+        {
+            recall.Configure(definition.altAbility);
+            recall.enabled = definition.altAbilityKind == AbilityKind.Recall && definition.altAbility != null;
+        }
+
+        if (pulseBomb != null)
+        {
+            pulseBomb.Configure(definition.ability);
+            pulseBomb.enabled = definition.abilityKind == AbilityKind.PulseBomb && definition.ability != null;
+        }
+
+        bool hasBard = definition.secondaryAbilityKind == AbilityKind.Crossfade && definition.secondaryAbility != null;
+        if (bard != null)
+        {
+            bard.Configure(hasBard ? definition.secondaryAbility : null,
+                definition.altAbilityKind == AbilityKind.Amp ? definition.altAbility : null,
+                definition.abilityKind == AbilityKind.Concert ? definition.ability : null,
+                definition.rmbAbilityKind == AbilityKind.Soundwave ? definition.rmbAbility : null);
+            bard.enabled = hasBard;
+        }
+
+        bool hasSindelLeap = definition.secondaryAbilityKind == AbilityKind.RighteousLeap && definition.secondaryAbility != null;
+        bool hasSindelGrenade = definition.altAbilityKind == AbilityKind.HolyGrenade && definition.altAbility != null;
+        if (sindel != null)
+        {
+            sindel.Configure(hasSindelLeap ? definition.secondaryAbility : null, hasSindelGrenade ? definition.altAbility : null);
+            sindel.enabled = hasSindelLeap || hasSindelGrenade;
+        }
+
+        if (ezekiel != null)
+        {
+            ezekiel.Configure(definition.ability);
+            ezekiel.enabled = definition.abilityKind == AbilityKind.Ezekiel && definition.ability != null;
+        }
+
         var controller = GetComponent<FirstPersonController>();
         if (controller != null)
         {
-            controller.ShiftReserved = hasRush || hasMine || dashOnShift;
+            controller.ShiftReserved = hasRush || hasMine || dashOnShift || hasSleepDart || hasGrapple || hasBlink || hasBard || hasSindelLeap;
             controller.DoubleJump = definition.doubleJump;
             controller.LedgeClimb = definition.ledgeClimb;
         }
@@ -542,6 +675,54 @@ public class PlayerHero : NetworkBehaviour
 
         else if (Hero.abilityKind == AbilityKind.Storm && storm != null && Hero.ability != null)
             slots.Add(UltSlot(storm.CooldownRemaining, false));
+
+        else if (Hero.abilityKind == AbilityKind.NanoBoost && nano != null && Hero.ability != null)
+            slots.Add(UltSlot(nano.CooldownRemaining, false));
+
+        else if (Hero.abilityKind == AbilityKind.Infra && infra != null && Hero.ability != null)
+            slots.Add(UltSlot(infra.CooldownRemaining, infra.IsActive));
+
+        else if (Hero.abilityKind == AbilityKind.PulseBomb && pulseBomb != null && Hero.ability != null)
+            slots.Add(UltSlot(pulseBomb.CooldownRemaining, false));
+
+        else if (Hero.abilityKind == AbilityKind.Concert && bard != null && Hero.ability != null)
+            slots.Add(UltSlot(bard.UltRemaining, false));
+
+        else if (Hero.abilityKind == AbilityKind.Ezekiel && ezekiel != null && Hero.ability != null)
+            slots.Add(UltSlot(ezekiel.CooldownRemaining, ezekiel.IsCasting));
+
+        if (Hero.altAbilityKind == AbilityKind.HolyGrenade && sindel != null && Hero.altAbility != null)
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = sindel.GrenadeRemaining, active = false, charge = -1f });
+
+        if (Hero.secondaryAbilityKind == AbilityKind.RighteousLeap && sindel != null && Hero.secondaryAbility != null)
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = sindel.LeapRemaining, active = false, charge = -1f });
+
+        if (Hero.altAbilityKind == AbilityKind.Amp && bard != null && Hero.altAbility != null)
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = bard.AmpRemaining, active = bard.Amped, charge = -1f });
+
+        if (Hero.rmbAbilityKind == AbilityKind.Soundwave && bard != null && Hero.rmbAbility != null)
+            slots.Add(new AbilitySlot { key = "PTM", ability = Hero.rmbAbility, remaining = bard.WaveRemaining, active = false, charge = -1f });
+
+        if (Hero.secondaryAbilityKind == AbilityKind.Crossfade && bard != null && Hero.secondaryAbility != null)
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = bard.ToggleRemaining, active = bard.SpeedMode, charge = -1f });
+
+        if (Hero.altAbilityKind == AbilityKind.Recall && recall != null && Hero.altAbility != null)
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = recall.CooldownRemaining, active = recall.IsActive, charge = -1f });
+
+        if (Hero.secondaryAbilityKind == AbilityKind.Blink && blink != null && Hero.secondaryAbility != null)
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = blink.CooldownRemaining, active = false, charge = -1f, count = blink.Charges });
+
+        if (Hero.altAbilityKind == AbilityKind.Kick && kick != null && Hero.altAbility != null)
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = kick.CooldownRemaining, active = false, charge = -1f });
+
+        if (Hero.secondaryAbilityKind == AbilityKind.Grapple && grapple != null && Hero.secondaryAbility != null)
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = grapple.CooldownRemaining, active = false, charge = -1f });
+
+        if (Hero.altAbilityKind == AbilityKind.BioticGrenade && bioGrenade != null && Hero.altAbility != null)
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = bioGrenade.CooldownRemaining, active = false, charge = -1f });
+
+        if (Hero.secondaryAbilityKind == AbilityKind.SleepDart && sleepDart != null && Hero.secondaryAbility != null)
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = sleepDart.CooldownRemaining, active = false, charge = -1f });
 
         if (Hero.rmbAbilityKind == AbilityKind.RapidFire && rapidFire != null && Hero.rmbAbility != null)
             slots.Add(new AbilitySlot { key = "PTM", ability = Hero.rmbAbility, remaining = rapidFire.CooldownRemaining, active = rapidFire.IsActive, charge = -1f, count = rapidFire.ShotsLeft });
@@ -716,6 +897,13 @@ public class PlayerHero : NetworkBehaviour
     {
         if (IsOwner)
             HudUI.NotifyHit(kill);
+    }
+
+    void OnBoostedChanged(bool previous, bool current)
+    {
+        NanoAura.Set(transform, current);
+        if (current && IsOwner)
+            HudUI.NotifyTint(new Color(0.45f, 0.8f, 1f, 0.45f), 0.6f);
     }
 
     void OnDeath()

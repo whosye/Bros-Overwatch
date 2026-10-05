@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
+  m_Name: RighteousLeap_Data
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
+  abilityName: "Spravedliv\xFD skok"
+  icon: {fileID: 2800000, guid: ae1a7fbf946e8bd41b104c1240018ef8, type: 3}
+  cooldown: 7
+  ultCost: 0
+  power: 10
+  duration: 2.2
+  radius: 6
+  range: 25
+  knockback: 0
+  charges: 1
+  sound: {fileID: 0}
+  voiceLines:
+  - {fileID: 8300000, guid: 972096558bd73044e9ca866b8a3964c6, type: 3}
+  blockAbsorb: 0.8
+  blockSpeed: 0.5
+  regenDelay: 5
+  regenTime: 6
+  speed: 14
+  tickInterval: 0.25
+  healRatio: 1

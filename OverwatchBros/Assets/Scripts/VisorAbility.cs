@@ -117,7 +117,7 @@ public class VisorAbility : NetworkBehaviour
         nextScan = 0f;
         scanning.Value = true;
 
-        // Behem ultimatky ma Viktor zasobnik na 20 naboju (hned plny).
+        // Behem ultimatky ma Viktor zasobnik na 30 naboju (hned plny).
         var shooting = GetComponent<WeaponShooting>();
         if (shooting != null)
             shooting.SetMagazineOverride(UltAmmo);
@@ -125,7 +125,7 @@ public class VisorAbility : NetworkBehaviour
         ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 0.7f);
     }
 
-    const int UltAmmo = 20;
+    const int UltAmmo = 30;
 
     const float WindupSeconds = 1f;
     readonly UltWindup windup = new UltWindup();

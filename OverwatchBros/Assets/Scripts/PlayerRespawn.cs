@@ -124,6 +124,13 @@ public class PlayerRespawn : NetworkBehaviour
         string spawnPointName = $"SpawnPoint_Team{team.teamId.Value}";
         GameObject spawnPointObject = GameObject.Find(spawnPointName);
         position = spawnPointObject != null ? spawnPointObject.transform.position : Vector3.zero;
+
+        // Kazdy hrac kousek vedle bodu (kruh kolem nej), at se pri startu zapasu neobjevi vsichni v sobe.
+        if (spawnPointObject != null)
+        {
+            float angle = OwnerClientId * 2.4f;
+            position += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * (1.4f + (OwnerClientId % 2) * 0.8f);
+        }
         return spawnPointObject != null;
     }
 }

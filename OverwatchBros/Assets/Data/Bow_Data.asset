@@ -25,6 +25,18 @@ MonoBehaviour:
   falloffStart: 0
   falloffEnd: 0
   falloffMin: 0.4
+  farFalloffEnd: 0
+  farFalloffMin: 0.1
+  maxDamageRange: 0
+  allyHeal: 0
+  scopeFov: 0
+  scopedChargeTime: 0
+  scopedMinDamage: 30
+  scopedMaxDamage: 120
+  headshotMultiplier: 2
+  scopedAmmoCost: 2
+  scopedMoveSpeed: 0.5
+  proximityRadius: 0
   fireMode: 1
   projectileSpeed: 110
   projectileGravity: 9
@@ -34,8 +46,8 @@ MonoBehaviour:
   projectileFuse: 1
   projectileColor: {r: 0.55, g: 0.85, b: 1, a: 1}
   projectileTrail: 1
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 7717565737963506589, guid: 9f9b3767e4f1f4a498aa7a7c1eef792b, type: 3}
   meleeRadius: 0.6
   heldModel: 4
   dualWield: 0
-  heldPrefab: {fileID: 0}
+  heldPrefab: {fileID: 1693860406041823042, guid: 2b8678a10d3c1184db3fa62700057fd4, type: 3}
