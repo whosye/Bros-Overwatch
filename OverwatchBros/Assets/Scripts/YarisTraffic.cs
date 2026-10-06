@@ -29,6 +29,13 @@ public sealed class YarisTraffic : MonoBehaviour
 
     void Awake()
     {
+        // Klakson je slyset jen v okoli (pres celou mapu jsou slyset jen ultimatky).
+        if (horn != null)
+        {
+            horn.rolloffMode = AudioRolloffMode.Linear;
+            horn.minDistance = Mathf.Min(horn.minDistance, 8f);
+            horn.maxDistance = Mathf.Min(horn.maxDistance, 45f);
+        }
         body = GetComponent<Rigidbody>();
         carCollider = GetComponent<BoxCollider>();
         body.isKinematic = true;

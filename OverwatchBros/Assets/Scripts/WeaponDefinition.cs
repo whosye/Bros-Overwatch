@@ -109,6 +109,17 @@ public class WeaponDefinition : ScriptableObject
     [Tooltip("Volitelny vlastni model zbrane. Kdyz je prazdny, pouzije se model z kostek.")]
     public GameObject heldPrefab;
 
+    [Header("Zvuk výstřelu")]
+    [Tooltip("Vlastni zvuk vystrelu. Prazdne = generovany zastupny vystrel.")]
+    public AudioClip fireSound;
+    [Tooltip("Zvuk odstrelu s pribliseni (sniper). Prazdne = 'Fire Sound'.")]
+    public AudioClip scopedFireSound;
+
+    // Dosah zvuku vystrelu (od teto vzdalenosti uz neni slyset).
+    public const float FireSoundRange = 45f;
+
+    public AudioClip ShotSound(bool scoped) => scoped && scopedFireSound != null ? scopedFireSound : fireSound;
+
     public bool IsProjectile => fireMode == FireMode.Projectile;
     public bool IsMelee => fireMode == FireMode.Melee;
     public bool IsCharged => IsProjectile && chargeTime > 0f;

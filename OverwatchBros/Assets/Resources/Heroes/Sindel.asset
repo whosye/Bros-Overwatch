@@ -42,10 +42,13 @@ MonoBehaviour:
   deathLines: []
   hurtLines:
   - {fileID: 8300000, guid: 2d54e1095f74e5b4a89aae2829c4f42f, type: 3}
+  - {fileID: 8300000, guid: 5b1a70576af8a45498f323cb0b94556b, type: 3}
+  - {fileID: 8300000, guid: 980eb342a35f0ad47a764b82014da725, type: 3}
   idleLines:
   - {fileID: 8300000, guid: b51d19d482685514f994fab41c962bb2, type: 3}
   - {fileID: 8300000, guid: 98389558563b39f46985956a12484224, type: 3}
   - {fileID: 8300000, guid: 04cbda7ba510393498c300beeee4d143, type: 3}
+  - {fileID: 8300000, guid: 6307bc6ae2c4d3f4aa2351a014fbf4b6, type: 3}
   snareLines:
   - {fileID: 8300000, guid: 97386fd59f9840749949630399594e56, type: 3}
   - {fileID: 8300000, guid: 7803c5aa0e6670342b3fa327746b554b, type: 3}

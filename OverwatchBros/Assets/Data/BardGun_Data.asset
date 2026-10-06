@@ -51,3 +51,5 @@ MonoBehaviour:
   heldModel: 2
   dualWield: 0
   heldPrefab: {fileID: 809421828374749415, guid: 4f0bff9ff4f7b2f428b37ab8273ee6b9, type: 3}
+  fireSound: {fileID: 8300000, guid: d796670e72cf71c43a6be46d560c0324, type: 3}
+  scopedFireSound: {fileID: 0}

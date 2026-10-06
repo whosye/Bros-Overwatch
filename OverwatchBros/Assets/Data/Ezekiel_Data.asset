@@ -19,7 +19,7 @@ MonoBehaviour:
   power: 220
   duration: 7
   radius: 5
-  range: 70
+  range: 120
   knockback: 0
   charges: 1
   sound: {fileID: 0}

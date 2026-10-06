@@ -51,6 +51,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 630e82b320602c349b6de9cf28285c73, type: 3}
   - {fileID: 8300000, guid: 3902e3bd8c63c724e96b65406eb59f6f, type: 3}
   - {fileID: 8300000, guid: c8cd74ee529408347a4a41de4d3e8f1f, type: 3}
+  - {fileID: 8300000, guid: feb2ab13b8e80ef4585eee6fd0c9ef15, type: 3}
   snareLines:
   - {fileID: 8300000, guid: d8fb27a500a994441b2a56033b6bf5e9, type: 3}
   - {fileID: 8300000, guid: d1e8a1d3af79d9848ab8d522dac21a86, type: 3}

@@ -201,8 +201,8 @@ public class WeaponShooting : NetworkBehaviour
         if (weapon.HasAmmo)
             currentAmmo -= cost;
 
-        ProceduralSfx.Play(ProceduralSfx.Gunshot, playerCamera.transform.position, 1f);
-        ShotFxServerRpc(false);
+        PlayShot(playerCamera.transform.position, true, 1f);
+        ShotFxServerRpc(false, true);
         held.Swing();
 
         Vector3 origin = playerCamera.transform.position;
@@ -302,7 +302,7 @@ public class WeaponShooting : NetworkBehaviour
     void FireArrow(float charge, bool rapidShot)
     {
         ProceduralSfx.Play(ProceduralSfx.Dash, playerCamera.transform.position, 0.45f + 0.3f * charge);
-        ShotFxServerRpc(true);
+        ShotFxServerRpc(true, false);
         held.Swing();
 
         Vector3 direction = playerCamera.transform.forward;
@@ -324,8 +324,9 @@ public class WeaponShooting : NetworkBehaviour
         if (weapon.HasAmmo)
             currentAmmo--;
 
-        ProceduralSfx.Play(melee ? ProceduralSfx.Dash : ProceduralSfx.Gunshot, playerCamera.transform.position, melee ? 0.6f : 0.7f);
-        ShotFxServerRpc(melee);
+        if (melee) ProceduralSfx.Play(ProceduralSfx.Dash, playerCamera.transform.position, 0.6f);
+        else PlayShot(playerCamera.transform.position, false, 0.8f);
+        ShotFxServerRpc(melee, false);
         held.Swing();
 
         if (weapon.IsProjectile)
@@ -460,18 +461,29 @@ public class WeaponShooting : NetworkBehaviour
         Fx.BulletImpact(point, tint, Mathf.Clamp(fxScale, 0.5f, 3f));
     }
 
-    [ServerRpc]
-    void ShotFxServerRpc(bool melee)
+    // Zvuk vystrelu: vlastni nahravka zbrane (WeaponDefinition.fireSound), jinak generovany zastupny.
+    void PlayShot(Vector3 position, bool scoped, float volume)
     {
-        ShotFxClientRpc(melee);
+        var clip = weapon != null ? weapon.ShotSound(scoped) : null;
+        if (clip != null)
+            ProceduralSfx.Play(clip, position, volume, WeaponDefinition.FireSoundRange);
+        else
+            ProceduralSfx.Play(ProceduralSfx.Gunshot, position, volume * 0.85f);
+    }
+
+    [ServerRpc]
+    void ShotFxServerRpc(bool melee, bool scoped)
+    {
+        ShotFxClientRpc(melee, scoped);
     }
 
     [ClientRpc]
-    void ShotFxClientRpc(bool melee)
+    void ShotFxClientRpc(bool melee, bool scoped)
     {
         if (IsOwner) return;
         held.Swing();
-        ProceduralSfx.Play(melee ? ProceduralSfx.Dash : ProceduralSfx.Gunshot, transform.position, melee ? 0.6f : 0.8f);
+        if (melee) ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
+        else PlayShot(transform.position, scoped, 0.9f);
     }
 
     [ServerRpc]

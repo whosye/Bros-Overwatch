@@ -64,7 +64,7 @@ public static class M7Setup
         if (flankerPistols != null && !flankerPistols.dualWield) return false;
         bool viktorReady = viktorHero == null || (viktorHero.abilityKind == AbilityKind.Visor && viktorHero.secondaryAbility != null
             && viktorHero.altAbility != null && viktorHero.rmbAbility != null);
-        return prefabReady && heroesReady && weaponsReady && honzaReady && viktorReady && ultsReady && IconsReady() && AssetDatabase.LoadAssetAtPath<Material>(LitMaterialPath) != null && HeldAxeSetup.IsReady() && WeaponModelSetup.IsReady() && CharacterSetup.IsReady() && AyranAvatarSetup.IsReady() && AyranSoundSetup.IsReady();
+        return prefabReady && heroesReady && weaponsReady && honzaReady && viktorReady && ultsReady && IconsReady() && AssetDatabase.LoadAssetAtPath<Material>(LitMaterialPath) != null && HeldAxeSetup.IsReady() && WeaponModelSetup.IsReady() && WeaponSoundSetup.IsReady() && CharacterSetup.IsReady() && AyranAvatarSetup.IsReady() && AyranSoundSetup.IsReady();
     }
 
     public static void RunIfNeeded()
@@ -107,6 +107,7 @@ public static class M7Setup
         SetupPlayerPrefab();
         HeldAxeSetup.Setup();
         WeaponModelSetup.Setup();
+        WeaponSoundSetup.Setup();
         CharacterSetup.Setup();
         AyranAvatarSetup.Setup();
 

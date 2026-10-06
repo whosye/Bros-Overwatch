@@ -109,11 +109,31 @@ public static class ProceduralSfx
 
     public static AudioClip Footstep => footstep ??= Make("footstep", 0.09f, (t, r) => Noise(r) * 0.35f * Mathf.Exp(-t * 55f));
 
+    // Zvuk efektu v miste deje s omezenym dosahem (pres celou mapu jsou slyset jen ultimatky - Fx.PlayGlobal).
+    // Drive AudioSource.PlayClipAtPoint: logaritmicky utlum s dosahem 500 m = vystrely a vybuchy slyset vsude.
     public static void Play(AudioClip clip, Vector3 position, float volume = 1f)
+    {
+        // Hlasite zvuky dal (vybuch, vystrel), drobne bliz.
+        Play(clip, position, volume, clip == explosion ? 60f : clip == gunshot ? 45f : 30f);
+    }
+
+    public static void Play(AudioClip clip, Vector3 position, float volume, float maxDistance)
     {
         if (clip == null) return;
         ReplayLog.Sfx(clip, position, volume);
-        AudioSource.PlayClipAtPoint(clip, position, volume);
+
+        var go = new GameObject("SFX_" + clip.name);
+        go.transform.position = position;
+        var source = go.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.volume = volume;
+        source.spatialBlend = 1f;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = 3f;
+        source.maxDistance = maxDistance;
+        source.dopplerLevel = 0f;
+        source.Play();
+        UnityEngine.Object.Destroy(go, clip.length + 0.1f);
     }
 
     static float Noise(System.Random r) => (float)(r.NextDouble() * 2.0 - 1.0);
