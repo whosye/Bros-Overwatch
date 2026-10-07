@@ -105,7 +105,7 @@ public class ProjectileVisual : MonoBehaviour
     static GameObject CreateDefaultVisual(WeaponDefinition weapon)
     {
         var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(go.GetComponent<Collider>());
+        DestroyImmediate(go.GetComponent<Collider>());
 
         float diameter = Mathf.Max(0.1f, weapon.projectileRadius * 2f);
         go.transform.localScale = Vector3.one * diameter;
@@ -122,7 +122,7 @@ public class ProjectileVisual : MonoBehaviour
         if (weapon.Bounces)
         {
             var band = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            Destroy(band.GetComponent<Collider>());
+            DestroyImmediate(band.GetComponent<Collider>());
             band.name = "Band";
             band.transform.SetParent(go.transform, false);
             band.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
@@ -196,6 +196,8 @@ public class ProjectileVisual : MonoBehaviour
             foreach (var hit in hits)
             {
                 if (ProjectileSim.IsLiveTarget(hit.collider)) continue;
+                // vlastni dily vizualu (koule, pruh) nejsou prekazka - granat by se odrazil sam od sebe a spadl
+                if (hit.collider.transform.IsChildOf(transform)) continue;
 
                 ProjectileSim.Bounce(ref velocity, hit.distance > 0f ? hit.normal : Vector3.up, bounce);
                 step = step / distance * Mathf.Max(0f, hit.distance - 0.01f);

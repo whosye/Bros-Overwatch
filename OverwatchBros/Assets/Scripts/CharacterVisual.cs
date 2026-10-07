@@ -103,7 +103,7 @@ public class CharacterVisual : MonoBehaviour
             ModelRoot = instance.transform;
 
             foreach (var collider in instance.GetComponentsInChildren<Collider>())
-                Destroy(collider);
+                DestroyImmediate(collider);
 
             renderers = instance.GetComponentsInChildren<Renderer>();
             animator = instance.GetComponent<Animator>();

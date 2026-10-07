@@ -152,7 +152,7 @@ public class EzekielAbility : NetworkBehaviour
         aimValid.Value = false;
         casting.Value = true;
         hero.SayAbility(ability);
-        BeginServerRpc();
+        BeginServerRpc(seconds);
     }
 
     void TickRising()
@@ -262,14 +262,24 @@ public class EzekielAbility : NetworkBehaviour
         }
         if (IsSpawned && IsOwner && casting.Value)
             casting.Value = false;
+        if (IsSpawned && IsOwner)
+            EndServerRpc();
     }
 
     // ---------------- server ----------------
 
+    // Behem kazani (vylet, cela hlaska, sestup) je Sindel nezranitelny.
     [ServerRpc]
-    void BeginServerRpc()
+    void BeginServerRpc(float seconds)
     {
+        GetComponent<Health>().ServerInvulnerable(riseTime + Mathf.Clamp(seconds, 0f, 25f) + 4f);
         BeginClientRpc();
+    }
+
+    [ServerRpc]
+    void EndServerRpc()
+    {
+        GetComponent<Health>().ServerClearInvulnerable();
     }
 
     [ServerRpc]
@@ -353,13 +363,13 @@ public class EzekielAbility : NetworkBehaviour
     {
         circle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         circle.name = "FX_EzekielCircle";
-        Destroy(circle.GetComponent<Collider>());
+        DestroyImmediate(circle.GetComponent<Collider>());
         Fx.Paint(circle, HolyColor);
         circleMaterial = circle.GetComponent<Renderer>().material;
 
         core = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         core.name = "Core";
-        Destroy(core.GetComponent<Collider>());
+        DestroyImmediate(core.GetComponent<Collider>());
         core.transform.SetParent(circle.transform, false);
         core.transform.localPosition = Vector3.up * 0.5f;
         Fx.Paint(core, Color.white);
@@ -414,7 +424,7 @@ public class HolyBeam : MonoBehaviour
     {
         var go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         go.name = "HolyBeam";
-        Destroy(go.GetComponent<Collider>());
+        DestroyImmediate(go.GetComponent<Collider>());
         go.transform.position = point + Vector3.up * 40f;
         var beam = go.AddComponent<HolyBeam>();
         beam.radius = radius;

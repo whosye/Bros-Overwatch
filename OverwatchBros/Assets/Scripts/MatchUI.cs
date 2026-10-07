@@ -26,6 +26,8 @@ public class MatchUI : MonoBehaviour
     readonly HudUI hud = new HudUI();
     readonly MatchOverlayUI overlay = new MatchOverlayUI();
     readonly CaptureUI capture = new CaptureUI();
+    readonly BuffUI buffs = new BuffUI();
+    TextMeshProUGUI boilerPrompt;
     readonly HeroPickerUI heroPicker = new HeroPickerUI();
     GameObject blockBar;
     Image blockFill;
@@ -89,6 +91,9 @@ public class MatchUI : MonoBehaviour
 
         overlay.Build(root);
         capture.Build(root);
+        buffs.Build(root);
+        boilerPrompt = UiKit.MakeText(root, "KotelVyzva", "", 30, TextAlignmentOptions.Center, center,
+            new Vector2(0f, -90f), new Vector2(900f, 44f), new Color(1f, 0.72f, 0.35f));
         hud.Build(root);
 
         // Zamerovac: maly bily krizek s jemnym tmavym obrysem (at je videt i na svetlem pozadi).
@@ -287,6 +292,8 @@ public class MatchUI : MonoBehaviour
         // Po konci zapasu (a po dohrani play of the game) je tabulka hracu videt porad, ne jen na Tab.
         overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing);
         capture.Tick(localHero, playing && !over, match);
+        buffs.Tick(playing && !over && !replay);
+        boilerPrompt.text = playing && !over && !replay ? Boiler.PromptText : "";
         UpdateEndScreen(network, match, over);
         UpdateLegacyHud(playing);
 
@@ -354,7 +361,7 @@ public class MatchUI : MonoBehaviour
 
         scoreText.text =
             $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team0)}>TÝM 0  {match.team0Score.Value}</color>" +
-            $"   <size=60%>{(match.IsCapture ? $"body · na {MatchManager.CapturePointsToWin}" : $"do {match.scoreToWinSynced.Value}")}</size>   " +
+            $"   <size=60%>{(match.IsAttackMode ? "zabrané body" : $"do {match.scoreToWinSynced.Value}")}</size>   " +
             $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team1)}>{match.team1Score.Value}  TÝM 1</color>";
 
         // Zivoty, schopnosti a munici kresli HudUI.
@@ -367,7 +374,9 @@ public class MatchUI : MonoBehaviour
         if (!over) return;
 
         int winner = match.winnerTeam.Value;
-        endTitle.text = $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(winner))}>TÝM {winner} VYHRÁL</color>";
+        endTitle.text = winner < 0
+            ? "REMÍZA"
+            : $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(winner))}>TÝM {winner} VYHRÁL</color>";
 
         bool isHost = network.IsServer;
         // Dokud nedobehne play of the game, host nemuze zapas ukoncit.

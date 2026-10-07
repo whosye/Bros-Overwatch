@@ -150,7 +150,7 @@ public class HookVisual : MonoBehaviour
         {
             var model = Instantiate(axePrefab, visual.tip);
             foreach (var collider in model.GetComponentsInChildren<Collider>())
-                Destroy(collider);
+                DestroyImmediate(collider);
             visual.axe = model.transform;
         }
         else
@@ -209,7 +209,7 @@ public class HookVisual : MonoBehaviour
     static void Block(Transform parent, Vector3 position, Vector3 scale, Color color)
     {
         var block = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Destroy(block.GetComponent<Collider>());
+        DestroyImmediate(block.GetComponent<Collider>());
         block.transform.SetParent(parent, false);
         block.transform.localPosition = position;
         block.transform.localScale = scale;

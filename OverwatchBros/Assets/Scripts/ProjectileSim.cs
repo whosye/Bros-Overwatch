@@ -18,7 +18,8 @@ public class ProjectileSim : MonoBehaviour
     float fuse = -1f;   // granat: bezi od prvniho odrazu
     float damage;       // poskozeni tohohle projektilu (u luku podle natazeni)
 
-    public static void Spawn(WeaponShooting shooter, WeaponDefinition weapon, int heroId, int id, Vector3 origin, Vector3 velocity, float damage = -1f)
+    public static void Spawn(WeaponShooting shooter, WeaponDefinition weapon, int heroId, int id, Vector3 origin, Vector3 velocity,
+        float damage = -1f)
     {
         var go = new GameObject("ProjectileSim");
         go.transform.position = origin;
@@ -31,6 +32,9 @@ public class ProjectileSim : MonoBehaviour
         sim.velocity = velocity;
         sim.damage = damage >= 0f ? damage : weapon.damage;
     }
+
+    // Poskozeni po ulete draze (pokles se vzdalenosti podle zbrane).
+    float DamageNow => damage * weapon.RangeFactor(traveled);
 
     void FixedUpdate()
     {
@@ -98,31 +102,61 @@ public class ProjectileSim : MonoBehaviour
             Finish(transform.position, KindExpired);
     }
 
+    // Proti hracum (a terci, balvanu, pasti) ma strela plnou velikost (projectileRadius), at se dobre trefuje.
+    // Proti svetu (zdi, okna, latovani) jen tenka (WorldRadius): kdyz miris do okna, strela jim proleti.
+    // Granaty se od sveta odrazi celou velikosti.
+    const float WorldRadius = 0.05f;
+
     bool TryFindHit(Vector3 start, Vector3 direction, float distance, out RaycastHit result)
     {
+        bool found = false;
+        result = default;
+
         var hits = Physics.SphereCastAll(start, weapon.projectileRadius, direction, distance, ~0, QueryTriggerInteraction.Ignore);
         System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
         foreach (var hit in hits)
         {
-            var owner = hit.collider.GetComponentInParent<NetworkObject>();
-            if (owner != null && owner == shooter.NetworkObject) continue;
-
-            // Spoluhraci projektil propousti (lecive sipy ne - ty spoluhrace leci).
-            if (owner != null && Combat.SameTeam(shooter.gameObject, owner.gameObject) && weapon.allyHeal <= 0f) continue;
-
-            // Vlastni (a tymovy) balvan a past taky.
-            var boulder = hit.collider.GetComponentInParent<BoulderHitbox>();
-            if (boulder != null && boulder.IsFriendly(shooter.gameObject)) continue;
-            var trap = hit.collider.GetComponentInParent<TrapHitbox>();
-            if (trap != null && trap.IsFriendly(shooter.gameObject)) continue;
-
+            if (!weapon.Bounces && !IsLiveTarget(hit.collider)) continue;   // svet resi tenky paprsek nize
+            if (!Valid(hit)) continue;
             result = hit;
-            return true;
+            found = true;
+            break;
         }
 
-        result = default;
-        return false;
+        if (!weapon.Bounces)
+        {
+            float thin = Mathf.Min(WorldRadius, weapon.projectileRadius);
+            var world = Physics.SphereCastAll(start, thin, direction, distance, ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(world, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in world)
+            {
+                if (IsLiveTarget(hit.collider) || !Valid(hit)) continue;
+                if (!found || hit.distance < result.distance)
+                {
+                    result = hit;
+                    found = true;
+                }
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    bool Valid(RaycastHit hit)
+    {
+        var owner = hit.collider.GetComponentInParent<NetworkObject>();
+        if (owner != null && owner == shooter.NetworkObject) return false;
+
+        // Spoluhraci projektil propousti (lecive sipy ne - ty spoluhrace leci).
+        if (owner != null && Combat.SameTeam(shooter.gameObject, owner.gameObject) && weapon.allyHeal <= 0f) return false;
+
+        // Vlastni (a tymovy) balvan a past taky.
+        var boulder = hit.collider.GetComponentInParent<BoulderHitbox>();
+        if (boulder != null && boulder.IsFriendly(shooter.gameObject)) return false;
+        var trap = hit.collider.GetComponentInParent<TrapHitbox>();
+        if (trap != null && trap.IsFriendly(shooter.gameObject)) return false;
+        return true;
     }
 
     public static bool IsLiveTarget(Collider collider)
@@ -163,7 +197,7 @@ public class ProjectileSim : MonoBehaviour
         {
             Vector3 center = point + normal * 0.1f;
             var direct = collider != null ? collider.GetComponentInParent<Health>() : null;
-            Combat.Explode(shooter.gameObject, center, weapon.explosionRadius, damage, 0.4f, direct);
+            Combat.Explode(shooter.gameObject, center, weapon.explosionRadius, DamageNow, 0.4f, direct);
             Finish(center, KindExplosion);
             return;
         }
@@ -174,23 +208,24 @@ public class ProjectileSim : MonoBehaviour
             return;
         }
 
+        float hitDamage = DamageNow;
         var dummy = collider.GetComponentInParent<Target>();
         if (dummy != null)
-            dummy.TakeDamage(damage);
+            dummy.TakeDamage(hitDamage);
 
         var boulder = collider.GetComponentInParent<BoulderHitbox>();
         if (boulder != null)
-            boulder.Damage(shooter.gameObject, damage);
+            boulder.Damage(shooter.gameObject, hitDamage);
 
         var trapHit = collider.GetComponentInParent<TrapHitbox>();
         if (trapHit != null)
-            trapHit.Damage(shooter.gameObject, damage);
+            trapHit.Damage(shooter.gameObject, hitDamage);
 
         var health = collider.GetComponentInParent<Health>();
         if (health != null && weapon.allyHeal > 0f && Combat.SameTeam(shooter.gameObject, health.gameObject))
             Combat.HealPlayer(shooter.gameObject, health, weapon.allyHeal);
-        else if (health != null)
-            Combat.DamagePlayer(shooter.gameObject, health, damage);
+        else if (health != null && hitDamage > 0f)
+            Combat.DamagePlayer(shooter.gameObject, health, hitDamage);
 
         Finish(point, KindHit);
     }

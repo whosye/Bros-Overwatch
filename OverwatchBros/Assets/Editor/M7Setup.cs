@@ -8,6 +8,8 @@ using UnityEngine;
 public static class M7Setup
 {
     const string PlayerPrefabPath = "Assets/Prefab/Player.prefab";
+    const float WalkSpeed = 6f;
+    const float RunSpeed = 9.5f;
 
     static M7Setup()
     {
@@ -39,7 +41,8 @@ public static class M7Setup
             && prefab.GetComponent<GrappleAbility>() != null && prefab.GetComponent<KickAbility>() != null && prefab.GetComponent<InfraAbility>() != null
             && prefab.GetComponent<BlinkAbility>() != null && prefab.GetComponent<RecallAbility>() != null && prefab.GetComponent<PulseBombAbility>() != null
             && prefab.GetComponent<BardAbility>() != null
-            && prefab.GetComponent<SindelAbility>() != null && prefab.GetComponent<EzekielAbility>() != null;
+            && prefab.GetComponent<SindelAbility>() != null && prefab.GetComponent<EzekielAbility>() != null
+            && prefab.GetComponent<FirstPersonController>() != null && prefab.GetComponent<FirstPersonController>().walkSpeed >= WalkSpeed;
         bool heroesReady = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset") != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Honza.asset") != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Mirek.asset") != null
@@ -421,12 +424,12 @@ public static class M7Setup
 
         var flash = LoadOrCreate<AbilityDefinition>("Assets/Data/Flash_Data.asset", a =>
         {
-            a.abilityName = "Oslepující granát";
+            a.abilityName = "Pulzní granát";
             a.cooldown = 10f;
-            a.power = 15f;
-            a.radius = 4f;
-            a.range = 7f;
-            a.speed = 22f;
+            a.power = 50f;
+            a.radius = 3f;
+            a.range = 40f;
+            a.speed = 45f;
             a.duration = 0.8f;   // delka omraceni
         });
 
@@ -462,7 +465,7 @@ public static class M7Setup
         {
             h.heroName = "Pova";
             h.color = new Color(0.95f, 0.55f, 0.20f);
-            h.maxHealth = 120f;
+            h.maxHealth = 180f;
             h.weapon = ayranWeapon;
             h.abilityKind = AbilityKind.LeapStrike;
             h.ability = leap;
@@ -1026,6 +1029,14 @@ public static class M7Setup
             AddIfMissing<SindelAbility>(contents);
             AddIfMissing<EzekielAbility>(contents);
             AddIfMissing<HeroVoice>(contents);
+
+            // Rychlejsi pohyb (puvodne chuze 5, sprint 8 m/s).
+            var movement = contents.GetComponent<FirstPersonController>();
+            if (movement != null && movement.walkSpeed < WalkSpeed)
+            {
+                movement.walkSpeed = WalkSpeed;
+                movement.runSpeed = Mathf.Max(movement.runSpeed, RunSpeed);
+            }
 
             foreach (var behaviour in contents.GetComponents<MonoBehaviour>())
             {

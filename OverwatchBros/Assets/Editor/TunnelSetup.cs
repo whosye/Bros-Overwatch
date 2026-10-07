@@ -12,7 +12,7 @@ public static class TunnelSetup
 {
     const string MapName = "Map-Domasov";
     const string RootName = "Tunel";
-    const string Version = "_v3";
+    const string Version = "_v6";   // v4: treti vstup; v5: severni vstup bliz; v6: drevene zabradli, u tretiho vstupu zadne (seno)
     const string DisabledPref = "BrosOverwatch.TunnelDisabled";
     const string MaterialFolder = "Assets/Materials/Tunnel";
 
@@ -33,10 +33,14 @@ public static class TunnelSetup
     // Vstup hned za zadni stenou rozhledny (v puvodni scene konci na z = 93): rampa klesa smerem +x.
     // Melky konec je mimo okruh spawnu tymu 1 u bodu 3 (8 m kolem SpawnPoint_3_Team1).
     // Kdyz je rozhledna v otevrene scene posunuta, vstup se posune s ni (viz MapBuildKit.TowerShift).
-    static readonly Rect BaseEntrance = Rect.MinMaxRect(-34f, 94f, -26f, 97f);
+    // (v5: posunuto z z 94-97 na 84-87 - sever mapy konci na z 92, viz ForestBoundarySetup.NorthLimit)
+    static readonly Rect BaseEntrance = Rect.MinMaxRect(-34f, 84f, -26f, 87f);
     static Ramp EntranceRamp = new Ramp { area = BaseEntrance, down = Vector2.right };
     // Vychod v leve prizemni mistnosti hlavni chaty: rampa u venkovni zdi, klesa smerem -x; vedle ni zustava ulicka ke dverim.
     static readonly Ramp HouseRamp = new Ramp { area = Rect.MinMaxRect(17f, -18.75f, 25f, -16.75f), down = Vector2.left };
+    // Treti vstup v pulce tunelu u paty plosiny rozhledny (bocni cesta k bodu 2): rampa zapadne od hlavni chodby,
+    // klesa smerem +x a ustí primo do ni. Vychodne od chodby vede trasa Yarisu, proto na zapadni strane.
+    static readonly Ramp MidRamp = new Ramp { area = Rect.MinMaxRect(-9.5f, 35f, -1.5f, 37f), down = Vector2.right };
 
     // Chodby (xz): od vstupu k ose x = 0, podel ni k chate a pak pod chatu k rampe. Pocitaji se v Layout() podle vstupu.
     static Rect[] Corridors;
@@ -166,7 +170,9 @@ public static class TunnelSetup
         var concrete = GetMaterial("Tunnel_Concrete", new Color(0.42f, 0.41f, 0.39f), Color.black);
         var darkConcrete = GetMaterial("Tunnel_ConcreteDark", new Color(0.30f, 0.29f, 0.28f), Color.black);
         var lamp = GetMaterial("Tunnel_Lamp", new Color(1f, 0.9f, 0.7f), new Color(2.4f, 1.9f, 1.2f));
-        var rail = GetMaterial("Tunnel_Rail", new Color(0.55f, 0.18f, 0.12f), Color.black);
+        // (drive cervene zabradli - ted drevene jako ostatni ploty na mape)
+        var rail = AssetDatabase.LoadAssetAtPath<Material>("Assets/Materials/Wood/Wood_Beam.mat")
+            ?? GetMaterial("Tunnel_Rail", new Color(0.55f, 0.18f, 0.12f), Color.black);
 
         float floorY = groundY - Depth;
 
@@ -174,9 +180,11 @@ public static class TunnelSetup
         BuildFloorAndCeiling(root, floorY, groundY, concrete, darkConcrete);
         BuildRamp(root, EntranceRamp, groundY, floorY, darkConcrete);
         BuildRamp(root, HouseRamp, groundY, floorY, darkConcrete);
+        BuildRamp(root, MidRamp, groundY, floorY, darkConcrete);
         BuildWalls(root, floorY, groundY, concrete);
         BuildRails(root, EntranceRamp, groundY, rail, true);
         BuildRails(root, HouseRamp, groundY, rail, false);
+        // treti vstup: bez zabradli, kolem nej jsou baliky sena (MapPlayabilitySetup)
         BuildLights(root, groundY, lamp);
 
         EditorSceneManager.MarkSceneDirty(map.gameObject.scene);
@@ -188,7 +196,7 @@ public static class TunnelSetup
     static void BuildGround(Transform root, Bounds bounds, float groundY, Material material)
     {
         var parent = Group(root, "Ground_Tiles");
-        var holes = new[] { EntranceRamp.area, HouseRamp.area };
+        var holes = new[] { EntranceRamp.area, HouseRamp.area, MidRamp.area };
 
         // Rozrez podlahy na svisle pasy podle hran otvoru; v kazdem pasu vynech otvory, ktere ho cele protinaji.
         var xs = new List<float> { bounds.min.x, bounds.max.x };
@@ -271,7 +279,7 @@ public static class TunnelSetup
     static void BuildWalls(Transform root, float floorY, float groundY, Material material)
     {
         var parent = Group(root, "Walls");
-        var areas = new List<Rect>(Corridors) { EntranceRamp.area, HouseRamp.area };
+        var areas = new List<Rect>(Corridors) { EntranceRamp.area, HouseRamp.area, MidRamp.area };
 
         float minX = float.MaxValue, minZ = float.MaxValue, maxX = float.MinValue, maxZ = float.MinValue;
         foreach (var r in areas)

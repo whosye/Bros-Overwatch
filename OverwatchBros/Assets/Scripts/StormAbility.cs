@@ -12,8 +12,8 @@ public class StormAbility : NetworkBehaviour
 
     const float TickInterval = 0.2f;
 
-    // Delka valce smrsti jako nasobek polomeru (radius 3 -> 18 m). Valec zacina v bode vystrelu a miri dopredu.
-    public const float LengthFactor = 6f;
+    // Delka valce smrsti jako nasobek polomeru (radius 6 -> 18 m). Valec zacina v bode vystrelu a miri dopredu.
+    public const float LengthFactor = 3f;
     static readonly Color StormColor = new Color(0.55f, 0.75f, 1f, 1f);
 
     FirstPersonController fpc;
@@ -294,7 +294,7 @@ public class StormVisual : MonoBehaviour
         glow = lightObject.AddComponent<Light>();
         glow.type = LightType.Point;
         glow.color = color;
-        glow.range = radius * 9f;
+        glow.range = length * 1.5f;
         lightObject.transform.localPosition = new Vector3(0f, 0f, length * 0.5f);
         glow.intensity = 6f;
 
@@ -304,7 +304,7 @@ public class StormVisual : MonoBehaviour
     static Transform Solid(PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, Color color)
     {
         var go = GameObject.CreatePrimitive(type);
-        Destroy(go.GetComponent<Collider>());
+        DestroyImmediate(go.GetComponent<Collider>());
         go.transform.SetParent(parent, false);
         go.transform.localPosition = position;
         go.transform.localScale = scale;

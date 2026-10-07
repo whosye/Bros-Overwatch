@@ -22,12 +22,12 @@ MonoBehaviour:
   chargeTime: 0
   minChargeDamage: 20
   minChargeSpeed: 25
-  falloffStart: 0
-  falloffEnd: 0
+  falloffStart: 12
+  falloffEnd: 25
   falloffMin: 0.4
-  farFalloffEnd: 0
-  farFalloffMin: 0.1
-  maxDamageRange: 0
+  farFalloffEnd: 40
+  farFalloffMin: 0
+  maxDamageRange: 40
   allyHeal: 0
   scopeFov: 0
   scopedChargeTime: 0

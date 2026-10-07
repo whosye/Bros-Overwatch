@@ -125,6 +125,12 @@ public class Health : NetworkBehaviour
             invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + seconds);
     }
 
+    public void ServerClearInvulnerable()
+    {
+        if (IsServer)
+            invulnerableUntil = 0f;
+    }
+
     public void ServerRestore(float value)
     {
         if (!IsServer || currentHealth.Value <= 0f) return;

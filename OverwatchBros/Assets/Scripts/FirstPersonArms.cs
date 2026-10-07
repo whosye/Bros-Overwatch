@@ -62,7 +62,7 @@ public class FirstPersonArms
         }
 
         foreach (var collider in rig.GetComponentsInChildren<Collider>())
-            Object.Destroy(collider);
+            Object.DestroyImmediate(collider);
 
         Vector3 headLocal = rig.transform.InverseTransformPoint(head.position);
         rig.transform.localPosition = -headLocal + new Vector3(0f, -0.10f, 0.10f);

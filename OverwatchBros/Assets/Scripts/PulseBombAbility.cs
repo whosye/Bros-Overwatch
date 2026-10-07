@@ -208,7 +208,7 @@ public class PulseBombVisual : MonoBehaviour
     {
         Remove(owner);
         var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(go.GetComponent<Collider>());
+        DestroyImmediate(go.GetComponent<Collider>());
         go.name = "PulseBombVisual";
         go.transform.position = origin;
         go.transform.localScale = Vector3.one * 0.22f;

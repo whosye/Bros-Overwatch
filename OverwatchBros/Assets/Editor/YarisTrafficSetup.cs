@@ -47,7 +47,7 @@ public static class YarisTrafficSetup
         var traffic = car != null ? car.GetComponent<YarisTraffic>() : null;
         if (map.transform.Find(RootName + "/_v4") != null && traffic != null)
         {
-            if (map.transform.Find("LesniHranice/_v2") == null) Configure(map.transform, traffic);
+            if (map.transform.Find("LesniHranice/" + ForestBoundarySetup.Marker) == null) Configure(map.transform, traffic);
         }
         else Build(map.transform);
     }

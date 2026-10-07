@@ -30,7 +30,8 @@ public static class CapturePointView
 
     public static void Sync(MatchManager match)
     {
-        bool show = match != null && match.IsSpawned && match.IsCapture && !match.IsLobby;
+        bool show = match != null && match.IsSpawned && match.IsAttackMode && !match.IsLobby && !match.IsOver
+            && match.roundPhase.Value != MatchManager.RoundIntermission;
         if (!show)
         {
             if (root != null && root.activeSelf)
@@ -103,7 +104,7 @@ public static class CapturePointView
     static Renderer Shape(PrimitiveType type, Vector3 position, Vector3 scale, Material material)
     {
         var go = GameObject.CreatePrimitive(type);
-        Object.Destroy(go.GetComponent<Collider>());
+        Object.DestroyImmediate(go.GetComponent<Collider>());
         go.transform.SetParent(root.transform, false);
         go.transform.localPosition = position;
         go.transform.localScale = scale;

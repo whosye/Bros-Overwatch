@@ -22,9 +22,9 @@ MonoBehaviour:
   chargeTime: 0
   minChargeDamage: 20
   minChargeSpeed: 25
-  falloffStart: 0
-  falloffEnd: 0
-  falloffMin: 0.4
+  falloffStart: 18
+  falloffEnd: 35
+  falloffMin: 0.5
   farFalloffEnd: 0
   farFalloffMin: 0.1
   maxDamageRange: 0

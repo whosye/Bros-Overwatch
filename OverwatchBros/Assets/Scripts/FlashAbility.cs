@@ -4,12 +4,15 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Viktoruv oslepujici granat (prave tlacitko mysi): kratky hod dopredu (nejdal 'range' m), po dopadu vybuchne
-// a nepratele v okruhu 'radius' na 'duration' sekund omraci (nemuzou se hybat, utocit ani pouzivat schopnosti)
-// a trochu zrani ('power'). Neprochazi zdmi a spoluhrace ani Viktora nezasahne.
+// Viktoruv pulzni granat (prave tlacitko mysi, jako Soldierovy Helix rakety): vystreli se z hlavne granatometu,
+// leti rychle rovne (rychlost 'speed', nejdal 'range' m) a o prvni prekazku nebo nepritele vybuchne. Nepratele
+// v okruhu 'radius' zrani ('power' uprostred, na okraji 40 %) a na 'duration' sekund omraci (nemuzou se hybat,
+// utocit ani pouzivat schopnosti). Neprochazi zdmi a spoluhrace ani Viktora nezasahne.
 public class FlashAbility : NetworkBehaviour
 {
     public AbilityDefinition ability;
+
+    public static readonly Color PulseColor = new Color(0.55f, 0.85f, 1f);
 
     FirstPersonController fpc;
 
@@ -36,15 +39,16 @@ public class FlashAbility : NetworkBehaviour
         nextUseTime = Time.time + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.5f);
+        // granat vyleti z hlavne (stejne misto jako stopy strel), miri se ale ze stredu obrazovky
+        Vector3 muzzle = eye.position + eye.right * 0.15f - eye.up * 0.12f + eye.forward * 0.4f;
         GetComponent<PlayerHero>().SayAbility(ability);
-        ThrowServerRpc(eye.position, eye.forward);
+        ThrowServerRpc(eye.position, eye.forward, muzzle);
     }
 
     // ---------------- server ----------------
 
     [ServerRpc]
-    void ThrowServerRpc(Vector3 origin, Vector3 direction)
+    void ThrowServerRpc(Vector3 origin, Vector3 direction, Vector3 muzzle)
     {
         var match = MatchManager.Instance;
         if (ability == null || direction.sqrMagnitude < 0.01f || (match != null && (match.IsOver || match.IsLobby))) return;
@@ -66,7 +70,8 @@ public class FlashAbility : NetworkBehaviour
 
         Vector3 point = origin + direction * distance;
         float flight = distance / Mathf.Max(1f, ability.speed);
-        ThrownClientRpc(origin + direction * 0.5f, point, flight);
+        if ((muzzle - origin).sqrMagnitude > 1f) muzzle = origin + direction * 0.5f;
+        ThrownClientRpc(muzzle, point, flight);
         StartCoroutine(Detonate(point, flight));
     }
 
@@ -80,16 +85,20 @@ public class FlashAbility : NetworkBehaviour
             var hit = new HashSet<Health>();
             foreach (var col in Physics.OverlapSphere(point, ability.radius, ~0, QueryTriggerInteraction.Ignore))
             {
+                // poskozeni podle vzdalenosti od stredu vybuchu
+                float near = Vector3.Distance(point, col.ClosestPoint(point));
+                float damage = ability.power * Mathf.Lerp(1f, 0.4f, near / Mathf.Max(0.1f, ability.radius));
+
                 var dummy = col.GetComponentInParent<Target>();
                 if (dummy != null)
-                    dummy.TakeDamage(ability.power);
+                    dummy.TakeDamage(damage);
 
                 var victim = col.GetComponentInParent<Health>();
                 if (victim == null || !hit.Add(victim) || victim.currentHealth.Value <= 0f) continue;
                 if (victim.gameObject == gameObject || Combat.SameTeam(gameObject, victim.gameObject)) continue;
                 if (!Combat.HasLineOfSight(point, col)) continue;
 
-                Combat.DamagePlayer(gameObject, victim, ability.power);
+                Combat.DamagePlayer(gameObject, victim, damage);
 
                 var controller = victim.GetComponent<FirstPersonController>();
                 if (controller != null && victim.currentHealth.Value > 0f)
@@ -112,20 +121,26 @@ public class FlashAbility : NetworkBehaviour
     void ThrownClientRpc(Vector3 from, Vector3 to, float seconds)
     {
         var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(ball.GetComponent<Collider>());
-        ball.name = "FlashGrenade";
-        ball.transform.localScale = Vector3.one * 0.16f;
-        Fx.Paint(ball, new Color(0.92f, 0.94f, 1f));
+        DestroyImmediate(ball.GetComponent<Collider>());
+        ball.name = "PulseGrenade";
+        ball.transform.localScale = Vector3.one * 0.14f;
+        Fx.Paint(ball, new Color(0.92f, 0.96f, 1f));
         ball.AddComponent<FlashGrenadeVisual>().Init(from, to, seconds);
+
+        // vystrel z granatometu: tupe bouchnuti a zablesk u hlavne
+        ProceduralSfx.Play(ProceduralSfx.Gunshot, from, 0.9f);
+        ProceduralSfx.Play(ProceduralSfx.Dash, from, 0.6f);
+        Fx.Sparks(from, PulseColor);
     }
 
     [ClientRpc]
     void DetonatedClientRpc(Vector3 point)
     {
-        Fx.BulletImpact(point, Color.white, 4f);
+        Fx.Explosion(point, (ability != null ? ability.radius : 3f) * 0.6f);
+        Fx.BulletImpact(point, PulseColor, 4f);
         Fx.Sparks(point, Color.white);
+        ProceduralSfx.Play(ProceduralSfx.Explosion, point, 0.7f);
         ProceduralSfx.Play(ProceduralSfx.Hit, point, 1f);
-        ProceduralSfx.Play(ProceduralSfx.Gunshot, point, 0.8f);
 
         // Bily zablesk.
         var lightObject = new GameObject("FlashLight");
@@ -151,6 +166,24 @@ public class FlashGrenadeVisual : MonoBehaviour
         to = end;
         seconds = Mathf.Max(0.02f, flight);
         transform.position = start;
+
+        // svitici stopa za granatem
+        var trail = gameObject.AddComponent<TrailRenderer>();
+        trail.time = 0.25f;
+        trail.minVertexDistance = 0.1f;
+        trail.widthCurve = new AnimationCurve(new Keyframe(0f, 0.12f), new Keyframe(1f, 0f));
+        trail.material = Fx.ParticleMaterial;
+        var gradient = new Gradient();
+        gradient.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(FlashAbility.PulseColor, 1f) },
+            new[] { new GradientAlphaKey(0.9f, 0f), new GradientAlphaKey(0f, 1f) });
+        trail.colorGradient = gradient;
+        trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+        var glow = gameObject.AddComponent<Light>();
+        glow.type = LightType.Point;
+        glow.color = FlashAbility.PulseColor;
+        glow.range = 3f;
+        glow.intensity = 3f;
     }
 
     void Update()

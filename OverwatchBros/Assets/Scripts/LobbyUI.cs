@@ -135,10 +135,10 @@ public class LobbyUI
         RefreshTeams(localHero);
         RefreshHeroes(localHero);
 
-        // Rezim hry voli host (ostatni ho jen vidi): team deathmatch na pocet zabiti, nebo dobyvani bodu.
-        bool captureMode = match != null && match.IsCapture;
+        // Rezim hry voli host (ostatni ho jen vidi): team deathmatch na pocet zabiti, nebo utok a obrana.
+        bool captureMode = match != null && match.IsAttackMode;
         UiKit.SetButtonLabel(modeButton, captureMode
-            ? $"REŽIM:  <color=#F28C1A>DOBÝVÁNÍ BODŮ</color>  <size=75%>({MatchManager.CapturePointsToWin} body ze {MatchManager.CapturePointCount})</size>"
+            ? "REŽIM:  <color=#F28C1A>ÚTOK A OBRANA</color>  <size=75%>(body A, B, C · výměna stran)</size>"
             : "REŽIM:  <color=#F28C1A>TEAM DEATHMATCH</color>");
         modeButton.interactable = isHost && !joining;
 
@@ -267,7 +267,7 @@ public class LobbyUI
         var match = MatchManager.Instance;
         if (match == null) return;
 
-        if (match.IsCapture)
+        if (match.IsAttackMode)
             match.SetCaptureSeconds(match.captureSeconds.Value + delta * 5);
         else
             match.SetScoreToWin(match.scoreToWinSynced.Value + delta);
@@ -284,7 +284,7 @@ public class LobbyUI
     {
         var match = MatchManager.Instance;
         if (match != null)
-            match.SetGameMode(match.IsCapture ? MatchManager.ModeDeathmatch : MatchManager.ModeCapture);
+            match.SetGameMode(match.IsAttackMode ? MatchManager.ModeDeathmatch : MatchManager.ModeAttack);
     }
 
     void EnterMatch()

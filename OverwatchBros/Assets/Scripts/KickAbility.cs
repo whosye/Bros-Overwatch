@@ -159,7 +159,7 @@ public class FirstPersonKick : MonoBehaviour
     static void Part(Transform parent, string name, Vector3 position, Vector3 scale, Color color)
     {
         var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Destroy(go.GetComponent<Collider>());
+        DestroyImmediate(go.GetComponent<Collider>());
         go.name = name;
         go.transform.SetParent(parent, false);
         go.transform.localPosition = position;

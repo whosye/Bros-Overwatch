@@ -331,8 +331,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController
   ShowTopMostFoldoutHeaderGroup: 1
   playerCamera: {fileID: 4723832114344736642}
-  walkSpeed: 5
-  runSpeed: 8
+  walkSpeed: 6
+  runSpeed: 9.5
   jumpHeight: 1.2
   gravity: -9.81
   mouseSensitivity: 2

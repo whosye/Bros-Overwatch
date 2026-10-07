@@ -64,7 +64,7 @@ public partial class MatchManager : NetworkBehaviour
         testCooldowns.OnValueChanged += OnTestCooldownsChanged;
         AbilityDefinition.TestCooldowns = testCooldowns.Value;
 
-        // Klient pripojeny do rozehraneho zapasu si vyzada mista oziveni (rezim dobyvani bodu).
+        // Klient pripojeny do rozehraneho zapasu si vyzada mista oziveni (rezim utok a obrana).
         if (!IsServer)
         {
             RequestSpawnsRpc();
@@ -114,9 +114,9 @@ public partial class MatchManager : NetworkBehaviour
         if (killerObject != null && victimObject != null)
             KillFeedClientRpc(killerObject.NetworkObjectId, victimObject.NetworkObjectId);
 
-        // V dobyvani bodu se skore pocita za zabrane body, ne za zabiti.
+        // V utoku a obrane se skore pocita za zabrane body, ne za zabiti.
         var team = killer.GetComponent<PlayerTeam>();
-        if (team != null && !IsCapture)
+        if (team != null && !IsAttackMode)
             AddScore(team.teamId.Value, 1);
 
         // Play of the game: hodnoceni akce (az po pripsani bodu, at se vi, jestli zabiti rozhodlo zapas).
@@ -154,7 +154,7 @@ public partial class MatchManager : NetworkBehaviour
 
     void CheckWinCondition()
     {
-        int target = IsCapture ? CapturePointsToWin : scoreToWinSynced.Value;
+        int target = scoreToWinSynced.Value;
 
         if (team0Score.Value >= target)
             EndMatch(0);
@@ -162,11 +162,12 @@ public partial class MatchManager : NetworkBehaviour
             EndMatch(1);
     }
 
+    // winner = -1: remiza (utok a obrana se stejnym vysledkem).
     void EndMatch(int winner)
     {
         winnerTeam.Value = winner;
         matchOver.Value = true;
-        Debug.Log($"Tým {winner} vyhrál zápas!");
+        Debug.Log(winner >= 0 ? $"Tým {winner} vyhrál zápas!" : "Remíza!");
 
         PotgPending = true;
         StartCoroutine(PlayOfTheGame());
@@ -280,6 +281,8 @@ public partial class MatchManager : NetworkBehaviour
 
     void ResetRound()
     {
+        ServerResetPickups();
+        ServerResetBoiler();
         team0Score.Value = 0;
         team1Score.Value = 0;
         winnerTeam.Value = -1;
@@ -305,15 +308,16 @@ public partial class MatchManager : NetworkBehaviour
                 recorder.ServerReset();
         }
 
-        // Dobyvani bodu: vybrat mista a pripravit prvni bod; jinak se ozivuje na zakladnach ze sceny.
-        if (!IsLobby && IsCapture)
+        // Utok a obrana: body, kola a spawny podle roli; jinak se ozivuje na zakladnach ze sceny.
+        if (!IsLobby && IsAttackMode)
         {
-            ServerBeginCapture();
+            ServerBeginAttackMatch();
         }
         else
         {
             customSpawns = false;
             pointState.Value = StateLocked;
+            roundPhase.Value = RoundSetup;
         }
 
         ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);

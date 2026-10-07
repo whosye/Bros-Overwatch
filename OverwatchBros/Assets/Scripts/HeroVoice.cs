@@ -22,6 +22,7 @@ public class HeroVoice : MonoBehaviour
     AudioSource source;
     int playingPriority = -1;
     bool playingUlt;
+    bool playingRide;   // hraje hudba jizdy z toboganu - prerusi ji jen ultimatka
 
     // Vsichni hrdinove na tomto klientovi - aby nemluvilo prilis mnoho postav naraz.
     static readonly List<HeroVoice> all = new List<HeroVoice>();
@@ -153,6 +154,8 @@ public class HeroVoice : MonoBehaviour
         if (busy && (priority < playingPriority || (priority == playingPriority && priority < 4))) return;
         // Hlasku k ultimatce neprerusi jina schopnost ani zabiti; jen dalsi faze ultimatky nebo smrt.
         if (busy && playingUlt && !ult && kind != VoiceKind.Death) return;
+        // Hudbu jizdy z toboganu prebije jen ultimatka.
+        if (busy && playingRide && !ult) return;
 
         // Proti zvukovemu chaosu, kdyz mluvi vic postav u sebe: mene dulezite hlasky (spawn, chuze, zraneni, past)
         // se preskoci, kdyz uz mluvi nekdo jiny; schopnosti a zabiti hraji nejvys dve naraz. Ultimatka a smrt vzdy.
@@ -162,6 +165,43 @@ public class HeroVoice : MonoBehaviour
             if (priority < 4 ? others > 0 : others >= 2) return;
         }
 
+        EnsureSource();
+        source.Stop();
+        source.clip = clip;
+        source.volume = volume;
+        // Hlaska k ultimatce (Q) je slyset pres celou mapu, ostatni jen v okoli.
+        source.spatialBlend = kind == VoiceKind.Ability && slot == 0 ? 0f : 1f;
+        source.Play();
+        playingPriority = priority;
+        playingUlt = ult;
+        playingRide = false;
+    }
+
+    // Hudba jizdy z toboganu (stejny "hlas" hrace - mezitim nemluvi, jen ultimatka ji prerusi).
+    public void PlayRide(AudioClip clip)
+    {
+        if (clip == null) return;
+        if (source != null && source.isPlaying && playingUlt) return;
+        EnsureSource();
+        source.Stop();
+        source.clip = clip;
+        source.volume = 1f;
+        source.spatialBlend = 1f;
+        source.Play();
+        playingPriority = 99;
+        playingUlt = false;
+        playingRide = true;
+    }
+
+    public void StopRide()
+    {
+        if (playingRide && source != null && source.isPlaying)
+            source.Stop();
+        playingRide = false;
+    }
+
+    void EnsureSource()
+    {
         if (source == null)
         {
             var go = new GameObject("Voice");
@@ -175,14 +215,5 @@ public class HeroVoice : MonoBehaviour
             source.maxDistance = 30f;
             source.playOnAwake = false;
         }
-
-        source.Stop();
-        source.clip = clip;
-        source.volume = volume;
-        // Hlaska k ultimatce (Q) je slyset pres celou mapu, ostatni jen v okoli.
-        source.spatialBlend = kind == VoiceKind.Ability && slot == 0 ? 0f : 1f;
-        source.Play();
-        playingPriority = priority;
-        playingUlt = ult;
     }
 }

@@ -104,7 +104,7 @@ public class SleepDartAbility : NetworkBehaviour
     void FiredClientRpc(Vector3 from, Vector3 to, float seconds)
     {
         var dart = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        Destroy(dart.GetComponent<Collider>());
+        DestroyImmediate(dart.GetComponent<Collider>());
         dart.name = "SleepDart";
         dart.transform.localScale = new Vector3(0.05f, 0.18f, 0.05f);
         dart.transform.rotation = Quaternion.FromToRotation(Vector3.up, to - from);

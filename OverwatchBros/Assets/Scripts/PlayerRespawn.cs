@@ -97,6 +97,10 @@ public class PlayerRespawn : NetworkBehaviour
         if (rapidFire != null)
             rapidFire.Cancel();
 
+        var ezekiel = GetComponent<EzekielAbility>();
+        if (ezekiel != null)
+            ezekiel.Cancel();
+
         controller.enabled = false;
         if (hasSpawn)
             transform.position = spawn;

@@ -360,8 +360,8 @@ public class MatchOverlayUI
         nextBoardRefresh = Time.unscaledTime + 0.2f;
 
         string gameName = match.gameName.Value.Length > 0 ? match.gameName.Value.ToString() : "Zápas";
-        boardTitle.text = match.IsCapture
-            ? $"{gameName}  ·  dobývání bodů ({MatchManager.CapturePointsToWin} ze {MatchManager.CapturePointCount})"
+        boardTitle.text = match.IsAttackMode
+            ? $"{gameName}  ·  útok a obrana  ·  {match.round.Value}. kolo, útočí tým {match.attackTeam.Value}"
             : $"{gameName}  ·  do {match.scoreToWinSynced.Value} zabití";
 
         var sorted = new List<PlayerHero>();

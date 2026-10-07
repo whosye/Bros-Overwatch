@@ -18,7 +18,7 @@ MonoBehaviour:
   ultCost: 550
   power: 120
   duration: 6
-  radius: 3
+  radius: 6
   range: 25
   knockback: 0
   charges: 1

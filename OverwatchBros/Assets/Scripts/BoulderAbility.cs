@@ -405,7 +405,7 @@ public class BoulderAbility : NetworkBehaviour
     void AddLump(Vector3 localPosition, float diameter, Color color)
     {
         var lump = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(lump.GetComponent<Collider>());
+        DestroyImmediate(lump.GetComponent<Collider>());
         lump.transform.SetParent(rock, false);
         lump.transform.localPosition = localPosition;
         lump.transform.localScale = Vector3.one * diameter;

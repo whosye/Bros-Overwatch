@@ -112,7 +112,7 @@ public class BioticGrenadeAbility : NetworkBehaviour
     void ThrownClientRpc(Vector3 from, Vector3 to, float seconds)
     {
         var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(ball.GetComponent<Collider>());
+        DestroyImmediate(ball.GetComponent<Collider>());
         ball.name = "BioticGrenade";
         ball.transform.localScale = Vector3.one * 0.18f;
         Fx.Paint(ball, GrenadeColor);

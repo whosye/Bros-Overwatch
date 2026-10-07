@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Pova
   color: {r: 0.95, g: 0.55, b: 0.2, a: 1}
-  maxHealth: 120
+  maxHealth: 180
   weapon: {fileID: 11400000, guid: 609db72800e8358488080403e6361bd3, type: 2}
   abilityKind: 2
   ability: {fileID: 11400000, guid: d0372316b35ddcc41bf21a55f73ccd8f, type: 2}

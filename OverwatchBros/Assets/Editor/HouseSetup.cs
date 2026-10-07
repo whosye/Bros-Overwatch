@@ -18,6 +18,17 @@ public static class HouseSetup
     const string ExteriorName = "Exterier";
     const string SurroundingsName = "OkoliChaty";
     const string Version = "_v3";
+    // Exterier zvlast: v4 = prurazna okna v prizemi (ramy a okenice se postavi znovu podle novych otvoru).
+    const string ExteriorVersion = "_v4";
+
+    // Okna v prizemi, kterymi jde proskocit dovnitr (po dvou na severu, vychodu a zapadu). Sloupky a nadprazi
+    // se vypnou: otvor je pak 3 m siroky a od parapetu (1 m) az ke stropu (asi 3,25 m). Zbytek oken zustava jako kryt.
+    static readonly string[] OpenWindows =
+    {
+        "PRIZEMI/obyvak/okno (2)", "PRIZEMI/obyvak/okno (5)",   // sever (obyvak, rohy)
+        "PRIZEMI/obyvak/okno (8)", "PRIZEMI/kuchyn/okno (7)",   // vychod (obyvak, kuchyn)
+        "PRIZEMI/okno (6)", "PRIZEMI/okno (7)",                 // zapad (chodba u schodiste)
+    };
     const string Folder = "Assets/Materials/House";
 
     static HouseSetup()
@@ -41,7 +52,7 @@ public static class HouseSetup
         var house = map != null ? map.transform.Find(HouseName) : null;
         if (house == null) return;
 
-        bool built = house.Find(ExteriorName + "/" + Version) != null && map.transform.Find(SurroundingsName + "/" + Version) != null;
+        bool built = house.Find(ExteriorName + "/" + ExteriorVersion) != null && map.transform.Find(SurroundingsName + "/" + Version) != null;
         if (built && !NeedsMaterials(house))
         {
             if (RepairDormerCollision(house))
@@ -186,7 +197,7 @@ public static class HouseSetup
         Bounds ground = new Bounds();
         foreach (var r in house.GetComponentsInChildren<MeshRenderer>(true))
         {
-            if (IsDecor(r.transform, house)) continue;
+            if (IsDecor(r.transform, house) || !r.gameObject.activeInHierarchy) continue;
             Bounds b = r.bounds;
 
             if (IsUnder(r.transform, house, "DRUHEPATRO") && r.name == "Prism")
@@ -311,15 +322,17 @@ public static class HouseSetup
         // chova jako zed (omitka, kolize, zadne okenice).
         if (BrickUpLivingRoomWindows(house, shape, m))
             shape = Measure(house);
+        if (OpenGroundWindows(house))
+            shape = Measure(house);
         ApplyMaterials(house, m);
 
         var exterior = house.Find(ExteriorName);
-        if (force || exterior == null || exterior.Find(Version) == null)
+        if (force || exterior == null || exterior.Find(ExteriorVersion) == null)
         {
             if (exterior != null) Object.DestroyImmediate(exterior.gameObject);
             exterior = new GameObject(ExteriorName).transform;
             exterior.SetParent(house, true);
-            new GameObject(Version).transform.SetParent(exterior, false);
+            new GameObject(ExteriorVersion).transform.SetParent(exterior, false);
             BuildExterior(exterior, shape, m);
         }
 
@@ -455,6 +468,28 @@ public static class HouseSetup
         Vector3 dishPos = new Vector3(f.xMin - 0.55f, 5.3f, f.yMin + 3.2f);
         MapBuildKit.MeshObject(root, "Satelit", blob, dishPos, Quaternion.Euler(0f, -60f, 0f), new Vector3(0.12f, 0.42f, 0.42f), m.dish);
         MapBuildKit.Beam(root, "SatelitDrzak", new Vector3(f.xMin, 5.1f, f.yMin + 3.2f), dishPos - Vector3.up * 0.15f, 0.05f, m.iron);
+    }
+
+    // Prurazna okna: sloupky (Cube (4), Cube (6)) a nadprazi (Cube (5)) vybranych oken se vypnou (ne smazou,
+    // aby slo zmenu vratit zapnutim v hierarchii).
+    static bool OpenGroundWindows(Transform house)
+    {
+        bool changed = false;
+        foreach (var path in OpenWindows)
+        {
+            var window = house.Find(path);
+            if (window == null) continue;
+            foreach (var piece in new[] { "Cube (4)", "Cube (5)", "Cube (6)" })
+            {
+                var part = window.Find(piece);
+                if (part != null && part.gameObject.activeSelf)
+                {
+                    part.gameObject.SetActive(false);
+                    changed = true;
+                }
+            }
+        }
+        return changed;
     }
 
     static bool BrickUpLivingRoomWindows(Transform house, Shape s, Mats m)

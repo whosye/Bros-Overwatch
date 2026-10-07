@@ -13,7 +13,7 @@ public class DeathGrenadeVisual : MonoBehaviour
     public static void Spawn(Vector3 from, Vector3 to, float delay, float radius)
     {
         var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(go.GetComponent<Collider>());
+        DestroyImmediate(go.GetComponent<Collider>());
         go.name = "DeathGrenade";
         go.transform.position = from;
         go.transform.localScale = Vector3.one * 0.22f;

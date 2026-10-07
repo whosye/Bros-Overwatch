@@ -361,7 +361,7 @@ public static class Fx
     {
         var marker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         marker.name = "FX_LeapMarker";
-        Object.Destroy(marker.GetComponent<Collider>());
+        Object.DestroyImmediate(marker.GetComponent<Collider>());
         Paint(marker, new Color(1f, 0.25f, 0.05f));
         marker.SetActive(false);
         return marker;

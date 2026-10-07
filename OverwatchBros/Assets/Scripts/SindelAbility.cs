@@ -48,6 +48,8 @@ public class SindelAbility : NetworkBehaviour
         {
             nextLeap = Time.time + leap.Cooldown;
             fpc.OwnerHover(leap.power, leap.duration);
+            // skok ve smeru, kterym hrac jde (bez pohybu dopredu)
+            fpc.AddImpulse(LeapDirection() * 8f);
             ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 0.5f);
             hero.SayAbility(leap);
             LeapServerRpc();
@@ -63,6 +65,17 @@ public class SindelAbility : NetworkBehaviour
             if (held != null) held.PlayThrow();
             ThrowServerRpc(eye.position + eye.forward * 0.5f, eye.forward);
         }
+    }
+
+    Vector3 LeapDirection()
+    {
+        Vector2 input = Vector2.zero;
+        if (Keyboard.current.wKey.isPressed) input.y += 1f;
+        if (Keyboard.current.sKey.isPressed) input.y -= 1f;
+        if (Keyboard.current.dKey.isPressed) input.x += 1f;
+        if (Keyboard.current.aKey.isPressed) input.x -= 1f;
+        Vector3 direction = transform.right * input.x + transform.forward * input.y;
+        return direction.sqrMagnitude > 0.01f ? direction.normalized : transform.forward;
     }
 
     // ---------------- server ----------------
@@ -142,14 +155,14 @@ public class SindelAbility : NetworkBehaviour
 
         // Zlaty granat s krizkem nahore (jako "svaty granat").
         var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(ball.GetComponent<Collider>());
+        DestroyImmediate(ball.GetComponent<Collider>());
         ball.name = "HolyGrenade";
         ball.transform.localScale = Vector3.one * 0.2f;
         Fx.Paint(ball, GrenadeColor);
         foreach (var size in new[] { new Vector3(0.12f, 0.7f, 0.12f), new Vector3(0.5f, 0.12f, 0.12f) })
         {
             var bar = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Destroy(bar.GetComponent<Collider>());
+            DestroyImmediate(bar.GetComponent<Collider>());
             bar.transform.SetParent(ball.transform, false);
             bar.transform.localPosition = new Vector3(0f, size.y > 0.5f ? 0.75f : 0.85f, 0f);
             bar.transform.localScale = size;

@@ -7,8 +7,8 @@ public class FirstPersonController : NetworkBehaviour
 {
     public Camera playerCamera;
 
-    public float walkSpeed = 5f;
-    public float runSpeed = 8f;
+    public float walkSpeed = 6f;
+    public float runSpeed = 9.5f;
     public float jumpHeight = 1.2f;
     public float gravity = -9.81f;
     public float mouseSensitivity = 2f;
@@ -40,6 +40,42 @@ public class FirstPersonController : NetworkBehaviour
     float slowUntil;
     float slowFactor = 1f;
     float SlowScale => Time.time < slowUntil ? slowFactor : 1f;
+
+    // Docasne zrychleni (balicek "Pivo" na mape).
+    float boostUntil;
+    float boostFactor = 1f;
+    float BoostScale => Time.time < boostUntil ? boostFactor : 1f;
+
+    // V tunelu (jediny prostor pod zemi: podlaha 4 m pod terenem) se bezi dvojnasobnou rychlosti - rychla bocni cesta.
+    public const float TunnelSpeed = 2f;
+    const float TunnelDepth = -1.5f;
+    public bool InTunnel => controller != null && controller.bounds.min.y < TunnelDepth;
+    float TunnelScale => InTunnel ? TunnelSpeed : 1f;
+
+    bool waterRide;   // hrac sjel z toboganu do vody (WaterCurrent)
+    float waterArmedUntil;   // hrac byl na plosine toboganu (start jizdy)
+
+    // Jede z toboganu po vode - vidi vsichni (splouchani, WaterSplashFx). Zapisuje vlastnik.
+    public NetworkVariable<bool> waterSurfing = new NetworkVariable<bool>(false,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    // Jizda z toboganu (od skluzu az do konce vody) - podle toho hraje hudba jizdy (WaterSplashFx). Zapisuje vlastnik.
+    public NetworkVariable<bool> waterRiding = new NetworkVariable<bool>(false,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    public void ServerSpeedBoost(float seconds, float factor)
+    {
+        if (IsServer)
+            SpeedBoostClientRpc(seconds, factor);
+    }
+
+    [ClientRpc]
+    void SpeedBoostClientRpc(float seconds, float factor)
+    {
+        if (!IsOwner) return;
+        boostUntil = Time.time + seconds;
+        boostFactor = Mathf.Clamp(factor, 1f, 2f);
+    }
 
     public void ServerSlow(float seconds, float factor)
     {
@@ -112,6 +148,10 @@ public class FirstPersonController : NetworkBehaviour
         hoverUntil = Time.time + seconds;
     }
 
+    // Behem vznaseni se ve vzduchu da pohybovat rychleji (jinak by visel skoro na miste).
+    public const float HoverAirSpeed = 1.6f;
+    float HoverScale => Time.time < hoverUntil && !controller.isGrounded ? HoverAirSpeed : 1f;
+
     public void ServerKnockback(Vector3 impulse)
     {
         if (IsServer)
@@ -134,6 +174,13 @@ public class FirstPersonController : NetworkBehaviour
         // Hlaska "chytili me" (i pro budouci zpomaleni staci zavolat hero.Say(VoiceKind.Snare)).
         if (hero != null)
             hero.Say(VoiceKind.Snare);
+    }
+
+    // Podrzeni na miste bez hlasky (utocnici behem pripravy v rezimu utok a obrana). Rozhlizet se a strilet jde.
+    public void ServerHold(float seconds)
+    {
+        if (IsServer)
+            RootClientRpc(seconds);
     }
 
     [ClientRpc]
@@ -295,6 +342,11 @@ public class FirstPersonController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (GetComponent<WaterSplashFx>() == null)
+            gameObject.AddComponent<WaterSplashFx>();
+        if (IsOwner && GetComponent<JokerTvBuff>() == null)
+            gameObject.AddComponent<JokerTvBuff>();
+
         if (!IsOwner)
         {
             playerCamera.gameObject.SetActive(false);
@@ -420,7 +472,7 @@ public class FirstPersonController : NetworkBehaviour
         Vector3 move = transform.right * input.x + transform.forward * input.y;
         move = Vector3.ClampMagnitude(move, 1f);
 
-        float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * ScopeSpeedScale * SlowScale * BardAbility.SpeedScaleFor(gameObject);
+        float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * ScopeSpeedScale * SlowScale * BoostScale * TunnelScale * HoverScale * BardAbility.SpeedScaleFor(gameObject);
         var flags = controller.Move((move * speed + externalVelocity) * Time.deltaTime);
 
         // Odhozeni postupne odezni: na zemi rychle (treni), ve vzduchu pomalu; naraz do zdi ho zastavi.
@@ -455,6 +507,13 @@ public class FirstPersonController : NetworkBehaviour
         else
             verticalVelocity += gravity * Time.deltaTime;
         controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
+
+        // Skluzavka a proud v potoce hrace unasi (WaterCurrent); z toboganu se po vode jede rychleji.
+        Vector3 current = WaterCurrent.PushAt(transform.position, ref waterRide, ref waterArmedUntil, out bool surfing);
+        if (waterSurfing.Value != surfing) waterSurfing.Value = surfing;
+        if (waterRiding.Value != waterRide) waterRiding.Value = waterRide;
+        if (current.sqrMagnitude > 0.01f)
+            controller.Move(current * Time.deltaTime);
 
         // Kapsle se pri drepu zkracuje shora: spodek zustava u chodidel, jinak by se postava zaborila do zeme.
         float height = crouch ? crouchHeight : standHeight;

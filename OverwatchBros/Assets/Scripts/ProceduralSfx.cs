@@ -6,7 +6,7 @@ public static class ProceduralSfx
 {
     const int Rate = 44100;
 
-    static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock, potgIntro, ultCharge;
+    static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock, potgIntro, ultCharge, splash, bigSplash, waterRush, jokerJingle;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
@@ -106,6 +106,82 @@ public static class ProceduralSfx
         float tremolo = 0.75f + 0.25f * Mathf.Sin(2f * Mathf.PI * 14f * t);
         return (Mathf.Sin(phase) * 0.5f + Noise(r) * 0.08f) * tremolo * Mathf.Min(1f, t * 8f) * Mathf.Min(1f, (1f - t) * 10f + 0.2f);
     });
+
+    // Splouchnuti (dopad do vody z toboganu): sumivy sum s hlubokym zbuchnutim.
+    public static AudioClip Splash => splash ??= MakeFiltered("splash", 0.9f, 0.3f, 4.5f, 0.7f, 70f);
+
+    // Velky splouch (dopad do jezirka): delsi a hlubsi.
+    public static AudioClip BigSplash => bigSplash ??= MakeFiltered("bigSplash", 1.8f, 0.22f, 2.4f, 0.9f, 45f);
+
+    // Zastupna znelka buffu Respin Joker: vyherni automat - vzestupne arpeggio, cinkani minci a zaverecny akord.
+    public static AudioClip JokerJingle => jokerJingle ??= MakeJingle();
+
+    static AudioClip MakeJingle()
+    {
+        const float seconds = 3.6f;
+        int count = Mathf.CeilToInt(seconds * Rate);
+        var data = new float[count];
+        var rnd = new System.Random(777);
+
+        // tony arpeggia (C dur nahoru o dve oktavy), kazdy 0,11 s
+        float[] notes = { 523.25f, 659.25f, 783.99f, 1046.5f, 1318.5f, 1568f, 2093f };
+        void Tone(float start, float freq, float length, float volume)
+        {
+            int a = (int)(start * Rate), n = (int)(length * Rate);
+            for (int i = 0; i < n && a + i < count; i++)
+            {
+                float t = i / (float)Rate;
+                float env = Mathf.Min(1f, t * 200f) * Mathf.Exp(-t * 6f / length);
+                // "osmibitovy" ton: sinus s trochou ctverce
+                float s = Mathf.Sin(2f * Mathf.PI * freq * t);
+                data[a + i] += (s * 0.7f + Mathf.Sign(s) * 0.3f) * env * volume;
+            }
+        }
+        for (int r = 0; r < 2; r++)
+            for (int k = 0; k < notes.Length; k++)
+                Tone(r * 0.85f + k * 0.11f, notes[k], 0.16f, 0.32f);
+        // cinkani minci
+        for (int k = 0; k < 14; k++)
+            Tone(1.7f + (float)rnd.NextDouble() * 1.1f, 2600f + (float)rnd.NextDouble() * 1600f, 0.09f, 0.18f);
+        // zaverecny akord
+        foreach (var f in new[] { 523.25f, 659.25f, 783.99f, 1046.5f })
+            Tone(2.15f, f, 1.4f, 0.22f);
+
+        for (int i = 0; i < count; i++) data[i] = Mathf.Clamp(data[i], -1f, 1f);
+        var clip = AudioClip.Create("jokerJingle", count, 1, Rate, false);
+        clip.SetData(data, 0);
+        return clip;
+    }
+
+    // Huceni vody behem jizdy (smycka): filtrovany sum s vlnenim.
+    public static AudioClip WaterRush => waterRush ??= MakeRush();
+
+    static AudioClip MakeRush()
+    {
+        const float seconds = 2f;
+        int count = Mathf.CeilToInt(seconds * Rate);
+        var data = new float[count];
+        var rnd = new System.Random(1234);
+        float low = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            float t = i / (float)Rate;
+            low += 0.12f * (Noise(rnd) - low);
+            // vlneni s periodou delky smycky, at navaz neni slyset
+            float swell = 0.75f + 0.25f * Mathf.Sin(2f * Mathf.PI * t * 3f / seconds);
+            data[i] = Mathf.Clamp(low * 2.6f * swell, -1f, 1f);
+        }
+        // plynule napojeni konce na zacatek
+        int fade = Rate / 20;
+        for (int i = 0; i < fade; i++)
+        {
+            float k = i / (float)fade;
+            data[count - fade + i] = Mathf.Lerp(data[count - fade + i], data[i], k);
+        }
+        var clip = AudioClip.Create("waterRush", count, 1, Rate, false);
+        clip.SetData(data, 0);
+        return clip;
+    }
 
     public static AudioClip Footstep => footstep ??= Make("footstep", 0.09f, (t, r) => Noise(r) * 0.35f * Mathf.Exp(-t * 55f));
 

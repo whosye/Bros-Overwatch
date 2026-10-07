@@ -77,7 +77,9 @@ public class HealFieldAbility : NetworkBehaviour
 
         // Pole lezi na zemi pod hracem.
         Vector3 point = transform.position;
-        foreach (var hit in Physics.RaycastAll(transform.position + Vector3.up, Vector3.down, 12f, ~0, QueryTriggerInteraction.Ignore))
+        var hits = Physics.RaycastAll(transform.position + Vector3.up, Vector3.down, 12f, ~0, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));   // nejblizsi podlaha (ne patro nize)
+        foreach (var hit in hits)
         {
             if (hit.collider.GetComponentInParent<NetworkObject>() != null) continue;
             if (hit.collider.GetComponentInParent<BoulderHitbox>() != null) continue;
@@ -144,7 +146,7 @@ public class HealFieldAbility : NetworkBehaviour
 
         // Pruhledny kruh na zemi.
         var disc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        Destroy(disc.GetComponent<Collider>());
+        DestroyImmediate(disc.GetComponent<Collider>());
         disc.transform.SetParent(visual.transform, false);
         disc.transform.localScale = new Vector3(radius * 2f, 0.01f, radius * 2f);
         var discRenderer = disc.GetComponent<Renderer>();
@@ -155,7 +157,7 @@ public class HealFieldAbility : NetworkBehaviour
 
         // Vysilac uprostred.
         var emitter = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        Destroy(emitter.GetComponent<Collider>());
+        DestroyImmediate(emitter.GetComponent<Collider>());
         emitter.transform.SetParent(visual.transform, false);
         emitter.transform.localPosition = new Vector3(0f, 0.14f, 0f);
         emitter.transform.localScale = new Vector3(0.22f, 0.14f, 0.22f);

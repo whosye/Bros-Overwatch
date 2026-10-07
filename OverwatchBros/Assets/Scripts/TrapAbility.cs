@@ -303,7 +303,7 @@ public class TrapAbility : NetworkBehaviour
         float radius = ability != null ? Mathf.Clamp(ability.radius * 0.6f, 0.35f, 0.7f) : 0.5f;
 
         var plate = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        Destroy(plate.GetComponent<Collider>());
+        DestroyImmediate(plate.GetComponent<Collider>());
         plate.transform.SetParent(root.transform, false);
         plate.transform.localScale = new Vector3(radius * 0.9f, 0.015f, radius * 0.9f);
         Fx.Paint(plate, new Color(0.20f, 0.21f, 0.23f));
@@ -324,7 +324,7 @@ public class TrapAbility : NetworkBehaviour
         {
             float angle = Mathf.Lerp(-80f, 80f, i / (teeth - 1f)) * Mathf.Deg2Rad;
             var tooth = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Destroy(tooth.GetComponent<Collider>());
+            DestroyImmediate(tooth.GetComponent<Collider>());
             tooth.transform.SetParent(jaw, false);
             tooth.transform.localPosition = new Vector3(side * Mathf.Cos(angle) * radius, 0.05f, Mathf.Sin(angle) * radius);
             tooth.transform.localRotation = Quaternion.Euler(0f, -side * angle * Mathf.Rad2Deg, side * 35f);

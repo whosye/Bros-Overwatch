@@ -7,6 +7,9 @@ using Object = UnityEngine.Object;
 public static class ForestBoundarySetup
 {
     const string RootName = "LesniHranice";
+    // Sever mapy je kratsi (zahrada za rozhlednou), at je bojiste kompaktnejsi; puvodne konec podlahy (~115 m).
+    public const float NorthLimit = 92f;
+    public const string Marker = "_v3";
     const string Nature = "Assets/Models/Kenney/NatureKit/";
     static readonly string[] TreeNames = { "tree_pineDefaultA", "tree_pineDefaultB", "tree_pineRoundA", "tree_pineRoundB", "tree_default_dark", "tree_oak_dark" };
 
@@ -43,10 +46,11 @@ public static class ForestBoundarySetup
         var gates = MapBuildKit.Group(root, "PrujezdyProAuto");
         Bounds ground = MapBuildKit.GroundBounds(map);
         float y = ground.max.y;
+        float north = Mathf.Min(ground.max.z, NorthLimit);
         Vector3[] corners =
         {
             new Vector3(ground.min.x, y, ground.min.z), new Vector3(ground.max.x, y, ground.min.z),
-            new Vector3(ground.max.x, y, ground.max.z), new Vector3(ground.min.x, y, ground.max.z)
+            new Vector3(ground.max.x, y, north), new Vector3(ground.min.x, y, north)
         };
         var road = new List<Vector2>();
         foreach (Transform node in traffic.route) road.Add(new Vector2(node.position.x, node.position.z));
@@ -100,7 +104,7 @@ public static class ForestBoundarySetup
         boundary.car = traffic;
         Physics.SyncTransforms();
         boundary.ApplyCollisionExceptions();
-        new GameObject("_v2").transform.SetParent(root, false);
+        new GameObject(Marker).transform.SetParent(root, false);
         var report = new System.Text.StringBuilder();
         report.AppendLine($"Trees: {count}; gates: {gateCount}; clearance: {clearance}; bounds: {ground}");
         report.AppendLine("Boundary: 4 solid walls, 24 metres high, ignored only by the Yaris colliders.");

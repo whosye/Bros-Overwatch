@@ -22,18 +22,21 @@ MonoBehaviour:
   chargeTime: 0
   minChargeDamage: 20
   minChargeSpeed: 25
-  falloffStart: 12
-  falloffEnd: 30
+  falloffStart: 10
+  falloffEnd: 22
   falloffMin: 0.25
-  farFalloffEnd: 0
-  farFalloffMin: 0.1
-  maxDamageRange: 40
+  farFalloffEnd: 35
+  farFalloffMin: 0
+  maxDamageRange: 35
   allyHeal: 0
   scopeFov: 25
   scopedChargeTime: 1.2
   scopedMinDamage: 30
   scopedMaxDamage: 65
   headshotMultiplier: 2
+  scopedFalloffStart: 40
+  scopedFalloffEnd: 90
+  scopedFalloffMin: 0.4
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0

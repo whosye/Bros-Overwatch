@@ -26,13 +26,72 @@ public static class SmallCottageSetup
         if (EditorApplication.isPlayingOrWillChangePlaymode) return;
         var map = GameObject.Find("Map-Domasov");
         var cottage = map != null ? map.transform.Find("MensiChata") : null;
-        if (cottage == null || cottage.Find(RootName + "/" + Version) != null) return;
+        if (cottage == null) return;
+        if (cottage.Find(RootName + "/" + Version) != null)
+        {
+            if (DisableOldRoofCollision(cottage))
+            {
+                EditorSceneManager.MarkSceneDirty(cottage.gameObject.scene);
+                Debug.Log("[Mensi chata] Stara strecha uz nema kolizi (prekazela strelbe nad novou strechou). Uloz scenu (Ctrl+S).");
+            }
+            return;
+        }
         if (Build(cottage))
         {
             EditorSceneManager.MarkSceneDirty(cottage.gameObject.scene);
             Debug.Log("[Mensi chata] Fasada, sedlova strecha, okna a vstupni veranda hotove. Uloz scenu (Ctrl+S).");
         }
         else if (retries++ < 30) EditorApplication.delayCall += Run;
+    }
+
+    // Puvodni strecha (Prism) je skryta, ale jeji kolize mela jiny tvar nez nova taskova strecha:
+    // nad strechou tak zustaly neviditelne kliny, pres ktere neslo strilet. Nova strecha ma kolizi vlastni.
+    static bool DisableOldRoofCollision(Transform cottage)
+    {
+        var newRoof = cottage.Find(RootName + "/Strecha");
+        if (newRoof == null || newRoof.GetComponentInChildren<Collider>() == null) return false;
+
+        bool changed = false;
+
+        // Stity (trojuhelniky na koncich strechy) byly jen vzhled - drive je kryla stara strecha.
+        foreach (Transform part in newRoof)
+            if (part.name == "DrevenyStit" && part.GetComponent<Collider>() == null)
+            {
+                var filter = part.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null) continue;
+                part.gameObject.AddComponent<MeshCollider>().sharedMesh = TwoSided(filter.sharedMesh);
+                changed = true;
+            }
+
+        foreach (Transform child in cottage)
+        {
+            if (child.name != "Prism") continue;
+            var renderer = child.GetComponent<MeshRenderer>();
+            var collider = child.GetComponent<Collider>();
+            if (renderer != null && !renderer.enabled && collider != null && collider.enabled)
+            {
+                collider.enabled = false;
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    // Kolize z obou stran (plochy trojuhelnik by jinak zastavil jen strely z jedne strany).
+    static Mesh TwoSided(Mesh source)
+    {
+        var triangles = source.triangles;
+        var both = new int[triangles.Length * 2];
+        triangles.CopyTo(both, 0);
+        for (int i = 0; i < triangles.Length; i += 3)
+        {
+            both[triangles.Length + i] = triangles[i];
+            both[triangles.Length + i + 1] = triangles[i + 2];
+            both[triangles.Length + i + 2] = triangles[i + 1];
+        }
+        var mesh = new Mesh { name = source.name + "_Kolize", vertices = source.vertices, triangles = both };
+        mesh.RecalculateBounds();
+        return mesh;
     }
 
     [MenuItem("BrosOverwatch/Mapa/Vymodelovat mensi chatu znovu")]
@@ -130,6 +189,8 @@ public static class SmallCottageSetup
         }
         // The old roof keeps its collision but its white mesh is replaced by the detailed roof.
         roof.enabled = false;
+        var oldRoofCollider = roof.GetComponent<Collider>();
+        if (oldRoofCollider != null) oldRoofCollider.enabled = false;
         foreach (float x in new[] { rb.min.x - 0.04f, rb.max.x + 0.04f })
         {
             var points = new[] { new Vector3(x, eave, rb.min.z), new Vector3(x, eave, rb.max.z),
@@ -181,6 +242,7 @@ public static class SmallCottageSetup
             }
         }
         new GameObject(Version).transform.SetParent(root, false);
+        DisableOldRoofCollision(cottage);
         return true;
     }
 

@@ -70,6 +70,17 @@ public class WeaponDefinition : ScriptableObject
     public float scopedMaxDamage = 120f;
     [Tooltip("Nasobek pri zasahu do hlavy (jen plne nabita rana). 1 = bez zasahu do hlavy.")]
     public float headshotMultiplier = 2f;
+    [Tooltip("Odstrel s pribliseni: plne poskozeni do teto vzdalenosti (0 = bez poklesu).")]
+    public float scopedFalloffStart = 0f;
+    [Tooltip("Odstrel s pribliseni: na teto vzdalenosti uz jen 'Scoped Falloff Min' poskozeni.")]
+    public float scopedFalloffEnd = 0f;
+    [Range(0f, 1f)] public float scopedFalloffMin = 0.4f;
+
+    public float ScopedRangeFactor(float distance)
+    {
+        if (scopedFalloffEnd <= scopedFalloffStart || scopedFalloffStart <= 0f) return 1f;
+        return Mathf.Lerp(1f, Mathf.Clamp01(scopedFalloffMin), Mathf.InverseLerp(scopedFalloffStart, scopedFalloffEnd, distance));
+    }
     [Tooltip("Kolik naboju spotrebuje rana s pribliseni.")]
     public int scopedAmmoCost = 2;
     [Tooltip("Pomer rychlosti chuze pri pribliseni (0.5 = polovicni).")]
@@ -129,8 +140,10 @@ public class WeaponDefinition : ScriptableObject
     // Poskozeni okamziteho zasahu na danou vzdalenost.
     public float DamageAt(float distance)
     {
-        if (fireMode == FireMode.Hitscan && maxDamageRange > 0f && distance > maxDamageRange) return 0f;
-        if (fireMode != FireMode.Hitscan || falloffEnd <= falloffStart || falloffStart <= 0f) return damage;
+        // Pokles plati pro vsechny zbrane krome melee (hitscan podle vzdalenosti zasahu, projektil podle uletene drahy).
+        if (fireMode == FireMode.Melee) return damage;
+        if (maxDamageRange > 0f && distance > maxDamageRange) return 0f;
+        if (falloffEnd <= falloffStart || falloffStart <= 0f) return damage;
 
         // Druhy krok: za 'Falloff End' klesa dal az na 'Far Falloff Min'.
         if (farFalloffEnd > falloffEnd && distance > falloffEnd)
@@ -142,6 +155,8 @@ public class WeaponDefinition : ScriptableObject
         float t = Mathf.InverseLerp(falloffStart, falloffEnd, distance);
         return damage * Mathf.Lerp(1f, Mathf.Clamp01(falloffMin), t);
     }
+    // Podil plneho poskozeni na dane vzdalenosti (pro projektily, jejichz poskozeni se pocita zvlast).
+    public float RangeFactor(float distance) => damage > 0f ? DamageAt(distance) / damage : 1f;
     public bool Bounces => IsProjectile && projectileBounce > 0f;
     public bool HasScopedShot => fireMode == FireMode.Hitscan && scopeFov > 0f && scopedChargeTime > 0f;
 }

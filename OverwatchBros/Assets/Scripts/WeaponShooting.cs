@@ -148,7 +148,8 @@ public class WeaponShooting : NetworkBehaviour
             return;
         }
 
-        if (Keyboard.current.rKey.wasPressedThisFrame)
+        // u packy kotle je R "zatopit" (Boiler), ne nabijeni
+        if (Keyboard.current.rKey.wasPressedThisFrame && !Boiler.LocalCanUse)
         {
             Reload();
             return;
@@ -215,7 +216,9 @@ public class WeaponShooting : NetworkBehaviour
             var owner = hit.collider.GetComponentInParent<NetworkObject>();
             if (owner != null && owner == NetworkObject) continue;
 
-            float damage = Mathf.Lerp(weapon.scopedMinDamage, weapon.scopedMaxDamage, charge);
+            // i plne nabity odstrel slabne se vzdalenosti
+            float damage = Mathf.Lerp(weapon.scopedMinDamage, weapon.scopedMaxDamage, charge)
+                * weapon.ScopedRangeFactor(Vector3.Distance(origin, hit.point));
             bool headshot = full && weapon.headshotMultiplier > 1f && hit.collider.GetComponentInParent<Health>() != null
                 && hit.point.y >= hit.collider.bounds.max.y - HeadHeight;
             if (headshot)
@@ -384,12 +387,9 @@ public class WeaponShooting : NetworkBehaviour
         }
     }
 
-    // Poskozeni podle vzdalenosti. Sindel pri kazani ve vzduchu (ultimatka) je terc: bez poklesu vzdalenosti.
+    // Poskozeni podle vzdalenosti.
     float DamageFor(Collider collider, Vector3 point)
     {
-        var preacher = collider.GetComponentInParent<EzekielAbility>();
-        if (preacher != null && preacher.enabled && preacher.IsCasting)
-            return weapon.damage;
         return weapon.DamageAt(Vector3.Distance(playerCamera.transform.position, point));
     }
 

@@ -160,14 +160,14 @@ public class ScoutArrowVisual : MonoBehaviour
         color = pulseColor;
 
         var shaft = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Destroy(shaft.GetComponent<Collider>());
+        DestroyImmediate(shaft.GetComponent<Collider>());
         shaft.transform.SetParent(transform, false);
         shaft.transform.localScale = new Vector3(0.05f, 0.05f, 0.8f);
         Fx.Paint(shaft, color);
         arrow = shaft.transform;
 
         var ring = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(ring.GetComponent<Collider>());
+        DestroyImmediate(ring.GetComponent<Collider>());
         ring.transform.SetParent(transform, false);
         pulseMaterial = new Material(Fx.ParticleMaterial) { mainTexture = null };
         var ringRenderer = ring.GetComponent<Renderer>();

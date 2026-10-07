@@ -299,7 +299,7 @@ public class PotgIntro : MonoBehaviour
     static GameObject Prim(PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, Color color)
     {
         var go = GameObject.CreatePrimitive(type);
-        Destroy(go.GetComponent<Collider>());
+        DestroyImmediate(go.GetComponent<Collider>());
         go.transform.SetParent(parent, false);
         go.transform.position = position;
         go.transform.localScale = scale;
@@ -346,7 +346,7 @@ public class PotgIntro : MonoBehaviour
 
         var go = Instantiate(honza.characterPrefab, root.transform);
         go.name = "Tomasek";
-        foreach (var c in go.GetComponentsInChildren<Collider>()) Destroy(c);
+        foreach (var c in go.GetComponentsInChildren<Collider>()) DestroyImmediate(c);
         seat = Stage + TomasekSeat;
         seatRotation = Quaternion.Euler(0f, 180f, 0f);
         go.transform.SetPositionAndRotation(seat, seatRotation);

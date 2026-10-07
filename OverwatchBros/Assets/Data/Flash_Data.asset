@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
   m_Name: Flash_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
-  abilityName: "Oslepuj\xEDc\xED gran\xE1t"
+  abilityName: "Pulzn\xED gran\xE1t"
   icon: {fileID: 2800000, guid: b1d14064f1818444a970f2da644f54b9, type: 3}
   cooldown: 10
   ultCost: 0
-  power: 15
+  power: 50
   duration: 0.8
-  radius: 4
-  range: 7
+  radius: 3
+  range: 40
   knockback: 0
   charges: 1
   sound: {fileID: 0}
@@ -29,6 +29,6 @@ MonoBehaviour:
   blockSpeed: 0.5
   regenDelay: 5
   regenTime: 6
-  speed: 22
+  speed: 45
   tickInterval: 0.25
   healRatio: 1

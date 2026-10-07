@@ -297,13 +297,13 @@ public class MineAbility : NetworkBehaviour
         var visual = new MineVisual { root = new GameObject("MineVisual") };
 
         var body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        Destroy(body.GetComponent<Collider>());
+        DestroyImmediate(body.GetComponent<Collider>());
         body.transform.SetParent(visual.root.transform, false);
         body.transform.localScale = new Vector3(Size, 0.045f, Size);
         Fx.Paint(body, new Color(0.16f, 0.17f, 0.19f));
 
         var cap = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(cap.GetComponent<Collider>());
+        DestroyImmediate(cap.GetComponent<Collider>());
         cap.transform.SetParent(visual.root.transform, false);
         cap.transform.localPosition = new Vector3(0f, 0.05f, 0f);
         cap.transform.localScale = Vector3.one * 0.13f;
