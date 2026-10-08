@@ -36,6 +36,10 @@ public class MatchUI : MonoBehaviour
     TextMeshProUGUI volumeText;
     Slider sensitivitySlider;
     Slider volumeSlider;
+    Button headBobButton;
+    Slider headBobSlider;
+    TextMeshProUGUI headBobText;
+    bool settingsWereVisible;
 
     NetworkUI legacyMenu;
     PlayerHUD legacyHud;
@@ -161,30 +165,39 @@ public class MatchUI : MonoBehaviour
     {
         var center = new Vector2(0.5f, 0.5f);
 
-        var panel = UiKit.MakeImage(root, "SettingsPanel", new Color(0.05f, 0.07f, 0.10f, 0.92f), center, Vector2.zero, new Vector2(780f, 480f));
+        var panel = UiKit.MakeImage(root, "SettingsPanel", new Color(0.05f, 0.07f, 0.10f, 0.92f), center, Vector2.zero, new Vector2(780f, 700f));
         panel.raycastTarget = true;
         settingsPanel = panel.gameObject;
 
         UiKit.MakeText(settingsPanel.transform, "Title", "NASTAVENÍ", 52, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 180f), new Vector2(700f, 70f), UiKit.Accent);
+            new Vector2(0f, 290f), new Vector2(700f, 70f), UiKit.Accent);
 
         sensText = UiKit.MakeText(settingsPanel.transform, "Sens", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 100f), new Vector2(700f, 50f));
+            new Vector2(0f, 210f), new Vector2(700f, 50f));
         volumeText = UiKit.MakeText(settingsPanel.transform, "Volume", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -10f), new Vector2(700f, 50f));
+            new Vector2(0f, 100f), new Vector2(700f, 50f));
 
         // Logarithmic sensitivity keeps low values easy to adjust across the full range.
         sensitivitySlider = UiKit.MakeSlider(settingsPanel.transform, "SensitivitySlider", center,
-            new Vector2(0f, 55f), new Vector2(620f, 44f), 0f, 1f, SensitivityToSlider(),
+            new Vector2(0f, 165f), new Vector2(620f, 44f), 0f, 1f, SensitivityToSlider(),
             value => GameSettings.Sensitivity = Mathf.Round(GameSettings.MinSensitivity
                 * Mathf.Pow(GameSettings.MaxSensitivity / GameSettings.MinSensitivity, value) * 100f) / 100f);
         volumeSlider = UiKit.MakeSlider(settingsPanel.transform, "VolumeSlider", center,
-            new Vector2(0f, -55f), new Vector2(620f, 44f), 0f, 100f, GameSettings.Volume * 100f,
+            new Vector2(0f, 55f), new Vector2(620f, 44f), 0f, 100f, GameSettings.Volume * 100f,
             value => GameSettings.Volume = value / 100f, wholeNumbers: true);
 
-        UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -150f), new Vector2(340f, 76f),
+        headBobButton = UiKit.MakeButton(settingsPanel.transform, "Pohupování kamery: ZAPNUTO", center,
+            new Vector2(0f, -30f), new Vector2(620f, 60f),
+            () => GameSettings.HeadBobEnabled = !GameSettings.HeadBobEnabled, fontSize: 30f);
+        headBobText = UiKit.MakeText(settingsPanel.transform, "HeadBobIntensity", "", 32, TextAlignmentOptions.Center, center,
+            new Vector2(0f, -100f), new Vector2(700f, 50f));
+        headBobSlider = UiKit.MakeSlider(settingsPanel.transform, "HeadBobSlider", center,
+            new Vector2(0f, -145f), new Vector2(620f, 44f), 0f, 200f, GameSettings.HeadBobIntensity * 100f,
+            value => GameSettings.HeadBobIntensity = value / 100f, wholeNumbers: true);
+
+        UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -260f), new Vector2(340f, 76f),
             () => Cursor.lockState = CursorLockMode.Locked, UiKit.Green, 32f);
-        UiKit.MakeButton(settingsPanel.transform, "OPUSTIT HRU", center, new Vector2(190f, -150f), new Vector2(340f, 76f),
+        UiKit.MakeButton(settingsPanel.transform, "OPUSTIT HRU", center, new Vector2(190f, -260f), new Vector2(340f, 76f),
             LeaveGame, new Color(0.45f, 0.18f, 0.18f, 1f), 32f);
 
         settingsPanel.SetActive(false);
@@ -305,6 +318,8 @@ public class MatchUI : MonoBehaviour
         UpdateBlockBar(localHero, playing && !over);
 
         bool showSettings = playing && !over && !locked && !heroPicker.IsOpen;
+        if (settingsWereVisible && !showSettings) PlayerPrefs.Save();
+        settingsWereVisible = showSettings;
         settingsPanel.SetActive(showSettings);
         if (showSettings)
         {
@@ -312,6 +327,10 @@ public class MatchUI : MonoBehaviour
             volumeSlider.SetValueWithoutNotify(GameSettings.Volume * 100f);
             sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0#}  <size=65%>(max {GameSettings.MaxSensitivity:0})</size>";
             volumeText.text = $"Hlasitost: {Mathf.RoundToInt(GameSettings.Volume * 100f)} %";
+            UiKit.SetButtonLabel(headBobButton, GameSettings.HeadBobEnabled ? "Pohupování kamery: ZAPNUTO" : "Pohupování kamery: VYPNUTO");
+            headBobSlider.SetValueWithoutNotify(GameSettings.HeadBobIntensity * 100f);
+            headBobSlider.interactable = GameSettings.HeadBobEnabled;
+            headBobText.text = $"Intenzita pohupování: {Mathf.RoundToInt(GameSettings.HeadBobIntensity * 100f)} %";
         }
     }
 
