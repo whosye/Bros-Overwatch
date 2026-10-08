@@ -8,6 +8,7 @@ public class ProjectileSim : MonoBehaviour
     public const int KindExpired = 0;
     public const int KindHit = 1;
     public const int KindExplosion = 2;
+    public const int KindSpent = 3;   // doletel tak daleko, ze by uz nedal zadne poskozeni - vybuchne ve vzduchu
 
     WeaponShooting shooter;
     WeaponDefinition weapon;
@@ -95,6 +96,13 @@ public class ProjectileSim : MonoBehaviour
         if (weapon.proximityRadius > 0f && weapon.explosionRadius > 0f && NearEnemy(transform.position))
         {
             Detonate(transform.position, Vector3.up, null);
+            return;
+        }
+
+        // Za dosahem poskozeni (pokles se vzdalenosti az na nulu) uz strela nic neudela: vybuchne ve vzduchu.
+        if (damage > 0f && weapon.RangeFactor(traveled) <= 0.001f)
+        {
+            Finish(transform.position, KindSpent);
             return;
         }
 

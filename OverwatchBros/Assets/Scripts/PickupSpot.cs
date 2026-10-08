@@ -9,6 +9,7 @@ public enum PickupKind
     Power,        // slivovice: posileni (jako Annina ultimatka, kratce)
     Shield,       // stit: docasny stit nad zdravim
     Invulnerable, // dedova slivovice (spiz velke chaty): nesmrtelnost
+    Tramal,       // Tramal ve skrince pod diplomem MUDr. Tomaska: plne zdravi + kratce mensi poskozeni
 }
 
 // Buffy z balicku, ktere zobrazuje HUD mistniho hrace (BuffUI). Nastavuje je MatchManager, kdyz balicek sebere
@@ -18,8 +19,16 @@ public static class PickupBuffs
     public const float InvulnerableSeconds = 15f;
     public static float InvulnerableUntil;
 
+    public const float TramalSeconds = 25f;
+    public const float TramalDamageTaken = 0.8f;   // o 20 % mensi poskozeni
+    public static float TramalUntil;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void Reset() => InvulnerableUntil = 0f;
+    static void Reset()
+    {
+        InvulnerableUntil = 0f;
+        TramalUntil = 0f;
+    }
 }
 
 // Misto s balickem na mape (znacka ve scene, rozmisti ji editorovy skript). Vizual si postavi samo za behu;
@@ -27,6 +36,13 @@ public static class PickupBuffs
 public class PickupSpot : MonoBehaviour
 {
     public PickupKind kind = PickupKind.Health;
+    // Jak hluboko pod balickem muze hrac stat, aby ho sebral (balicek na skrince/stole je nad chodidly).
+    public float reachBelow = 0.5f;
+    // Lekarnicka: kolik vyleci (0 = vychozi 75 HP).
+    public float healAmount = 0f;
+
+    // Balicek polozeny na nabytku (zachod, skrinka): maly podstavec, predmet nizko nad nim.
+    bool OnFurniture => kind == PickupKind.Tramal || reachBelow > 0.6f;
 
     public static readonly List<PickupSpot> All = new List<PickupSpot>();
     static bool sorted;
@@ -55,6 +71,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Speed => 30f,
         PickupKind.Power => 45f,
         PickupKind.Invulnerable => 60f,
+        PickupKind.Tramal => 30f,
         _ => 30f,
     };
 
@@ -67,6 +84,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Speed => new Color(1f, 0.75f, 0.2f),
         PickupKind.Power => new Color(0.75f, 0.35f, 1f),
         PickupKind.Invulnerable => new Color(1f, 0.72f, 0.25f),
+        PickupKind.Tramal => new Color(0.35f, 0.75f, 0.55f),
         _ => new Color(0.45f, 0.85f, 1f),
     };
 
@@ -77,6 +95,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Speed => "Pivo",
         PickupKind.Power => "Slivovice",
         PickupKind.Invulnerable => "Dědova slivovice",
+        PickupKind.Tramal => "Tramal",
         _ => "Štít",
     };
 
@@ -121,7 +140,8 @@ public class PickupSpot : MonoBehaviour
         }
         if (item != null && available)
         {
-            item.localPosition = new Vector3(0f, 0.75f + Mathf.Sin(Time.time * 2f + Index) * 0.08f, 0f);
+            bool low = OnFurniture;   // na nabytku lezi nizko
+            item.localPosition = new Vector3(0f, (low ? 0.22f : 0.75f) + Mathf.Sin(Time.time * 2f + Index) * (low ? 0.03f : 0.08f), 0f);
             item.localRotation = Quaternion.Euler(0f, Time.time * 70f + Index * 40f, 0f);
         }
     }
@@ -141,8 +161,10 @@ public class PickupSpot : MonoBehaviour
         var color = Color;
 
         // Podstavec: tmavy kotouc se svitivym okrajem (vidi se i kdyz je balicek sebrany - misto se pozna).
-        var pad = Part(PrimitiveType.Cylinder, transform, new Vector3(0f, 0.03f, 0f), new Vector3(1.1f, 0.03f, 1.1f), new Color(0.12f, 0.13f, 0.15f));
-        var ring = Part(PrimitiveType.Cylinder, transform, new Vector3(0f, 0.035f, 0f), new Vector3(1.25f, 0.02f, 1.25f), color, 1.5f);
+        // (Tramal lezi na skrince - jen maly svitici kruzek.)
+        float padSize = OnFurniture ? 0.32f : 1.1f;
+        Part(PrimitiveType.Cylinder, transform, new Vector3(0f, 0.03f, 0f), new Vector3(padSize, 0.03f, padSize), new Color(0.12f, 0.13f, 0.15f));
+        var ring = Part(PrimitiveType.Cylinder, transform, new Vector3(0f, 0.035f, 0f), new Vector3(padSize * 1.14f, 0.02f, padSize * 1.14f), color, 1.5f);
         ring.transform.SetSiblingIndex(0);
 
         item = new GameObject("Predmet").transform;
@@ -184,6 +206,13 @@ public class PickupSpot : MonoBehaviour
                 Part(PrimitiveType.Cylinder, item, new Vector3(0f, 0.42f, 0f), new Vector3(0.075f, 0.03f, 0.075f), new Color(0.75f, 0.1f, 0.08f));
                 Part(PrimitiveType.Cube, item, new Vector3(0f, -0.02f, 0.092f), new Vector3(0.12f, 0.12f, 0.01f), new Color(0.96f, 0.93f, 0.82f));
                 Part(PrimitiveType.Cylinder, item, new Vector3(0.2f, -0.18f, 0f), new Vector3(0.07f, 0.05f, 0.07f), new Color(1f, 0.8f, 0.4f), 0.6f);
+                break;
+            case PickupKind.Tramal:
+                // Krabicka leku: bila se zelenym pruhem a modrym napisem, vedle platek tablet.
+                Part(PrimitiveType.Cube, item, Vector3.zero, new Vector3(0.2f, 0.07f, 0.11f), Color.white);
+                Part(PrimitiveType.Cube, item, new Vector3(-0.05f, 0f, 0f), new Vector3(0.05f, 0.072f, 0.112f), color, 0.8f);
+                Part(PrimitiveType.Cube, item, new Vector3(0.04f, 0.036f, 0f), new Vector3(0.09f, 0.002f, 0.04f), new Color(0.2f, 0.25f, 0.6f));
+                Part(PrimitiveType.Cube, item, new Vector3(0.02f, -0.02f, 0.11f), new Vector3(0.12f, 0.008f, 0.06f), new Color(0.82f, 0.84f, 0.86f), 0.2f);
                 break;
             default:
                 // Modry sestiuhelnikovy stit.

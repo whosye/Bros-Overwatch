@@ -40,6 +40,8 @@ public class BuffUI
                 until = () => AbilityDefinition.FastCooldownUntil },
             new Buff { key = "dedova_slivovice", shortName = "DS", color = new Color(1f, 0.72f, 0.25f),
                 until = () => PickupBuffs.InvulnerableUntil },
+            new Buff { key = "tramal", shortName = "TR", color = new Color(0.35f, 0.75f, 0.55f),
+                until = () => PickupBuffs.TramalUntil },
         };
         foreach (var b in buffs) Create(b);
     }

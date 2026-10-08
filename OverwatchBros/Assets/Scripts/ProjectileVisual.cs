@@ -100,6 +100,21 @@ public class ProjectileVisual : MonoBehaviour
             Fx.Sparks(position, weapon.projectileColor);
             ProceduralSfx.Play(ProceduralSfx.Hit, position, 0.6f);
         }
+        else if (kind == ProjectileSim.KindSpent)
+        {
+            // konec dostrelu: mala neskodna exploze ve vzduchu
+            if (weapon.explosionRadius > 0f)
+            {
+                Fx.Explosion(position, weapon.explosionRadius * 0.5f);
+                ProceduralSfx.Play(ProceduralSfx.Explosion, position, 0.5f);
+            }
+            else
+            {
+                Fx.BulletImpact(position, weapon.projectileColor, 1.5f);
+                Fx.Sparks(position, weapon.projectileColor);
+                ProceduralSfx.Play(ProceduralSfx.Hit, position, 0.4f);
+            }
+        }
     }
 
     static GameObject CreateDefaultVisual(WeaponDefinition weapon)

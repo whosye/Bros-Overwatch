@@ -472,6 +472,11 @@ public class FirstPersonController : NetworkBehaviour
         Vector3 move = transform.right * input.x + transform.forward * input.y;
         move = Vector3.ClampMagnitude(move, 1f);
 
+        // Na zebriku (Ladder) se leze: W nahoru, S dolu; vodorovne jen pomalu, at se z nej hned nesejde.
+        bool onLadder = !jump && Ladder.At(transform.position);
+        if (onLadder && !isGrounded)
+            move *= Ladder.SideSpeedScale;
+
         float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * ScopeSpeedScale * SlowScale * BoostScale * TunnelScale * HoverScale * BardAbility.SpeedScaleFor(gameObject);
         var flags = controller.Move((move * speed + externalVelocity) * Time.deltaTime);
 
@@ -502,7 +507,9 @@ public class FirstPersonController : NetworkBehaviour
         if (LedgeClimb && !isGrounded && !frozen && input.y > 0f && TryStartMantle())
             return;
 
-        if (Time.time < hoverUntil && verticalVelocity <= 0f && !isGrounded)
+        if (onLadder)
+            verticalVelocity = input.y > 0f ? Ladder.ClimbSpeed : input.y < 0f ? -Ladder.ClimbSpeed : 0f;
+        else if (Time.time < hoverUntil && verticalVelocity <= 0f && !isGrounded)
             verticalVelocity = Mathf.Max(verticalVelocity + gravity * 0.1f * Time.deltaTime, -1.2f);
         else
             verticalVelocity += gravity * Time.deltaTime;

@@ -54,8 +54,8 @@ public partial class MatchManager
                     Vector3 flat = feet - spot;
                     float dy = flat.y;
                     flat.y = 0f;
-                    if (flat.magnitude > PickupRadius || dy < -0.5f || dy > 2.5f) continue;
-                    if (!ApplyPickup(spots[i].kind, health, hero)) continue;
+                    if (flat.magnitude > PickupRadius || dy < -spots[i].reachBelow || dy > 2.5f) continue;
+                    if (!ApplyPickup(spots[i], health, hero)) continue;
 
                     mask &= ~(1UL << i);
                     pickupRespawnAt[i] = Time.time + spots[i].RespawnSeconds;
@@ -69,13 +69,13 @@ public partial class MatchManager
     }
 
     // Vraci false, kdyz balicek hraci nic neda (lekarnicka pri plnem zdravi) - pak zustane lezet.
-    bool ApplyPickup(PickupKind kind, Health health, PlayerHero hero)
+    bool ApplyPickup(PickupSpot spot, Health health, PlayerHero hero)
     {
-        switch (kind)
+        switch (spot.kind)
         {
             case PickupKind.Health:
                 if (health.currentHealth.Value >= health.maxHealth - 0.5f || health.HealBlocked) return false;
-                health.Heal(75f);
+                health.Heal(spot.healAmount > 0f ? spot.healAmount : 75f);
                 return true;
             case PickupKind.BigHealth:
                 if (health.currentHealth.Value >= health.maxHealth - 0.5f || health.HealBlocked) return false;
@@ -90,6 +90,11 @@ public partial class MatchManager
                 return true;
             case PickupKind.Invulnerable:
                 health.ServerInvulnerable(PickupBuffs.InvulnerableSeconds);
+                return true;
+            case PickupKind.Tramal:
+                // plne zdravi (sebere se i pri plnem zdravi - jde o buff) a kratce mensi poskozeni
+                if (!health.HealBlocked) health.Heal(health.maxHealth);
+                health.ServerDamageReduction(PickupBuffs.TramalDamageTaken, PickupBuffs.TramalSeconds);
                 return true;
             default:
                 health.ServerAddShield(60f, 10f);
@@ -110,8 +115,13 @@ public partial class MatchManager
             PickupBuffs.InvulnerableUntil = Time.time + PickupBuffs.InvulnerableSeconds;
             CaptureUI.Announce("Vypil jsi dědovu slivovici", PickupSpot.KindColor(kind), 3f);
         }
+        if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Tramal)
+        {
+            PickupBuffs.TramalUntil = Time.time + PickupBuffs.TramalSeconds;
+            CaptureUI.Announce("Užil jsi Tramal", PickupSpot.KindColor(kind), 3f);
+        }
         Fx.Sparks(position + Vector3.up * 0.8f, PickupSpot.KindColor(kind));
-        bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth;
+        bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth || kind == PickupKind.Tramal;
         ProceduralSfx.Play(heal ? ProceduralSfx.Spawn : ProceduralSfx.CaptureUnlock, position, 0.8f);
     }
 }

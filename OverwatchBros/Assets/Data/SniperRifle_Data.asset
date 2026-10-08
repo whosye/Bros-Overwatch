@@ -34,9 +34,9 @@ MonoBehaviour:
   scopedMinDamage: 30
   scopedMaxDamage: 65
   headshotMultiplier: 2
-  scopedFalloffStart: 40
-  scopedFalloffEnd: 90
-  scopedFalloffMin: 0.4
+  scopedFalloffStart: 20
+  scopedFalloffEnd: 50
+  scopedFalloffMin: 0.25
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0

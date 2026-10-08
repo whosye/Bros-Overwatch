@@ -37,7 +37,14 @@ public static class MapPlayabilitySetup
         ("Balicky", 1),
         ("OknaKulny", 1),          // okna do stavajici kulny (kulna zustava, kde ji ma uzivatel)
         ("DedovaSlivovice", 2),    // balicek nesmrtelnosti ve spizi velke chaty (v2: v rohu, neni videt z chodby)
-        ("Kotel", 1),              // kotel na piliny v kotelne velke chaty: packa (R) prehreje horni patra
+        ("Kotel", 1),
+        ("LekarnickaNaZachode", 1), // na kazdem zachodu (objekt "Zachod") lekarnicka za 50 HP
+        ("BezBalicku", 1),         // balicky rozmistene po mape se odstrani (zustava dedova slivovice a Tramal)
+        ("VyssiStropy", 1),        // velka chata: strop prizemi i 1. patra o 0,5 m vys (vse nad nimi se posune)
+        ("OpravaSchodisteChaty", 1), // po zvyseni stropu: dolni rameno schodiste az k odpocivadlu, prujezd volny
+        ("ZebrikRozhledny", 2),    // kamenna rampa na rozhlednu (sever) se vypne, misto ni zebrik; v2: soucasti rozhledny
+        ("SchodisteRozhledny", 5), // druhy pristup na rozhlednu: schodiste z jihu (od bodu C) na nizsi plosinu; v2: zastresene; v3: i bocni steny; v4: hladka rampa, vyssi strecha; v5: soucasti rozhledny
+              // kotel na piliny v kotelne velke chaty: packa (R) prehreje horni patra
         ("StartToboganu", 1),      // jizda z toboganu jen pro toho, kdo vyjde na plosinu (skluzavka zustava, kde je)
     };
 
@@ -145,6 +152,29 @@ public static class MapPlayabilitySetup
                 break;
             case "OknaKulny":
                 ShedWindows(root);
+                break;
+            case "OpravaSchodisteChaty":
+                FixHouseStairs(map, extra);
+                break;
+            case "LekarnickaNaZachode":
+                ToiletHealthPacks(map);
+                break;
+            case "BezBalicku":
+                RemoveMapPickups(root);
+                break;
+            case "VyssiStropy":
+                RaiseHouseCeilings(map);
+                break;
+            case "ZebrikRozhledny":
+                // (drive v Hratelnost/Doplnky; ted pod rozhlednou, aby se s ni posouval)
+                DeleteNamed(extra, "ZebrikRozhledny");
+                if (map.Find("Rozhledna") != null) DeleteNamed(map.Find("Rozhledna"), "ZebrikRozhledny");
+                TowerLadder(map, extra);
+                break;
+            case "SchodisteRozhledny":
+                DeleteNamed(extra, "SchodisteRozhledny");
+                if (map.Find("Rozhledna") != null) DeleteNamed(map.Find("Rozhledna"), "SchodisteRozhledny");
+                TowerStairs(map, extra);
                 break;
             case "Kotel":
                 DeleteNamed(extra, "Kotel");
@@ -943,6 +973,450 @@ public static class MapPlayabilitySetup
                 if (parts.Contains(filter.name) && filter.sharedMesh != null && filter.GetComponent<Collider>() == null)
                     filter.gameObject.AddComponent<BoxCollider>();
         }
+    }
+
+    // ---------------- vyssi stropy ve velke chate ----------------
+
+    // Vysky ve velke chate se prepocitaji po usecich: do 'Floor1' beze zmeny, mezi 'Floor1' a 'Floor2' +0,5 m,
+    // nad 'Floor2' +1 m (strop prizemi lezi nad Floor1, podlaha podkrovi nad Floor2). Co lezi cele v jednom useku,
+    // se jen posune; co useky protina (zdi, okenni preklady), se natahne. Schodiste se natahne rovnomerne od zeme.
+    // Kromne chaty se posune i vse ostatni nad prizemim v jejim pudorysu (svetla kotle, balicky...).
+    // Zmeny jdou vratit pres Ctrl+Z.
+    const float CeilingRaise = 0.5f;
+    const float Floor1 = 2.9f, Floor2 = 6.1f;
+    const float StairTop = 3.76f;   // podlaha 1. patra, kam vede schodiste
+
+    static float RaisedY(float y) => y <= Floor1 ? y : y <= Floor2 ? y + CeilingRaise : y + 2f * CeilingRaise;
+    static float RaisedStairY(float y) => y <= 0f ? y : y * (1f + CeilingRaise / StairTop);
+
+    static void RaiseHouseCeilings(Transform map)
+    {
+        var house = map.Find("HlavniChata");
+        if (house == null)
+        {
+            Debug.LogWarning("[Hratelnost] Vyssi stropy: HlavniChata nenalezena.");
+            return;
+        }
+        Physics.SyncTransforms();
+
+        // pudorys chaty (se strechou)
+        Bounds footprint = new Bounds();
+        bool any = false;
+        foreach (var r in house.GetComponentsInChildren<Renderer>())
+        {
+            if (!any) { footprint = r.bounds; any = true; }
+            else footprint.Encapsulate(r.bounds);
+        }
+
+        // co se meni: vse v chate, mimo ni jen veci nad prizemim v jejim pudorysu
+        var targets = new List<(Transform t, Bounds b, bool inHouse)>();
+        foreach (var t in map.GetComponentsInChildren<Transform>(true))
+        {
+            if (t == map || t == house) continue;
+            bool inHouse = t.IsChildOf(house);
+            if (!OwnBounds(t, out Bounds b)) continue;
+            if (!inHouse)
+            {
+                if (b.min.y < Floor1 + 0.3f) continue;
+                if (b.min.x < footprint.min.x || b.max.x > footprint.max.x || b.min.z < footprint.min.z || b.max.z > footprint.max.z) continue;
+            }
+            else if (b.max.y <= Floor1) continue;
+            targets.Add((t, b, inHouse));
+        }
+
+        // rodice pred potomky (zmena rodice pohne potomky, potomci se pak srovnaji na sve cile)
+        targets.Sort((a, b) => Depth(a.t).CompareTo(Depth(b.t)));
+        int moved = 0, stretched = 0;
+        foreach (var (t, b, _) in targets)
+        {
+            Undo.RecordObject(t, "Vyssi stropy");
+            bool stairs = t.name.StartsWith("Stairs");
+            float newMin = stairs ? RaisedStairY(b.min.y) : RaisedY(b.min.y);
+            float newMax = stairs ? RaisedStairY(b.max.y) : RaisedY(b.max.y);
+            float newHeight = newMax - newMin;
+
+            // aktualni stav (rodic uz mohl objekt posunout nebo natahnout)
+            Physics.SyncTransforms();
+            OwnBounds(t, out Bounds now);
+
+            // natahnout jen rovne postavene veci (otoceni jen kolem svisle osy), ostatni jen posunout
+            bool upright = Vector3.Dot(t.rotation * Vector3.up, Vector3.up) > 0.999f;
+            if (upright && now.size.y > 0.01f && newHeight > 0.01f && Mathf.Abs(newHeight - now.size.y) > 0.01f)
+            {
+                var scale = t.localScale;
+                t.localScale = new Vector3(scale.x, scale.y * newHeight / now.size.y, scale.z);
+                Physics.SyncTransforms();
+                OwnBounds(t, out Bounds after);
+                t.position += Vector3.up * (newMin - after.min.y);
+                stretched++;
+            }
+            else
+            {
+                t.position += Vector3.up * ((newMin + newMax) * 0.5f - now.center.y);
+                moved++;
+            }
+        }
+
+        // kotel: horka oblast sahala pod strechu - strecha je ted o metr vys
+        foreach (var boiler in map.GetComponentsInChildren<Boiler>(true))
+        {
+            Undo.RecordObject(boiler, "Vyssi stropy");
+            boiler.heatMax.y = RaisedY(boiler.heatMax.y);
+            EditorUtility.SetDirty(boiler);
+        }
+
+        Debug.Log($"[Hratelnost] Vyssi stropy ve velke chate: posunuto {moved}, natazeno {stretched} objektu. " +
+                  "Strop prizemi i 1. patra je o 0,5 m vys. Vratit jde pres Ctrl+Z, ulozit scenu Ctrl+S.");
+    }
+
+    // Po zvyseni stropu zustalo dolni rameno schodiste (Stairs, cele pod hranici Floor1) puvodne vysoke, odpocivadlo
+    // nad nim (strop/Cube (4)) se posunulo o 0,5 m nahoru a nosna zidka pod jeho hranou (schodiste_spodek/Cube (3))
+    // se natahla - schod byl moc vysoky a zidka zavrela pruchod. Rameno se natahne az pod odpocivadlo (stejny
+    // odstup jako puvodne), zidka se srovna pod odpocivadlo a pres rameno vede hladka neviditelna rampa.
+    static void FixHouseStairs(Transform map, Transform root)
+    {
+        var stairs = map.Find("HlavniChata/PRIZEMI/schodiste_spodek/Stairs");
+        var landing = map.Find("HlavniChata/PRVNIPATRO/strop/Cube (4)");
+        var support = map.Find("HlavniChata/PRIZEMI/schodiste_spodek/Cube (3)");
+        if (stairs == null || landing == null || !stairs.TryGetComponent<Renderer>(out var stairsRenderer)
+            || !landing.TryGetComponent<Renderer>(out var landingRenderer))
+        {
+            Debug.LogWarning("[Hratelnost] Oprava schodiste: Stairs nebo odpocivadlo (strop/Cube (4)) nenalezeno.");
+            return;
+        }
+        Undo.RecordObject(stairs, "Oprava schodiste");
+        Bounds sb = stairsRenderer.bounds, lb = landingRenderer.bounds;
+        const float gapBelowLanding = 0.29f;   // puvodni odstup vrsku ramene od vrsku odpocivadla
+
+        // rameno: spodek zustava, vrsek pod odpocivadlo
+        float newTop = lb.max.y - gapBelowLanding;
+        if (sb.size.y > 0.1f && newTop > sb.max.y + 0.01f)
+        {
+            float k = (newTop - sb.min.y) / sb.size.y;
+            var scale = stairs.localScale;
+            stairs.localScale = new Vector3(scale.x, scale.y * k, scale.z);
+            Physics.SyncTransforms();
+            stairs.position += Vector3.up * (sb.min.y - stairsRenderer.bounds.min.y);
+            sb = stairsRenderer.bounds;
+        }
+
+        // zidka pod hranou odpocivadla: vrsek nejvys po spodek odpocivadla
+        if (support != null && support.TryGetComponent<Renderer>(out var supportRenderer))
+        {
+            Bounds wb = supportRenderer.bounds;
+            if (wb.max.y > lb.min.y + 0.01f && wb.size.y > 0.1f)
+            {
+                Undo.RecordObject(support, "Oprava schodiste");
+                float k = (lb.min.y - wb.min.y) / wb.size.y;
+                var scale = support.localScale;
+                support.localScale = new Vector3(scale.x, scale.y * k, scale.z);
+                Physics.SyncTransforms();
+                support.position += Vector3.up * (wb.min.y - supportRenderer.bounds.min.y);
+            }
+        }
+
+        // hladka rampa: od paty ramene (strana dal od odpocivadla) az na hranu odpocivadla
+        bool alongX = sb.size.x >= sb.size.z;
+        Vector3 toLanding = lb.center - sb.center;
+        Vector3 low, high;
+        float width;
+        if (alongX)
+        {
+            float sign = Mathf.Sign(toLanding.x);
+            low = new Vector3(sign > 0f ? sb.min.x : sb.max.x, sb.min.y + 0.15f, sb.center.z);
+            high = new Vector3(sign > 0f ? lb.min.x : lb.max.x, lb.max.y, sb.center.z);
+            width = sb.size.z;
+        }
+        else
+        {
+            float sign = Mathf.Sign(toLanding.z);
+            low = new Vector3(sb.center.x, sb.min.y + 0.15f, sign > 0f ? sb.min.z : sb.max.z);
+            high = new Vector3(sb.center.x, lb.max.y, sign > 0f ? lb.min.z : lb.max.z);
+            width = sb.size.x;
+        }
+        Vector3 along = (high - low).normalized;
+        Vector3 side = Vector3.Cross(Vector3.up, along).normalized;
+        Vector3 normal = Vector3.Cross(along, side);
+        if (normal.y < 0f) normal = -normal;
+
+        DeleteNamed(root, "RampaSchodisteChaty");
+        var ramp = new GameObject("RampaSchodisteChaty");
+        Undo.RegisterCreatedObjectUndo(ramp, "Oprava schodiste");
+        ramp.transform.SetParent(root, false);
+        ramp.transform.SetPositionAndRotation((low + high) * 0.5f - normal * 0.15f, Quaternion.LookRotation(along, normal));
+        ramp.AddComponent<BoxCollider>().size = new Vector3(width, 0.3f, Vector3.Distance(low, high) + 0.2f);
+
+        Debug.Log($"[Hratelnost] Oprava schodiste ve velke chate: rameno do {sb.max.y:0.00} m, odpocivadlo {lb.max.y:0.00} m, rampa pridana.");
+    }
+
+    // Balicky, ktere skript rozmistil po mape (lekarnicky, pivo, slivovice, stity), se smazou. Zustanou ty, ktere
+    // si uzivatel vyzadal: dedova slivovice ve spizi (Invulnerable) a Tramal pod diplomem (mimo skupinu Balicky).
+    static void RemoveMapPickups(Transform root)
+    {
+        var group = root.Find("Balicky");
+        if (group == null) return;
+        int removed = 0;
+        foreach (var spot in group.GetComponentsInChildren<PickupSpot>(true))
+        {
+            if (spot.kind == PickupKind.Invulnerable || spot.kind == PickupKind.Tramal) continue;
+            UnityEngine.Object.DestroyImmediate(spot.gameObject);
+            removed++;
+        }
+        Debug.Log($"[Hratelnost] Odstraneno {removed} balicku z mapy (dedova slivovice a Tramal zustavaji).");
+    }
+
+    // Lekarnicka (50 HP) na viku kazdeho zachodu ve scene - jako podobjekt zachodu, posouva se s nim.
+    static void ToiletHealthPacks(Transform map)
+    {
+        int added = 0;
+        foreach (var toilet in map.GetComponentsInChildren<Transform>(true))
+        {
+            if (toilet.name != "Zachod" || toilet.Find("Balicek_Zachod") != null) continue;
+            var renderers = toilet.GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0) continue;
+            Bounds b = renderers[0].bounds;
+            foreach (var r in renderers) b.Encapsulate(r.bounds);
+
+            var spot = new GameObject("Balicek_Zachod");
+            Undo.RegisterCreatedObjectUndo(spot, "Lekarnicka na zachode");
+            spot.transform.SetParent(toilet, true);
+            spot.transform.position = new Vector3(b.center.x, b.max.y + 0.01f, b.center.z);
+            var pickup = spot.AddComponent<PickupSpot>();
+            pickup.kind = PickupKind.Health;
+            pickup.healAmount = 50f;
+            pickup.reachBelow = b.size.y + 0.4f;   // hrac stoji na podlaze vedle zachodu
+            added++;
+        }
+        Debug.Log($"[Hratelnost] Lekarnicka na zachode: pridano {added}.");
+    }
+
+    static int Depth(Transform t)
+    {
+        int d = 0;
+        for (var p = t.parent; p != null; p = p.parent) d++;
+        return d;
+    }
+
+    // Hranice objektu jen z jeho vlastnich komponent (renderer, kolize); bez nich bod (svetla, balicky, znacky).
+    // Prazdne skupiny (jen potomci) se vynechaji.
+    static bool OwnBounds(Transform t, out Bounds bounds)
+    {
+        bounds = default;
+        bool any = false;
+        // vypnute objekty nemaji platne hranice renderu - jen bod (posunou se, nenatahnou)
+        if (!t.gameObject.activeInHierarchy)
+        {
+            if (t.GetComponents<Component>().Length <= 1 && t.childCount > 0) return false;
+            bounds = new Bounds(t.position, Vector3.zero);
+            return true;
+        }
+        foreach (var r in t.GetComponents<Renderer>())
+        {
+            if (!any) { bounds = r.bounds; any = true; } else bounds.Encapsulate(r.bounds);
+        }
+        foreach (var c in t.GetComponents<Collider>())
+        {
+            if (!c.enabled) continue;
+            if (!any) { bounds = c.bounds; any = true; } else bounds.Encapsulate(c.bounds);
+        }
+        if (any) return true;
+        if (t.GetComponents<Component>().Length > 1)
+        {
+            bounds = new Bounds(t.position, Vector3.zero);
+            return true;
+        }
+        return false;
+    }
+
+    // ---------------- zebrik misto kamenne rampy ----------------
+
+    // Kamenna rampa (Rozhledna/Cube (24)) vedla ze zeme na nizsi plosinu. Rampa se vypne (ne smaze) a na hranu
+    // plosiny, kde konci, se postavi zebrik (Ladder): pomalejsi a zranitelnejsi pristup nez schodiste.
+    static void TowerLadder(Transform map, Transform root)
+    {
+        var tower = map.Find("Rozhledna");
+        var ramp = map.Find("Rozhledna/Cube (24)");
+        var deck = map.Find("Rozhledna/Cube (12)");
+        if (tower == null || ramp == null || deck == null || !ramp.TryGetComponent<Renderer>(out var rampRenderer)
+            || !deck.TryGetComponent<Renderer>(out var deckRenderer))
+        {
+            Debug.LogWarning("[Hratelnost] Zebrik rozhledny: rampa Rozhledna/Cube (24) nebo plosina Cube (12) nenalezena.");
+            return;
+        }
+
+        // (vypnuta rampa nema platne hranice - na chvili ji zapnout)
+        ramp.gameObject.SetActive(true);
+        Physics.SyncTransforms();
+        Bounds rb = rampRenderer.bounds, db = deckRenderer.bounds;
+        ramp.gameObject.SetActive(false);
+        Physics.SyncTransforms();
+
+        // hrana plosiny, u ktere rampa koncila (smer od stredu plosiny k rampe)
+        Vector3 toRamp = rb.center - db.center;
+        bool alongZ = Mathf.Abs(toRamp.z) >= Mathf.Abs(toRamp.x);
+        Vector3 outward = alongZ ? new Vector3(0f, 0f, Mathf.Sign(toRamp.z)) : new Vector3(Mathf.Sign(toRamp.x), 0f, 0f);
+        Vector3 edge = alongZ
+            ? new Vector3(Mathf.Clamp(rb.center.x, db.min.x + 0.6f, db.max.x - 0.6f), 0f, toRamp.z > 0f ? db.max.z : db.min.z)
+            : new Vector3(toRamp.x > 0f ? db.max.x : db.min.x, 0f, Mathf.Clamp(rb.center.z, db.min.z + 0.6f, db.max.z - 0.6f));
+        float top = db.max.y;
+        float ground = Ground(edge + outward * 0.5f, top - 0.3f, tower);
+        if (top - ground < 1f) return;
+
+        var g = MapBuildKit.Group(tower, "ZebrikRozhledny");   // pod rozhlednou - posouva se s ni
+        var rotation = Quaternion.LookRotation(-outward, Vector3.up);   // zebrik celem ven, "dopredu" = k plosine
+        Vector3 Local(float x, float y, float z) => edge + rotation * new Vector3(x, 0f, z) + Vector3.up * y;
+
+        // bocnice (prectivaji metr nad plosinu - chyt pri vylezani) a pricky po 30 cm
+        float railTop = top + 1f;
+        foreach (float x in new[] { -0.28f, 0.28f })
+            MapBuildKit.Box(g, "Bocnice", Local(x, (ground + railTop) * 0.5f, -0.1f), new Vector3(0.07f, railTop - ground, 0.07f), rotation, mats["beam"], false);
+        for (float y = ground + 0.3f; y < top + 0.05f; y += 0.3f)
+            MapBuildKit.Box(g, "Pricka", Local(0f, y, -0.1f), new Vector3(0.56f, 0.04f, 0.04f), rotation, mats["beam"], false);
+
+        // neviditelna stena pod plosinou za zebrikem (aby se pod plosinu neslo vejit a lezlo se rovnou nahoru)
+        float under = db.min.y;
+        var blocker = new GameObject("ZaZebrikem");
+        blocker.transform.SetParent(g, false);
+        blocker.transform.SetPositionAndRotation(Local(0f, (ground + under) * 0.5f, 0.05f), rotation);
+        blocker.AddComponent<BoxCollider>().size = new Vector3(1f, under - ground, 0.1f);
+
+        // oblast lezeni: pred zebrikem od zeme kousek nad plosinu
+        var zone = new GameObject("Lezeni");
+        zone.transform.SetParent(g, false);
+        zone.transform.SetPositionAndRotation(Local(0f, (ground + top + 0.6f) * 0.5f, -0.45f), rotation);
+        zone.AddComponent<Ladder>().size = new Vector3(0.9f, top + 0.6f - ground, 0.9f);
+
+        Debug.Log($"[Hratelnost] Zebrik rozhledny: kamenna rampa vypnuta, zebrik z {ground:0.0} m na {top:0.0} m.");
+    }
+
+    // ---------------- druhe schodiste na rozhlednu ----------------
+
+    // Na rozhlednu vedla jen rampa ze severu na nizsi (zapadni) plosinu - sniper nahore se tezko dobyval.
+    // Druhe schodiste vede z jizni strany (od bodu C) na tutez plosinu. Vse se meri z plosiny ve scene
+    // (Rozhledna/Cube (12)), takze sedi, i kdyz se rozhledna posunula. Zabradli v miste nastupu se jen vypne.
+    static void TowerStairs(Transform map, Transform root)
+    {
+        var deck = map.Find("Rozhledna/Cube (12)");
+        if (deck == null || !deck.TryGetComponent<Renderer>(out var deckRenderer))
+        {
+            Debug.LogWarning("[Hratelnost] Schodiste rozhledny: plosina Rozhledna/Cube (12) nenalezena, schodiste se nepostavi.");
+            return;
+        }
+
+        const float rise = 0.25f, tread = 0.32f, width = 1.4f;
+        Bounds b = deckRenderer.bounds;
+        float top = b.max.y;
+        float x = b.center.x;
+        float edge = b.min.z;   // jizni hrana plosiny
+
+        // vyska zeme pred schodistem (bez samotne rozhledny), dvakrat - delka zavisi na vysce
+        var tower = map.Find("Rozhledna");
+        float ground = 0f, run = 0f;
+        for (int i = 0; i < 2; i++)
+        {
+            ground = Ground(new Vector3(x, 0f, edge - run - 0.5f), top - 0.3f, tower);
+            run = Mathf.Ceil((top - ground) / rise) * tread;
+        }
+        int steps = Mathf.CeilToInt((top - ground) / rise);
+        if (steps < 3)
+        {
+            Debug.LogWarning($"[Hratelnost] Schodiste rozhledny: plosina je jen {top - ground:0.0} m nad zemi, schodiste neni potreba.");
+            return;
+        }
+
+        float stepRise = (top - ground) / steps;
+        float length = steps * tread;
+        const float headroom = 3.1f;   // hrac je 2 m vysoky a schody stoupaji 38 st. - nizsi strecha drhne o hlavu
+
+        // vyska zeme pod sloupy strechy a bocnimi stenami - zmerit predem (pak by paprsek narazil do strechy)
+        var postFloor = new float[2, 3];
+        var wallFloor = new float[2, steps];
+        for (int s = 0; s < 2; s++)
+        {
+            float sx = x + (s == 0 ? -1f : 1f) * (width * 0.5f + 0.2f);
+            for (int i = 0; i < 3; i++)
+                postFloor[s, i] = Ground(new Vector3(sx, 0f, Mathf.Lerp(edge - length, edge, (i + 0.5f) / 3f)), top - 0.3f, tower);
+            for (int i = 0; i < steps; i++)
+                wallFloor[s, i] = Ground(new Vector3(sx, 0f, edge - (i + 0.5f) * tread), top - 0.3f, tower);
+        }
+
+        // vse (i neviditelna rampa) pod rozhlednou: kdyz se rozhledna posune, schodiste jede s ni
+        var g = MapBuildKit.Group(tower, "SchodisteRozhledny");
+        for (int i = 0; i < steps; i++)
+        {
+            // stupen i (od plosiny dolu): plny blok od zeme po svou vysku
+            float h = top - i * stepRise;
+            float z = edge - (i + 0.5f) * tread;
+            MapBuildKit.Box(g, "Stupen", new Vector3(x, ground + (h - ground) * 0.5f, z), new Vector3(width, h - ground, tread), mats["planks"], false);
+        }
+
+        // Chodi se po hladke neviditelne rampe (o hrany jednotlivych stupnu se postava zasekavala).
+        // Horni plocha rampy vede po vnitrnich rozich stupnu od zeme az na plosinu.
+        {
+            Vector3 low = new Vector3(x, ground, edge - steps * tread);
+            Vector3 high = new Vector3(x, top, edge);
+            Vector3 along = (high - low).normalized;
+            Vector3 normal = Vector3.Cross(along, Vector3.right);
+            if (normal.y < 0f) normal = -normal;
+            var slope = new GameObject("RampaSchodu");
+            slope.transform.SetParent(g, false);
+            slope.transform.SetPositionAndRotation((low + high) * 0.5f - normal * 0.15f, Quaternion.LookRotation(along, normal));
+            slope.AddComponent<BoxCollider>().size = new Vector3(width, 0.3f, Vector3.Distance(low, high) + 0.3f);
+        }
+
+        // (zabradli na schodisti neni - uzivatel ho odstranil, stene staci)
+
+        // strecha nad celym schodistem (rovnobezne se stupni, 'headroom' nad nimi): obrance z rozhledny na schody
+        // nevidi a nestrili. Nese ji sest sloupu vedle schodiste (od zeme).
+        Vector3 roofLow = new Vector3(x, ground + stepRise + headroom, edge - length - 0.4f);
+        Vector3 roofHigh = new Vector3(x, top + headroom, edge + 0.1f);
+        var roof = MapBuildKit.Beam(g, "Strecha", roofLow, roofHigh, 0.12f, mats["roof"], true);   // (strecha 3,1 m nad stupni)
+        roof.transform.localScale = new Vector3((width + 0.7f) / 0.12f, 1f, 1f);
+        for (int s = 0; s < 2; s++)
+        {
+            float sx = x + (s == 0 ? -1f : 1f) * (width * 0.5f + 0.2f);
+            for (int i = 0; i < 3; i++)
+            {
+                float t = (i + 0.5f) / 3f;
+                float z = Mathf.Lerp(edge - length, edge, t);
+                float floor = postFloor[s, i];
+                float h = Mathf.Lerp(ground + stepRise, top, t) + headroom;
+                MapBuildKit.Box(g, "SloupStrechy", new Vector3(sx, (floor + h) * 0.5f, z), new Vector3(0.14f, h - floor, 0.14f), mats["beam"], true);
+            }
+        }
+
+        // bocni steny az ke strese (schodiste je kryty tunel - z boku ani shora do nej nejde strilet).
+        // Po stupnich: kazdy kus steny od zeme az kousek nad strechu nad timto stupnem.
+        for (int s = 0; s < 2; s++)
+        {
+            float sx = x + (s == 0 ? -1f : 1f) * (width * 0.5f + 0.2f);
+            for (int i = 0; i < steps; i++)
+            {
+                float z = edge - (i + 0.5f) * tread;
+                float floor = wallFloor[s, i];
+                float roofAt = top - i * stepRise + headroom + 0.15f;
+                MapBuildKit.Box(g, "Stena", new Vector3(sx, (floor + roofAt) * 0.5f, z), new Vector3(0.1f, roofAt - floor, tread + 0.01f), mats["boards"], true);
+            }
+        }
+
+        // pruchod v zabradli plosiny nad schodistem: tenke kusy zabradli v miste nastupu se vypnou (ne smazou)
+        var gap = new Bounds(new Vector3(x, top + 0.7f, edge), new Vector3(width + 0.4f, 1.2f, 0.9f));
+        // (vcetne neviditelnych koliznich kusu zabradli)
+        Physics.SyncTransforms();
+        var blockers = new List<(GameObject go, Bounds bounds)>();
+        foreach (var r in tower.GetComponentsInChildren<Renderer>())
+            blockers.Add((r.gameObject, r.bounds));
+        foreach (var c in tower.GetComponentsInChildren<Collider>())
+            blockers.Add((c.gameObject, c.bounds));
+        int hidden = 0;
+        foreach (var (go, rb) in blockers)
+        {
+            if (go.transform == deck || !go.activeInHierarchy || go.transform.IsChildOf(g)) continue;
+            if (rb.size.y > 1.4f || !rb.Intersects(gap) || rb.max.y < top + 0.1f) continue;
+            go.SetActive(false);
+            hidden++;
+        }
+        Debug.Log($"[Hratelnost] Schodiste rozhledny: {steps} stupnu z vysky {ground:0.0} m na {top:0.0} m, vypnuto {hidden} kusu zabradli v miste nastupu.");
     }
 
     // ---------------- travnik nad vstupy do tunelu ----------------

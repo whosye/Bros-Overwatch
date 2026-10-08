@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 // sviti kruh - vidi ho jen Sindel a jeho tym (nepratele slysi hlasku a vidi zariciho Sindela na nebi, ale nevi, kam miri).
 // Ve vzduchu se da pomalu pohybovat.
 // Na konci hlasky ("...when I lay my vengeance upon thee!") do kruhu uderi sloup svetla: 'power' ve stredu, k okraji
-// mene ('radius'). Doba = delka nahravky ultimatky (Audio/Sindel/ability_Q), bez nahravky 'duration'.
+// mene ('radius'). Sloup zasahne kazdeho ve svislem valci nad kruhem, i skrz stropy (lidi v patrech nad nim). Doba = delka nahravky ultimatky (Audio/Sindel/ability_Q), bez nahravky 'duration'.
 public class EzekielAbility : NetworkBehaviour
 {
     enum Phase { Idle, Rising, Preaching, Descending }
@@ -15,10 +15,12 @@ public class EzekielAbility : NetworkBehaviour
 
     public float hoverHeight = 25f;
     public float riseTime = 1.4f;
-    public float hoverSpeed = 3.5f;
+    const float HoverSpeed = 7f;      // rychlost letu ve vysce (WASD)
     public float cameraDistance = 6.5f;
     public float cameraLift = 1.2f;
     const float StrikeEdge = 0.35f;
+    const float BeamBelow = 2f;      // sloup zasahuje i kousek pod misto dopadu (sklep, schody dolu)
+    const float BeamHeight = 60f;    // a nahoru az k nebi (vsechna patra nad kruhem)
     public static readonly Color HolyColor = new Color(1f, 0.85f, 0.45f, 1f);
 
     CharacterController controller;
@@ -177,13 +179,19 @@ public class EzekielAbility : NetworkBehaviour
         if (Keyboard.current.dKey.isPressed) input.x += 1f;
         if (Keyboard.current.aKey.isPressed) input.x -= 1f;
 
-        Vector3 forward = Vector3.ProjectOnPlane(playerCamera.transform.forward, Vector3.up).normalized;
+        // Pri pohledu skoro kolmo dolu (miri pod sebe) je vodorovna slozka smeru kamery nulova - pak "dopredu"
+        // urcuje horni hrana obrazovky.
+        var cam = playerCamera.transform;
+        Vector3 forward = Vector3.ProjectOnPlane(cam.forward, Vector3.up);
+        if (forward.sqrMagnitude < 0.04f) forward = Vector3.ProjectOnPlane(cam.up, Vector3.up);
+        if (forward.sqrMagnitude < 0.0001f) forward = transform.forward;
+        forward.Normalize();
         Vector3 right = Vector3.Cross(Vector3.up, forward);
         Vector3 move = (forward * input.y + right * input.x);
         if (move.sqrMagnitude > 1f) move.Normalize();
         // drobne vlneni nahoru a dolu
         float bob = Mathf.Sin(Time.time * 2.2f) * 0.25f;
-        controller.Move(move * hoverSpeed * Time.deltaTime + Vector3.up * (targetY + bob - transform.position.y) * Mathf.Min(1f, Time.deltaTime * 3f));
+        controller.Move(move * HoverSpeed * Time.deltaTime + Vector3.up * (targetY + bob - transform.position.y) * Mathf.Min(1f, Time.deltaTime * 3f));
 
         UpdateAim();
         if (Time.time >= castEnd)
@@ -293,8 +301,46 @@ public class EzekielAbility : NetworkBehaviour
         if (recorder != null)
             recorder.ServerNoteUltimate();
 
-        Combat.Explode(gameObject, point + Vector3.up * 0.3f, ability.radius, ability.power, StrikeEdge);
+        BeamDamage(point);
         StrikeClientRpc(point, ability.radius);
+    }
+
+    // Sloup svetla zasahne vse ve svislem valci nad kruhem (od kousek pod zemi az k nebi) - i skrz stropy a patra,
+    // takze kdyz kruh lezi v prizemi, dostanou to i nepratele v patre nad nim. Poskozeni podle vodorovne
+    // vzdalenosti od osy sloupu: 'power' uprostred, 'StrikeEdge' na okraji.
+    void BeamDamage(Vector3 point)
+    {
+        float radius = ability.radius;
+        Vector3 bottom = point + Vector3.down * (BeamBelow - radius);
+        Vector3 top = point + Vector3.up * (BeamHeight - radius);
+        var damaged = new System.Collections.Generic.HashSet<Health>();
+        foreach (var col in Physics.OverlapCapsule(bottom, top, radius, ~0, QueryTriggerInteraction.Ignore))
+        {
+            Vector3 flat = col.bounds.center - point;
+            flat.y = 0f;
+            float scaled = ability.power * Mathf.Lerp(1f, StrikeEdge, Mathf.Clamp01(flat.magnitude / radius));
+
+            var dummy = col.GetComponentInParent<Target>();
+            if (dummy != null)
+                dummy.TakeDamage(scaled);
+
+            var boulder = col.GetComponentInParent<BoulderHitbox>();
+            if (boulder != null)
+                boulder.Damage(gameObject, scaled);
+
+            var trap = col.GetComponentInParent<TrapHitbox>();
+            if (trap != null)
+                trap.Damage(gameObject, scaled);
+
+            var health = col.GetComponentInParent<Health>();
+            if (health == null || !damaged.Add(health)) continue;
+            if (health.gameObject == gameObject || Combat.SameTeam(gameObject, health.gameObject)) continue;
+
+            // u hrace podle jeho pozice (ne podle kusu tela, ktery do valce zasahl)
+            Vector3 feet = health.transform.position - point;
+            feet.y = 0f;
+            Combat.DamagePlayer(gameObject, health, ability.power * Mathf.Lerp(1f, StrikeEdge, Mathf.Clamp01(feet.magnitude / radius)));
+        }
     }
 
     // ---------------- vizual ----------------

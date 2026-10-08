@@ -16,6 +16,12 @@ public class SindelAbility : NetworkBehaviour
     const float Gravity = 14f;
     const float Lift = 3.5f;          // pridana rychlost nahoru (oblouk)
     const float Fuse = 0.6f;          // po dopadu
+    // Zvuk pred vybuchem (Resources/Audio/sindel_granat): granat vybuchne nejdriv po jeho delce od hodu,
+    // zvuk hraje z granatu a konci prave s vybuchem.
+    const float FallbackSoundLength = 1.4f;
+    static AudioClip armSound;
+    static AudioClip ArmSound => armSound != null ? armSound : (armSound = Resources.Load<AudioClip>("Audio/sindel_granat"));
+    static float ArmTime => ArmSound != null ? ArmSound.length : FallbackSoundLength;
     const float MaxFlight = 3f;
     const float Edge = 0.35f;
 
@@ -119,6 +125,7 @@ public class SindelAbility : NetworkBehaviour
         }
 
         float fuse = direct ? 0f : Fuse;
+        fuse = Mathf.Max(fuse, ArmTime - flight);   // zvuk pred vybuchem musi dohrat
         ThrownClientRpc(origin, direction.normalized * grenade.speed + Vector3.up * Lift, flight, position, fuse);
         StartCoroutine(Detonate(position, flight + fuse));
     }
@@ -169,14 +176,121 @@ public class SindelAbility : NetworkBehaviour
             Fx.Paint(bar, new Color(0.95f, 0.9f, 0.8f));
         }
         ball.AddComponent<HolyGrenadeFlight>().Init(origin, velocity, Gravity, flight, landing, fuse);
+
+        // zvuk pred vybuchem: hraje z granatu a konci s vybuchem
+        var clip = ArmSound;
+        if (clip != null)
+        {
+            var source = ball.AddComponent<AudioSource>();
+            source.clip = clip;
+            source.volume = 1f;
+            source.spatialBlend = 1f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = 5f;
+            source.maxDistance = 40f;
+            source.dopplerLevel = 0f;
+            source.PlayDelayed(Mathf.Max(0f, flight + fuse - clip.length));
+        }
     }
 
     [ClientRpc]
+    // Svaty granat vybuchne mohutneji nez obycejny: dvojity ohnivy vybuch, zlaty sloup svetla,
+    // tlakova vlna po zemi, jiskry do stran a hlasity dvojity vybuch slyset daleko.
     void DetonatedClientRpc(Vector3 point, float radius)
     {
-        Fx.Explosion(point, radius);
-        Fx.Sparks(point + Vector3.up * 0.3f, EzekielAbility.HolyColor);
-        ProceduralSfx.Play(ProceduralSfx.Explosion, point, 0.9f);
+        Fx.Explosion(point, radius * 1.6f);
+        Fx.Explosion(point + Vector3.up * 1.2f, radius);
+        for (int i = 0; i < 4; i++)
+        {
+            float angle = i * Mathf.PI * 0.5f + 0.4f;
+            Fx.Sparks(point + new Vector3(Mathf.Cos(angle), 0.4f, Mathf.Sin(angle)) * radius * 0.4f, EzekielAbility.HolyColor);
+        }
+        Fx.Sparks(point + Vector3.up * 0.3f, Color.white);
+
+        var blast = new GameObject("FX_SvatyVybuch");
+        blast.transform.position = point;
+        blast.AddComponent<HolyBlast>().Init(radius);
+
+        ProceduralSfx.Play(ProceduralSfx.Explosion, point, 1f, 70f);
+        ProceduralSfx.Play(ProceduralSfx.Explosion, point + Vector3.up, 0.8f, 70f);
+        ProceduralSfx.Play(ProceduralSfx.Gunshot, point, 0.9f, 70f);
+    }
+}
+
+// Zlaty sloup svetla a tlakova vlna svateho granatu (jen efekt, sam zmizi).
+public class HolyBlast : MonoBehaviour
+{
+    const float Seconds = 0.9f;
+    const int Segments = 48;
+
+    float radius, age;
+    Transform pillar;
+    Material pillarMaterial;
+    LineRenderer ring;
+    Light flash;
+
+    public void Init(float blastRadius)
+    {
+        radius = blastRadius;
+
+        // sloup svetla
+        var go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        DestroyImmediate(go.GetComponent<Collider>());
+        go.name = "SloupSvetla";
+        pillar = go.transform;
+        pillar.SetParent(transform, false);
+        pillarMaterial = new Material(Fx.ParticleMaterial) { mainTexture = null };
+        go.GetComponent<MeshRenderer>().sharedMaterial = pillarMaterial;
+        go.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+        // tlakova vlna po zemi
+        ring = gameObject.AddComponent<LineRenderer>();
+        ring.loop = true;
+        ring.useWorldSpace = false;
+        ring.positionCount = Segments;
+        ring.alignment = LineAlignment.View;
+        ring.material = new Material(Fx.ParticleMaterial) { mainTexture = null };
+        ring.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+        // zlaty zablesk
+        var lightObject = new GameObject("Zablesk");
+        lightObject.transform.SetParent(transform, false);
+        lightObject.transform.localPosition = Vector3.up * 2f;
+        flash = lightObject.AddComponent<Light>();
+        flash.type = LightType.Point;
+        flash.color = SindelAbility.GrenadeColor;
+        flash.range = radius * 5f;
+        flash.shadows = LightShadows.None;
+
+        Update();
+    }
+
+    void Update()
+    {
+        age += Time.deltaTime;
+        float t = age / Seconds;
+        if (t >= 1f) { Destroy(gameObject); return; }
+        float fade = 1f - t;
+
+        // sloup: rychle vyrazi nahoru, pak se zuzi a vybledne
+        float height = Mathf.Lerp(2f, 14f, Mathf.Sqrt(t));
+        float width = radius * 0.7f * Mathf.Lerp(1f, 0.15f, t);
+        pillar.localPosition = Vector3.up * height * 0.5f;
+        pillar.localScale = new Vector3(width, height * 0.5f, width);
+        var c = SindelAbility.GrenadeColor;
+        pillarMaterial.color = new Color(1f, Mathf.Lerp(0.95f, c.g, t), Mathf.Lerp(0.8f, c.b, t), 0.75f * fade * fade);
+
+        // vlna: rozbehne se do dvojnasobku polomeru vybuchu
+        float r = Mathf.Lerp(0.5f, radius * 2f, 1f - fade * fade);
+        for (int i = 0; i < Segments; i++)
+        {
+            float a = i * Mathf.PI * 2f / Segments;
+            ring.SetPosition(i, new Vector3(Mathf.Cos(a) * r, 0.15f, Mathf.Sin(a) * r));
+        }
+        ring.widthMultiplier = Mathf.Lerp(0.6f, 0.1f, t);
+        ring.startColor = ring.endColor = new Color(1f, 0.88f, 0.45f, 0.9f * fade);
+
+        flash.intensity = 25f * fade * fade;
     }
 }
 

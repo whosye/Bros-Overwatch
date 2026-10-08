@@ -23,10 +23,22 @@ public class Health : NetworkBehaviour
         shieldDecay = shield.Value / Mathf.Max(0.5f, seconds - 1f);
     }
 
+    // Samoleceni: kdo 'RegenDelay' s nedostal poskozeni, zacne sam regenerovat 'RegenPerSecond' HP za sekundu.
+    public const float RegenDelay = 10f;
+    public const float RegenPerSecond = 10f;
+    float lastHurtTime = -1000f;
+
     void Update()
     {
-        if (!IsServer || shield.Value <= 0f || Time.time < shieldHoldUntil) return;
-        shield.Value = Mathf.Max(0f, shield.Value - shieldDecay * Time.deltaTime);
+        if (!IsServer) return;
+
+        if (shield.Value > 0f && Time.time >= shieldHoldUntil)
+            shield.Value = Mathf.Max(0f, shield.Value - shieldDecay * Time.deltaTime);
+
+        float hp = currentHealth.Value;
+        if (hp > 0f && hp < maxHealth && Time.time - lastHurtTime >= RegenDelay && !HealBlocked
+            && (MatchManager.Instance == null || !MatchManager.Instance.IsLobby))
+            currentHealth.Value = Mathf.Min(maxHealth, hp + RegenPerSecond * Time.deltaTime);
     }
 
     public event Action OnDeath;
@@ -64,6 +76,16 @@ public class Health : NetworkBehaviour
         }
     }
 
+    // Docasne snizeni prijateho poskozeni (Tramal): poskozeni * 'damageTakenScale' do 'damageReductionUntil'.
+    float damageReductionUntil, damageTakenScale = 1f;
+
+    public void ServerDamageReduction(float scale, float seconds)
+    {
+        if (!IsServer) return;
+        damageTakenScale = Mathf.Clamp01(scale);
+        damageReductionUntil = Time.time + seconds;
+    }
+
     public void TakeDamage(float amount)
     {
         if (!IsServer) return;
@@ -74,8 +96,11 @@ public class Health : NetworkBehaviour
 
         if (block != null)
             amount = block.FilterDamage(amount);
+        if (Time.time < damageReductionUntil)
+            amount *= damageTakenScale;
 
         if (amount <= 0f) return;
+        lastHurtTime = Time.time;
 
         if (shield.Value > 0f)
         {
