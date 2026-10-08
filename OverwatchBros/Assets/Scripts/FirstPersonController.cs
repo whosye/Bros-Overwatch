@@ -28,6 +28,10 @@ public class FirstPersonController : NetworkBehaviour
     float verticalVelocity;
     float cameraPitch;
     float stepAccumulator;
+    float gaitSpeed;
+    float baseEyeHeight;
+    float headBobOffset;
+    bool crouching;
 
     public CharacterController Controller => controller;
     public bool AbilityActive { get; set; }
@@ -356,6 +360,7 @@ public class FirstPersonController : NetworkBehaviour
 
     void Awake()
     {
+        baseEyeHeight = eyeHeight;
         controller = GetComponent<CharacterController>();
         health = GetComponent<Health>();
         hero = GetComponent<PlayerHero>();
@@ -384,6 +389,9 @@ public class FirstPersonController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
+        gaitSpeed = 0f;
+        crouching = false;
+
         if (Bot != null)
         {
             // bot: natoceni a pohled urcuje mozek
@@ -391,6 +399,7 @@ public class FirstPersonController : NetworkBehaviour
             cameraPitch = Bot.Pitch;
             playerCamera.transform.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
             HandleMovement();
+            UpdateEyePosition();
             return;
         }
 
@@ -399,6 +408,32 @@ public class FirstPersonController : NetworkBehaviour
 
         HandleLook();
         HandleMovement();
+        UpdateEyePosition();
+    }
+
+    void UpdateEyePosition()
+    {
+        // Ability cameras own their position in third person.
+        if (ThirdPerson || Joining)
+        {
+            headBobOffset = 0f;
+            return;
+        }
+
+        baseEyeHeight = Mathf.MoveTowards(baseEyeHeight, crouching ? crouchEyeHeight : eyeHeight, 5f * Time.deltaTime);
+        bool enabled = Bot == null && !CannotAct && GameSettings.CursorLocked && GameSettings.HeadBobEnabled;
+        float targetBob = 0f;
+        if (enabled && gaitSpeed > 0.1f)
+        {
+            // One vertical cycle per footstep, with its low point at foot contact.
+            float phase = stepAccumulator / Mathf.Max(0.1f, footstepDistance);
+            float amplitude = 0.025f * Mathf.Clamp(gaitSpeed / Mathf.Max(0.1f, walkSpeed), 0f, 1.5f);
+            targetBob = -Mathf.Cos(phase * Mathf.PI * 2f) * amplitude * GameSettings.HeadBobIntensity;
+        }
+        headBobOffset = enabled && GameSettings.HeadBobIntensity > 0f
+            ? Mathf.Lerp(headBobOffset, targetBob, 1f - Mathf.Exp(-25f * Time.deltaTime)) : 0f;
+        // Keep stance height separate so the oscillation cannot accumulate or fight crouching.
+        playerCamera.transform.localPosition = new Vector3(0f, baseEyeHeight + headBobOffset, 0f);
     }
 
     void HandleLook()
@@ -512,6 +547,7 @@ public class FirstPersonController : NetworkBehaviour
         }
 
         Vector3 move = transform.right * input.x + transform.forward * input.y;
+        crouching = crouch;
         move = Vector3.ClampMagnitude(move, 1f);
 
         // Na zebriku (Ladder) se leze: W nahoru, S dolu; vodorovne jen pomalu, at se z nej hned nesejde.
@@ -520,7 +556,10 @@ public class FirstPersonController : NetworkBehaviour
             move *= Ladder.SideSpeedScale;
 
         float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * HeroSpeedScale * ScopeSpeedScale * AbilitySpeedScale * SlowScale * BoostScale * TunnelScale * HoverScale * BardAbility.SpeedScaleFor(gameObject);
+        Vector3 beforeMove = transform.position;
         var flags = controller.Move((move * speed + externalVelocity) * Time.deltaTime);
+        Vector3 travelled = transform.position - beforeMove;
+        float groundDistance = new Vector2(travelled.x, travelled.z).magnitude;
 
         // Odhozeni postupne odezni: na zemi rychle (treni), ve vzduchu pomalu; naraz do zdi ho zastavi.
         if (externalVelocity.sqrMagnitude > 0f)
@@ -572,20 +611,16 @@ public class FirstPersonController : NetworkBehaviour
             controller.center = new Vector3(0f, height * 0.5f, 0f);
         }
 
-        // Kameru ve 3. osobe ridi schopnosti, tady jen vyska oci v 1. osobe.
-        if (!ThirdPerson)
+        // Sound and camera share distance-based timing, including collision-limited movement.
+        if (isGrounded && controller.isGrounded && !jump && !onLadder && !waterRide
+            && current.sqrMagnitude <= 0.01f && move.sqrMagnitude > 0.01f && groundDistance > 0.001f)
         {
-            Vector3 eye = playerCamera.transform.localPosition;
-            float targetEye = crouch ? crouchEyeHeight : eyeHeight;
-            playerCamera.transform.localPosition = new Vector3(0f, Mathf.MoveTowards(eye.y, targetEye, 5f * Time.deltaTime), 0f);
-        }
-
-        if (isGrounded && move.sqrMagnitude > 0.01f)
-        {
-            stepAccumulator += speed * move.magnitude * Time.deltaTime;
-            if (stepAccumulator >= footstepDistance)
+            gaitSpeed = groundDistance / Mathf.Max(Time.deltaTime, 0.0001f);
+            float stride = Mathf.Max(0.1f, footstepDistance);
+            stepAccumulator += groundDistance;
+            if (stepAccumulator >= stride)
             {
-                stepAccumulator = 0f;
+                stepAccumulator %= stride;
                 ProceduralSfx.Play(ProceduralSfx.Footstep, transform.position, 0.3f);
             }
         }

@@ -10,6 +10,20 @@ public static class GameSettings
 
     const string SensitivityKey = "settings.sensitivity";
     const string VolumeKey = "settings.volume";
+    const string HeadBobEnabledKey = "settings.headBobEnabled";
+    const string HeadBobIntensityKey = "settings.headBobIntensity";
+
+    public static bool HeadBobEnabled
+    {
+        get => PlayerPrefs.GetInt(HeadBobEnabledKey, 1) != 0;
+        set => PlayerPrefs.SetInt(HeadBobEnabledKey, value ? 1 : 0);
+    }
+
+    public static float HeadBobIntensity
+    {
+        get => Mathf.Clamp(PlayerPrefs.GetFloat(HeadBobIntensityKey, 1f), 0f, 2f);
+        set => PlayerPrefs.SetFloat(HeadBobIntensityKey, Mathf.Clamp(value, 0f, 2f));
+    }
 
     public const float MinSensitivity = 0.2f;
     public const float MaxSensitivity = 20f;
