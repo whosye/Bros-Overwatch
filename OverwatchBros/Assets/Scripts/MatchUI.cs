@@ -284,13 +284,16 @@ public class MatchUI : MonoBehaviour
         UpdateCursor(hasPlayer, inLobby, over || heroPicker.IsOpen);
         UpdateHud(match, localHero, playing, over);
         // HUD: zivy hrac, nebo pri prehravani POTG HUD hrace, ktery akci predvedl (podle zaznamu).
-        hud.SetVisible(replay || (playing && !over && localHero != null));
-        if (replay)
+        // (killcam: HUD vraha v zaznamu neni - jen obraz a zamerovac)
+        bool killcam = ReplayPlayer.IsKillcam;
+        hud.SetVisible((replay && !killcam) || (playing && !over && localHero != null && !replay));
+        if (killcam) { }
+        else if (replay)
             hud.TickReplay(ReplayPlayer.Frame, ReplayPlayer.Camera);
         else
             hud.Tick(localHero);
         // Po konci zapasu (a po dohrani play of the game) je tabulka hracu videt porad, ne jen na Tab.
-        overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing);
+        overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing && !killcam);
         capture.Tick(localHero, playing && !over, match);
         buffs.Tick(playing && !over && !replay);
         boilerPrompt.text = playing && !over && !replay ? Boiler.PromptText : "";
@@ -298,7 +301,7 @@ public class MatchUI : MonoBehaviour
         UpdateLegacyHud(playing);
 
         bool locked = GameSettings.CursorLocked;
-        crosshair.SetActive((playing && !over && locked) || (replay && ReplayPlayer.Frame != null && !ReplayPlayer.Frame.thirdPerson));
+        crosshair.SetActive((playing && !over && locked && !replay) || (replay && ReplayPlayer.Frame != null && (killcam || !ReplayPlayer.Frame.thirdPerson)));
         UpdateBlockBar(localHero, playing && !over);
 
         bool showSettings = playing && !over && !locked && !heroPicker.IsOpen;

@@ -49,8 +49,7 @@ public class DashAbility : NetworkBehaviour
         if (!IsOwner || ability == null) return;
 
         // Stisk se chvili pamatuje, aby zmacknuti tesne pred koncem cooldownu nepropadlo.
-        var key = onShift ? Keyboard.current.leftShiftKey : Keyboard.current.qKey;
-        if (key.wasPressedThisFrame && GameSettings.CursorLocked)
+        if (HeroInput.Pressed(this, onShift ? HeroInput.Key.Shift : HeroInput.Key.Q) && HeroInput.Locked(this))
             bufferedUntil = Time.time + PressBuffer;
 
         if (Time.time > bufferedUntil || Time.time < nextDashTime || isDashing) return;
@@ -64,10 +63,10 @@ public class DashAbility : NetworkBehaviour
     Vector3 DashDirection()
     {
         Vector2 input = Vector2.zero;
-        if (Keyboard.current.wKey.isPressed) input.y += 1f;
-        if (Keyboard.current.sKey.isPressed) input.y -= 1f;
-        if (Keyboard.current.dKey.isPressed) input.x += 1f;
-        if (Keyboard.current.aKey.isPressed) input.x -= 1f;
+        if (HeroInput.MoveKey(this, 'w')) input.y += 1f;
+        if (HeroInput.MoveKey(this, 's')) input.y -= 1f;
+        if (HeroInput.MoveKey(this, 'd')) input.x += 1f;
+        if (HeroInput.MoveKey(this, 'a')) input.x -= 1f;
 
         Vector3 direction = transform.right * input.x + transform.forward * input.y;
         return direction.sqrMagnitude > 0.01f && onShift ? direction.normalized : transform.forward;

@@ -21,7 +21,7 @@ public class ScopeZoom : MonoBehaviour
 
     void Update()
     {
-        if (fpc == null || hero == null || fpc.playerCamera == null || !fpc.IsOwner) return;
+        if (fpc == null || hero == null || fpc.playerCamera == null || !fpc.IsOwner || fpc.Bot != null) return;
 
         var cam = fpc.playerCamera;
         if (baseFov < 0f)

@@ -35,7 +35,7 @@ public class NanoBoostAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!Keyboard.current.qKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.Q) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || !CanUse) return;
 
         var target = FindAlly();

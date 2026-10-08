@@ -76,7 +76,7 @@ public class StormAbility : NetworkBehaviour
             return;
         }
 
-        if (!Keyboard.current.qKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.Q) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || !CanUse) return;
 
         windup.Begin(fpc, WindupSeconds);
@@ -182,7 +182,7 @@ public class StormAbility : NetworkBehaviour
             if (victim == null || !hit.Add(victim) || victim.currentHealth.Value <= 0f) continue;
             if (victim.gameObject == gameObject || Combat.SameTeam(gameObject, victim.gameObject)) continue;
 
-            Combat.DamagePlayer(gameObject, victim, ability.power * TickInterval);
+            Combat.DamagePlayer(gameObject, victim, ability.power * TickInterval, Combat.AbilitySource(ability));
         }
     }
 

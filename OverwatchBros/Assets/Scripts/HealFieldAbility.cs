@@ -57,7 +57,7 @@ public class HealFieldAbility : NetworkBehaviour
     void OwnerUpdate()
     {
         if (ability == null) return;
-        if (!Keyboard.current.eKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.E) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
         nextUseTime = Time.time + ability.Cooldown;

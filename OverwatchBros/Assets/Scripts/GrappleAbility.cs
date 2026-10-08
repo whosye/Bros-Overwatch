@@ -30,7 +30,7 @@ public class GrappleAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!Keyboard.current.leftShiftKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.Shift) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
         var eye = fpc.playerCamera.transform;

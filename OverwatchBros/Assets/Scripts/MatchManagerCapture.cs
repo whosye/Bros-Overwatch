@@ -187,7 +187,7 @@ public partial class MatchManager
 
     void HoldAttackers(float seconds)
     {
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        foreach (var client in PlayerSlots())
         {
             var player = client.PlayerObject;
             var team = player != null ? player.GetComponent<PlayerTeam>() : null;
@@ -314,7 +314,7 @@ public partial class MatchManager
         attackers = 0;
         defenders = 0;
         Quaternion toLocal = Quaternion.Euler(0f, -pointYaw.Value, 0f);
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        foreach (var client in PlayerSlots())
         {
             var player = client.PlayerObject;
             if (player == null) continue;
@@ -408,7 +408,7 @@ public partial class MatchManager
         ServerResetBoiler();
 
         // Vsichni zpet na spawny (nove role), zivoty dopoli.
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        foreach (var client in PlayerSlots())
         {
             var health = client.PlayerObject != null ? client.PlayerObject.GetComponent<Health>() : null;
             if (health != null) health.ResetHealth();

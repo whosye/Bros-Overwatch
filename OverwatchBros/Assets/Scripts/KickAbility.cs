@@ -32,7 +32,7 @@ public class KickAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!Keyboard.current.eKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.E) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
         nextUseTime = Time.time + ability.Cooldown;
@@ -80,7 +80,7 @@ public class KickAbility : NetworkBehaviour
             if (to.sqrMagnitude > 0.04f && Vector3.Angle(flat, to) > 35f) continue;
             if (!Combat.HasLineOfSight(center, col)) continue;
 
-            Combat.DamagePlayer(gameObject, victim, ability.power);
+            Combat.DamagePlayer(gameObject, victim, ability.power, Combat.AbilitySource(ability));
             if (victim.currentHealth.Value <= 0f) continue;
 
             var controller = victim.GetComponent<FirstPersonController>();

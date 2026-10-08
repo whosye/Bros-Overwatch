@@ -38,7 +38,8 @@ public class PlayerRespawn : NetworkBehaviour
 
     void HandleDeath()
     {
-        Invoke(nameof(Respawn), respawnDelay);
+        // oziveni az po killcamu (Killcam.RespawnDelay)
+        Invoke(nameof(Respawn), Mathf.Max(respawnDelay, Killcam.RespawnDelay));
     }
 
     void Respawn()
@@ -101,6 +102,14 @@ public class PlayerRespawn : NetworkBehaviour
         if (ezekiel != null)
             ezekiel.Cancel();
 
+        var trespass = GetComponent<TrespassAbility>();
+        if (trespass != null)
+            trespass.Cancel();
+
+        var max = GetComponent<MaxAbility>();
+        if (max != null)
+            max.CancelShadow();
+
         controller.enabled = false;
         if (hasSpawn)
             transform.position = spawn;
@@ -120,7 +129,7 @@ public class PlayerRespawn : NetworkBehaviour
         var match = MatchManager.Instance;
         if (match != null && match.TryGetSpawn(team.teamId.Value, out position))
         {
-            float angle = OwnerClientId * 2.4f;
+            float angle = NetworkObjectId * 2.4f;
             position += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 1.4f;
             return true;
         }
@@ -132,8 +141,8 @@ public class PlayerRespawn : NetworkBehaviour
         // Kazdy hrac kousek vedle bodu (kruh kolem nej), at se pri startu zapasu neobjevi vsichni v sobe.
         if (spawnPointObject != null)
         {
-            float angle = OwnerClientId * 2.4f;
-            position += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * (1.4f + (OwnerClientId % 2) * 0.8f);
+            float angle = NetworkObjectId * 2.4f;
+            position += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * (1.4f + (NetworkObjectId % 2) * 0.8f);
         }
         return spawnPointObject != null;
     }

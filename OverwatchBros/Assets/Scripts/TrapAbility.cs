@@ -71,7 +71,7 @@ public class TrapAbility : NetworkBehaviour
     void OwnerUpdate()
     {
         if (ability == null) return;
-        if (!Keyboard.current.eKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.E) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
         if (!FindGround(out Vector3 point)) return;
 
@@ -189,7 +189,7 @@ public class TrapAbility : NetworkBehaviour
             if (victim == null || victim == health || victim.currentHealth.Value <= 0f) continue;
             if (Combat.SameTeam(gameObject, victim.gameObject)) continue;
 
-            Combat.DamagePlayer(gameObject, victim, ability.power);
+            Combat.DamagePlayer(gameObject, victim, ability.power, Combat.AbilitySource(ability));
 
             var controller = victim.GetComponent<FirstPersonController>();
             if (controller != null && victim.currentHealth.Value > 0f)

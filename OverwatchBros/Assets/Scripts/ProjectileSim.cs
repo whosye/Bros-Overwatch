@@ -205,7 +205,7 @@ public class ProjectileSim : MonoBehaviour
         {
             Vector3 center = point + normal * 0.1f;
             var direct = collider != null ? collider.GetComponentInParent<Health>() : null;
-            Combat.Explode(shooter.gameObject, center, weapon.explosionRadius, DamageNow, 0.4f, direct);
+            Combat.Explode(shooter.gameObject, center, weapon.explosionRadius, DamageNow, 0.4f, direct, "weapon:explosion");
             Finish(center, KindExplosion);
             return;
         }
@@ -233,7 +233,7 @@ public class ProjectileSim : MonoBehaviour
         if (health != null && weapon.allyHeal > 0f && Combat.SameTeam(shooter.gameObject, health.gameObject))
             Combat.HealPlayer(shooter.gameObject, health, weapon.allyHeal);
         else if (health != null && hitDamage > 0f)
-            Combat.DamagePlayer(shooter.gameObject, health, hitDamage);
+            Combat.DamagePlayer(shooter.gameObject, health, hitDamage, weapon.IsCharged ? "weapon:bow" : "weapon:gun");
 
         Finish(point, KindHit);
     }

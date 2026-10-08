@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a39f21388b7624d84e663cff5b4ed3, type: 3}
+  m_Name: Max
+  m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
+  heroName: Max
+  color: {r: 0.55, g: 0.25, b: 0.85, a: 1}
+  maxHealth: 150
+  weapon: {fileID: 11400000, guid: 6c2f48df1ebe5d044b61ed05523d914a, type: 2}
+  abilityKind: 33
+  ability: {fileID: 11400000, guid: 5b90656f1ad24c54f90ca222875b81d7, type: 2}
+  secondaryAbilityKind: 30
+  secondaryAbility: {fileID: 11400000, guid: 7b4685179edd63e459ec86a18784ac5e, type: 2}
+  blockAbility: {fileID: 0}
+  altAbilityKind: 31
+  altAbility: {fileID: 11400000, guid: 04ee9e0b220400942ace43a47114e7b3, type: 2}
+  rmbAbilityKind: 32
+  rmbAbility: {fileID: 11400000, guid: 69294116357d7a741a6f22eabb1ac29e, type: 2}
+  doubleJump: 0
+  ledgeClimb: 0
+  moveSpeed: 1.2
+  lifesteal: 0.15
+  takedownCooldownCut: 0
+  deathGrenades: 0
+  deathGrenadeDamage: 30
+  deathGrenadeRadius: 3.5
+  characterPrefab: {fileID: 2650966028610993166, guid: 4800a86dc5fbf4e44bed13ccf85fa714, type: 3}
+  tintCharacter: 1
+  sleeveColor: {r: 0.16, g: 0.1, b: 0.22, a: 1}
+  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
+  spawnLines: []
+  killLines: []
+  deathLines: []
+  hurtLines: []
+  idleLines: []
+  snareLines: []

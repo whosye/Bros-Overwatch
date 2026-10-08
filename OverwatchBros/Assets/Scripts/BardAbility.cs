@@ -106,11 +106,11 @@ public class BardAbility : NetworkBehaviour
         if (IsServer)
             ServerTick();
 
-        if (!IsOwner || crossfade == null || !GameSettings.CursorLocked || fpc.InputBlocked) return;
+        if (!IsOwner || crossfade == null || !HeroInput.Locked(this) || fpc.InputBlocked) return;
         bool alive = health.currentHealth.Value > 0f;
         if (!alive) return;
 
-        if (Keyboard.current.leftShiftKey.wasPressedThisFrame && Time.time >= nextToggle)
+        if (HeroInput.Pressed(this, HeroInput.Key.Shift) && Time.time >= nextToggle)
         {
             nextToggle = Time.time + crossfade.Cooldown;
             ProceduralSfx.Play(ProceduralSfx.CaptureTick, transform.position, 0.7f);
@@ -118,20 +118,20 @@ public class BardAbility : NetworkBehaviour
             ToggleServerRpc();
         }
 
-        if (amp != null && Keyboard.current.eKey.wasPressedThisFrame && Time.time >= nextAmp)
+        if (amp != null && HeroInput.Pressed(this, HeroInput.Key.E) && Time.time >= nextAmp)
         {
             nextAmp = Time.time + amp.Cooldown;
             hero.SayAbility(amp);
             AmpServerRpc();
         }
 
-        if (wave != null && Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame && Time.time >= nextWave)
+        if (wave != null && Mouse.current != null && HeroInput.Pressed(this, HeroInput.Key.RightMouse) && Time.time >= nextWave)
         {
             nextWave = Time.time + wave.Cooldown;
             Soundwave();
         }
 
-        if (concert != null && Keyboard.current.qKey.wasPressedThisFrame)
+        if (concert != null && HeroInput.Pressed(this, HeroInput.Key.Q))
         {
             bool ready = UltUsesCharge ? hero.UltReady : Time.time >= nextUlt;
             if (!ready) return;
@@ -184,7 +184,7 @@ public class BardAbility : NetworkBehaviour
             if (to.sqrMagnitude > 0.04f && Vector3.Angle(forward, to) > 40f) continue;
             if (!Combat.HasLineOfSight(origin, col)) continue;
 
-            Combat.DamagePlayer(gameObject, victim, wave.power);
+            Combat.DamagePlayer(gameObject, victim, wave.power, Combat.AbilitySource(wave));
             if (victim.currentHealth.Value <= 0f) continue;
 
             Vector3 flat = Vector3.ProjectOnPlane(to, Vector3.up);

@@ -34,7 +34,7 @@ public class PulseBombAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!Keyboard.current.qKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.Q) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || !CanUse) return;
 
         nextUseTime = Time.time + ability.Cooldown;
@@ -75,7 +75,7 @@ public class PulseBombAbility : NetworkBehaviour
 
     public void ServerExplode(Vector3 point)
     {
-        Combat.Explode(gameObject, point, ability.radius, ability.power, 0.3f);
+        Combat.Explode(gameObject, point, ability.radius, ability.power, 0.3f, null, Combat.AbilitySource(ability));
         ExplodedClientRpc(point);
     }
 

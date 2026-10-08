@@ -125,7 +125,7 @@ public class BoulderAbility : NetworkBehaviour
                 return;
             }
 
-            if (Keyboard.current.qKey.wasPressedThisFrame && CanUse && GameSettings.CursorLocked
+            if (HeroInput.Pressed(this, HeroInput.Key.Q) && CanUse && HeroInput.Locked(this)
                 && !fpc.InputBlocked && !fpc.RushActive && !fpc.BlockActive)
             {
                 // Priprava: Honza zvedne zbran, ozve se zvuk ultimatky a pak teprve vyrazi balvan.
@@ -214,7 +214,7 @@ public class BoulderAbility : NetworkBehaviour
 
         if (roller.isGrounded && verticalSpeed < 0f)
             verticalSpeed = -2f;
-        if (roller.isGrounded && Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (roller.isGrounded && HeroInput.Pressed(this, HeroInput.Key.Space))
             verticalSpeed = jumpSpeed;
         verticalSpeed -= gravity * Time.deltaTime;
 
@@ -229,7 +229,7 @@ public class BoulderAbility : NetworkBehaviour
 
         PlaceCamera();
 
-        bool trigger = elapsed > 0.3f && (Mouse.current.leftButton.wasPressedThisFrame || Keyboard.current.qKey.wasPressedThisFrame);
+        bool trigger = elapsed > 0.3f && (HeroInput.Pressed(this, HeroInput.Key.LeftMouse) || HeroInput.Pressed(this, HeroInput.Key.Q));
         if (trigger || elapsed >= ability.duration)
         {
             ExplodeServerRpc(boulder.transform.position);
@@ -313,7 +313,7 @@ public class BoulderAbility : NetworkBehaviour
             recorder.ServerNoteUltimate();
 
         Vector3 center = point + Vector3.up * boulderRadius;
-        Combat.Explode(gameObject, center, ability.radius, ability.power, 0.3f);
+        Combat.Explode(gameObject, center, ability.radius, ability.power, 0.3f, null, Combat.AbilitySource(ability));
         Combat.Knockback(gameObject, center, ability.radius, ability.knockback, 1f);
         ExplodeFxClientRpc(center);
     }

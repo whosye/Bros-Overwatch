@@ -75,7 +75,7 @@ public class BlockAbility : NetworkBehaviour
     {
         if (ability == null) return;
 
-        bool wants = Mouse.current.rightButton.isPressed && GameSettings.CursorLocked
+        bool wants = HeroInput.Held(this, HeroInput.Key.RightMouse) && HeroInput.Locked(this)
             && !fpc.InputBlocked && !fpc.RushActive && energy.Value > 0.01f;
 
         if (wants && !active)

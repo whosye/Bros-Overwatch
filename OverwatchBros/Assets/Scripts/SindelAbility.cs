@@ -48,9 +48,9 @@ public class SindelAbility : NetworkBehaviour
 
     void Update()
     {
-        if (!IsOwner || !GameSettings.CursorLocked || fpc.InputBlocked || health.currentHealth.Value <= 0f) return;
+        if (!IsOwner || !HeroInput.Locked(this) || fpc.InputBlocked || health.currentHealth.Value <= 0f) return;
 
-        if (leap != null && Keyboard.current.leftShiftKey.wasPressedThisFrame && Time.time >= nextLeap && !fpc.Rooted)
+        if (leap != null && HeroInput.Pressed(this, HeroInput.Key.Shift) && Time.time >= nextLeap && !fpc.Rooted)
         {
             nextLeap = Time.time + leap.Cooldown;
             fpc.OwnerHover(leap.power, leap.duration);
@@ -61,7 +61,7 @@ public class SindelAbility : NetworkBehaviour
             LeapServerRpc();
         }
 
-        if (grenade != null && Keyboard.current.eKey.wasPressedThisFrame && Time.time >= nextGrenade)
+        if (grenade != null && HeroInput.Pressed(this, HeroInput.Key.E) && Time.time >= nextGrenade)
         {
             nextGrenade = Time.time + grenade.Cooldown;
             var eye = fpc.playerCamera.transform;
@@ -76,10 +76,10 @@ public class SindelAbility : NetworkBehaviour
     Vector3 LeapDirection()
     {
         Vector2 input = Vector2.zero;
-        if (Keyboard.current.wKey.isPressed) input.y += 1f;
-        if (Keyboard.current.sKey.isPressed) input.y -= 1f;
-        if (Keyboard.current.dKey.isPressed) input.x += 1f;
-        if (Keyboard.current.aKey.isPressed) input.x -= 1f;
+        if (HeroInput.MoveKey(this, 'w')) input.y += 1f;
+        if (HeroInput.MoveKey(this, 's')) input.y -= 1f;
+        if (HeroInput.MoveKey(this, 'd')) input.x += 1f;
+        if (HeroInput.MoveKey(this, 'a')) input.x -= 1f;
         Vector3 direction = transform.right * input.x + transform.forward * input.y;
         return direction.sqrMagnitude > 0.01f ? direction.normalized : transform.forward;
     }
@@ -136,7 +136,7 @@ public class SindelAbility : NetworkBehaviour
 
         var match = MatchManager.Instance;
         if (match == null || (!match.IsOver && !match.IsLobby))
-            Combat.Explode(gameObject, point, grenade.radius, grenade.power, Edge);
+            Combat.Explode(gameObject, point, grenade.radius, grenade.power, Edge, null, Combat.AbilitySource(grenade));
 
         DetonatedClientRpc(point, grenade.radius);
     }

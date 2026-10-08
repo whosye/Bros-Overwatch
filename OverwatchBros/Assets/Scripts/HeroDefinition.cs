@@ -31,7 +31,11 @@ public enum AbilityKind
     Soundwave,  // Bard: basovy uder - odhodi nepratele, mirenim pod sebe ho vystreli (prave tlacitko)
     RighteousLeap, // Sindel: vyskok se vznasenim (Shift)
     HolyGrenade,   // Sindel: svaty granat - hod obloukem, plosny vybuch (E)
-    Ezekiel        // Sindel: Ezechiel 25:17 - kazani ve vzduchu a uder svetla (Q)
+    Ezekiel,       // Sindel: Ezechiel 25:17 - kazani ve vzduchu a uder svetla (Q)
+    MaxReap,       // Max: Rozpolceni - vypad a otocka kosou (Shift)
+    ShadowStep,    // Max: Stinovy krok - pruchod zdi (E)
+    MaxSlash,      // Max: Dlouhy rez - pruh pred sebou se zpomalenim (prave tlacitko)
+    Trespass       // Max: Vpad do stinu - zmizi v nepriteli a vyrazi ven (Q)
 }
 
 [CreateAssetMenu(fileName = "NewHero", menuName = "BrosOverwatch/Hero")]
@@ -64,6 +68,14 @@ public class HeroDefinition : ScriptableObject
     public bool doubleJump = false;
     [Tooltip("Kdyz hrac ve skoku narazi na hranu, vytahne se na ni.")]
     public bool ledgeClimb = false;
+
+    [Header("Pasivni bonusy")]
+    [Tooltip("Nasobek rychlosti chuze a behu (1 = jako ostatni).")]
+    public float moveSpeed = 1f;
+    [Tooltip("Podil zpusobeneho poskozeni (zbran i schopnosti), ktery si hrdina vyleci.")]
+    [Range(0f, 1f)] public float lifesteal = 0f;
+    [Tooltip("Zabiti nebo asistence zkrati zbyvajici cooldowny schopnosti o tento podil.")]
+    [Range(0f, 1f)] public float takedownCooldownCut = 0f;
 
     [Header("Pasivní: granáty po smrti (0 = žádné)")]
     public int deathGrenades = 0;

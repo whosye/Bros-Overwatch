@@ -61,7 +61,7 @@ public class PotgRecorder : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (IsOwner)
+        if (BotBrain.IsLocalHuman(this))
         {
             capture = GetComponent<ReplayCapture>();
             if (capture == null)

@@ -11,6 +11,19 @@ public class PlayerHero : NetworkBehaviour
 
     public NetworkVariable<int> heroId = new NetworkVariable<int>(-1);
     public NetworkVariable<FixedString32Bytes> playerName = new NetworkVariable<FixedString32Bytes>();
+    // Bot (BotBrain na hostu) - vidi vsichni hraci (oznaceni v lobby).
+    public NetworkVariable<bool> isBot = new NetworkVariable<bool>(false);
+    // Neviditelny (Max uvnitr obeti pri ultimatce): skryty model, zbran, jmenovka a bez kolize.
+    public NetworkVariable<bool> isHidden = new NetworkVariable<bool>(false);
+    public bool IsHidden => isHidden.Value;
+    // Necilitelny: neviditelny, nebo Max ve stinove forme (viditelny stin, ale bez jmenovky, kolize a zraneni).
+    public bool IsUntargetable => isHidden.Value || (max != null && max.ShadowFormActive);
+
+    void OnHiddenChanged(bool previous, bool current)
+    {
+        var body = GetComponent<CharacterController>();
+        if (body != null && !(IsOwner && current)) body.enabled = !current;
+    }
 
     // Hrac se pripojil do rozehraneho zapasu a jeste si vybira tym a hrdinu (vidi lobby, do hry vstoupi tlacitkem).
     // Do te doby stoji mimo mapu, nejde zranit a nemuze nic delat.
@@ -44,9 +57,40 @@ public class PlayerHero : NetworkBehaviour
     float lastAttackTime = -100f;
     float nextFallCheck;
 
+    // Kdo hrace v posledni dobe zranil (asistence pri zabiti).
+    readonly System.Collections.Generic.Dictionary<GameObject, float> recentAttackers = new System.Collections.Generic.Dictionary<GameObject, float>();
+    public const float AssistSeconds = 8f;
+
+    public System.Collections.Generic.List<GameObject> ServerRecentAttackers()
+    {
+        var list = new System.Collections.Generic.List<GameObject>();
+        foreach (var pair in recentAttackers)
+            if (pair.Key != null && Time.time - pair.Value <= AssistSeconds)
+                list.Add(pair.Key);
+        return list;
+    }
+
+    public void ServerClearAttackers() => recentAttackers.Clear();
+
+    // Zabiti nebo asistence: zkratit zbyvajici cooldowny (Pova). Cooldowny drzi vlastnik hrace.
+    public void ServerTakedownRefund()
+    {
+        if (!IsServer || Hero == null || Hero.takedownCooldownCut <= 0f) return;
+        TakedownRefundClientRpc(Hero.takedownCooldownCut);
+    }
+
+    [ClientRpc]
+    void TakedownRefundClientRpc(float cut)
+    {
+        if (!IsOwner) return;
+        foreach (var behaviour in GetComponents<ICooldownCut>())
+            behaviour.CutCooldown(cut);
+    }
+
     public void ServerNoteAttacker(GameObject attacker)
     {
         if (!IsServer || attacker == null || attacker == gameObject) return;
+        recentAttackers[attacker] = Time.time;
 
         lastAttacker = attacker;
         lastAttackTime = Time.time;
@@ -72,10 +116,13 @@ public class PlayerHero : NetworkBehaviour
         if (health.currentHealth.Value <= 0f) return;
 
         if (lastAttacker != null && Time.time - lastAttackTime < 6f)
-            Combat.DamagePlayer(lastAttacker, health, 100000f);
+            Combat.DamagePlayer(lastAttacker, health, 100000f, "env:fall");
 
         if (health.currentHealth.Value > 0f)
+        {
+            ServerDeathCause = "env:fall";
             health.Kill();
+        }
     }
 
     [ClientRpc]
@@ -131,7 +178,8 @@ public class PlayerHero : NetworkBehaviour
             || (boulder != null && boulder.enabled && boulder.IsRolling)
             || (visor != null && visor.enabled && visor.IsScanning)
             || (storm != null && storm.enabled && storm.IsStormActive)
-            || (ezekiel != null && ezekiel.enabled && ezekiel.IsCasting);
+            || (ezekiel != null && ezekiel.enabled && ezekiel.IsCasting)
+            || (trespass != null && trespass.enabled && trespass.ServerActive);
     }
 
     // ---------------- odhaleni pruzkumnym sipem ----------------
@@ -202,6 +250,8 @@ public class PlayerHero : NetworkBehaviour
     BardAbility bard;
     SindelAbility sindel;
     EzekielAbility ezekiel;
+    MaxAbility max;
+    TrespassAbility trespass;
     HeroVoice voice;
 
     void Awake()
@@ -234,6 +284,8 @@ public class PlayerHero : NetworkBehaviour
         bard = GetComponent<BardAbility>();
         sindel = GetComponent<SindelAbility>();
         ezekiel = GetComponent<EzekielAbility>();
+        max = GetComponent<MaxAbility>();
+        trespass = GetComponent<TrespassAbility>();
         voice = GetComponent<HeroVoice>();
     }
 
@@ -241,6 +293,7 @@ public class PlayerHero : NetworkBehaviour
     {
         heroId.OnValueChanged += OnHeroChanged;
         ultCharge.OnValueChanged += OnUltChargeChanged;
+        isHidden.OnValueChanged += OnHiddenChanged;
         boosted.OnValueChanged += OnBoostedChanged;
         if (boosted.Value)
             OnBoostedChanged(false, true);
@@ -253,7 +306,7 @@ public class PlayerHero : NetworkBehaviour
         if (heroId.Value >= 0)
             Apply(heroId.Value);
 
-        if (IsOwner)
+        if (BotBrain.IsLocalHuman(this))
         {
             SetNameServerRpc(PreferredName);
             RequestHeroServerRpc(PreferredHero);
@@ -264,6 +317,7 @@ public class PlayerHero : NetworkBehaviour
     {
         heroId.OnValueChanged -= OnHeroChanged;
         ultCharge.OnValueChanged -= OnUltChargeChanged;
+        isHidden.OnValueChanged -= OnHiddenChanged;
         boosted.OnValueChanged -= OnBoostedChanged;
         NanoAura.Set(transform, false);
         health.OnDeath -= OnDeath;
@@ -620,11 +674,28 @@ public class PlayerHero : NetworkBehaviour
             ezekiel.enabled = definition.abilityKind == AbilityKind.Ezekiel && definition.ability != null;
         }
 
+        bool hasMaxReap = definition.secondaryAbilityKind == AbilityKind.MaxReap && definition.secondaryAbility != null;
+        bool hasMaxStep = definition.altAbilityKind == AbilityKind.ShadowStep && definition.altAbility != null;
+        bool hasMaxSlash = definition.rmbAbilityKind == AbilityKind.MaxSlash && definition.rmbAbility != null;
+        if (max != null)
+        {
+            max.Configure(hasMaxReap ? definition.secondaryAbility : null, hasMaxStep ? definition.altAbility : null,
+                hasMaxSlash ? definition.rmbAbility : null);
+            max.enabled = hasMaxReap || hasMaxStep || hasMaxSlash;
+        }
+
+        if (trespass != null)
+        {
+            trespass.Configure(definition.ability);
+            trespass.enabled = definition.abilityKind == AbilityKind.Trespass && definition.ability != null;
+        }
+
         var controller = GetComponent<FirstPersonController>();
         if (controller != null)
         {
-            controller.ShiftReserved = hasRush || hasMine || dashOnShift || hasSleepDart || hasGrapple || hasBlink || hasBard || hasSindelLeap;
+            controller.ShiftReserved = hasMaxReap || hasRush || hasMine || dashOnShift || hasSleepDart || hasGrapple || hasBlink || hasBard || hasSindelLeap;
             controller.DoubleJump = definition.doubleJump;
+            controller.HeroSpeedScale = Mathf.Max(0.5f, definition.moveSpeed);
             controller.LedgeClimb = definition.ledgeClimb;
         }
 
@@ -690,6 +761,16 @@ public class PlayerHero : NetworkBehaviour
 
         else if (Hero.abilityKind == AbilityKind.Ezekiel && ezekiel != null && Hero.ability != null)
             slots.Add(UltSlot(ezekiel.CooldownRemaining, ezekiel.IsCasting));
+
+        else if (Hero.abilityKind == AbilityKind.Trespass && trespass != null && Hero.ability != null)
+            slots.Add(UltSlot(trespass.CooldownRemaining, trespass.IsActive));
+
+        if (Hero.rmbAbilityKind == AbilityKind.MaxSlash && max != null && Hero.rmbAbility != null)
+            slots.Add(new AbilitySlot { key = "PTM", ability = Hero.rmbAbility, remaining = max.SlashRemaining, active = false, charge = -1f });
+        if (Hero.altAbilityKind == AbilityKind.ShadowStep && max != null && Hero.altAbility != null)
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = max.StepRemaining, active = false, charge = -1f });
+        if (Hero.secondaryAbilityKind == AbilityKind.MaxReap && max != null && Hero.secondaryAbility != null)
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = max.ReapRemaining, active = max.Busy, charge = -1f });
 
         if (Hero.altAbilityKind == AbilityKind.HolyGrenade && sindel != null && Hero.altAbility != null)
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = sindel.GrenadeRemaining, active = false, charge = -1f });
@@ -895,15 +976,29 @@ public class PlayerHero : NetworkBehaviour
     [ClientRpc]
     void HitClientRpc(bool kill)
     {
-        if (IsOwner)
+        if (BotBrain.IsLocalHuman(this))
             HudUI.NotifyHit(kill);
     }
 
     void OnBoostedChanged(bool previous, bool current)
     {
         NanoAura.Set(transform, current);
-        if (current && IsOwner)
+        if (current && BotBrain.IsLocalHuman(this))
             HudUI.NotifyTint(new Color(0.45f, 0.8f, 1f, 0.45f), 0.6f);
+    }
+
+    // Pricina smrti bez vraha (auto, pad, kotel...) - nastavuje zdroj tesne pred zabitim; pro kill feed.
+    public string ServerDeathCause { get; set; } = "";
+    public int ServerKillReportedFrame { get; set; } = -1;
+
+    // Kdyz smrt nikdo nezpusobil (zadne ReportKill v tomhle snimku), ukaze se v kill feedu s pricinou.
+    System.Collections.IEnumerator EnvironmentDeathFeed(int frame)
+    {
+        yield return null;
+        var match = MatchManager.Instance;
+        if (match != null && !match.IsLobby && ServerKillReportedFrame < frame)
+            match.ServerEnvironmentDeath(this, ServerDeathCause);
+        ServerDeathCause = "";
     }
 
     void OnDeath()
@@ -912,6 +1007,7 @@ public class PlayerHero : NetworkBehaviour
         if (IsServer)
         {
             Say(VoiceKind.Death);
+            StartCoroutine(EnvironmentDeathFeed(Time.frameCount));
 
             var match = MatchManager.Instance;
             if (match != null && !match.IsLobby && !match.IsOver)
@@ -960,7 +1056,7 @@ public class PlayerHero : NetworkBehaviour
         yield return new WaitForSeconds(DeathGrenadeDelay);
 
         foreach (var point in points)
-            Combat.Explode(gameObject, point + Vector3.up * 0.2f, radius, damage, 0.4f);
+            Combat.Explode(gameObject, point + Vector3.up * 0.2f, radius, damage, 0.4f, null, "weapon:explosion");
     }
 
     [ClientRpc]

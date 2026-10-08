@@ -5,7 +5,7 @@ using Unity.Netcode;
 
 // Ayranova ultimatni schopnost: vyskoci do vzduchu, drzi se (ability.duration s) a kurzorem vybira misto dopadu.
 // Kdyz misto nepotvrdi vcas, schopnost se vyplytva. Dopad rozda AOE damage (ability.radius, ability.power) protivnikum.
-public class LeapStrikeAbility : NetworkBehaviour
+public class LeapStrikeAbility : NetworkBehaviour, ICooldownCut
 {
     enum Phase { Idle, Ascending, Aiming, Diving, Fizzling }
 
@@ -41,6 +41,13 @@ public class LeapStrikeAbility : NetworkBehaviour
     public bool IsAirborne => airborne.Value;
 
     public float CooldownRemaining => UsesCharge ? 0f : Mathf.Max(0f, nextUseTime - Time.time);
+
+    // (ultimatka nabijena hrou se nezkracuje - jen klasicky cooldown)
+    public void CutCooldown(float fraction)
+    {
+        if (!UsesCharge && nextUseTime > Time.time)
+            nextUseTime = Time.time + (nextUseTime - Time.time) * (1f - Mathf.Clamp01(fraction));
+    }
 
     // Ultimatka: s nastavenou cenou (ultCost) se nabiji hrou, jinak plati cooldown.
     PlayerHero hero;
@@ -120,8 +127,8 @@ public class LeapStrikeAbility : NetworkBehaviour
 
         if (phase == Phase.Idle)
         {
-            if (Keyboard.current.qKey.wasPressedThisFrame && CanUse
-                && !fpc.InputBlocked && !fpc.RushActive && !fpc.BlockActive && !fpc.Rooted && GameSettings.CursorLocked)
+            if (HeroInput.Pressed(this, HeroInput.Key.Q) && CanUse
+                && !fpc.InputBlocked && !fpc.RushActive && !fpc.BlockActive && !fpc.Rooted && HeroInput.Locked(this))
                 Begin();
             return;
         }
@@ -191,7 +198,7 @@ public class LeapStrikeAbility : NetworkBehaviour
 
         UpdateAim();
 
-        bool confirm = Mouse.current.leftButton.wasPressedThisFrame || Keyboard.current.qKey.wasPressedThisFrame;
+        bool confirm = HeroInput.Pressed(this, HeroInput.Key.LeftMouse) || HeroInput.Pressed(this, HeroInput.Key.Q);
 
         if (confirm && aimValid)
         {
@@ -356,7 +363,7 @@ public class LeapStrikeAbility : NetworkBehaviour
             recorder.ServerNoteUltimate();
 
         // Vybuch nejde skrz zdi a nezrani vlastni tym (viz Combat.Explode).
-        Combat.Explode(gameObject, position, ability.radius, ability.power, 0.5f);
+        Combat.Explode(gameObject, position, ability.radius, ability.power, 0.5f, null, Combat.AbilitySource(ability));
 
         ImpactFxClientRpc(position);
     }

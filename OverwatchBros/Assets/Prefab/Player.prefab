@@ -186,6 +186,8 @@ GameObject:
   - component: {fileID: 1792325043084606660}
   - component: {fileID: 8753729545128356338}
   - component: {fileID: 53562669911337371}
+  - component: {fileID: 8013583674131917789}
+  - component: {fileID: 2910593085831879148}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -341,6 +343,16 @@ MonoBehaviour:
   eyeHeight: 1.62
   crouchEyeHeight: 1
   footstepDistance: 2.2
+  waterSurfing:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  waterRiding:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &7417173623501469966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -528,6 +540,16 @@ MonoBehaviour:
         byte0027: 0
         byte0028: 0
         byte0029: 0
+  isBot:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  isHidden:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   joining:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -983,6 +1005,35 @@ MonoBehaviour:
   ability: {fileID: 0}
   hoverHeight: 7
   riseTime: 0.8
-  hoverSpeed: 3.5
   cameraDistance: 6.5
   cameraLift: 1.2
+--- !u!114 &8013583674131917789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34f85ec21816ace428267efeb4f92da6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaxAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  reap: {fileID: 0}
+  step: {fileID: 0}
+  slash: {fileID: 0}
+--- !u!114 &2910593085831879148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15db7f26a74cf894da0005263737468c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrespassAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}

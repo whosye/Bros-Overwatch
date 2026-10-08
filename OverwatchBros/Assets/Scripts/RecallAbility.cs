@@ -57,7 +57,7 @@ public class RecallAbility : NetworkBehaviour
         }
 
         if (!IsOwner || rewinding) return;
-        if (!Keyboard.current.eKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.E) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime || path.Count < 2) return;
 
         nextUseTime = Time.time + ability.Cooldown;

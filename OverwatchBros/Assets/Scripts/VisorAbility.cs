@@ -88,7 +88,7 @@ public class VisorAbility : NetworkBehaviour
                 return;
             }
 
-            if (Keyboard.current.qKey.wasPressedThisFrame && CanUse && GameSettings.CursorLocked && !fpc.InputBlocked)
+            if (HeroInput.Pressed(this, HeroInput.Key.Q) && CanUse && HeroInput.Locked(this) && !fpc.InputBlocked)
             {
                 // Priprava: Viktor zvedne zbran a ozve se hlaska, zamerovac nabehne az po ni.
                 windup.Begin(fpc, WindupSeconds);
@@ -208,7 +208,7 @@ public class VisorAbility : NetworkBehaviour
                 Consider(eye, collider.bounds.center, null, collider, ref best);
         }
 
-        if (hasTarget)
+        if (hasTarget && BotBrain.IsLocalHuman(this))   // (znacka cile jen na HUD hrace, ne bota na hostu)
         {
             HudUI.LockPoint = targetPoint;
             HudUI.LockFrame = Time.frameCount;

@@ -25,6 +25,11 @@ public class LobbyUI
     Button testButton;
     TextMeshProUGUI waitText;
 
+    // Boti (jen host): hrdina a tym pristiho bota, pridat / odebrat vsechny.
+    Button botHeroButton, botTeamButton, botAddButton, botRemoveButton;
+    int botHero;
+    int botTeam = 1;
+
     float nextRefresh;
 
     public void Build(Transform canvas, Action onLeave)
@@ -86,6 +91,17 @@ public class LobbyUI
         // Pro testovani: vsechny cooldowny 1 s (prepina host, plati pro vsechny hrace).
         testButton = UiKit.MakeButton(Root.transform, "TEST", new Vector2(1f, 1f), new Vector2(-30f, -30f), new Vector2(470f, 58f),
             ToggleTestCooldowns, UiKit.ButtonBase, 26f);
+
+        // Boti pro trenink (vlevo nahore, jen host)
+        var topLeft = new Vector2(0f, 1f);
+        botHeroButton = UiKit.MakeButton(Root.transform, "BOT", topLeft, new Vector2(16f, -14f), new Vector2(300f, 46f),
+            () => botHero = (botHero + 1) % Mathf.Max(1, HeroRegistry.All.Length), UiKit.ButtonBase, 24f);
+        botTeamButton = UiKit.MakeButton(Root.transform, "TÝM", topLeft, new Vector2(16f, -66f), new Vector2(120f, 46f),
+            () => botTeam = (botTeam + 1) % PlayerTeam.TeamCount, UiKit.ButtonBase, 24f);
+        botAddButton = UiKit.MakeButton(Root.transform, "+ PŘIDAT BOTA", topLeft, new Vector2(142f, -66f), new Vector2(174f, 46f),
+            () => MatchManager.Instance?.ServerAddBot(botHero, botTeam), UiKit.Green, 22f);
+        botRemoveButton = UiKit.MakeButton(Root.transform, "ODEBRAT BOTY", topLeft, new Vector2(16f, -118f), new Vector2(300f, 46f),
+            () => MatchManager.Instance?.ServerRemoveBots(), new Color(0.45f, 0.18f, 0.18f, 1f), 22f);
 
         modeButton = UiKit.MakeButton(Root.transform, "REŽIM", center, new Vector2(-40f, -352f), new Vector2(760f, 56f),
             ToggleMode, UiKit.ButtonBase, 28f);
@@ -156,6 +172,22 @@ public class LobbyUI
         startButton.gameObject.SetActive(isHost && !joining);
         enterButton.gameObject.SetActive(joining);
         waitText.gameObject.SetActive(!isHost && !joining);
+
+        bool botsVisible = isHost && !joining;
+        foreach (var button in new[] { botHeroButton, botTeamButton, botAddButton, botRemoveButton })
+            button.gameObject.SetActive(botsVisible);
+        if (botsVisible)
+        {
+            var heroes = HeroRegistry.All;
+            botHero = Mathf.Clamp(botHero, 0, Mathf.Max(0, heroes.Length - 1));
+            string heroName = heroes.Length > 0 ? heroes[botHero].heroName : "?";
+            UiKit.SetButtonLabel(botHeroButton, $"BOT: <color=#F28C1A>{heroName}</color>  <size=70%>(klikni = další)</size>");
+            UiKit.SetButtonLabel(botTeamButton, $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(botTeam))}>TÝM {botTeam}</color>");
+            int count = BotBrain.All.Count;
+            UiKit.SetButtonLabel(botRemoveButton, count > 0 ? $"ODEBRAT BOTY ({count})" : "ODEBRAT BOTY");
+            botRemoveButton.interactable = count > 0;
+            botAddButton.interactable = count < MatchManager.MaxBots;
+        }
     }
 
     void RefreshTeams(PlayerHero localHero)
@@ -179,7 +211,8 @@ public class LobbyUI
             bool isLocal = player == localHero;
             if (isLocal) localTeam = id;
 
-            string host = player.OwnerClientId == NetworkManager.ServerClientId ? "<color=#F28C1A>[HOST]</color> " : "";
+            string host = player.isBot.Value ? "<color=#8FA3BF>[BOT]</color> "
+                : player.OwnerClientId == NetworkManager.ServerClientId ? "<color=#F28C1A>[HOST]</color> " : "";
             string name = isLocal ? $"<b>{player.DisplayName}</b>" : player.DisplayName;
             string hero = player.Hero != null ? player.Hero.heroName : "…";
             builders[id].AppendLine($"{host}{name}   <size=75%><color=#A6B3C7>{hero}</color></size>");

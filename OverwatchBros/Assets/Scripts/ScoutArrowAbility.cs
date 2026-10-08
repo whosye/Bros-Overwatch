@@ -47,7 +47,7 @@ public class ScoutArrowAbility : NetworkBehaviour
     void OwnerUpdate()
     {
         if (ability == null) return;
-        if (!Keyboard.current.eKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.E) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
         nextUseTime = Time.time + ability.Cooldown;
@@ -111,7 +111,7 @@ public class ScoutArrowAbility : NetworkBehaviour
         var match = MatchManager.Instance;
         if (match != null && (match.IsOver || match.IsLobby)) return;
 
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        foreach (var client in MatchManager.PlayerSlots())
         {
             var player = client.PlayerObject;
             if (player == null || player.gameObject == gameObject) continue;

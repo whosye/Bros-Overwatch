@@ -27,6 +27,9 @@ MonoBehaviour:
   rmbAbility: {fileID: 0}
   doubleJump: 0
   ledgeClimb: 0
+  moveSpeed: 1.15
+  lifesteal: 0.15
+  takedownCooldownCut: 0.5
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5

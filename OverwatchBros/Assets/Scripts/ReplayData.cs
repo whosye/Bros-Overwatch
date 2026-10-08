@@ -11,7 +11,7 @@ using UnityEngine;
 
 public struct ReplayPlayerSnap
 {
-    public int id;            // OwnerClientId hrace
+    public int id;            // NetworkObjectId postavy hrace (boti maji vlastni, i kdyz patri hostovi)
     public short hero;        // index v HeroRegistry
     public byte team;
     public Vector3 position;
@@ -105,7 +105,7 @@ public enum ReplayEventType : byte
 {
     Explosion, Sparks, Impact, Tracer, SpatialSound, GlobalSound, Sfx, ProjectileSpawn, ProjectileEnd,
     Voice, Swing, Reload, StopReload, Kick, FirstPersonKick, HudHit, HudFlash, HudSleep, HudTint, HudEnd,
-    NanoAura, SleepShow, SleepHide
+    NanoAura, SleepShow, SleepHide, KillFeed
 }
 
 public class ReplayEvent

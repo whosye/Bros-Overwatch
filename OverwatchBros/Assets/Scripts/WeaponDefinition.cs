@@ -13,7 +13,8 @@ public enum HeldModel
     None,
     Gun,
     Axe,
-    Bow
+    Bow,
+    Scythe   // kosa (Max): drzi se a mava jako sekyra, model se stavi v kodu
 }
 
 [CreateAssetMenu(fileName = "NewWeapon", menuName = "BrosOverwatch/Weapon")]
@@ -111,6 +112,13 @@ public class WeaponDefinition : ScriptableObject
     [Header("Blizky souboj (jen kdyz Fire Mode = Melee)")]
     [Tooltip("Sirka uderu (polomer sweepu pred hracem). Dosah uderu je 'range', ammo se u melee nepouziva.")]
     public float meleeRadius = 0.6f;
+    [Tooltip("Uder na blizko: polovina sirky oblouku ve stupnich (55 = oblouk 110 st.).")]
+    public float meleeArc = 55f;
+    [Tooltip("Kombo: kazdy treti uder (do 1 s po sobe) je silnejsi. 0 = bez komba.")]
+    public float comboFinisherDamage = 0f;
+    public float comboFinisherArc = 60f;
+    [Tooltip("Treti uder komba nepritele odhodi (rychlost m/s).")]
+    public float comboFinisherKnockback = 0f;
 
     [Header("Zbran v ruce")]
     [Tooltip("Auto = sekyrka pro melee, jinak pistole (u projektilu raketomet).")]

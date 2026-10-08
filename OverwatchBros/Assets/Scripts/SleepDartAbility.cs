@@ -31,7 +31,7 @@ public class SleepDartAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!Keyboard.current.leftShiftKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.Shift) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
         nextUseTime = Time.time + ability.Cooldown;
@@ -82,7 +82,7 @@ public class SleepDartAbility : NetworkBehaviour
 
         if (victim != null && victim.currentHealth.Value > 0f)
         {
-            Combat.DamagePlayer(gameObject, victim, ability.power);
+            Combat.DamagePlayer(gameObject, victim, ability.power, Combat.AbilitySource(ability));
 
             var controller = victim.GetComponent<FirstPersonController>();
             if (controller != null && victim.currentHealth.Value > 0f)

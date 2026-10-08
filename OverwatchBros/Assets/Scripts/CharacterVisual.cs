@@ -7,6 +7,7 @@ using UnityEngine.Playables;
 // (bez Animator Controlleru) a vychazi z rychlosti pohybu, takze funguje stejne pro majitele i pro ostatni po siti.
 public class CharacterVisual : MonoBehaviour
 {
+    PlayerHero hero;
     const int Idle = 0, Walk = 1, Jog = 2, Sprint = 3, Jump = 4, Death = 5, StateCount = 6;
 
     public int Version { get; private set; }
@@ -122,6 +123,43 @@ public class CharacterVisual : MonoBehaviour
 
         if (bodyCapsule != null)
             bodyCapsule.enabled = false;
+    }
+
+    // Stinova forma (Max): vsechny casti modelu docasne pruhledne tmave fialove (svitici), pak puvodni materialy.
+    static Material shadowMaterial;
+    Material[][] savedMaterials;
+
+    public void SetShadow(bool on)
+    {
+        if (on)
+        {
+            if (shadowMaterial == null)
+            {
+                shadowMaterial = new Material(Fx.ParticleMaterial) { mainTexture = null };
+                var tint = new Color(0.22f, 0.04f, 0.38f, 0.55f);
+                shadowMaterial.color = tint;
+                if (shadowMaterial.HasProperty("_BaseColor")) shadowMaterial.SetColor("_BaseColor", tint);
+            }
+            if (savedMaterials == null)
+            {
+                savedMaterials = new Material[renderers.Length][];
+                for (int i = 0; i < renderers.Length; i++)
+                {
+                    if (renderers[i] == null) continue;
+                    savedMaterials[i] = renderers[i].sharedMaterials;
+                    var shadows = new Material[savedMaterials[i].Length];
+                    for (int k = 0; k < shadows.Length; k++) shadows[k] = shadowMaterial;
+                    renderers[i].sharedMaterials = shadows;
+                }
+            }
+        }
+        else if (savedMaterials != null)
+        {
+            for (int i = 0; i < renderers.Length && i < savedMaterials.Length; i++)
+                if (renderers[i] != null && savedMaterials[i] != null)
+                    renderers[i].sharedMaterials = savedMaterials[i];
+            savedMaterials = null;
+        }
     }
 
     public void ClearModel()
@@ -366,9 +404,11 @@ public class CharacterVisual : MonoBehaviour
     {
         if (ModelRoot == null) return;
 
-        bool owner = fpc != null && fpc.IsSpawned && fpc.IsOwner;
+        bool owner = fpc != null && fpc.IsSpawned && fpc.IsOwner && fpc.Bot == null;
         // Behem prehravani POTG jsou zivi hraci skryti (misto nich hraji duchove).
-        bool visible = IsGhost ? !GhostHidden : (!owner || fpc.ThirdPerson) && !ReplayPlayer.Active;
+        if (hero == null && !IsGhost) hero = GetComponent<PlayerHero>();
+        bool hidden = hero != null && hero.IsSpawned && hero.IsHidden;   // Max uvnitr obeti
+        bool visible = IsGhost ? !GhostHidden : (!owner || fpc.ThirdPerson) && !ReplayPlayer.Active && !hidden;
         foreach (var r in renderers)
             if (r != null && r.enabled != visible)
                 r.enabled = visible;

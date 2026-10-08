@@ -32,7 +32,7 @@ public class BioticGrenadeAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!Keyboard.current.eKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.E) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
         nextUseTime = Time.time + ability.Cooldown;
@@ -97,7 +97,7 @@ public class BioticGrenadeAbility : NetworkBehaviour
                 }
                 else
                 {
-                    Combat.DamagePlayer(gameObject, target, ability.power);
+                    Combat.DamagePlayer(gameObject, target, ability.power, Combat.AbilitySource(ability));
                     target.ServerBlockHealing(ability.duration);
                 }
             }

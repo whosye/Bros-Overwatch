@@ -4,6 +4,8 @@ using UnityEngine;
 // ostatni na tele hrace. Model se sklada z kostek (placeholder), nebo se pouzije WeaponDefinition.heldPrefab.
 public class HeldWeapons : MonoBehaviour
 {
+    PlayerHero heroComponent;
+    PlayerHero CurrentHeroComponent => heroComponent != null ? heroComponent : (heroComponent = GetComponent<PlayerHero>());
     class Hand
     {
         public Transform holder;
@@ -111,6 +113,8 @@ public class HeldWeapons : MonoBehaviour
         var hand = hands[nextHand % hands.Length];
         hand.swingTime = 0f;
         nextHand++;
+        // kosa: kazdy sek z druhe strany (zprava doleva, zleva doprava, ...)
+        if (builtModel == HeldModel.Scythe) slashDir = -slashDir;
 
         PlayBodyAttack(weapon);
     }
@@ -158,7 +162,7 @@ public class HeldWeapons : MonoBehaviour
         if (visual == null)
             visual = GetComponent<CharacterVisual>();
 
-        bool owner = ghost ? ghostFirstPerson : shooting.IsOwner;
+        bool owner = ghost ? ghostFirstPerson : shooting.IsOwner && shooting.Bot == null;
         bool visualChanged = visual != null && visual.Version != builtVersion;
         if (!built || builtWeapon != CurrentWeapon || builtAsOwner != owner || visualChanged)
             Rebuild(owner);
@@ -176,7 +180,7 @@ public class HeldWeapons : MonoBehaviour
 
         // Zbrane u kamery (majitel v 1. osobe) a zbrane v rukou postavy (ostatni, majitel ve 3. osobe).
         // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
-        bool hiddenByReplay = !ghost && ReplayPlayer.Active;
+        bool hiddenByReplay = !ghost && (ReplayPlayer.Active || (CurrentHeroComponent != null && CurrentHeroComponent.IsSpawned && CurrentHeroComponent.IsUntargetable));
         bool cameraHandsVisible = !dead && !(owner && thirdPerson) && !hiddenByReplay;
         if (root != null && root.activeSelf != cameraHandsVisible)
             root.SetActive(cameraHandsVisible);
@@ -220,7 +224,7 @@ public class HeldWeapons : MonoBehaviour
 
         runBlend = Mathf.Lerp(runBlend, Mathf.Clamp(speed / 5f, 0f, 1.6f), 1f - Mathf.Exp(-8f * Time.deltaTime));
         runPhase += speed * 1.5f * Time.deltaTime;
-        float sway = builtModel == HeldModel.Axe ? 1.5f : 1f;
+        float sway = Swung(builtModel) ? 1.5f : 1f;
 
         foreach (var hand in hands)
         {
@@ -233,7 +237,10 @@ public class HeldWeapons : MonoBehaviour
             position += new Vector3(Mathf.Sin(p * 0.5f) * 0.03f, -Mathf.Abs(Mathf.Sin(p)) * 0.035f, Mathf.Sin(p * 2f) * 0.012f) * k;
             euler += new Vector3(Mathf.Sin(p * 2f) * 4f, Mathf.Sin(p * 0.5f) * 5f, Mathf.Sin(p * 0.5f) * -8f) * k;
 
-            if (hand.swingTime < swingDuration)
+            float sinceReach = Time.time - reachStart;
+            if (sinceReach >= 0f && sinceReach < reachWindup + ReachStrike + ReachRecover)
+                AnimateReach(sinceReach, ref position, ref euler);
+            else if (hand.swingTime < swingDuration)
             {
                 hand.swingTime += Time.deltaTime;
                 float t = Mathf.Clamp01(hand.swingTime / swingDuration);
@@ -330,9 +337,88 @@ public class HeldWeapons : MonoBehaviour
         }
     }
 
+    int slashDir = -1;
+
+    // Maxuv Dlouhy rez (jako Kaynovo W): napraah dozadu nahoru po dobu 'windup', mohutny sek dopredu a dolu, navrat.
+    float reachStart = -100f, reachWindup = 0.4f;
+    const float ReachStrike = 0.15f, ReachRecover = 0.3f;
+
+    public void PlayReach(float windup)
+    {
+        reachStart = Time.time;
+        reachWindup = Mathf.Max(0.05f, windup);
+    }
+
+    // Nabijeni (drzeni PTM): kosa se zvedne do napraahu a zustane, dokud se nepusti (ReleaseReach = sek).
+    const float ReachRaise = 0.3f;
+    public void BeginReachHold()
+    {
+        reachStart = Time.time;
+        reachWindup = 999f;
+    }
+
+    public void ReleaseReach()
+    {
+        reachWindup = Mathf.Max(0.05f, Time.time - reachStart);
+    }
+
+    void AnimateReach(float t, ref Vector3 position, ref Vector3 euler)
+    {
+        Vector3 raisedPos = new Vector3(-0.05f, 0.12f, -0.12f), raisedRot = new Vector3(-45f, 20f, 0f);
+        Vector3 struckPos = new Vector3(0f, -0.08f, 0.28f), struckRot = new Vector3(65f, -10f, 0f);
+        Vector3 dp, de;
+        if (t < reachWindup)
+        {
+            float k = Mathf.SmoothStep(0f, 1f, t / Mathf.Min(reachWindup, ReachRaise));
+            dp = raisedPos * k;
+            de = raisedRot * k;
+        }
+        else if (t < reachWindup + ReachStrike)
+        {
+            float k = Mathf.SmoothStep(0f, 1f, (t - reachWindup) / ReachStrike);
+            dp = Vector3.Lerp(raisedPos, struckPos, k);
+            de = Vector3.Lerp(raisedRot, struckRot, k);
+        }
+        else
+        {
+            float k = Mathf.SmoothStep(0f, 1f, (t - reachWindup - ReachStrike) / ReachRecover);
+            dp = Vector3.Lerp(struckPos, Vector3.zero, k);
+            de = Vector3.Lerp(struckRot, Vector3.zero, k);
+        }
+        position += dp;
+        euler += de;
+    }
+
+    // Kosa: vodorovny sek pred sebou. Kosa se polozi na bok (cepel naplocho dopredu) a cela se otoci kolem hrace
+    // z jedne strany na druhou; strany se stridaji.
+    static readonly Vector3 SlashPivot = new Vector3(0f, -0.3f, 0f);
+
+    static void SlashPose(int dir, float angle, out Vector3 position, out Vector3 euler)
+    {
+        Vector3 start = new Vector3(0.30f * dir, -0.18f, 0.42f);
+        position = SlashPivot + Quaternion.Euler(0f, angle, 0f) * (start - SlashPivot);
+        euler = new Vector3(5f, angle, 90f * dir);
+    }
+
     void Animate(float t, ref Vector3 position, ref Vector3 euler)
     {
-        if (builtModel == HeldModel.Axe)
+        if (builtModel == HeldModel.Scythe)
+        {
+            int dir = slashDir;
+            float from = 60f * dir, to = -60f * dir;
+            float angle, blend;
+            if (t < 0.15f) { blend = Mathf.SmoothStep(0f, 1f, t / 0.15f); angle = from; }
+            else if (t < 0.6f) { blend = 1f; angle = Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, (t - 0.15f) / 0.45f)); }
+            else { blend = 1f - Mathf.SmoothStep(0f, 1f, (t - 0.6f) / 0.4f); angle = to; }
+
+            SlashPose(dir, angle, out Vector3 slashPosition, out Vector3 slashEuler);
+            position = Vector3.Lerp(position, slashPosition, blend);
+            euler = new Vector3(Mathf.LerpAngle(euler.x, slashEuler.x, blend), Mathf.LerpAngle(euler.y, slashEuler.y, blend),
+                Mathf.LerpAngle(euler.z, slashEuler.z, blend));
+            return;
+        }
+
+        if (Swung(builtModel))
         {
             // Zamah: nahoru dozadu, rychle dopredu a dolu, navrat.
             float angle;
@@ -430,9 +516,11 @@ public class HeldWeapons : MonoBehaviour
                 hand.holder = holder;
 
                 hand.restPosition = owner
-                    ? (model == HeldModel.Axe ? new Vector3(0.36f * side, -0.40f, 0.55f) : new Vector3(0.30f * side, -0.28f, 0.50f))
+                    ? (model == HeldModel.Scythe ? new Vector3(0.34f * side, -0.45f, 0.50f)
+                        : model == HeldModel.Axe ? new Vector3(0.36f * side, -0.40f, 0.55f) : new Vector3(0.30f * side, -0.28f, 0.50f))
                     : new Vector3(0.62f * side, 0.15f, 0.30f);
-                hand.restEuler = model == HeldModel.Axe ? new Vector3(15f, 0f, -9f * side) : Vector3.zero;
+                hand.restEuler = model == HeldModel.Scythe ? new Vector3(10f, 0f, -12f * side)
+                    : model == HeldModel.Axe ? new Vector3(15f, 0f, -9f * side) : Vector3.zero;
 
                 BuildModel(holder, weapon, model, side);
                 FindArrow(hand);
@@ -515,7 +603,7 @@ public class HeldWeapons : MonoBehaviour
     {
         if (model == HeldModel.Bow) return new Vector3(0f, 0f, 0.10f);
 
-        return model == HeldModel.Axe ? new Vector3(0f, 0.12f, 0f)
+        return Swung(model) ? new Vector3(0f, 0.12f, 0f)
             : weapon.IsProjectile ? new Vector3(0f, -0.10f, 0.12f)
             : new Vector3(0f, -0.07f, 0.05f);
     }
@@ -547,7 +635,8 @@ public class HeldWeapons : MonoBehaviour
         var grip = visual.GetGrip(right);
         Vector3 gripWorld = grip != null ? grip.position : bone.position;
 
-        Vector3 euler = model == HeldModel.Axe ? new Vector3(35f, 0f, -10f * hand.side) : new Vector3(10f, 0f, 0f);
+        Vector3 euler = model == HeldModel.Scythe ? new Vector3(20f, 0f, -10f * hand.side)
+            : model == HeldModel.Axe ? new Vector3(35f, 0f, -10f * hand.side) : new Vector3(10f, 0f, 0f);
         Quaternion rotation = visual.ModelRoot.rotation * Quaternion.Euler(euler);
         hand.holder.position = gripWorld - rotation * GripInWeapon(weapon, model);
         hand.holder.rotation = rotation;
@@ -586,6 +675,10 @@ public class HeldWeapons : MonoBehaviour
             Part(holder, new Vector3(0f, 0f, 0.28f), Vector3.zero, new Vector3(0.015f, 0.015f, 0.68f), weapon.projectileColor);
             holder.GetChild(holder.childCount - 1).name = "Arrow";
         }
+        else if (model == HeldModel.Scythe)
+        {
+            BuildScythe(holder);
+        }
         else if (model == HeldModel.Axe)
         {
             Part(holder, new Vector3(0f, 0.25f, 0f), Vector3.zero, new Vector3(0.045f, 0.56f, 0.045f), wood);
@@ -606,6 +699,130 @@ public class HeldWeapons : MonoBehaviour
             Part(holder, new Vector3(0f, -0.09f, 0.05f), new Vector3(15f, 0f, 0f), new Vector3(0.05f, 0.12f, 0.06f), dark);
             Part(holder, new Vector3(0f, 0.055f, 0.2f), Vector3.zero, new Vector3(0.075f, 0.02f, 0.2f), weapon.projectileColor);
         }
+    }
+
+    // Zbrane, kterymi se mava (sekyra, kosa): stejne drzeni a zamah.
+    static bool Swung(HeldModel model) => model == HeldModel.Axe || model == HeldModel.Scythe;
+
+    // Kosa (Max) v prostoru drzaku: nasada svisle (+Y), ruka drzi bod (0; 0,12; 0), nasada od -0,55 do 0,95 m.
+    // Nahore cepel: vybiha dopredu (+Z) a zahyba se dolu (matna tmava ocel).
+    static Mesh scytheBlade;
+
+    static void BuildScythe(Transform holder)
+    {
+        var wood = new Color(0.30f, 0.17f, 0.10f);
+        var wrap = new Color(0.10f, 0.08f, 0.10f);
+        var brass = new Color(0.62f, 0.48f, 0.22f);
+        const float bottom = -0.55f, top = 0.95f;
+
+        // nasada, omotavky, kovani
+        Part(holder, new Vector3(0f, (bottom + top) * 0.5f, 0f), Vector3.zero, new Vector3(0.04f, top - bottom, 0.04f), wood);
+        Part(holder, new Vector3(0f, 0.12f, 0f), Vector3.zero, new Vector3(0.052f, 0.20f, 0.052f), wrap);
+        Part(holder, new Vector3(0f, -0.40f, 0f), Vector3.zero, new Vector3(0.052f, 0.18f, 0.052f), wrap);
+        Part(holder, new Vector3(0f, top - 0.03f, 0f), Vector3.zero, new Vector3(0.06f, 0.08f, 0.06f), brass);
+        Part(holder, new Vector3(0f, bottom + 0.02f, 0f), Vector3.zero, new Vector3(0.055f, 0.04f, 0.055f), brass);
+
+        if (scytheBlade == null) BuildScytheMeshes();
+        var blade = new GameObject("Cepel", typeof(MeshFilter), typeof(MeshRenderer));
+        blade.transform.SetParent(holder, false);
+        blade.GetComponent<MeshFilter>().sharedMesh = scytheBlade;
+        var bladeRenderer = blade.GetComponent<MeshRenderer>();
+        bladeRenderer.sharedMaterial = Fx.NewLit(new Color(0.20f, 0.20f, 0.24f));
+        bladeRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+        // (ostri bez samostatneho dilu: tenky pas na povrchu cepele blikal - z-fighting)
+
+        // cela kosa matna: bez odlesku a odrazu okoli (jinak se ostri a kovani leskly)
+        foreach (var r in holder.GetComponentsInChildren<Renderer>())
+            foreach (var m in r.sharedMaterials)
+                Matte(m);
+    }
+
+    static void Matte(Material m)
+    {
+        if (m == null) return;
+        m.SetFloat("_Smoothness", 0f);
+        m.SetFloat("_Metallic", 0f);
+        m.SetFloat("_SpecularHighlights", 0f);
+        m.SetFloat("_EnvironmentReflections", 0f);
+        m.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        m.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
+        m.DisableKeyword("_EMISSION");
+    }
+
+    // Cepel: krivka hrbetu z vrsku nasady dopredu a dolu; sirka se zuzuje k hrotu, ostri pod hrbetem.
+    static void BuildScytheMeshes()
+    {
+        const int n = 20;
+        const float baseY = 0.93f, reach = 0.78f, drop = 0.32f, width = 0.15f;
+        var spine = new Vector3[n + 1];
+        var edgeLine = new Vector3[n + 1];
+        for (int i = 0; i <= n; i++)
+        {
+            float t = i / (float)n;
+            float z = reach * Mathf.Sin(t * Mathf.PI * 0.5f);
+            float y = baseY - drop * t * t;
+            spine[i] = new Vector3(0f, y, z);
+            float w = width * Mathf.Pow(1f - t, 0.7f) + 0.006f;
+            // ostri: pod hrbetem a trochu dovnitr ohybu (k nasade)
+            Vector3 tangent = i < n ? Vector3.zero : Vector3.zero;
+            edgeLine[i] = spine[i] + new Vector3(0f, -w, -w * 0.35f * t);
+        }
+
+        scytheBlade = Wedge("KosaCepel", spine, edgeLine, 0.022f, 0.004f);
+
+    }
+
+    // Klinovity pas mezi dvema krivkami: horni hrana tlusta 'thick', spodni (ostri) tenka. Uzavrene teleso,
+    // kazda plocha jednou, s vlastnimi vrcholy a otocena ven (sdilene vrcholy s opacne otocenymi plochami davaly
+    // nulove normaly -> chyba v osvetleni a prepalena bila zare).
+    static Mesh Wedge(string name, Vector3[] upper, Vector3[] lower, float thick, float edgeThick = 0.001f)
+    {
+        int n = upper.Length;
+        var ring = new Vector3[n][];
+        for (int i = 0; i < n; i++)
+            ring[i] = new[]
+            {
+                upper[i] + Vector3.right * thick * 0.5f, upper[i] - Vector3.right * thick * 0.5f,
+                lower[i] - Vector3.right * edgeThick, lower[i] + Vector3.right * edgeThick,
+            };
+
+        var vertices = new System.Collections.Generic.List<Vector3>();
+        var triangles = new System.Collections.Generic.List<int>();
+
+        void Quad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 inside)
+        {
+            Vector3 normal = Vector3.Cross(b - a, c - a);
+            Vector3 center = (a + b + c + d) * 0.25f;
+            if (Vector3.Dot(normal, center - inside) < 0f) { var t = b; b = d; d = t; }   // otocit ven
+            int k = vertices.Count;
+            vertices.Add(a); vertices.Add(b); vertices.Add(c); vertices.Add(d);
+            triangles.AddRange(new[] { k, k + 1, k + 2, k, k + 2, k + 3 });
+        }
+
+        for (int i = 0; i < n - 1; i++)
+        {
+            var r0 = ring[i];
+            var r1 = ring[i + 1];
+            Vector3 inside = (r0[0] + r0[1] + r0[2] + r0[3] + r1[0] + r1[1] + r1[2] + r1[3]) / 8f;
+            for (int e = 0; e < 4; e++)
+            {
+                int f = (e + 1) % 4;
+                Quad(r0[e], r1[e], r1[f], r0[f], inside);
+            }
+        }
+        // zaslepeni koncu
+        Vector3 startInside = (ring[0][0] + ring[0][1] + ring[0][2] + ring[0][3]) * 0.25f + (upper[1] - upper[0]).normalized * 0.01f;
+        Quad(ring[0][0], ring[0][1], ring[0][2], ring[0][3], startInside);
+        Vector3 endInside = (ring[n - 1][0] + ring[n - 1][1] + ring[n - 1][2] + ring[n - 1][3]) * 0.25f - (upper[n - 1] - upper[n - 2]).normalized * 0.01f;
+        Quad(ring[n - 1][0], ring[n - 1][1], ring[n - 1][2], ring[n - 1][3], endInside);
+
+        var mesh = new Mesh { name = name };
+        mesh.SetVertices(vertices);
+        mesh.SetTriangles(triangles, 0);
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        return mesh;
     }
 
     static void Part(Transform parent, Vector3 position, Vector3 euler, Vector3 scale, Color color)

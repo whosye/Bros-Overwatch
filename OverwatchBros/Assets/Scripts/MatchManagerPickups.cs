@@ -38,7 +38,7 @@ public partial class MatchManager
 
         if (!IsLobby && !IsOver)
         {
-            foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+            foreach (var client in PlayerSlots())
             {
                 var player = client.PlayerObject;
                 if (player == null) continue;

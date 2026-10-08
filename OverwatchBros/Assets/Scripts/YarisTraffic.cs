@@ -145,6 +145,7 @@ public sealed class YarisTraffic : MonoBehaviour
             if (health == null || !health.IsSpawned || health.currentHealth.Value <= 0f || !hitThisStep.Add(health)) continue;
             var hero = health.GetComponent<PlayerHero>();
             if (hero != null && hero.IsJoining) continue;
+            if (hero != null) hero.ServerDeathCause = "env:car";
             health.Kill();
         }
     }

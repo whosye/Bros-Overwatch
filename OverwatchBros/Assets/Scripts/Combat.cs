@@ -26,7 +26,11 @@ public static class Combat
     }
 
     // Prime poskozeni hrace (jen server). Vlastni tym se neraní. Kdyz zasah zabije, pripise se kill utocnikovi.
-    public static void DamagePlayer(GameObject attacker, Health target, float amount)
+    // Zdroj poskozeni pro kill feed (ikona mezi jmeny): "ability:<asset>", "weapon:gun|bow|explosion|melee",
+    // "env:car|fall|boiler". Prazdny = nezname.
+    public static string AbilitySource(AbilityDefinition ability) => ability != null ? "ability:" + ability.name : "";
+
+    public static void DamagePlayer(GameObject attacker, Health target, float amount, string source = "")
     {
         var network = NetworkManager.Singleton;
         if (network == null || !network.IsServer || target == null) return;
@@ -69,8 +73,18 @@ public static class Combat
                 recorder.ServerAddDamage(before - target.Effective);
         }
 
+        // Lifesteal (Pova): utocnik si vyleci cast skutecne zpusobeneho poskozeni.
+        float dealt = before - target.Effective;
+        var stealer = attacker != null ? attacker.GetComponent<PlayerHero>() : null;
+        if (dealt > 0f && stealer != null && stealer.Hero != null && stealer.Hero.lifesteal > 0f && attacker != target.gameObject)
+        {
+            var stealerHealth = attacker.GetComponent<Health>();
+            if (stealerHealth != null && stealerHealth.currentHealth.Value > 0f)
+                stealerHealth.Heal(dealt * stealer.Hero.lifesteal);
+        }
+
         if (killed && match != null)
-            match.ReportKill(attacker, target.gameObject);
+            match.ReportKill(attacker, target.gameObject, source);
     }
 
     // Leceni spoluhrace (jen server): lecitel dostane potvrzeni zasahu a nabiti ultimatky za vylecene HP.
@@ -98,7 +112,7 @@ public static class Combat
 
     // Plosny vybuch (jen server): damage klesa od stredu (100 %) po okraj (edgeFactor), neprochazi zdmi, nevraci vlastni tym.
     // 'direct' = hrac, ktereho projektil trefil primo: dostane plne poskozeni bez ohledu na vzdalenost od stredu.
-    public static void Explode(GameObject attacker, Vector3 position, float radius, float damage, float edgeFactor, Health direct = null)
+    public static void Explode(GameObject attacker, Vector3 position, float radius, float damage, float edgeFactor, Health direct = null, string source = "")
     {
         var network = NetworkManager.Singleton;
         if (network == null || !network.IsServer) return;
@@ -128,7 +142,7 @@ public static class Combat
 
             float distance = Vector3.Distance(position, health.transform.position);
             float scaled = health == direct ? damage : damage * Mathf.Lerp(1f, edgeFactor, Mathf.Clamp01(distance / radius));
-            DamagePlayer(attacker, health, scaled);
+            DamagePlayer(attacker, health, scaled, source);
         }
     }
 

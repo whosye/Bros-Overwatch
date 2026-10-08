@@ -42,7 +42,7 @@ public class BlinkAbility : NetworkBehaviour
                 rechargeAt = Time.time + ability.Cooldown;
         }
 
-        if (!Keyboard.current.leftShiftKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.Shift) || !HeroInput.Locked(this)) return;
         if (charges <= 0 || fpc.InputBlocked || fpc.Rooted) return;
 
         if (charges == MaxCharges)
@@ -61,10 +61,10 @@ public class BlinkAbility : NetworkBehaviour
     Vector3 Direction()
     {
         Vector2 input = Vector2.zero;
-        if (Keyboard.current.wKey.isPressed) input.y += 1f;
-        if (Keyboard.current.sKey.isPressed) input.y -= 1f;
-        if (Keyboard.current.dKey.isPressed) input.x += 1f;
-        if (Keyboard.current.aKey.isPressed) input.x -= 1f;
+        if (HeroInput.MoveKey(this, 'w')) input.y += 1f;
+        if (HeroInput.MoveKey(this, 's')) input.y -= 1f;
+        if (HeroInput.MoveKey(this, 'd')) input.x += 1f;
+        if (HeroInput.MoveKey(this, 'a')) input.x -= 1f;
 
         Vector3 direction = transform.right * input.x + transform.forward * input.y;
         return direction.sqrMagnitude > 0.01f ? direction.normalized : transform.forward;

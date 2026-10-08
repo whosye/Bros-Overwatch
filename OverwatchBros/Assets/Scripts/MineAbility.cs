@@ -99,13 +99,13 @@ public class MineAbility : NetworkBehaviour
             rechargeAt = Time.time + ability.Cooldown;
         }
 
-        if (!GameSettings.CursorLocked || fpc.CannotAct) return;
+        if (!HeroInput.Locked(this) || fpc.CannotAct) return;
 
-        if (minesOut > 0 && Mouse.current.rightButton.wasPressedThisFrame)
+        if (minesOut > 0 && HeroInput.Pressed(this, HeroInput.Key.RightMouse))
             DetonateServerRpc();
 
         // Stisk se chvili pamatuje: zmacknuti tesne pred dobitim naboje se nezahodi.
-        if (Keyboard.current.leftShiftKey.wasPressedThisFrame)
+        if (HeroInput.Pressed(this, HeroInput.Key.Shift))
         {
             bufferedUntil = Time.time + PressBuffer;
 
@@ -216,7 +216,7 @@ public class MineAbility : NetworkBehaviour
         foreach (var mine in mines)
         {
             Vector3 center = mine.position + Vector3.up * 0.1f;
-            Combat.Explode(gameObject, center, ability.radius, ability.power, 0.5f);
+            Combat.Explode(gameObject, center, ability.radius, ability.power, 0.5f, null, Combat.AbilitySource(ability));
             Combat.Knockback(gameObject, center, ability.radius, ability.knockback, 1f);
             EndClientRpc(mine.id, mine.position, true);
         }

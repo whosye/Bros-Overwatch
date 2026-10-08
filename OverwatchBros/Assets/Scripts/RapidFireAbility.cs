@@ -49,7 +49,7 @@ public class RapidFireAbility : NetworkBehaviour
             return;
         }
 
-        if (!Mouse.current.rightButton.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.RightMouse) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
         active = true;

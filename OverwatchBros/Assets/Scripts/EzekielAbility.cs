@@ -114,7 +114,7 @@ public class EzekielAbility : NetworkBehaviour
 
         if (phase == Phase.Idle)
         {
-            if (Keyboard.current.qKey.wasPressedThisFrame && CanUse && GameSettings.CursorLocked
+            if (HeroInput.Pressed(this, HeroInput.Key.Q) && CanUse && HeroInput.Locked(this)
                 && !fpc.InputBlocked && !fpc.Rooted)
                 Begin();
             return;
@@ -174,10 +174,10 @@ public class EzekielAbility : NetworkBehaviour
     {
         // Pomaly let ve vysce (WASD podle smeru kamery).
         Vector2 input = Vector2.zero;
-        if (Keyboard.current.wKey.isPressed) input.y += 1f;
-        if (Keyboard.current.sKey.isPressed) input.y -= 1f;
-        if (Keyboard.current.dKey.isPressed) input.x += 1f;
-        if (Keyboard.current.aKey.isPressed) input.x -= 1f;
+        if (HeroInput.MoveKey(this, 'w')) input.y += 1f;
+        if (HeroInput.MoveKey(this, 's')) input.y -= 1f;
+        if (HeroInput.MoveKey(this, 'd')) input.x += 1f;
+        if (HeroInput.MoveKey(this, 'a')) input.x -= 1f;
 
         // Pri pohledu skoro kolmo dolu (miri pod sebe) je vodorovna slozka smeru kamery nulova - pak "dopredu"
         // urcuje horni hrana obrazovky.
@@ -339,7 +339,7 @@ public class EzekielAbility : NetworkBehaviour
             // u hrace podle jeho pozice (ne podle kusu tela, ktery do valce zasahl)
             Vector3 feet = health.transform.position - point;
             feet.y = 0f;
-            Combat.DamagePlayer(gameObject, health, ability.power * Mathf.Lerp(1f, StrikeEdge, Mathf.Clamp01(feet.magnitude / radius)));
+            Combat.DamagePlayer(gameObject, health, ability.power * Mathf.Lerp(1f, StrikeEdge, Mathf.Clamp01(feet.magnitude / radius)), Combat.AbilitySource(ability));
         }
     }
 

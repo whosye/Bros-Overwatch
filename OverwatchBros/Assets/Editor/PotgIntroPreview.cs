@@ -50,7 +50,7 @@ public static class PotgIntroPreview
     [MenuItem("BrosOverwatch/Ukázka POTG úvodu/Mirek")] static void Mirek() => Run("Mirek");
     [MenuItem("BrosOverwatch/Ukázka POTG úvodu/Anna")] static void Anna() => Run("Anna");
     [MenuItem("BrosOverwatch/Ukázka POTG úvodu/Sniper")] static void Sniper() => Run("Sniper");
-    [MenuItem("BrosOverwatch/Ukázka POTG úvodu/Flanker")] static void Flanker() => Run("Flanker");
+    [MenuItem("BrosOverwatch/Ukázka POTG úvodu/Max")] static void Max() => Run("Max");
     [MenuItem("BrosOverwatch/Ukázka POTG úvodu/Bard")] static void Bard() => Run("Bard");
     [MenuItem("BrosOverwatch/Ukázka POTG úvodu/Šindel")] static void Sindel() => Run("Sindel");
 }

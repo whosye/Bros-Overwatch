@@ -72,7 +72,7 @@ public partial class MatchManager
 
         float damage = Boiler.TotalDamage / Boiler.HeatSeconds * BoilerTickInterval;
         int burned = 0;
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        foreach (var client in PlayerSlots())
         {
             var player = client.PlayerObject;
             if (player == null) continue;
@@ -84,12 +84,16 @@ public partial class MatchManager
             // Pali vsechny nahore. Nepratelum se poskozeni i zabiti pripise tomu, kdo zatopil;
             // jemu samotnemu, jeho tymu (a kdyz uz neni ve hre) bez pripsani (jako pad z vysky).
             if (boilerStoker == null || Combat.SameTeam(boilerStoker, player.gameObject))
+            {
+                var burnedHero = player.GetComponent<PlayerHero>();
+                if (burnedHero != null) burnedHero.ServerDeathCause = "env:boiler";
                 health.TakeDamage(damage);
+            }
             else
-                Combat.DamagePlayer(boilerStoker, health, damage);
+                Combat.DamagePlayer(boilerStoker, health, damage, "env:boiler");
         }
         if (burned == 0 && Boiler.LogMisses)
-            foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+            foreach (var client in PlayerSlots())
                 if (client.PlayerObject != null)
                     Debug.Log($"[Kotel] {client.PlayerObject.name} je na {client.PlayerObject.transform.position} - mimo horni patra " +
                               $"({boiler.heatMin} az {boiler.heatMax}).");

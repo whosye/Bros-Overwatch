@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 // Ayranova sekera na retezu (klavesa E, jako Roadhoguv hak): hodi sekeru na retezu rovne dopredu (nejdal 'range' m).
 // Prvniho nepritele, ktereho trefi, zrani ('power'), pritahne tesne pred Ayrana a na chvili omraci
 // ('duration' s po dotazeni). Zed sekeru zastavi, spoluhrace proleti.
-public class HookAbility : NetworkBehaviour
+public class HookAbility : NetworkBehaviour, ICooldownCut
 {
     public AbilityDefinition ability;
 
@@ -18,6 +18,12 @@ public class HookAbility : NetworkBehaviour
     float nextUseTime;
 
     public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
+
+    public void CutCooldown(float fraction)
+    {
+        if (nextUseTime > Time.time)
+            nextUseTime = Time.time + (nextUseTime - Time.time) * (1f - Mathf.Clamp01(fraction));
+    }
 
     public void Configure(AbilityDefinition definition)
     {
@@ -32,7 +38,7 @@ public class HookAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!Keyboard.current.eKey.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.E) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || fpc.RushActive || fpc.BlockActive || Time.time < nextUseTime) return;
 
         nextUseTime = Time.time + ability.Cooldown;
@@ -77,7 +83,7 @@ public class HookAbility : NetworkBehaviour
             return;
         }
 
-        Combat.DamagePlayer(gameObject, victim, ability.power);
+        Combat.DamagePlayer(gameObject, victim, ability.power, Combat.AbilitySource(ability));
 
         var controller = victim.GetComponent<FirstPersonController>();
         if (controller != null && victim.currentHealth.Value > 0f)

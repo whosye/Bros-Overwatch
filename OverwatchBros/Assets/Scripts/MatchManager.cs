@@ -98,7 +98,7 @@ public partial class MatchManager : NetworkBehaviour
     }
 
     // Zavola server, kdyz hrac (killer) zabil protihrace. Pripise bod tymu a spusti kill hlasku.
-    public void ReportKill(GameObject killer, GameObject victim = null)
+    public void ReportKill(GameObject killer, GameObject victim = null, string source = "")
     {
         if (!IsServer || killer == null) return;
         if (matchOver.Value || IsLobby) return;
@@ -106,13 +106,16 @@ public partial class MatchManager : NetworkBehaviour
         var hero = killer.GetComponent<PlayerHero>();
         if (hero != null)
             hero.kills.Value++;
+        var killedHero = victim != null ? victim.GetComponent<PlayerHero>() : null;
+        if (killedHero != null)
+            killedHero.ServerKillReportedFrame = Time.frameCount;
 
 
         // Seznam zabiti u vsech hracu.
         var killerObject = killer.GetComponent<NetworkObject>();
         var victimObject = victim != null ? victim.GetComponent<NetworkObject>() : null;
         if (killerObject != null && victimObject != null)
-            KillFeedClientRpc(killerObject.NetworkObjectId, victimObject.NetworkObjectId);
+            KillFeedClientRpc(killerObject.NetworkObjectId, victimObject.NetworkObjectId, source ?? "");
 
         // V utoku a obrane se skore pocita za zabrane body, ne za zabiti.
         var team = killer.GetComponent<PlayerTeam>();
@@ -126,10 +129,44 @@ public partial class MatchManager : NetworkBehaviour
 
         if (hero != null)
             hero.NotifyKill();
+
+        // Zabiti a asistence (kdo obet zranil v poslednich sekundach): zkraceni cooldownu (Pova).
+        if (hero != null)
+            hero.ServerTakedownRefund();
+        var victimHero = victim != null ? victim.GetComponent<PlayerHero>() : null;
+        if (victimHero != null)
+        {
+            foreach (var assister in victimHero.ServerRecentAttackers())
+            {
+                if (assister == killer || Combat.SameTeam(assister, victim)) continue;
+                var assistHero = assister.GetComponent<PlayerHero>();
+                if (assistHero != null) assistHero.ServerTakedownRefund();
+            }
+            victimHero.ServerClearAttackers();
+        }
+    }
+
+    // Smrt, kterou nezpusobil hrac (auto, pad z mapy, kotel na sebe...): v kill feedu pricina misto vraha.
+    public void ServerEnvironmentDeath(PlayerHero victim, string cause)
+    {
+        if (!IsServer || victim == null || matchOver.Value || IsLobby) return;
+        EnvironmentFeedClientRpc(victim.NetworkObjectId, cause ?? "");
     }
 
     [ClientRpc]
-    void KillFeedClientRpc(ulong killerId, ulong victimId)
+    void EnvironmentFeedClientRpc(ulong victimId, string cause)
+    {
+        if (!NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(victimId, out NetworkObject victim)) return;
+        var victimHero = victim.GetComponent<PlayerHero>();
+        var victimTeam = victim.GetComponent<PlayerTeam>();
+        if (victimHero == null) return;
+        bool local = victim.IsOwner && !BotBrain.IsBot(victim.gameObject);
+        // bez vraha: jen ikona priciny a obet
+        MatchOverlayUI.AddKill("", -1, victimHero.DisplayName, victimTeam != null ? victimTeam.teamId.Value : -1, local, cause);
+    }
+
+    [ClientRpc]
+    void KillFeedClientRpc(ulong killerId, ulong victimId, string source)
     {
         var spawned = NetworkManager.SpawnManager.SpawnedObjects;
         spawned.TryGetValue(killerId, out NetworkObject killer);
@@ -142,14 +179,18 @@ public partial class MatchManager : NetworkBehaviour
 
         var killerTeam = killer != null ? killer.GetComponent<PlayerTeam>() : null;
         var victimTeam = victim.GetComponent<PlayerTeam>();
-        bool local = (killer != null && killer.IsOwner) || victim.IsOwner;
+        bool local = (killer != null && killer.IsOwner && !BotBrain.IsBot(killer.gameObject)) || (victim.IsOwner && !BotBrain.IsBot(victim.gameObject));
+
+        // zemrel jsem ja: killcam z pohledu vraha
+        if (killer != null && victim.IsOwner && !BotBrain.IsBot(victim.gameObject))
+            Killcam.OnLocalDeath(killer, victim);
 
         MatchOverlayUI.AddKill(
             killerHero != null ? killerHero.DisplayName : "",
             killerTeam != null ? killerTeam.teamId.Value : -1,
             victimHero.DisplayName,
             victimTeam != null ? victimTeam.teamId.Value : -1,
-            local);
+            local, source);
     }
 
     void CheckWinCondition()
@@ -288,7 +329,7 @@ public partial class MatchManager : NetworkBehaviour
         winnerTeam.Value = -1;
         matchOver.Value = false;
 
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        foreach (var client in PlayerSlots())
         {
             if (client.PlayerObject == null) continue;
 
@@ -338,7 +379,7 @@ public partial class MatchManager : NetworkBehaviour
         {
             int team = (first + i) % PlayerTeam.TeamCount;
             var heroes = new System.Collections.Generic.List<PlayerHero>();
-            foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+            foreach (var client in PlayerSlots())
             {
                 var player = client.PlayerObject;
                 var hero = player != null ? player.GetComponent<PlayerHero>() : null;
@@ -357,6 +398,13 @@ public partial class MatchManager : NetworkBehaviour
     void ResetPlayersClientRpc(bool custom, Vector3 spawn0, Vector3 spawn1)
     {
         MatchOverlayUI.ClearKills();
+        if (IsServer)
+        {
+            customSpawns = custom;
+            customSpawn[0] = spawn0;
+            customSpawn[1] = spawn1;
+            ServerResetBots();
+        }
         customSpawns = custom;
         customSpawn[0] = spawn0;
         customSpawn[1] = spawn1;

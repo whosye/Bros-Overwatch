@@ -7,6 +7,9 @@ public class FirstPersonController : NetworkBehaviour
 {
     public Camera playerCamera;
 
+    // Bot (BotBrain) misto klavesnice a mysi - jen na hostu.
+    public BotBrain Bot { get; set; }
+
     public float walkSpeed = 6f;
     public float runSpeed = 9.5f;
     public float jumpHeight = 1.2f;
@@ -35,8 +38,12 @@ public class FirstPersonController : NetworkBehaviour
     // Blok (zkrizene sekery): pomalejsi pohyb, nejde utocit.
     public bool BlockActive { get; set; }
     public float SpeedMultiplier { get; set; } = 1f;
+    // Rychlost hrdiny (HeroDefinition.moveSpeed, napr. Pova rychlejsi nez strelci).
+    public float HeroSpeedScale { get; set; } = 1f;
     // Zpomaleni pri pribliseni (sniper) a docasne zpomaleni od schopnosti (odkopnuti).
     public float ScopeSpeedScale { get; set; } = 1f;
+    // Zpomaleni od vlastni schopnosti (napr. nabijeni Maxova Dlouheho rezu).
+    public float AbilitySpeedScale { get; set; } = 1f;
     float slowUntil;
     float slowFactor = 1f;
     float SlowScale => Time.time < slowUntil ? slowFactor : 1f;
@@ -75,6 +82,20 @@ public class FirstPersonController : NetworkBehaviour
         if (!IsOwner) return;
         boostUntil = Time.time + seconds;
         boostFactor = Mathf.Clamp(factor, 1f, 2f);
+    }
+
+    // Vlastnik sam sobe (Maxuv Stinovy krok / napraah rezu).
+    public void OwnerSpeedBoost(float seconds, float factor)
+    {
+        if (!IsOwner) return;
+        boostUntil = Time.time + seconds;
+        boostFactor = Mathf.Clamp(factor, 1f, 2f);
+    }
+
+    public void OwnerHold(float seconds)
+    {
+        if (!IsOwner) return;
+        rootedUntil = Mathf.Max(rootedUntil, Time.time + seconds);
     }
 
     public void ServerSlow(float seconds, float factor)
@@ -229,7 +250,7 @@ public class FirstPersonController : NetworkBehaviour
 
         stunnedUntil = Time.time + seconds;
         externalVelocity = Vector3.zero;
-        HudUI.NotifySleep(seconds);
+        if (Bot == null) HudUI.NotifySleep(seconds);
     }
 
     [ClientRpc]
@@ -239,7 +260,7 @@ public class FirstPersonController : NetworkBehaviour
         if (!IsOwner) return;
 
         stunnedUntil = 0f;
-        HudUI.EndOverlay();
+        if (Bot == null) HudUI.EndOverlay();
     }
 
     // Omraceni (oslepujici granat): hrac se chvili nemuze hybat, utocit ani pouzivat schopnosti; rozbehle schopnosti se prerusi.
@@ -270,7 +291,7 @@ public class FirstPersonController : NetworkBehaviour
 
         stunnedUntil = Time.time + seconds;
         externalVelocity = Vector3.zero;
-        if (blind)
+        if (blind && Bot == null)
             HudUI.NotifyFlash(seconds);
     }
 
@@ -344,11 +365,13 @@ public class FirstPersonController : NetworkBehaviour
     {
         if (GetComponent<WaterSplashFx>() == null)
             gameObject.AddComponent<WaterSplashFx>();
-        if (IsOwner && GetComponent<JokerTvBuff>() == null)
+        if (IsOwner && Bot == null && GetComponent<JokerTvBuff>() == null)
             gameObject.AddComponent<JokerTvBuff>();
 
-        if (!IsOwner)
+        // cizi hrac i bot (na hostu) - kamera se nepouziva (jen jako "oci" bota)
+        if (!IsOwner || Bot != null)
         {
+            playerCamera.transform.localPosition = new Vector3(0f, eyeHeight, 0f);
             playerCamera.gameObject.SetActive(false);
             return;
         }
@@ -360,6 +383,16 @@ public class FirstPersonController : NetworkBehaviour
     void Update()
     {
         if (!IsOwner) return;
+
+        if (Bot != null)
+        {
+            // bot: natoceni a pohled urcuje mozek
+            transform.rotation = Quaternion.Euler(0f, Bot.Yaw, 0f);
+            cameraPitch = Bot.Pitch;
+            playerCamera.transform.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
+            HandleMovement();
+            return;
+        }
 
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
             Cursor.lockState = CursorLockMode.None;
@@ -452,14 +485,23 @@ public class FirstPersonController : NetworkBehaviour
 
         if (!frozen)
         {
-            if (Keyboard.current.wKey.isPressed) input.y += 1;
-            if (Keyboard.current.sKey.isPressed) input.y -= 1;
-            if (Keyboard.current.dKey.isPressed) input.x += 1;
-            if (Keyboard.current.aKey.isPressed) input.x -= 1;
+            if (Bot != null)
+            {
+                input = Bot.Move;
+                running = Bot.Run;
+                jump = Bot.ConsumeJump();
+            }
+            else
+            {
+                if (Keyboard.current.wKey.isPressed) input.y += 1;
+                if (Keyboard.current.sKey.isPressed) input.y -= 1;
+                if (Keyboard.current.dKey.isPressed) input.x += 1;
+                if (Keyboard.current.aKey.isPressed) input.x -= 1;
 
-            running = Keyboard.current.leftShiftKey.isPressed && !ShiftReserved;
-            jump = Keyboard.current.spaceKey.wasPressedThisFrame;
-            crouch = Keyboard.current.leftCtrlKey.isPressed;
+                running = Keyboard.current.leftShiftKey.isPressed && !ShiftReserved;
+                jump = Keyboard.current.spaceKey.wasPressedThisFrame;
+                crouch = Keyboard.current.leftCtrlKey.isPressed;
+            }
 
             // V pasti: neda se chodit ani skakat (strilet ano).
             if (Rooted)
@@ -477,7 +519,7 @@ public class FirstPersonController : NetworkBehaviour
         if (onLadder && !isGrounded)
             move *= Ladder.SideSpeedScale;
 
-        float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * ScopeSpeedScale * SlowScale * BoostScale * TunnelScale * HoverScale * BardAbility.SpeedScaleFor(gameObject);
+        float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * HeroSpeedScale * ScopeSpeedScale * AbilitySpeedScale * SlowScale * BoostScale * TunnelScale * HoverScale * BardAbility.SpeedScaleFor(gameObject);
         var flags = controller.Move((move * speed + externalVelocity) * Time.deltaTime);
 
         // Odhozeni postupne odezni: na zemi rychle (treni), ve vzduchu pomalu; naraz do zdi ho zastavi.

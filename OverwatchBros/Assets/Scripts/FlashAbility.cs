@@ -33,7 +33,7 @@ public class FlashAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!Mouse.current.rightButton.wasPressedThisFrame || !GameSettings.CursorLocked) return;
+        if (!HeroInput.Pressed(this, HeroInput.Key.RightMouse) || !HeroInput.Locked(this)) return;
         if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
         nextUseTime = Time.time + ability.Cooldown;
@@ -98,7 +98,7 @@ public class FlashAbility : NetworkBehaviour
                 if (victim.gameObject == gameObject || Combat.SameTeam(gameObject, victim.gameObject)) continue;
                 if (!Combat.HasLineOfSight(point, col)) continue;
 
-                Combat.DamagePlayer(gameObject, victim, damage);
+                Combat.DamagePlayer(gameObject, victim, damage, Combat.AbilitySource(ability));
 
                 var controller = victim.GetComponent<FirstPersonController>();
                 if (controller != null && victim.currentHealth.Value > 0f)

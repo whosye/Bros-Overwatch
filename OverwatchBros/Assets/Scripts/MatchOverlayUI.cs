@@ -19,7 +19,7 @@ public class MatchOverlayUI
 
     class Kill
     {
-        public string killer, victim;
+        public string killer, victim, icon;
         public int killerTeam, victimTeam;
         public bool local;
         public float time;
@@ -36,9 +36,10 @@ public class MatchOverlayUI
     }
 
     // killer muze byt prazdny (smrt bez utocnika).
-    public static void AddKill(string killer, int killerTeam, string victim, int victimTeam, bool localInvolved)
+    public static void AddKill(string killer, int killerTeam, string victim, int victimTeam, bool localInvolved, string icon = "")
     {
-        kills.Add(new Kill { killer = killer, killerTeam = killerTeam, victim = victim, victimTeam = victimTeam, local = localInvolved, time = Time.unscaledTime });
+        ReplayLog.KillFeed(killer, killerTeam, victim, victimTeam, localInvolved, icon ?? "");
+        kills.Add(new Kill { killer = killer, killerTeam = killerTeam, victim = victim, victimTeam = victimTeam, local = localInvolved, icon = icon ?? "", time = Time.unscaledTime });
         while (kills.Count > MaxKills)
             kills.RemoveAt(0);
     }
@@ -60,7 +61,8 @@ public class MatchOverlayUI
     class FeedRow
     {
         public Image background;
-        public TextMeshProUGUI text;
+        public TextMeshProUGUI killer, victim;
+        public RawImage icon;
     }
 
     const float BarWidth = 110f;
@@ -98,8 +100,18 @@ public class MatchOverlayUI
             var row = new FeedRow();
             row.background = UiKit.MakeImage(feedRoot.transform, "Row", new Color(0.05f, 0.07f, 0.10f, 0.72f), new Vector2(1f, 1f),
                 new Vector2(0f, -i * 44f), new Vector2(460f, 38f));
-            row.text = UiKit.MakeText(row.background.transform, "Text", "", 26, TextAlignmentOptions.Right, center, new Vector2(-12f, 0f), new Vector2(440f, 38f));
-            row.text.textWrappingMode = TextWrappingModes.NoWrap;
+            var right = new Vector2(1f, 0.5f);
+            row.victim = UiKit.MakeText(row.background.transform, "Obet", "", 26, TextAlignmentOptions.Right, right, new Vector2(-12f, 0f), new Vector2(200f, 38f));
+            row.victim.textWrappingMode = TextWrappingModes.NoWrap;
+            row.killer = UiKit.MakeText(row.background.transform, "Vrah", "", 26, TextAlignmentOptions.Right, right, new Vector2(-260f, 0f), new Vector2(200f, 38f));
+            row.killer.textWrappingMode = TextWrappingModes.NoWrap;
+            var iconObject = new GameObject("Ikona", typeof(RectTransform), typeof(RawImage));
+            iconObject.transform.SetParent(row.background.transform, false);
+            var iconRect = (RectTransform)iconObject.transform;
+            iconRect.anchorMin = iconRect.anchorMax = iconRect.pivot = right;
+            iconRect.sizeDelta = new Vector2(30f, 30f);
+            row.icon = iconObject.GetComponent<RawImage>();
+            row.icon.raycastTarget = false;
             row.background.gameObject.SetActive(false);
             feedRows[i] = row;
         }
@@ -144,7 +156,8 @@ public class MatchOverlayUI
             UpdateReplayPlates();
         else
             UpdatePlates(local, localTeam, playing);
-        UpdateFeed(localTeam, playing && !ReplayPlayer.Active);
+        // behem zaznamu (play of the game) se ukazuje kill feed ze zaznamu, barvy podle tymu hrace v zaznamu
+        UpdateFeed(ReplayPlayer.Active ? ReplayPlayer.PovTeam : localTeam, (playing && !ReplayPlayer.Active) || ReplayPlayer.Active);
         UpdateBoard(local, playing, match, alwaysShowBoard);
     }
 
@@ -166,7 +179,7 @@ public class MatchOverlayUI
         {
             foreach (var player in players)
             {
-                if (player == null || player == local || !player.IsSpawned || player.Hero == null || player.IsJoining) continue;
+                if (player == null || player == local || !player.IsSpawned || player.Hero == null || player.IsJoining || player.IsUntargetable) continue;
 
                 var health = player.GetComponent<Health>();
                 if (health == null || health.currentHealth.Value <= 0f) continue;
@@ -327,17 +340,49 @@ public class MatchOverlayUI
             var kill = kills[index];
             float alpha = Mathf.Clamp01(KillLifetime - (Time.unscaledTime - kill.time));
 
-            string victim = Colored(kill.victim, kill.victimTeam == localTeam);
-            row.text.text = string.IsNullOrEmpty(kill.killer)
-                ? $"{victim}  zemřel"
-                : $"{Colored(kill.killer, kill.killerTeam == localTeam)}  <color=#FFFFFF>»</color>  {victim}";
-            row.text.alpha = alpha;
+            // vrah  [ikona: cim]  obet  (bez vraha jen ikona a obet)
+            row.victim.text = Colored(kill.victim, kill.victimTeam == localTeam);
+            row.killer.text = string.IsNullOrEmpty(kill.killer) ? "" : Colored(kill.killer, kill.killerTeam == localTeam);
+            float victimWidth = Mathf.Min(200f, row.victim.GetPreferredValues(row.victim.text).x);
+            var iconRect = (RectTransform)row.icon.transform;
+            iconRect.anchoredPosition = new Vector2(-12f - victimWidth - 8f, 0f);
+            row.icon.texture = KillIcon(kill.icon);
+            ((RectTransform)row.killer.transform).anchoredPosition = new Vector2(-12f - victimWidth - 8f - 30f - 8f, 0f);
+            row.victim.alpha = alpha;
+            row.killer.alpha = alpha;
+            row.icon.color = new Color(1f, 1f, 1f, alpha);
 
             // Zabiti, ktera se tykaji me, jsou zvyraznena.
             var background = kill.local ? new Color(0.22f, 0.26f, 0.36f, 0.95f) : new Color(0.05f, 0.07f, 0.10f, 0.72f);
             background.a *= alpha;
             row.background.color = background;
         }
+    }
+
+    // Ikona zpusobu zabiti: schopnost (jeji ikona z HUD), zbran nebo prostredi (Resources/Icons/kill_*.png).
+    static readonly Dictionary<string, Texture> iconCache = new Dictionary<string, Texture>();
+
+    static Texture KillIcon(string key)
+    {
+        key = key ?? "";
+        if (iconCache.TryGetValue(key, out var cached)) return cached;
+        Texture texture = null;
+        if (key.StartsWith("ability:"))
+        {
+            string assetName = key.Substring(8);
+            foreach (var hero in HeroRegistry.All)
+                foreach (var ability in new[] { hero.ability, hero.secondaryAbility, hero.altAbility, hero.rmbAbility, hero.blockAbility })
+                    if (ability != null && ability.name == assetName && ability.icon != null)
+                        texture = ability.icon;
+        }
+        else if (key.StartsWith("weapon:") || key.StartsWith("env:"))
+        {
+            texture = Resources.Load<Texture2D>("Icons/kill_" + key.Substring(key.IndexOf(':') + 1));
+        }
+        if (texture == null)
+            texture = Resources.Load<Texture2D>("Icons/kill_skull");
+        iconCache[key] = texture;
+        return texture;
     }
 
     static string Colored(string name, bool ally)

@@ -113,6 +113,11 @@ public class WeaponShooting : NetworkBehaviour
         reloading = false;
     }
 
+    // Bot (BotBrain) misto mysi a klavesnice - jen na hostu.
+    public BotBrain Bot { get; set; }
+    bool FireHeld => Bot != null ? Bot.FireHeld : Mouse.current.leftButton.isPressed;
+    bool FirePressed => Bot != null ? Bot.FirePressedThisFrame : Mouse.current.leftButton.wasPressedThisFrame;
+
     void Update()
     {
         if (!IsOwner) return;
@@ -135,7 +140,7 @@ public class WeaponShooting : NetworkBehaviour
             return;
         }
 
-        if ((fpc != null && (fpc.InputBlocked || fpc.RushActive || fpc.BlockActive)) || !GameSettings.CursorLocked)
+        if ((fpc != null && (fpc.InputBlocked || fpc.RushActive || fpc.BlockActive)) || (Bot == null && !GameSettings.CursorLocked))
         {
             charging = false;
             return;
@@ -149,7 +154,7 @@ public class WeaponShooting : NetworkBehaviour
         }
 
         // u packy kotle je R "zatopit" (Boiler), ne nabijeni
-        if (Keyboard.current.rKey.wasPressedThisFrame && !Boiler.LocalCanUse)
+        if (Bot == null && Keyboard.current.rKey.wasPressedThisFrame && !Boiler.LocalCanUse)
         {
             Reload();
             return;
@@ -168,7 +173,7 @@ public class WeaponShooting : NetworkBehaviour
             scopedCharge = 0f;
         }
 
-        if (Mouse.current.leftButton.isPressed && Time.time >= nextFireTime)
+        if (FireHeld && Time.time >= nextFireTime)
             Fire();
     }
 
@@ -184,7 +189,7 @@ public class WeaponShooting : NetworkBehaviour
     {
         scopedCharge = Mathf.Clamp01(scopedCharge + Time.deltaTime / Mathf.Max(0.05f, weapon.scopedChargeTime));
 
-        if (!Mouse.current.leftButton.wasPressedThisFrame || Time.time < nextFireTime) return;
+        if (!FirePressed || Time.time < nextFireTime) return;
 
         int cost = Mathf.Max(1, weapon.scopedAmmoCost);
         if (weapon.HasAmmo && currentAmmo < cost)
@@ -270,7 +275,7 @@ public class WeaponShooting : NetworkBehaviour
         if (rapid == null)
             rapid = GetComponent<RapidFireAbility>();
 
-        bool down = Mouse.current.leftButton.isPressed;
+        bool down = FireHeld;
 
         // Rychlopalba: sipy leti hned plnou rychlosti, jeden za druhym.
         if (rapid != null && rapid.enabled && rapid.IsActive)
@@ -369,10 +374,74 @@ public class WeaponShooting : NetworkBehaviour
         }
     }
 
-    // Uder: sweep koulí před hráčem, zasáhne nejbližší cíl v dosahu.
+    // Uder: siroky oblouk pred hracem (~110 st.) a k tomu 0,5 m tolerance do stran - zasahne vsechny nepratele
+    // v dosahu, na ktere je volny vyhled (ne pres zed). Kdyz nikoho, zasah do zdi pred hracem (jiskry).
+    const float MeleeSlack = 0.5f;
+    const float ComboWindow = 1f;
+    int comboStep;
+    float lastSwing = -10f;
+
     void SwingMelee()
     {
         Vector3 origin = playerCamera.transform.position;
+        Vector3 forward = playerCamera.transform.forward;
+
+        // kombo (Max): treti uder po sobe je silnejsi, sirsi a odhodi
+        bool finisher = false;
+        if (weapon.comboFinisherDamage > 0f)
+        {
+            comboStep = Time.time - lastSwing <= ComboWindow ? comboStep + 1 : 0;
+            finisher = comboStep >= 2;
+            if (finisher)
+            {
+                comboStep = -1;
+                nextFireTime = Mathf.Max(nextFireTime, Time.time + 0.35f);   // po finisheru kratka pauza
+            }
+        }
+        lastSwing = Time.time;
+        float arc = finisher ? weapon.comboFinisherArc : weapon.meleeArc;
+        var struck = new System.Collections.Generic.HashSet<Object>();
+        bool any = false;
+        foreach (var col in Physics.OverlapSphere(origin, weapon.range + MeleeSlack, ~0, QueryTriggerInteraction.Ignore))
+        {
+            var owner = col.GetComponentInParent<NetworkObject>();
+            if (owner != null && owner == NetworkObject) continue;
+            Object victim = col.GetComponentInParent<Health>();
+            if (victim == null) victim = col.GetComponentInParent<Target>();
+            if (victim == null) victim = col.GetComponentInParent<BoulderHitbox>();
+            if (victim == null) victim = col.GetComponentInParent<TrapHitbox>();
+            if (victim == null || struck.Contains(victim)) continue;
+            if (victim is Health h && Combat.SameTeam(gameObject, h.gameObject)) continue;
+
+            Vector3 point = col.ClosestPoint(origin);
+            Vector3 to = point - origin;
+            float along = Vector3.Dot(to, forward);
+            if (along < -0.2f || to.magnitude > weapon.range + MeleeSlack) continue;
+            float lateral = (to - forward * along).magnitude;
+            if (Vector3.Angle(forward, to) > arc && lateral > MeleeSlack) continue;
+
+            // ne pres zed
+            if (Physics.Linecast(origin, point, out RaycastHit block, ~0, QueryTriggerInteraction.Ignore)
+                && block.collider != col && block.collider.GetComponentInParent<NetworkObject>() != NetworkObject
+                && block.collider.GetComponentInParent<NetworkObject>() != owner)
+                continue;
+
+            struck.Add(victim);
+            if (finisher)
+            {
+                ApplyHit(col, point, 2f, weapon.comboFinisherDamage);
+                if (weapon.comboFinisherKnockback > 0f && victim is Health pushed && pushed.TryGetComponent<NetworkObject>(out var pushedObject))
+                {
+                    Vector3 away = new Vector3(to.x, 0f, to.z).normalized;
+                    KnockbackServerRpc(pushedObject, away * weapon.comboFinisherKnockback + Vector3.up * 3f);
+                }
+            }
+            else
+                ApplyHit(col, point, 1.4f);
+            any = true;
+        }
+        if (any) return;
+
         var hits = Physics.SphereCastAll(origin, weapon.meleeRadius, playerCamera.transform.forward, weapon.range, ~0, QueryTriggerInteraction.Ignore);
         System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
 
@@ -412,7 +481,7 @@ public class WeaponShooting : NetworkBehaviour
         if (target != null)
         {
             target.TakeDamage(damage);
-            HudUI.NotifyHit(false);
+            if (Bot == null) HudUI.NotifyHit(false);
         }
 
         // Balvan (Honzova ulti) jde rozstrilet.
@@ -429,7 +498,7 @@ public class WeaponShooting : NetworkBehaviour
         {
             RequestTrapDamageServerRpc(trap.Owner.NetworkObject, damage);
             ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.8f);
-            HudUI.NotifyHit(false);
+            if (Bot == null) HudUI.NotifyHit(false);
         }
 
         NetworkObject hitNetworkObject = collider.GetComponentInParent<NetworkObject>();
@@ -474,6 +543,7 @@ public class WeaponShooting : NetworkBehaviour
     [ServerRpc]
     void ShotFxServerRpc(bool melee, bool scoped)
     {
+        if (!melee) BotBrain.HearShot(transform.position, gameObject);   // boti v okoli strelbu slysi
         ShotFxClientRpc(melee, scoped);
     }
 
@@ -487,6 +557,15 @@ public class WeaponShooting : NetworkBehaviour
     }
 
     [ServerRpc]
+    void KnockbackServerRpc(NetworkObjectReference targetRef, Vector3 impulse)
+    {
+        if (!targetRef.TryGet(out NetworkObject targetObject) || Combat.SameTeam(gameObject, targetObject.gameObject)) return;
+        if ((targetObject.transform.position - transform.position).sqrMagnitude > 49f) return;
+        var movement = targetObject.GetComponent<FirstPersonController>();
+        if (movement != null) movement.ServerKnockback(Vector3.ClampMagnitude(impulse, 12f));
+    }
+
+    [ServerRpc]
     void RequestDamageServerRpc(NetworkObjectReference targetRef, float amount)
     {
         if (MatchManager.Instance != null && MatchManager.Instance.IsOver) return;
@@ -495,7 +574,7 @@ public class WeaponShooting : NetworkBehaviour
         Health targetHealth = targetObject.GetComponent<Health>();
         if (targetHealth == null) return;
 
-        Combat.DamagePlayer(gameObject, targetHealth, amount);
+        Combat.DamagePlayer(gameObject, targetHealth, amount, weapon != null && weapon.IsMelee ? "weapon:melee" : "weapon:gun");
     }
 
     [ServerRpc]
@@ -561,7 +640,7 @@ public class WeaponShooting : NetworkBehaviour
 
         // Strelec vidi svuj sip vyletet od luku (vpravo dole), ne primo ze stredu obrazovky.
         Vector3 offset = Vector3.zero;
-        if (IsOwner && projectileWeapon.IsCharged && playerCamera != null && (fpc == null || !fpc.ThirdPerson))
+        if (IsOwner && Bot == null && projectileWeapon.IsCharged && playerCamera != null && (fpc == null || !fpc.ThirdPerson))
             offset = playerCamera.transform.right * 0.28f - playerCamera.transform.up * 0.22f;
 
         ProjectileVisual.Spawn(id, origin, velocity, projectileWeapon, offset);

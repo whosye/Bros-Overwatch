@@ -28,7 +28,7 @@ public static class CharacterSetup
         new Look { hero = "Mirek", lightSkin = true, hair = new[] { "Hair_Long", "Hair_Beard" } },
         new Look { hero = "Anna", lightSkin = true, hair = new[] { "Hair_Buns" } },
         new Look { hero = "Sniper", lightSkin = true, hair = new[] { "Hair_Buzzed" } },
-        new Look { hero = "Flanker", lightSkin = true, hair = new[] { "Hair_BuzzedFemale" } },
+        new Look { hero = "Max", lightSkin = true, hair = new[] { "Hair_Buzzed", "Hair_Beard" } },
         new Look { hero = "Bard", lightSkin = false, hair = new[] { "Hair_SimpleParted", "Hair_Beard" } },
     };
 

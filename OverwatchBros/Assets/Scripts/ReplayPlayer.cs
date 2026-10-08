@@ -13,6 +13,8 @@ public class ReplayPlayer : MonoBehaviour
     static ReplayPlayer instance;
 
     public static bool Active => instance != null && instance.clip != null;
+    // Killcam: prehrava se z pohledu vraha (clip.povId) ze zaznamu obeti - kamera z jeho polohy smerem k obeti.
+    public static bool IsKillcam => Active && instance.killcamVictim >= 0;
     public static bool Finished => instance == null || instance.clip == null || instance.time >= instance.clip.duration;
     public static ReplayFrame Frame => instance != null ? instance.current : null;
     public static Camera Camera => instance != null ? instance.view : null;
@@ -28,7 +30,18 @@ public class ReplayPlayer : MonoBehaviour
     }
 
     // Jmenovky ostatnich hracu (ne toho, z jehoz pohledu se prehrava) v aktualnim okamziku; tym = jeho tym.
-    public static int PovTeam => instance != null && instance.current != null ? instance.current.hudTeam : -1;
+    public static int PovTeam => instance != null && instance.current != null
+        ? (instance.killcamVictim >= 0 ? instance.TeamOf(instance.clip.povId) : instance.current.hudTeam) : -1;
+
+    int TeamOf(int id)
+    {
+        if (current != null)
+            foreach (var p in current.players)
+                if (p.id == id) return p.team;
+        return -1;
+    }
+
+    int killcamVictim = -1;
 
     public static void GetPlates(List<Plate> plates)
     {
@@ -60,7 +73,7 @@ public class ReplayPlayer : MonoBehaviour
 
         name = $"Hráč {id}";
         foreach (var hero in FindObjectsByType<PlayerHero>())
-            if (hero.IsSpawned && (int)hero.OwnerClientId == id)
+            if (hero.IsSpawned && (int)hero.NetworkObjectId == id)
             {
                 name = hero.DisplayName;
                 break;
@@ -96,12 +109,13 @@ public class ReplayPlayer : MonoBehaviour
 
     const int ProjectileIdOffset = 1000000;
 
-    public static void Play(ReplayClip replay)
+    // killcamVictim >= 0: killcam (pohled vraha = clip.povId, kamera miri na tuto obet)
+    public static void Play(ReplayClip replay, int killcamVictim = -1)
     {
         if (replay == null || replay.frames.Count < 2) return;
         if (instance == null)
             instance = new GameObject("ReplayPlayer").AddComponent<ReplayPlayer>();
-        instance.Begin(replay);
+        instance.Begin(replay, killcamVictim);
     }
 
     public static void Stop()
@@ -112,9 +126,11 @@ public class ReplayPlayer : MonoBehaviour
 
     // ---------------- zacatek a konec ----------------
 
-    void Begin(ReplayClip replay)
+    void Begin(ReplayClip replay, int killcam = -1)
     {
+        MatchOverlayUI.ClearKills();
         End();
+        killcamVictim = killcam;
         clip = replay;
         time = 0f;
         nextEvent = 0;
@@ -189,6 +205,7 @@ public class ReplayPlayer : MonoBehaviour
 
         clip = null;
         current = null;
+        killcamVictim = -1;
         names.Clear();
     }
 
@@ -254,15 +271,17 @@ public class ReplayPlayer : MonoBehaviour
 
             bool pov = p.id == clip.povId;
             bool alive = (p.flags & ReplayPlayerSnap.Alive) != 0;
+            // (killcam: vrah vzdy z prvni osoby; HUD a stav schopnosti v zaznamu patri obeti)
+            bool povThird = killcamVictim < 0 && a.thirdPerson;
             g.visual.GhostDead = !alive;
-            g.visual.GhostHidden = pov && !a.thirdPerson;
+            g.visual.GhostHidden = pov && !povThird;
             g.visual.GhostFrenzy = (p.flags & ReplayPlayerSnap.Rushing) != 0;
             g.visual.GhostBlocking = (p.flags & ReplayPlayerSnap.Blocking) != 0;
 
             g.held.GhostDead = !alive;
-            g.held.GhostThirdPerson = pov && a.thirdPerson;
+            g.held.GhostThirdPerson = pov && povThird;
             g.held.GhostBlocking = g.visual.GhostBlocking;
-            if (pov)
+            if (pov && killcamVictim < 0)
             {
                 g.held.GhostUltCasting = a.ultCasting;
                 g.held.GhostUltWindup = a.ultWindup;
@@ -314,10 +333,53 @@ public class ReplayPlayer : MonoBehaviour
     void ApplyView(ReplayFrame a, ReplayFrame b, float k)
     {
         if (view == null) return;
+        if (killcamVictim >= 0)
+        {
+            KillcamView(a, b, k);
+            return;
+        }
         view.transform.SetPositionAndRotation(
             (a.cameraPosition - b.cameraPosition).sqrMagnitude < 9f ? Vector3.Lerp(a.cameraPosition, b.cameraPosition, k) : a.cameraPosition,
             Quaternion.Slerp(a.cameraRotation, b.cameraRotation, k));
         view.fieldOfView = Mathf.Lerp(a.fov, b.fov, k) > 1f ? Mathf.Lerp(a.fov, b.fov, k) : 60f;
+    }
+
+    // Killcam: oci vraha (poloha a natoceni ze snimku), pohled nahoru/dolu smerem k obeti.
+    const float EyeHeight = 1.62f;
+    float killcamPitch;
+
+    void KillcamView(ReplayFrame a, ReplayFrame b, float k)
+    {
+        if (!Snap(a, b, k, clip.povId, out Vector3 killer, out float yaw)) return;
+        Vector3 eye = killer + Vector3.up * EyeHeight;
+        float pitch = 0f;
+        if (Snap(a, b, k, killcamVictim, out Vector3 victim, out _))
+        {
+            Vector3 to = victim + Vector3.up * 1.2f - eye;
+            float flat = new Vector2(to.x, to.z).magnitude;
+            pitch = Mathf.Clamp(-Mathf.Atan2(to.y, Mathf.Max(0.01f, flat)) * Mathf.Rad2Deg, -70f, 70f);
+        }
+        killcamPitch = Mathf.LerpAngle(killcamPitch, pitch, Mathf.Clamp01(Time.unscaledDeltaTime * 8f));
+        view.transform.SetPositionAndRotation(eye, Quaternion.Euler(killcamPitch, yaw, 0f));
+        view.fieldOfView = 75f;
+    }
+
+    static bool Snap(ReplayFrame a, ReplayFrame b, float k, int id, out Vector3 position, out float yaw)
+    {
+        position = Vector3.zero;
+        yaw = 0f;
+        bool found = false;
+        foreach (var p in a.players)
+            if (p.id == id) { position = p.position; yaw = p.yaw; found = true; break; }
+        if (!found) return false;
+        foreach (var q in b.players)
+            if (q.id == id && (q.position - position).sqrMagnitude < 9f)
+            {
+                position = Vector3.Lerp(position, q.position, k);
+                yaw = Mathf.LerpAngle(yaw, q.yaw, k);
+                break;
+            }
+        return true;
     }
 
     // ---------------- zachycene efekty ----------------
@@ -488,6 +550,10 @@ public class ReplayPlayer : MonoBehaviour
             case ReplayEventType.HudSleep: HudUI.NotifySleep(e.f0); break;
             case ReplayEventType.HudTint: HudUI.NotifyTint(e.color, e.f0); break;
             case ReplayEventType.HudEnd: HudUI.EndOverlay(); break;
+            case ReplayEventType.KillFeed:
+                var names = (e.name ?? "").Split('\n');
+                MatchOverlayUI.AddKill(names[0], e.a, names.Length > 1 ? names[1] : "", e.b, e.flag, names.Length > 2 ? names[2] : "");
+                break;
             case ReplayEventType.NanoAura: if (g != null) NanoAura.Set(g.go.transform, e.flag); break;
             case ReplayEventType.SleepShow: if (g != null) SleepMarker.Show(g.go.transform, e.f0); break;
             case ReplayEventType.SleepHide: if (g != null) SleepMarker.Hide(g.go.transform); break;

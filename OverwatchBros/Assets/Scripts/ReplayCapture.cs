@@ -81,7 +81,7 @@ public class ReplayCapture : MonoBehaviour
     bool ShouldRecord()
     {
         var match = MatchManager.Instance;
-        return match != null && !match.IsLobby && !match.IsOver && hero != null && hero.IsSpawned && hero.IsOwner
+        return match != null && !match.IsLobby && !match.IsOver && hero != null && hero.IsSpawned && BotBrain.IsLocalHuman(hero)
             && !hero.IsJoining && hero.Hero != null && !ReplayPlayer.Active;
     }
 
@@ -153,7 +153,7 @@ public class ReplayCapture : MonoBehaviour
 
             list.Add(new ReplayPlayerSnap
             {
-                id = (int)p.OwnerClientId,
+                id = (int)p.NetworkObjectId,
                 hero = (short)p.heroId.Value,
                 team = (byte)(team != null ? team.teamId.Value : 0),
                 position = p.transform.position,
@@ -407,7 +407,7 @@ public class ReplayCapture : MonoBehaviour
         float end = frames[frames.Count - 1].time;
         float start = Mathf.Max(frames[0].time, end - seconds);
 
-        var clip = new ReplayClip { povId = (int)hero.OwnerClientId, duration = end - start };
+        var clip = new ReplayClip { povId = (int)hero.NetworkObjectId, duration = end - start };
         var used = new HashSet<int>();
         foreach (var f in frames)
         {
@@ -470,11 +470,11 @@ public static class ReplayLog
             ReplayCapture.Local.AddEvent(e);
     }
 
-    // Hrac, ke kteremu komponenta patri (OwnerClientId), nebo -1.
+    // Hrac, ke kteremu komponenta patri (NetworkObjectId jeho postavy), nebo -1.
     public static int PlayerOf(Component c)
     {
         var hero = c != null ? c.GetComponentInParent<PlayerHero>() : null;
-        return hero != null && hero.IsSpawned ? (int)hero.OwnerClientId : -1;
+        return hero != null && hero.IsSpawned ? (int)hero.NetworkObjectId : -1;
     }
 
     public static void Explosion(Vector3 p, float radius) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Explosion, p0 = p, f0 = radius }); }
@@ -529,6 +529,10 @@ public static class ReplayLog
     public static void HudSleep(float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudSleep, f0 = seconds }); }
     public static void HudTint(Color c, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudTint, color = c, f0 = seconds }); }
     public static void HudEnd() { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudEnd }); }
+    public static void KillFeed(string killer, int killerTeam, string victim, int victimTeam, bool local, string icon)
+    {
+        if (Recording) Add(new ReplayEvent { type = ReplayEventType.KillFeed, name = killer + "\n" + victim + "\n" + icon, a = killerTeam, b = victimTeam, flag = local });
+    }
 
     public static void NanoAura(Transform player, bool on) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.NanoAura, player = PlayerOf(player), flag = on }); }
     public static void SleepShow(Transform player, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.SleepShow, player = PlayerOf(player), f0 = seconds }); }

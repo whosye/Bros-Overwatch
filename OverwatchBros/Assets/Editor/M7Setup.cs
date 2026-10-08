@@ -42,13 +42,15 @@ public static class M7Setup
             && prefab.GetComponent<BlinkAbility>() != null && prefab.GetComponent<RecallAbility>() != null && prefab.GetComponent<PulseBombAbility>() != null
             && prefab.GetComponent<BardAbility>() != null
             && prefab.GetComponent<SindelAbility>() != null && prefab.GetComponent<EzekielAbility>() != null
+            && prefab.GetComponent<MaxAbility>() != null && prefab.GetComponent<TrespassAbility>() != null
             && prefab.GetComponent<FirstPersonController>() != null && prefab.GetComponent<FirstPersonController>().walkSpeed >= WalkSpeed;
         bool heroesReady = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset") != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Honza.asset") != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Mirek.asset") != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Anna.asset") != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Sniper.asset") != null
-            && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Flanker.asset") != null
+            && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Max.asset") != null
+
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Bard.asset") != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Bard.asset").rmbAbility != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Sindel.asset") != null
@@ -67,7 +69,7 @@ public static class M7Setup
         if (flankerPistols != null && !flankerPistols.dualWield) return false;
         bool viktorReady = viktorHero == null || (viktorHero.abilityKind == AbilityKind.Visor && viktorHero.secondaryAbility != null
             && viktorHero.altAbility != null && viktorHero.rmbAbility != null);
-        return prefabReady && heroesReady && weaponsReady && honzaReady && viktorReady && ultsReady && IconsReady() && AssetDatabase.LoadAssetAtPath<Material>(LitMaterialPath) != null && HeldAxeSetup.IsReady() && WeaponModelSetup.IsReady() && WeaponSoundSetup.IsReady() && CharacterSetup.IsReady() && AyranAvatarSetup.IsReady() && AyranSoundSetup.IsReady();
+        return prefabReady && heroesReady && weaponsReady && honzaReady && viktorReady && ultsReady && IconsReady() && AssetDatabase.LoadAssetAtPath<Material>(LitMaterialPath) != null && HeldAxeSetup.IsReady() && MaxSetup.IsReady() && WeaponModelSetup.IsReady() && WeaponSoundSetup.IsReady() && CharacterSetup.IsReady() && AyranAvatarSetup.IsReady() && AyranSoundSetup.IsReady();
     }
 
     public static void RunIfNeeded()
@@ -109,6 +111,7 @@ public static class M7Setup
         AyranSoundSetup.Setup();
         SetupPlayerPrefab();
         HeldAxeSetup.Setup();
+        MaxSetup.Setup();
         WeaponModelSetup.Setup();
         WeaponSoundSetup.Setup();
         CharacterSetup.Setup();
@@ -221,6 +224,10 @@ public static class M7Setup
         { "Assets/Data/RighteousLeap_Data.asset", "Assets/Resources/Icons/sindel_leap.png" },
         { "Assets/Data/HolyGrenade_Data.asset", "Assets/Resources/Icons/sindel_grenade.png" },
         { "Assets/Data/Ezekiel_Data.asset", "Assets/Resources/Icons/sindel_ezekiel.png" },
+        { "Assets/Data/MaxReap_Data.asset", "Assets/Resources/Icons/max_reap.png" },
+        { "Assets/Data/ShadowStep_Data.asset", "Assets/Resources/Icons/max_step.png" },
+        { "Assets/Data/MaxSlash_Data.asset", "Assets/Resources/Icons/max_slash.png" },
+        { "Assets/Data/Trespass_Data.asset", "Assets/Resources/Icons/max_trespass.png" },
     };
 
     static bool IconsReady()
@@ -481,7 +488,7 @@ public static class M7Setup
         CreateMirek();
         CreateAnna();
         CreateSniper();
-        CreateFlanker();
+        CreateMax();   // (misto Flankera, ktery byl smazan)
         CreateBard();
         CreateSindel();
 
@@ -742,74 +749,77 @@ public static class M7Setup
         });
     }
 
-    // Flanker (inspirace: Tracer): rychla, krehka (75 HP). Dve pistole (rychla palba, kratky dosah), Shift = premisteni
-    // (3 nabiti), E = navrat v case (poloha i zdravi pred 3 s), Q = lepiva pulzni bomba.
-    static void CreateFlanker()
+    // Max (inspirace: Kayn): melee zabijak s kosou (150 HP, rychlejsi). LMB kombo kosou (3. uder silnejsi a odhodi),
+    // Shift = vypad s otockou, E = stinova forma (skrz zdi), PTM = dlouhy rez se zpomalenim, Q = vpad do nepritele. Lifesteal 15 %.
+    static void CreateMax()
     {
-        var pistols = LoadOrCreate<WeaponDefinition>("Assets/Data/FlankerPistols_Data.asset", w =>
+        var scythe = LoadOrCreate<WeaponDefinition>("Assets/Data/Scythe_Data.asset", w =>
         {
-            w.weaponName = "Dvojité pistole";
-            w.fireMode = FireMode.Hitscan;
-            w.heldModel = HeldModel.Gun;
-            w.damage = 6f;
-            w.fireRate = 18f;
-            w.maxAmmo = 36;
-            w.reloadTime = 1.2f;
-            w.range = 60f;
-            w.falloffStart = 10f;
-            w.falloffEnd = 22f;
-            w.falloffMin = 0.3f;
-            w.maxDamageRange = 35f;
-            w.projectileColor = new Color(0.4f, 0.75f, 1f, 1f);
+            w.weaponName = "Kosa";
+            w.fireMode = FireMode.Melee;
+            w.heldModel = HeldModel.Scythe;
+            w.damage = 30f;
+            w.fireRate = 2.5f;
+            w.maxAmmo = 0;
+            w.range = 3.6f;
+            w.meleeRadius = 0.7f;
+            w.meleeArc = 40f;
+            w.comboFinisherDamage = 50f;
+            w.comboFinisherArc = 60f;
+            w.comboFinisherKnockback = 6f;
+            w.projectileColor = new Color(0.55f, 0.18f, 0.85f, 1f);
         });
 
-        var blink = LoadOrCreate<AbilityDefinition>("Assets/Data/Blink_Data.asset", a =>
+        var reap = LoadOrCreate<AbilityDefinition>("Assets/Data/MaxReap_Data.asset", a =>
         {
-            a.abilityName = "Přemístění";
-            a.cooldown = 3f;     // obnoveni jednoho nabiti
-            a.charges = 3;
-            a.power = 7f;        // delka premisteni v metrech
+            a.abilityName = "Rozpolcení";
+            a.cooldown = 6f;
+            a.power = 40f;       // poskozeni otocky
+            a.range = 6f;        // delka vypadu
+            a.radius = 3f;
         });
-
-        var recall = LoadOrCreate<AbilityDefinition>("Assets/Data/Recall_Data.asset", a =>
+        var step = LoadOrCreate<AbilityDefinition>("Assets/Data/ShadowStep_Data.asset", a =>
         {
-            a.abilityName = "Návrat v čase";
-            a.cooldown = 12f;
-            a.duration = 3f;     // o kolik sekund zpet
+            a.abilityName = "Stínová forma";
+            a.cooldown = 9f;
+            a.duration = 3f;     // jak dlouho muze byt ve stinu (skrz zdi)
         });
-
-        var bomb = LoadOrCreate<AbilityDefinition>("Assets/Data/PulseBomb_Data.asset", a =>
+        var slash = LoadOrCreate<AbilityDefinition>("Assets/Data/MaxSlash_Data.asset", a =>
         {
-            a.abilityName = "Pulzní bomba";
+            a.abilityName = "Dlouhý řez";
+            a.cooldown = 7f;
+            a.power = 50f;
+            a.range = 10f;       // nejdelsi dosah vlny (pri plnem nabiti; nejkratsi 4 m)
+            a.duration = 0.4f;   // napraah
+        });
+        var trespass = LoadOrCreate<AbilityDefinition>("Assets/Data/Trespass_Data.asset", a =>
+        {
+            a.abilityName = "Vpád do stínu";
             a.cooldown = 30f;
             a.ultCost = 350f;
-            a.power = 150f;      // poskozeni ve stredu vybuchu
-            a.radius = 3f;
-            a.duration = 1.5f;   // odpocet po prilepeni
-            a.speed = 20f;       // rychlost hodu
+            a.power = 60f;       // + 25 % max. zdravi obeti
+            a.range = 10f;
+            a.duration = 2f;
         });
 
-        LoadOrCreate<HeroDefinition>("Assets/Resources/Heroes/Flanker.asset", h =>
+        LoadOrCreate<HeroDefinition>("Assets/Resources/Heroes/Max.asset", h =>
         {
-            h.heroName = "Flanker";
-            h.color = new Color(0.95f, 0.6f, 0.2f);
-            h.maxHealth = 75f;
-            h.weapon = pistols;
-            h.abilityKind = AbilityKind.PulseBomb;
-            h.ability = bomb;
-            h.secondaryAbilityKind = AbilityKind.Blink;
-            h.secondaryAbility = blink;
-            h.altAbilityKind = AbilityKind.Recall;
-            h.altAbility = recall;
-            h.sleeveColor = new Color(0.55f, 0.32f, 0.12f);
+            h.heroName = "Max";
+            h.color = new Color(0.55f, 0.25f, 0.85f);
+            h.maxHealth = 150f;
+            h.weapon = scythe;
+            h.abilityKind = AbilityKind.Trespass;
+            h.ability = trespass;
+            h.secondaryAbilityKind = AbilityKind.MaxReap;
+            h.secondaryAbility = reap;
+            h.altAbilityKind = AbilityKind.ShadowStep;
+            h.altAbility = step;
+            h.rmbAbilityKind = AbilityKind.MaxSlash;
+            h.rmbAbility = slash;
+            h.moveSpeed = 1.2f;
+            h.lifesteal = 0.15f;
+            h.sleeveColor = new Color(0.16f, 0.1f, 0.22f);
         });
-
-        // Dve pistole (doplneno pozdeji).
-        if (!pistols.dualWield)
-        {
-            pistols.dualWield = true;
-            EditorUtility.SetDirty(pistols);
-        }
     }
 
     // Bard (inspirace: Lucio): podpurce s aurou. Shift prepina leceni / zrychleni spoluhracu v okoli, E auru na chvili
@@ -1028,6 +1038,8 @@ public static class M7Setup
             AddIfMissing<BardAbility>(contents);
             AddIfMissing<SindelAbility>(contents);
             AddIfMissing<EzekielAbility>(contents);
+            AddIfMissing<MaxAbility>(contents);
+            AddIfMissing<TrespassAbility>(contents);
             AddIfMissing<HeroVoice>(contents);
 
             // Rychlejsi pohyb (puvodne chuze 5, sprint 8 m/s).
