@@ -9,12 +9,35 @@ public sealed class YarisTraffic : MonoBehaviour
 {
     public Transform route;
     [Min(0.1f)] public float speed = 18f;
+    [Tooltip("Seconds spent waiting at the start of the route before each lap.")]
     [Min(0f)] public float pauseSeconds = 25f;
     [Min(0f)] public float hornLeadSeconds = 2f;
     public AudioSource horn;
+    public AudioClip impactSound;
+    [Range(0f, 1f)] public float impactVolume = 0.7f;
     public Transform boundaryFrame;
     public Vector2 boundaryMin, boundaryMax;
     public float modelYawOffset;
+
+    [Header("Bouncy Yaris")]
+    public bool bounceEnabled = true;
+    [Min(1f)] public float bounceBpm = 128f;
+    [Tooltip("How much of the car's height is compressed on each beat.")]
+    [Range(0f, 0.6f)] public float squashAmount = 0.3f;
+    [Tooltip("Small upward stretch between compressions.")]
+    [Range(0f, 0.3f)] public float stretchAmount = 0.08f;
+
+    [Header("Car radio")]
+    public AudioClip radioMusic;
+    [Range(0f, 1f)] public float radioVolume = 0.4f;
+    [Min(1f)] public float radioRange = 40f;
+    [Min(0f)] public float radioFullVolumeDistance = 12f;
+    [SerializeField, HideInInspector] int radioRangeVersion;
+    [Range(200f, 22000f)] public float radioCutoff = 1100f;
+    AudioSource radioSource;
+    AudioLowPassFilter radioFilter;
+
+    Transform bouncePivot;
 
     Rigidbody body;
     BoxCollider carCollider;
@@ -42,7 +65,116 @@ public sealed class YarisTraffic : MonoBehaviour
         body.useGravity = false;
         body.interpolation = RigidbodyInterpolation.Interpolate;
         body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        EnsureBouncePivot();
+        EnsureRadio();
         RebuildRoute();
+    }
+
+    void EnsureRadio()
+    {
+        if (radioSource != null && radioFilter != null) return;
+        // Reuse the child after a script reload during Play mode; Awake need not run again.
+        var radio = transform.Find("CarRadio");
+        if (radio == null)
+        {
+            radio = new GameObject("CarRadio").transform;
+            radio.SetParent(transform, false);
+            radio.localPosition = GetComponent<BoxCollider>().center;
+        }
+        // A separate source keeps the muffling off the horn and impact sound.
+        radioSource = radio.GetComponent<AudioSource>();
+        if (radioSource == null) radioSource = radio.gameObject.AddComponent<AudioSource>();
+        radioSource.playOnAwake = false;
+        radioSource.loop = true;
+        radioSource.spatialBlend = 1f;
+        radioSource.rolloffMode = AudioRolloffMode.Linear;
+        radioSource.minDistance = 1f;
+        radioSource.dopplerLevel = 0f;
+        radioSource.priority = 180;
+        radioFilter = radio.GetComponent<AudioLowPassFilter>();
+        if (radioFilter == null) radioFilter = radio.gameObject.AddComponent<AudioLowPassFilter>();
+        radioFilter.lowpassResonanceQ = 1f;
+    }
+
+    void LateUpdate()
+    {
+        UpdateRadio();
+        EnsureBouncePivot();
+        if (bouncePivot == null) return;
+        if (!bounceEnabled)
+        {
+            ResetBounce();
+            return;
+        }
+
+        // Shared time keeps the dance in phase on host and clients, even for late joiners.
+        var network = NetworkManager.Singleton;
+        double time = network != null && network.IsListening ? network.ServerTime.Time : Time.timeAsDouble;
+        double beats = time * Mathf.Max(1f, bounceBpm) / 60.0;
+        float beat = (float)(beats % 1.0);
+        float wave = Mathf.Cos(beat * Mathf.PI * 2f);
+        float compression = Mathf.Max(0f, wave);
+        float rebound = Mathf.Max(0f, -wave);
+        float height = 1f - Mathf.Clamp(squashAmount, 0f, 0.6f) * compression * compression
+            + Mathf.Clamp(stretchAmount, 0f, 0.3f) * rebound * rebound;
+        // Wider when compressed, narrower on rebound, preserving the model's approximate volume.
+        float width = 1f / Mathf.Sqrt(height);
+        bouncePivot.localScale = new Vector3(width, height, width);
+    }
+
+    void EnsureBouncePivot()
+    {
+        if (bouncePivot != null) return;
+        bouncePivot = transform.Find("_YarisSquish");
+        if (bouncePivot != null) return;
+        var model = transform.Find("Model");
+        if (model == null) return;
+
+        // The imported model is rotated 270 degrees around X. Scale an upright parent instead,
+        // so vertical compression is always in the car's Y axis, with its bottom anchored.
+        var collider = GetComponent<BoxCollider>();
+        bouncePivot = new GameObject("_YarisSquish").transform;
+        bouncePivot.SetParent(transform, false);
+        bouncePivot.localPosition = collider.center - Vector3.up * collider.size.y * 0.5f;
+        model.SetParent(bouncePivot, true);
+    }
+
+    void ResetBounce()
+    {
+        if (bouncePivot != null) bouncePivot.localScale = Vector3.one;
+    }
+
+    void UpdateRadio()
+    {
+        UpgradeRadioRange();
+        EnsureRadio();
+        radioSource.volume = Mathf.Clamp01(radioVolume);
+        radioSource.maxDistance = Mathf.Max(1.01f, radioRange);
+        radioSource.minDistance = Mathf.Clamp(radioFullVolumeDistance, 0f, radioSource.maxDistance - 0.01f);
+        radioFilter.cutoffFrequency = Mathf.Clamp(radioCutoff, 200f, 22000f);
+        if (radioSource.clip != radioMusic)
+        {
+            radioSource.Stop();
+            radioSource.clip = radioMusic;
+        }
+        if (radioMusic != null && !radioSource.isPlaying)
+            radioSource.Play();
+    }
+
+    // Migrate values already serialized in an open scene; changing a C# default alone cannot do that.
+    public bool UpgradeRadioRange()
+    {
+        if (radioRangeVersion >= 1) return false;
+        if (Mathf.Approximately(radioRange, 14f) || Mathf.Approximately(radioRange, 28f))
+            radioRange = 40f;
+        radioRangeVersion = 1;
+        return true;
+    }
+
+    void OnDisable()
+    {
+        ResetBounce();
+        if (radioSource != null) radioSource.Stop();
     }
 
     public void RebuildRoute()
@@ -147,7 +279,14 @@ public sealed class YarisTraffic : MonoBehaviour
             if (hero != null && hero.IsJoining) continue;
             if (hero != null) hero.ServerDeathCause = "env:car";
             health.Kill();
+            if (health.currentHealth.Value <= 0f)
+                health.ServerPlayCarImpact();
         }
+    }
+
+    public void PlayImpact(Vector3 position, bool localVictim)
+    {
+        ProceduralSfx.Play(impactSound, position, impactVolume, 30f, spatial: !localVictim);
     }
 
     void OnDrawGizmosSelected()

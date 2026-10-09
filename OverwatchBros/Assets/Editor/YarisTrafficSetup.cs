@@ -18,7 +18,8 @@ public static class YarisTrafficSetup
         EditorSceneManager.sceneOpened += (scene, mode) => EditorApplication.delayCall += Run;
         EditorApplication.playModeStateChanged += state =>
         {
-            if (state == PlayModeStateChange.EnteredEditMode) EditorApplication.delayCall += Run;
+            if (state == PlayModeStateChange.EnteredEditMode || state == PlayModeStateChange.EnteredPlayMode)
+                EditorApplication.delayCall += Run;
         };
     }
 
@@ -40,16 +41,41 @@ public static class YarisTrafficSetup
 
     static void Run()
     {
-        if (EditorApplication.isPlayingOrWillChangePlaymode) return;
         var map = GameObject.Find("Map-Domasov");
         if (map == null) return;
         var car = map.transform.Find("Props/ToyotaYaris");
         var traffic = car != null ? car.GetComponent<YarisTraffic>() : null;
+        // Existing routes used to skip Configure, leaving new audio fields empty in an open scene.
+        // Bind missing clips independently of rebuilding the route, including after a Play-mode reload.
+        if (traffic != null) BindMissingAudio(traffic);
+        if (EditorApplication.isPlayingOrWillChangePlaymode) return;
         if (map.transform.Find(RootName + "/_v4") != null && traffic != null)
         {
             if (map.transform.Find("LesniHranice/" + ForestBoundarySetup.Marker) == null) Configure(map.transform, traffic);
         }
         else Build(map.transform);
+    }
+
+    static void BindMissingAudio(YarisTraffic traffic)
+    {
+        bool changed = traffic.UpgradeRadioRange();
+        if (traffic.radioMusic == null)
+        {
+            traffic.radioMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Traffic/why_is_this_dealer.mp3");
+            changed |= traffic.radioMusic != null;
+        }
+        if (traffic.impactSound == null)
+        {
+            traffic.impactSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Misc/bohuno_cut.mp3");
+            changed |= traffic.impactSound != null;
+        }
+        if (changed && !EditorApplication.isPlaying)
+        {
+            EditorUtility.SetDirty(traffic);
+            EditorSceneManager.MarkSceneDirty(traffic.gameObject.scene);
+        }
+        if ((traffic.radioMusic == null || traffic.impactSound == null) && resourceRetries++ < 30)
+            EditorApplication.delayCall += Run;
     }
 
     [MenuItem("BrosOverwatch/Mapa/Pripravit okruh Yarisu")]
@@ -222,6 +248,9 @@ public static class YarisTrafficSetup
     static void Configure(Transform map, YarisTraffic traffic)
     {
         var clip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Traffic/YarisHorn.wav");
+        traffic.impactSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Misc/bohuno_cut.mp3");
+        traffic.impactVolume = 0.7f;
+        traffic.radioMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Traffic/why_is_this_dealer.mp3");
         if (clip == null)
         {
             if (resourceRetries++ < 30) EditorApplication.delayCall += Run;
@@ -229,7 +258,6 @@ public static class YarisTrafficSetup
         }
         Bounds ground = MapBuildKit.GroundBounds(map);
         traffic.speed = 18f;
-        traffic.pauseSeconds = 25f;
         traffic.hornLeadSeconds = 2f;
         traffic.boundaryFrame = map;
         Vector3 min = map.InverseTransformPoint(ground.min), max = map.InverseTransformPoint(ground.max);

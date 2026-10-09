@@ -130,6 +130,21 @@ public class Health : NetworkBehaviour
         shield.Value = 0f;
     }
 
+    // The car is scene geometry; use the victim's network object to notify every peer once.
+    public void ServerPlayCarImpact()
+    {
+        if (!IsServer || !IsSpawned) return;
+        CarImpactClientRpc(transform.position);
+    }
+
+    [ClientRpc]
+    void CarImpactClientRpc(Vector3 position)
+    {
+        var car = FindAnyObjectByType<YarisTraffic>();
+        if (car != null)
+            car.PlayImpact(position, IsOwner && controller != null && controller.Bot == null);
+    }
+
     // Vrati, kolik HP opravdu vylecil (0 = plne zdravi, mrtvy nebo zablokovane leceni).
     public float Heal(float amount)
     {
