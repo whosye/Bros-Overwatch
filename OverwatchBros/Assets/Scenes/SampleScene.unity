@@ -75378,10 +75378,22 @@ MonoBehaviour:
   pauseSeconds: 25
   hornLeadSeconds: 2
   horn: {fileID: 277420837}
+  impactSound: {fileID: 8300000, guid: d82569222c584db438e9cb878fd3c04b, type: 3}
+  impactVolume: 0.7
   boundaryFrame: {fileID: 1880279437}
   boundaryMin: {x: -51.5, y: -35.5}
   boundaryMax: {x: 38.5, y: 114.5}
   modelYawOffset: 0
+  bounceEnabled: 1
+  bounceBpm: 128
+  squashAmount: 0.3
+  stretchAmount: 0.08
+  radioMusic: {fileID: 8300000, guid: 5f94befdea3a7184296d727eb5a149fc, type: 3}
+  radioVolume: 0.4
+  radioRange: 40
+  radioFullVolumeDistance: 12
+  radioRangeVersion: 1
+  radioCutoff: 1100
 --- !u!82 &277420837
 AudioSource:
   m_ObjectHideFlags: 0
