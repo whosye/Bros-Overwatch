@@ -309,7 +309,8 @@ public class WeaponShooting : NetworkBehaviour
 
     void FireArrow(float charge, bool rapidShot)
     {
-        ProceduralSfx.Play(ProceduralSfx.Dash, playerCamera.transform.position, 0.45f + 0.3f * charge);
+        ProceduralSfx.Play(ProceduralSfx.BowRelease, playerCamera.transform.position,
+            0.45f + 0.3f * charge, 30f, spatial: Bot != null);
         ShotFxServerRpc(true, false);
         held.Swing();
 
@@ -552,7 +553,9 @@ public class WeaponShooting : NetworkBehaviour
     {
         if (IsOwner) return;
         held.Swing();
-        if (melee) ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
+        if (melee && weapon != null && weapon.IsCharged)
+            ProceduralSfx.Play(ProceduralSfx.BowRelease, transform.position, 0.6f);
+        else if (melee) ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
         else PlayShot(transform.position, scoped, 0.9f);
     }
 

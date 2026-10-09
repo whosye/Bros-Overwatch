@@ -300569,13 +300569,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1134497939}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.22655024, y: -0, z: -0, w: 0.9739995}
-  m_LocalPosition: {x: -36.12375, y: 2.5, z: -14.59088}
+  m_LocalRotation: {x: -0.13650768, y: -0, z: -0, w: 0.99063903}
+  m_LocalPosition: {x: -36.12375, y: 1.9987935, z: -14.69728}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1563900735}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -15.692, y: 0, z: 0}
 --- !u!23 &1134497941
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -455183,6 +455183,7 @@ GameObject:
   - component: {fileID: 1710823194}
   - component: {fileID: 1710823193}
   - component: {fileID: 1710823192}
+  - component: {fileID: 1710823195}
   m_Layer: 0
   m_Name: TaskovaStrecha
   m_TagString: Untagged
@@ -455282,6 +455283,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1710823190}
+  m_Mesh: {fileID: 480568351}
+--- !u!64 &1710823195
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710823190}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 480568351}
 --- !u!43 &1710963686
 Mesh:
@@ -541967,13 +541990,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2046992966}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.22655024, y: -0, z: -0, w: 0.9739995}
-  m_LocalPosition: {x: -37.27375, y: 1.392318, z: -14.537922}
+  m_LocalRotation: {x: -0.13650768, y: -0, z: -0, w: 0.99063903}
+  m_LocalPosition: {x: -37.27375, y: 0.9, z: -14.847}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1563900735}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -15.692, y: 0, z: 0}
 --- !u!65 &2046992968
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -548389,13 +548412,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2074295037}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.22655024, y: -0, z: -0, w: 0.9739995}
-  m_LocalPosition: {x: -38.42375, y: 2.5, z: -14.59088}
+  m_LocalRotation: {x: -0.13650768, y: -0, z: -0, w: 0.99063903}
+  m_LocalPosition: {x: -38.42375, y: 1.9987935, z: -14.69728}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1563900735}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -15.692, y: 0, z: 0}
 --- !u!23 &2074295039
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -555745,6 +555768,7 @@ GameObject:
   - component: {fileID: 2096598091}
   - component: {fileID: 2096598090}
   - component: {fileID: 2096598089}
+  - component: {fileID: 2096598092}
   m_Layer: 0
   m_Name: TaskovaStrecha
   m_TagString: Untagged
@@ -555844,6 +555868,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096598087}
+  m_Mesh: {fileID: 616276989}
+--- !u!64 &2096598092
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096598087}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 616276989}
 --- !u!1 &2098366010
 GameObject:

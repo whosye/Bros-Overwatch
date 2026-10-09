@@ -53,7 +53,7 @@ public class ScoutArrowAbility : NetworkBehaviour
         nextUseTime = Time.time + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.5f);
+        ProceduralSfx.Play(ProceduralSfx.BowRelease, transform.position, 0.5f, 30f, spatial: fpc.Bot != null);
         GetComponent<PlayerHero>().SayAbility(ability);
         ShootServerRpc(eye.position, eye.forward);
     }
@@ -134,6 +134,8 @@ public class ScoutArrowAbility : NetworkBehaviour
     {
         if (IsOwner)
             activeUntil = Time.time + flight + seconds;
+        else
+            ProceduralSfx.Play(ProceduralSfx.BowRelease, from, 0.5f);
 
         var go = new GameObject("ScoutArrow");
         go.AddComponent<ScoutArrowVisual>().Init(from, to, flight, seconds, ability != null ? ability.radius : 10f, PulseColor);
@@ -149,6 +151,7 @@ public class ScoutArrowVisual : MonoBehaviour
     Transform arrow, pulse;
     Material pulseMaterial;
     Light glow;
+    AudioSource flightAudio;
 
     public void Init(Vector3 start, Vector3 end, float flightSeconds, float activeSeconds, float zoneRadius, Color pulseColor)
     {
@@ -177,6 +180,7 @@ public class ScoutArrowVisual : MonoBehaviour
         ring.SetActive(false);
 
         transform.position = from;
+        flightAudio = ProceduralSfx.PlayArrowFlight(transform);
         if ((to - from).sqrMagnitude > 0.001f)
             transform.rotation = Quaternion.LookRotation(to - from);
     }
@@ -192,6 +196,7 @@ public class ScoutArrowVisual : MonoBehaviour
         }
 
         transform.position = to;
+        if (flightAudio != null && flightAudio.isPlaying) flightAudio.Stop();
 
         if (glow == null)
         {
@@ -212,5 +217,10 @@ public class ScoutArrowVisual : MonoBehaviour
 
         if (age >= flight + seconds)
             Destroy(gameObject);
+    }
+
+    void OnDisable()
+    {
+        if (flightAudio != null) flightAudio.Stop();
     }
 }

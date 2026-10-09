@@ -7,11 +7,13 @@ public static class ProceduralSfx
     const int Rate = 44100;
 
     static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock, potgIntro, ultCharge, splash, bigSplash, waterRush, jokerJingle;
+    static AudioClip bowRelease, arrowFlight;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
     {
         gunshot = empty = reload = hit = dash = leapStart = explosion = death = spawn = footstep = hurt = null;
+        bowRelease = arrowFlight = null;
     }
 
     public static AudioClip Gunshot => gunshot ??= Make("gunshot", 0.28f, (t, r) =>
@@ -28,6 +30,38 @@ public static class ProceduralSfx
     public static AudioClip Hit => hit ??= Make("hit", 0.07f, (t, r) => Mathf.Sin(2f * Mathf.PI * 1400f * t) * Mathf.Exp(-t * 55f) * 0.6f);
 
     public static AudioClip Dash => dash ??= Sweep("dash", 0.35f, 0.6f);
+
+    // Short string snap with a little air, rather than the long ability whoosh.
+    public static AudioClip BowRelease => bowRelease ??= Make("bowRelease", 0.12f, (t, r) =>
+    {
+        float attack = Mathf.Clamp01(t / 0.002f);
+        float tail = Mathf.Clamp01((0.12f - t) / 0.025f);
+        float stringTone = Mathf.Sin(2f * Mathf.PI * (680f * t - 1300f * t * t))
+            + 0.25f * Mathf.Sin(2f * Mathf.PI * 1380f * t);
+        return attack * tail * (stringTone * 0.42f * Mathf.Exp(-t * 48f)
+            + Noise(r) * 0.32f * Mathf.Exp(-t * 65f));
+    });
+
+    // A finite, non-looping air hiss: even a missed cleanup can never play indefinitely.
+    public static AudioClip ArrowFlight => arrowFlight ??= MakeArrowFlight();
+
+    public static AudioSource PlayArrowFlight(Transform arrow)
+    {
+        var source = arrow.gameObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.clip = ArrowFlight;
+        source.loop = false;
+        source.volume = 0.1f;
+        source.spatialBlend = 1f;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = 0.8f;
+        source.maxDistance = 12f;
+        source.dopplerLevel = 0f;
+        source.priority = 180;
+        source.Play();
+        source.SetScheduledEndTime(AudioSettings.dspTime + 10.0);
+        return source;
+    }
 
     public static AudioClip LeapStart => leapStart ??= Sweep("leap", 0.9f, 0.9f);
 
@@ -193,7 +227,7 @@ public static class ProceduralSfx
         Play(clip, position, volume, clip == explosion ? 60f : clip == gunshot ? 45f : 30f);
     }
 
-    public static void Play(AudioClip clip, Vector3 position, float volume, float maxDistance)
+    public static void Play(AudioClip clip, Vector3 position, float volume, float maxDistance, bool spatial = true)
     {
         if (clip == null) return;
         ReplayLog.Sfx(clip, position, volume);
@@ -203,7 +237,8 @@ public static class ProceduralSfx
         var source = go.AddComponent<AudioSource>();
         source.clip = clip;
         source.volume = volume;
-        source.spatialBlend = 1f;
+        source.spatialBlend = spatial ? 1f : 0f;
+        source.panStereo = 0f;
         source.rolloffMode = AudioRolloffMode.Linear;
         source.minDistance = 3f;
         source.maxDistance = maxDistance;
@@ -213,6 +248,20 @@ public static class ProceduralSfx
     }
 
     static float Noise(System.Random r) => (float)(r.NextDouble() * 2.0 - 1.0);
+
+    static AudioClip MakeArrowFlight()
+    {
+        float fast = 0f, slow = 0f;
+        return Make("arrowFlight", 10f, (t, r) =>
+        {
+            float noise = Noise(r);
+            fast += 0.32f * (noise - fast);
+            slow += 0.09f * (noise - slow);
+            float envelope = Mathf.Clamp01(t / 0.04f) * Mathf.Clamp01((10f - t) / 0.08f);
+            float flutter = 0.9f + 0.1f * Mathf.Sin(2f * Mathf.PI * 23f * t);
+            return (fast - slow) * 1.8f * envelope * flutter;
+        });
+    }
 
     static AudioClip Make(string name, float seconds, Func<float, System.Random, float> sample)
     {

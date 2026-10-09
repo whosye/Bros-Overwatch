@@ -13,6 +13,7 @@ public class ProjectileVisual : MonoBehaviour
     int id;
     float bounce;
     float radius;
+    AudioSource flightAudio;
 
     // Skutecna draha (stejna jako na serveru) a docasny posun vykresleni: strelci sip vyleti od luku
     // a behem chvilky se srovna na skutecnou drahu ve stredu obrazovky, takze je videt i jeho stopa.
@@ -44,7 +45,10 @@ public class ProjectileVisual : MonoBehaviour
     {
         ReplayLog.ProjectileSpawn(id, position, velocity, weapon, visualOffset);
         if (Active.TryGetValue(id, out var old) && old != null)
+        {
+            old.StopFlightAudio();
             Destroy(old.gameObject);
+        }
 
         GameObject go;
         if (weapon.projectilePrefab != null)
@@ -71,6 +75,8 @@ public class ProjectileVisual : MonoBehaviour
         visual.radius = weapon.projectileRadius;
         visual.spins = go.transform.Find("Band") != null;
         visual.lifetime = weapon.range / Mathf.Max(0.1f, weapon.projectileSpeed) + 1f + (weapon.Bounces ? weapon.projectileFuse + 3f : 0f);
+        if (weapon.IsCharged)
+            visual.flightAudio = ProceduralSfx.PlayArrowFlight(go.transform);
         Active[id] = visual;
     }
 
@@ -85,7 +91,10 @@ public class ProjectileVisual : MonoBehaviour
     static void EndInternal(int id, Vector3 position, int kind, WeaponDefinition weapon)
     {
         if (Active.TryGetValue(id, out var visual) && visual != null)
+        {
+            visual.StopFlightAudio();
             Destroy(visual.gameObject);
+        }
         Active.Remove(id);
 
         if (weapon == null) return;
@@ -197,6 +206,19 @@ public class ProjectileVisual : MonoBehaviour
     bool spins;
     float spin;
 
+    void StopFlightAudio()
+    {
+        if (flightAudio != null) flightAudio.Stop();
+    }
+
+    void OnDisable() => StopFlightAudio();
+
+    void OnDestroy()
+    {
+        if (Active.TryGetValue(id, out var current) && current == this)
+            Active.Remove(id);
+    }
+
     void Update()
     {
         velocity.y -= gravity * Time.deltaTime;
@@ -240,6 +262,7 @@ public class ProjectileVisual : MonoBehaviour
         lifetime -= Time.deltaTime;
         if (lifetime <= 0f)
         {
+            StopFlightAudio();
             Active.Remove(id);
             Destroy(gameObject);
         }
