@@ -48,7 +48,7 @@ public class GrappleAbility : NetworkBehaviour
             destination = anchor + Vector3.up * 0.15f;
 
         float seconds = Mathf.Clamp(Vector3.Distance(transform.position, destination) / Mathf.Max(1f, ability.speed), 0.15f, 1.2f);
-        fpc.OwnerPull(destination, seconds);
+        fpc.OwnerGrapplePull(destination, seconds, anchor, normal);
 
         ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);

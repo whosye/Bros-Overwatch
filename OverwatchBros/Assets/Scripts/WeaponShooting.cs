@@ -105,6 +105,7 @@ public class WeaponShooting : NetworkBehaviour
     {
         if (newWeapon == null) return;
 
+        charging = false;
         scopedCharge = 0f;
         weapon = newWeapon;
         ammoOverride = 0;
@@ -259,6 +260,12 @@ public class WeaponShooting : NetworkBehaviour
     // ---------------- luk ----------------
 
     bool charging;
+    public bool IsDrawingBow => isActiveAndEnabled && weapon != null && weapon.IsCharged && charging
+        && FireHeld && (fpc == null || !fpc.InputBlocked)
+        && (Bot != null || GameSettings.CursorLocked)
+        && !(rapid != null && rapid.enabled && rapid.IsActive);
+
+    void OnDisable() => charging = false;
     float chargeStart;
     RapidFireAbility rapid;
 

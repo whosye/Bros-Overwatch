@@ -115,6 +115,7 @@ public static class KenneySceneDressing
         var kitchen = map.Find("HlavniChata/PRIZEMI/kuchyn");
         if (kitchen != null) FurnishKitchen(root, kitchen);
         new GameObject(Marker).transform.SetParent(root, false);
+        ForestBoundarySetup.ApplyForestPalette();
         EditorSceneManager.MarkSceneDirty(map.gameObject.scene);
         Debug.Log($"[Kenney] Scena doplnena: {placed} modelu, z toho {treeCount} stromu. Uloz scenu (Ctrl+S).");
         return true;

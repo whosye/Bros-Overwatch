@@ -14,6 +14,10 @@ public class FirstPersonController : NetworkBehaviour
     public float runSpeed = 9.5f;
     public float jumpHeight = 1.2f;
     public float gravity = -9.81f;
+    [Tooltip("Stronger gravity for regular jumps and falls; jump height stays the same.")]
+    [Min(1f)] public float movementGravityScale = 2.5f;
+    [Tooltip("Extra gravity after the apex of a regular jump.")]
+    [Min(1f)] public float fallingGravityScale = 1.2f;
     public float mouseSensitivity = 2f;
     public float standHeight = 2f;
     public float crouchHeight = 1f;
@@ -23,9 +27,12 @@ public class FirstPersonController : NetworkBehaviour
     public float footstepDistance = 2.2f;
 
     CharacterController controller;
+    WeaponShooting shooting;
     Health health;
     PlayerHero hero;
     float verticalVelocity;
+    bool abilityFlight;
+    float JumpGravity => gravity * Mathf.Max(1f, movementGravityScale);
     float cameraPitch;
     float stepAccumulator;
     float gaitSpeed;
@@ -117,11 +124,17 @@ public class FirstPersonController : NetworkBehaviour
     }
 
     // Vlastni pritazeni (sniperuv hak): hrac se plynule pritahne na misto.
-    public void OwnerPull(Vector3 destination, float seconds)
+    public void OwnerGrapplePull(Vector3 destination, float seconds, Vector3 anchor, Vector3 normal)
     {
         if (!IsOwner || IsDead) return;
 
         pulling = true;
+        mantling = false;
+        grappleAutoMantle = true;
+        grappleAnchor = anchor;
+        grappleInward = Vector3.ProjectOnPlane(-normal, Vector3.up).normalized;
+        if (Mathf.Abs(normal.y) > 0.3f || grappleInward.sqrMagnitude < 0.01f)
+            grappleInward = Vector3.ProjectOnPlane(anchor - transform.position, Vector3.up).normalized;
         pullTarget = destination;
         pullTimeLeft = Mathf.Max(0.05f, seconds) + 0.15f;
         pullSpeed = Vector3.Distance(transform.position, destination) / Mathf.Max(0.05f, seconds);
@@ -137,6 +150,8 @@ public class FirstPersonController : NetworkBehaviour
     bool mantling;
     Vector3 mantleTarget;
     float mantleTimeLeft;
+    Vector3[] grappleMantlePath;
+    int grappleMantleWaypoint;
     public bool ThirdPerson => AbilityActive || RushActive;
     public bool IsDead => health != null && health.currentHealth.Value <= 0f;
     public bool MatchOver => MatchManager.Instance != null && MatchManager.Instance.IsOver;
@@ -160,7 +175,10 @@ public class FirstPersonController : NetworkBehaviour
         // Vic vybuchu naraz se scita, ale jen po strop (dve naloze = vyssi skok, ne let do nebe).
         externalVelocity = Vector3.ClampMagnitude(externalVelocity + new Vector3(impulse.x, 0f, impulse.z), 20f);
         if (impulse.y > 0f)
+        {
+            abilityFlight = true;
             verticalVelocity = Mathf.Min(Mathf.Max(verticalVelocity, 0f) + impulse.y, 13f);
+        }
     }
 
     // Vyskok se vznasenim (Sindeluv Shift): hned nahoru, po vrcholu pomaly pad, dokud nevyprsi 'seconds'.
@@ -170,6 +188,7 @@ public class FirstPersonController : NetworkBehaviour
     {
         if (!IsOwner || IsDead) return;
         verticalVelocity = Mathf.Max(verticalVelocity, upSpeed);
+        abilityFlight = true;
         hoverUntil = Time.time + seconds;
     }
 
@@ -304,6 +323,9 @@ public class FirstPersonController : NetworkBehaviour
     Vector3 pullTarget;
     float pullSpeed;
     float pullTimeLeft;
+    bool grappleAutoMantle;
+    Vector3 grappleAnchor;
+    Vector3 grappleInward;
 
     public void ServerPull(Vector3 destination, float seconds)
     {
@@ -317,6 +339,8 @@ public class FirstPersonController : NetworkBehaviour
         if (!IsOwner || IsDead) return;
 
         pulling = true;
+        grappleAutoMantle = false;
+        mantling = false;
         pullTarget = destination;
         pullTimeLeft = Mathf.Max(0.05f, seconds) + 0.15f;
         pullSpeed = Vector3.Distance(transform.position, destination) / Mathf.Max(0.05f, seconds);
@@ -329,13 +353,17 @@ public class FirstPersonController : NetworkBehaviour
     {
         if (!pulling) return false;
 
+        if (grappleAutoMantle && !InputBlocked && TryStartGrappleMantle())
+            return false;
+
         pullTimeLeft -= Time.deltaTime;
         Vector3 toTarget = pullTarget - transform.position;
         float step = pullSpeed * Time.deltaTime;
 
-        if (IsDead || pullTimeLeft <= 0f || toTarget.magnitude <= Mathf.Max(0.25f, step))
+        if (IsDead || (grappleAutoMantle && InputBlocked) || pullTimeLeft <= 0f || toTarget.magnitude <= Mathf.Max(0.25f, step))
         {
             pulling = false;
+            grappleAutoMantle = false;
             verticalVelocity = 0f;
             return false;
         }
@@ -346,7 +374,9 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ClearForces()
     {
+        abilityFlight = false;
         pulling = false;
+        grappleAutoMantle = false;
         mantling = false;
         externalVelocity = Vector3.zero;
         rootedUntil = 0f;
@@ -355,6 +385,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ResetVertical()
     {
+        abilityFlight = false;
         verticalVelocity = 0f;
     }
 
@@ -470,6 +501,7 @@ public class FirstPersonController : NetworkBehaviour
         if (Physics.CheckCapsule(top.point + Vector3.up * 0.45f, top.point + Vector3.up * 1.6f, 0.3f, ~0, QueryTriggerInteraction.Ignore)) return false;
 
         mantling = true;
+        grappleMantlePath = null;
         mantleTarget = top.point + Vector3.up * 0.05f;
         mantleTimeLeft = 0.6f;
         verticalVelocity = 0f;
@@ -477,11 +509,122 @@ public class FirstPersonController : NetworkBehaviour
         return true;
     }
 
+    // Only the sniper's own grapple can initiate this automatic climb.
+    bool TryStartGrappleMantle()
+    {
+        Vector3 feet = transform.position;
+        Vector3 toAnchor = grappleAnchor - feet;
+        if (Vector3.ProjectOnPlane(toAnchor, Vector3.up).magnitude > 1.6f ||
+            toAnchor.y > 2.4f || toAnchor.y < -0.3f) return false;
+
+        float radius = controller.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z));
+        Vector3 sideways = Vector3.Cross(Vector3.up, grappleInward);
+        // A ridge or narrow fascia can block the exact hit line; try either side
+        // before giving up, while retaining all capsule/path clearance checks.
+        for (int lateral = 0; lateral < 5; lateral++)
+        for (int i = 0; i < 5; i++)
+        {
+            // Prefer a deep landing on roofs, then check narrow wall tops too.
+            // A 0.6 m wall is missed entirely by the original 0.7 m first probe.
+            // The capsule may overhang an edge; clearance, not wall width, decides safety.
+            float inset = i < 3 ? radius + 0.2f + i * 0.35f : radius * (i == 3 ? 0.6f : 0.3f);
+            float sideOffset = lateral == 0 ? 0f : ((lateral + 1) / 2) * radius * 0.75f * (lateral % 2 == 1 ? 1f : -1f);
+            Vector3 probe = grappleAnchor + grappleInward * inset + sideways * sideOffset;
+            probe.y = Mathf.Min(feet.y + 2.5f, grappleAnchor.y + 1.3f);
+            if (!Physics.Raycast(probe, Vector3.down, out RaycastHit top, probe.y - feet.y + 0.1f,
+                    ~0, QueryTriggerInteraction.Ignore)) continue;
+            if (top.collider.GetComponentInParent<NetworkObject>() != null ||
+                top.normal.y < Mathf.Cos(controller.slopeLimit * Mathf.Deg2Rad) ||
+                top.point.y < feet.y + 0.05f) continue;
+
+            // Extra clearance on slopes keeps the bottom sphere above the roof.
+            Vector3 landing = top.point + Vector3.up * (0.1f + radius * (1f / top.normal.y - 1f));
+            if (!GrappleCapsuleClear(landing, Vector3.zero)) continue;
+            if (!TryGrappleMantlePath(feet, landing, out Vector3[] path, out float length)) continue;
+
+            pulling = false;
+            grappleAutoMantle = false;
+            mantling = true;
+            mantleTarget = landing;
+            grappleMantlePath = path;
+            grappleMantleWaypoint = 0;
+            mantleTimeLeft = length / 5f + 0.35f;
+            abilityFlight = false;
+            verticalVelocity = 0f;
+            externalVelocity = Vector3.zero;
+            return true;
+        }
+        return false;
+    }
+
+    bool TryGrappleMantlePath(Vector3 feet, Vector3 landing, out Vector3[] path, out float length)
+    {
+        // If we are underneath an eave, first move out from under it, then rise
+        // and cross the edge. Every segment must fit the full character capsule.
+        Vector3 outward = Vector3.ProjectOnPlane(feet - grappleAnchor, Vector3.up).normalized;
+        if (outward.sqrMagnitude < 0.01f) outward = -grappleInward;
+        for (int attempt = 0; attempt < 4; attempt++)
+        {
+            Vector3 outside = feet + outward * (attempt * 0.5f);
+            Vector3 raised = new Vector3(outside.x, landing.y, outside.z);
+            if ((attempt > 0 && !GrappleCapsuleClear(feet, outside - feet)) ||
+                !GrappleCapsuleClear(outside, raised - outside) ||
+                !GrappleCapsuleClear(raised, landing - raised)) continue;
+            path = new[] { outside, raised, landing };
+            length = Vector3.Distance(feet, outside) + Vector3.Distance(outside, raised) + Vector3.Distance(raised, landing);
+            return true;
+        }
+        path = null;
+        length = 0f;
+        return false;
+    }
+
+    bool GrappleCapsuleClear(Vector3 position, Vector3 travel)
+    {
+        Vector3 scale = transform.lossyScale;
+        float radius = controller.radius * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
+        float height = Mathf.Max(controller.height * Mathf.Abs(scale.y), radius * 2f);
+        Vector3 center = position + transform.TransformVector(controller.center);
+        Vector3 bottom = center - Vector3.up * (height * 0.5f - radius);
+        Vector3 top = center + Vector3.up * (height * 0.5f - radius);
+        radius = Mathf.Max(0.01f, radius - 0.02f);
+        // Ignore our controller and character colliders, but respect all solid obstacles.
+        foreach (var overlap in Physics.OverlapCapsule(bottom + travel, top + travel, radius, ~0, QueryTriggerInteraction.Ignore))
+            if (!overlap.transform.IsChildOf(transform)) return false;
+        if (travel.sqrMagnitude > 0.0001f)
+            foreach (var hit in Physics.CapsuleCastAll(bottom, top, radius, travel.normalized,
+                         travel.magnitude, ~0, QueryTriggerInteraction.Ignore))
+                if (!hit.transform.IsChildOf(transform)) return false;
+        return true;
+    }
+
     bool TickMantle()
     {
         if (!mantling) return false;
+        if (CannotAct)
+        {
+            mantling = false;
+            verticalVelocity = 0f;
+            return false;
+        }
 
         mantleTimeLeft -= Time.deltaTime;
+        if (grappleMantlePath != null)
+        {
+            while (grappleMantleWaypoint < grappleMantlePath.Length &&
+                   Vector3.Distance(transform.position, grappleMantlePath[grappleMantleWaypoint]) < 0.025f)
+                grappleMantleWaypoint++;
+            if (mantleTimeLeft <= 0f || grappleMantleWaypoint == grappleMantlePath.Length)
+            {
+                mantling = false;
+                grappleMantlePath = null;
+                verticalVelocity = 0f;
+                return false;
+            }
+            Vector3 travel = Vector3.ClampMagnitude(grappleMantlePath[grappleMantleWaypoint] - transform.position, 5f * Time.deltaTime);
+            controller.Move(travel);
+            return true;
+        }
         Vector3 toTarget = mantleTarget - transform.position;
 
         // Nejdriv nahoru, pak dopredu na plochu.
@@ -511,7 +654,10 @@ public class FirstPersonController : NetworkBehaviour
 
         bool isGrounded = controller.isGrounded;
         if (isGrounded && verticalVelocity < 0)
+        {
             verticalVelocity = -2f;
+            abilityFlight = false;
+        }
 
         Vector2 input = Vector2.zero;
         bool running = false;
@@ -555,7 +701,9 @@ public class FirstPersonController : NetworkBehaviour
         if (onLadder && !isGrounded)
             move *= Ladder.SideSpeedScale;
 
-        float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * HeroSpeedScale * ScopeSpeedScale * AbilitySpeedScale * SlowScale * BoostScale * TunnelScale * HoverScale * BardAbility.SpeedScaleFor(gameObject);
+        if (shooting == null) shooting = GetComponent<WeaponShooting>();
+        float drawScale = shooting != null && shooting.IsDrawingBow ? 0.5f : 1f;
+        float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * HeroSpeedScale * ScopeSpeedScale * AbilitySpeedScale * SlowScale * BoostScale * TunnelScale * HoverScale * BardAbility.SpeedScaleFor(gameObject) * drawScale;
         Vector3 beforeMove = transform.position;
         var flags = controller.Move((move * speed + externalVelocity) * Time.deltaTime);
         Vector3 travelled = transform.position - beforeMove;
@@ -574,13 +722,15 @@ public class FirstPersonController : NetworkBehaviour
 
         if (jump && isGrounded)
         {
-            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            abilityFlight = false;
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * JumpGravity);
         }
         else if (jump && DoubleJump && !airJumpUsed)
         {
             // Druhy skok ve vzduchu.
             airJumpUsed = true;
-            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            abilityFlight = false;
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * JumpGravity);
             ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.35f);
         }
 
@@ -593,7 +743,13 @@ public class FirstPersonController : NetworkBehaviour
         else if (Time.time < hoverUntil && verticalVelocity <= 0f && !isGrounded)
             verticalVelocity = Mathf.Max(verticalVelocity + gravity * 0.1f * Time.deltaTime, -1.2f);
         else
-            verticalVelocity += gravity * Time.deltaTime;
+        {
+            // Keep authored knock-up and hover trajectories on their original gravity.
+            float acceleration = abilityFlight ? gravity : JumpGravity;
+            if (!abilityFlight && verticalVelocity < 0f)
+                acceleration *= Mathf.Max(1f, fallingGravityScale);
+            verticalVelocity += acceleration * Time.deltaTime;
+        }
         controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
 
         // Skluzavka a proud v potoce hrace unasi (WaterCurrent); z toboganu se po vode jede rychleji.

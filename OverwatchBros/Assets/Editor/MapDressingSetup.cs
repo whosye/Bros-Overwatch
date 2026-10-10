@@ -7,7 +7,7 @@ using UnityEngine;
 //  - Rozhledna je drevena: sloupky a zabradli z tramu, podlahy a steny z prken, strecha ze sindelu;
 //    podstavec (kopec s rampami a zadni zed) je kamenny. Kulata plosina uprostred mapy (Rozhledna/Cylinder) se nemeni.
 //  - Detaily rozhledny (Map-Domasov/RozhlednaDetaily): krizove vzpery, zabradli na plosinach, sedlova strecha
-//    s presahem, vlajka a lucerny. Kolize maji jen zabradli (strecha a vzpery jsou ozdoba).
+//    s presahem, vlajka a lucerny. Strecha ma kolize odpovidajici viditelnym plocham.
 //  - Na mapu se postavi auto Toyota Yaris (Assets/Models/ToyotaYaris, CC-BY 4.0 - viz CREDITS.txt).
 // Scenu je pak potreba ulozit (Ctrl+S). Rucne: BrosOverwatch > Mapa > Upravit vzhled znovu.
 [InitializeOnLoad]
@@ -46,6 +46,7 @@ public static class MapDressingSetup
         MapBuildKit.DumpLive(map.transform);
         bool changed = ApplyWood(map.transform, false);
         changed |= BuildTowerDetails(map.transform, false);
+        changed |= RepairTowerRoofCollision(map.transform);
         changed |= PlaceCar(map.transform, false);
 
         // Textury nebo model se mozna jeste importuji: kdyz neco chybi, zkus to za chvili znovu.
@@ -68,6 +69,7 @@ public static class MapDressingSetup
 
         ApplyWood(map.transform, true);
         BuildTowerDetails(map.transform, true);
+        RepairTowerRoofCollision(map.transform);
         PlaceCar(map.transform, true);
         EditorSceneManager.MarkSceneDirty(map.scene);
     }
@@ -286,7 +288,7 @@ public static class MapDressingSetup
                 lowestRailEnd = to;
         }
 
-        // Sedla strecha s presahem nad puvodni nizkou striskou (ta zustava jen jako kolize), vlajka a lucerna pod ni.
+        // Sedlova strecha s presahem; RepairTowerRoofCollision vypne puvodni skrytou kolizi.
         if (roofBounds.HasValue)
         {
             var rb = roofBounds.Value;
@@ -411,7 +413,7 @@ public static class MapDressingSetup
         {
             var rotation = Quaternion.Euler(0f, 0f, -side * slope);
             Vector3 mid = new Vector3(cx + side * halfSpan * 0.5f, eave + rise * 0.5f, cz) + rotation * new Vector3(0f, thickness * 0.5f, 0f);
-            MapBuildKit.Box(parent, side < 0 ? "Strecha_L" : "Strecha_P", mid, new Vector3(slant, thickness, lengthZ), rotation, shingles, false);
+            MapBuildKit.Box(parent, side < 0 ? "Strecha_L" : "Strecha_P", mid, new Vector3(slant, thickness, lengthZ), rotation, shingles, true);
         }
 
         MapBuildKit.Beam(parent, "Hreben", new Vector3(cx, ridgeY + 0.05f, cz - lengthZ * 0.5f), new Vector3(cx, ridgeY + 0.05f, cz + lengthZ * 0.5f), 0.22f, beams);
@@ -425,6 +427,54 @@ public static class MapDressingSetup
             var uv = new[] { new Vector2(0f, 0f), new Vector2(halfSpan * 2f, 0f), new Vector2(halfSpan, rise) };
             MapBuildKit.MeshObject(parent, "Stit", MapBuildKit.FlatMesh("Stit", points, uv), Vector3.zero, Quaternion.identity, Vector3.one, planks);
         }
+    }
+
+    // Upgrade existing scenes without rebuilding or moving the user's tower.
+    static bool RepairTowerRoofCollision(Transform map)
+    {
+        var tower = map.Find("Rozhledna");
+        var roof = tower != null ? tower.Find(DetailsName + "/Strecha") : null;
+        if (roof == null || roof.Find("Strecha_L") == null || roof.Find("Strecha_P") == null) return false;
+        bool changed = false;
+        foreach (var filter in roof.GetComponentsInChildren<MeshFilter>(true))
+        {
+            if (filter.sharedMesh == null) continue;
+            bool box = filter.name == "Strecha_L" || filter.name == "Strecha_P" || filter.name == "Hreben";
+            if (!box && filter.name != "Stit") continue;
+            Collider collider = filter.GetComponent<Collider>();
+            if (collider == null)
+            {
+                if (box)
+                {
+                    var added = filter.gameObject.AddComponent<BoxCollider>();
+                    added.center = filter.sharedMesh.bounds.center;
+                    added.size = filter.sharedMesh.bounds.size;
+                    collider = added;
+                }
+                else
+                {
+                    var added = filter.gameObject.AddComponent<MeshCollider>();
+                    added.sharedMesh = filter.sharedMesh; // Actual double-sided triangular gable, not its bounding box.
+                    collider = added;
+                }
+                changed = true;
+            }
+            if (!collider.enabled || collider.isTrigger)
+            {
+                collider.enabled = true;
+                collider.isTrigger = false;
+                changed = true;
+            }
+        }
+        var oldRoof = tower.Find("Prism");
+        if (oldRoof != null && oldRoof.TryGetComponent<MeshRenderer>(out var renderer) && !renderer.enabled)
+            foreach (var collider in oldRoof.GetComponents<Collider>())
+                if (collider.enabled)
+                {
+                    collider.enabled = false;
+                    changed = true;
+                }
+        return changed;
     }
 
     // Lucerna se svetlem; kdyz je 'hangFrom' vys nez lucerna, visi na retizku.

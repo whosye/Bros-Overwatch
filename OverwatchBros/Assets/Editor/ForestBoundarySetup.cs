@@ -4,8 +4,90 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+[InitializeOnLoad]
 public static class ForestBoundarySetup
 {
+    const string ForestMaterials = "Assets/Materials/Forest/";
+    static int paletteRetries;
+
+    static ForestBoundarySetup()
+    {
+        EditorApplication.delayCall += ApplyForestPalette;
+        EditorSceneManager.sceneOpened += (scene, mode) => EditorApplication.delayCall += ApplyForestPalette;
+        EditorApplication.playModeStateChanged += state =>
+        {
+            if (state == PlayModeStateChange.EnteredEditMode) EditorApplication.delayCall += ApplyForestPalette;
+        };
+    }
+
+    [MenuItem("BrosOverwatch/Mapa/Prirozene barvy lesni vegetace")]
+    public static void ApplyForestPalette()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+        var map = GameObject.Find("Map-Domasov");
+        if (map == null) return;
+        var palettes = new Dictionary<string, Material[]>();
+        foreach (string kind in new[] { "Conifer", "Broadleaf", "Shrub" })
+        {
+            var variants = new Material[3];
+            for (int i = 0; i < variants.Length; i++)
+            {
+                variants[i] = AssetDatabase.LoadAssetAtPath<Material>($"{ForestMaterials}Forest_{kind}_{i}.mat");
+                if (variants[i] == null)
+                {
+                    if (paletteRetries++ < 60) EditorApplication.delayCall += ApplyForestPalette;
+                    return;
+                }
+            }
+            palettes.Add(kind, variants);
+        }
+        var bark = AssetDatabase.LoadAssetAtPath<Material>(ForestMaterials + "Forest_Bark.mat");
+        if (bark == null) return;
+        int changed = 0;
+        foreach (string path in new[] { "LesniHranice/Stromy", "LesniHranice/HustyPodrost",
+            "KenneyDekorace/StromyPoOkraji", "KenneyDekorace/KereKamenyKvetiny" })
+        {
+            var group = map.transform.Find(path);
+            if (group == null) continue;
+            foreach (Transform plant in group)
+            {
+                string name = plant.name.ToLowerInvariant();
+                if (!name.StartsWith("tree_") && !name.StartsWith("plant_bush")) continue;
+                string kind = name.Contains("pine") ? "Conifer" : name.StartsWith("tree_") ? "Broadleaf" : "Shrub";
+                Vector3 p = plant.localPosition;
+                // Stable variation per plant: reloading or rebuilding does not shuffle its shade.
+                int seed = unchecked(Mathf.RoundToInt(p.x * 100f) * 73856093 ^ Mathf.RoundToInt(p.z * 100f) * 19349663);
+                var foliage = palettes[kind][(int)((uint)seed % 3u)];
+                foreach (var renderer in plant.GetComponentsInChildren<Renderer>(true))
+                {
+                    var materials = renderer.sharedMaterials;
+                    bool dirty = false;
+                    for (int i = 0; i < materials.Length; i++)
+                    {
+                        if (materials[i] == null) continue;
+                        string slot = materials[i].name.ToLowerInvariant();
+                        Material replacement = null;
+                        if (slot.Contains("leaf") || slot == "grass" || (slot.StartsWith("forest_") && slot != "forest_bark"))
+                            replacement = foliage;
+                        else if (slot.Contains("woodbark") || slot == "forest_bark") replacement = bark;
+                        if (replacement == null || replacement == materials[i]) continue;
+                        materials[i] = replacement;
+                        dirty = true;
+                    }
+                    if (!dirty) continue;
+                    renderer.sharedMaterials = materials;
+                    PrefabUtility.RecordPrefabInstancePropertyModifications(renderer);
+                    EditorUtility.SetDirty(renderer);
+                    changed++;
+                }
+            }
+        }
+        if (changed > 0)
+        {
+            EditorSceneManager.MarkSceneDirty(map.scene);
+            Debug.Log($"[Les] Prirozene materialy aplikovany na {changed} rendereru. Uloz scenu (Ctrl+S).");
+        }
+    }
     const string RootName = "LesniHranice";
     // Sever mapy je kratsi (zahrada za rozhlednou), at je bojiste kompaktnejsi; puvodne konec podlahy (~115 m).
     public const float NorthLimit = 92f;
@@ -105,6 +187,7 @@ public static class ForestBoundarySetup
         Physics.SyncTransforms();
         boundary.ApplyCollisionExceptions();
         new GameObject(Marker).transform.SetParent(root, false);
+        ApplyForestPalette();
         var report = new System.Text.StringBuilder();
         report.AppendLine($"Trees: {count}; gates: {gateCount}; clearance: {clearance}; bounds: {ground}");
         report.AppendLine("Boundary: 4 solid walls, 24 metres high, ignored only by the Yaris colliders.");

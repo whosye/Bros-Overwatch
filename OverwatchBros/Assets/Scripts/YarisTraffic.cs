@@ -29,9 +29,11 @@ public sealed class YarisTraffic : MonoBehaviour
 
     [Header("Car radio")]
     public AudioClip radioMusic;
-    [Range(0f, 1f)] public float radioVolume = 0.4f;
-    [Min(1f)] public float radioRange = 40f;
-    [Min(0f)] public float radioFullVolumeDistance = 12f;
+    [Range(0f, 1f)] public float radioVolume = 0.7f;
+    [Min(1f)] public float radioRange = 28f;
+    [Min(0f)] public float radioFullVolumeDistance = 0.5f;
+    [Tooltip("X: distance / Radio Range (0 to 1). Y: multiplier of Radio Volume (0 to 1). Keep the last point at (1, 0) for silence beyond the range.")]
+    public AnimationCurve radioRolloff = CreateRadioRolloff();
     [SerializeField, HideInInspector] int radioRangeVersion;
     [Range(200f, 22000f)] public float radioCutoff = 1100f;
     AudioSource radioSource;
@@ -87,7 +89,7 @@ public sealed class YarisTraffic : MonoBehaviour
         radioSource.playOnAwake = false;
         radioSource.loop = true;
         radioSource.spatialBlend = 1f;
-        radioSource.rolloffMode = AudioRolloffMode.Linear;
+        radioSource.rolloffMode = AudioRolloffMode.Custom;
         radioSource.minDistance = 1f;
         radioSource.dopplerLevel = 0f;
         radioSource.priority = 180;
@@ -151,6 +153,9 @@ public sealed class YarisTraffic : MonoBehaviour
         radioSource.volume = Mathf.Clamp01(radioVolume);
         radioSource.maxDistance = Mathf.Max(1.01f, radioRange);
         radioSource.minDistance = Mathf.Clamp(radioFullVolumeDistance, 0f, radioSource.maxDistance - 0.01f);
+        if (radioRolloff == null || radioRolloff.length < 2) radioRolloff = CreateRadioRolloff();
+        radioSource.rolloffMode = AudioRolloffMode.Custom;
+        radioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, radioRolloff);
         radioFilter.cutoffFrequency = Mathf.Clamp(radioCutoff, 200f, 22000f);
         if (radioSource.clip != radioMusic)
         {
@@ -164,11 +169,32 @@ public sealed class YarisTraffic : MonoBehaviour
     // Migrate values already serialized in an open scene; changing a C# default alone cannot do that.
     public bool UpgradeRadioRange()
     {
-        if (radioRangeVersion >= 1) return false;
-        if (Mathf.Approximately(radioRange, 14f) || Mathf.Approximately(radioRange, 28f))
-            radioRange = 40f;
-        radioRangeVersion = 1;
+        if (radioRangeVersion >= 3) return false;
+        if (radioRangeVersion < 2)
+        {
+            radioVolume = 0.7f;
+            radioRange = 28f;
+            radioFullVolumeDistance = 0.5f;
+        }
+        radioRolloff = CreateRadioRolloff();
+        radioRangeVersion = 3;
         return true;
+    }
+
+    static AnimationCurve CreateRadioRolloff()
+    {
+        // Gentler nearby decay, retaining a quiet tail and a smooth, silent endpoint.
+        var keys = new Keyframe[9];
+        for (int i = 0; i < keys.Length; i++)
+        {
+            float x = i / 8f;
+            float tail = 1f - x;
+            float decay = Mathf.Exp(-x);
+            float value = decay * tail * tail;
+            float slope = -decay * (tail * tail + 2f * tail);
+            keys[i] = new Keyframe(x, value, slope, slope);
+        }
+        return new AnimationCurve(keys) { preWrapMode = WrapMode.ClampForever, postWrapMode = WrapMode.ClampForever };
     }
 
     void OnDisable()

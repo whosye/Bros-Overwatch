@@ -1,9 +1,10 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Mirkuv pruzkumny sip (klavesa E): vystreli sip rovne dopredu (nejdal 'range' m). Kde se zabodne, tam na 'duration'
+// Mirkuv pruzkumny sip (klavesa E): balistika plne natazeneho luku (nejdal 'range' m). Kde se zabodne, tam na 'duration'
 // sekund odhaluje nepratele v okruhu 'radius': cely Mirkuv tym je vidi i pres zdi (jmenovka se zivoty).
 public class ScoutArrowAbility : NetworkBehaviour
 {
@@ -67,24 +68,47 @@ public class ScoutArrowAbility : NetworkBehaviour
         if (ability == null || direction.sqrMagnitude < 0.01f || (match != null && (match.IsOver || match.IsLobby))) return;
 
         direction.Normalize();
+        var hero = GetComponent<PlayerHero>();
+        var bow = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
+        if (bow == null || !bow.IsCharged) return;
 
-        // Sip leti rovne a zabodne se do prvni prekazky (hrace proleti).
-        float distance = ability.range;
-        var hits = Physics.RaycastAll(origin, direction, ability.range, ~0, QueryTriggerInteraction.Ignore);
-        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-        foreach (var hit in hits)
-        {
-            if (hit.collider.GetComponentInParent<NetworkObject>() != null) continue;
-            if (hit.collider.GetComponentInParent<BoulderHitbox>() != null) continue;
-
-            distance = Mathf.Max(0.3f, hit.distance - 0.05f);
-            break;
-        }
-
-        Vector3 point = origin + direction * distance;
-        float flight = distance / Mathf.Max(1f, ability.speed);
-        ShotClientRpc(origin + direction * 0.5f, point, flight, ability.duration);
+        // Same launch point, velocity and semi-implicit gravity steps as ProjectileSim.
+        // Preserve the scout arrow's world-only collision and its separate reveal range.
+        float dt = Time.fixedDeltaTime;
+        var path = TraceFlight(origin + direction * 0.6f, direction * bow.projectileSpeed,
+            bow.projectileGravity, Mathf.Min(0.05f, bow.projectileRadius), ability.range, dt);
+        Vector3 point = path[path.Length - 1];
+        float flight = (path.Length - 1) * dt;
+        ShotClientRpc(path, dt, ability.duration);
         StartCoroutine(Arm(point, flight));
+    }
+
+    static Vector3[] TraceFlight(Vector3 position, Vector3 velocity, float gravity, float radius, float range, float dt)
+    {
+        var path = new List<Vector3> { position };
+        float traveled = 0f;
+        for (int i = 0; i < Mathf.CeilToInt(10f / dt) && traveled < range; i++)
+        {
+            velocity.y -= gravity * dt;
+            Vector3 step = velocity * dt;
+            float distance = Mathf.Min(step.magnitude, range - traveled);
+            if (distance <= 0.0001f) break;
+            Vector3 direction = step.normalized;
+            var hits = Physics.SphereCastAll(position, radius, direction, distance, ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in hits)
+            {
+                if (hit.collider.GetComponentInParent<NetworkObject>() != null) continue;
+                if (hit.collider.GetComponentInParent<BoulderHitbox>() != null) continue;
+                path.Add(hit.distance > 0f ? hit.point : position);
+                return path.ToArray();
+            }
+            position += direction * distance;
+            traveled += distance;
+            path.Add(position);
+        }
+        if (path.Count == 1) path.Add(position);
+        return path.ToArray();
     }
 
     IEnumerator Arm(Vector3 point, float delay)
@@ -130,22 +154,26 @@ public class ScoutArrowAbility : NetworkBehaviour
     // ---------------- vizual ----------------
 
     [ClientRpc]
-    void ShotClientRpc(Vector3 from, Vector3 to, float flight, float seconds)
+    void ShotClientRpc(Vector3[] path, float stepSeconds, float seconds)
     {
+        if (path == null || path.Length < 2) return;
+        float flight = (path.Length - 1) * stepSeconds;
         if (IsOwner)
             activeUntil = Time.time + flight + seconds;
         else
-            ProceduralSfx.Play(ProceduralSfx.BowRelease, from, 0.5f);
+            ProceduralSfx.Play(ProceduralSfx.BowRelease, path[0], 0.5f);
 
         var go = new GameObject("ScoutArrow");
-        go.AddComponent<ScoutArrowVisual>().Init(from, to, flight, seconds, ability != null ? ability.radius : 10f, PulseColor);
+        go.AddComponent<ScoutArrowVisual>().Init(path, stepSeconds, seconds, ability != null ? ability.radius : 10f, PulseColor);
     }
 }
 
 // Pruzkumny sip (jen efekt): doleti na misto, zabodne se a po dobu pusobeni vysila rozpinajici se kruhy.
 public class ScoutArrowVisual : MonoBehaviour
 {
-    Vector3 from, to;
+    Vector3[] path;
+    Vector3 to;
+    float stepSeconds;
     float flight, seconds, radius, age;
     Color color;
     Transform arrow, pulse;
@@ -153,11 +181,12 @@ public class ScoutArrowVisual : MonoBehaviour
     Light glow;
     AudioSource flightAudio;
 
-    public void Init(Vector3 start, Vector3 end, float flightSeconds, float activeSeconds, float zoneRadius, Color pulseColor)
+    public void Init(Vector3[] flightPath, float fixedStep, float activeSeconds, float zoneRadius, Color pulseColor)
     {
-        from = start;
-        to = end;
-        flight = Mathf.Max(0.02f, flightSeconds);
+        path = flightPath;
+        stepSeconds = Mathf.Max(0.001f, fixedStep);
+        to = path[path.Length - 1];
+        flight = (path.Length - 1) * stepSeconds;
         seconds = activeSeconds;
         radius = zoneRadius;
         color = pulseColor;
@@ -179,10 +208,9 @@ public class ScoutArrowVisual : MonoBehaviour
         pulse = ring.transform;
         ring.SetActive(false);
 
-        transform.position = from;
+        transform.position = path[0];
         flightAudio = ProceduralSfx.PlayArrowFlight(transform);
-        if ((to - from).sqrMagnitude > 0.001f)
-            transform.rotation = Quaternion.LookRotation(to - from);
+        FaceSegment(0);
     }
 
     void Update()
@@ -191,11 +219,15 @@ public class ScoutArrowVisual : MonoBehaviour
 
         if (age < flight)
         {
-            transform.position = Vector3.Lerp(from, to, age / flight);
+            float frame = age / stepSeconds;
+            int segment = Mathf.Min(Mathf.FloorToInt(frame), path.Length - 2);
+            transform.position = Vector3.Lerp(path[segment], path[segment + 1], frame - segment);
+            FaceSegment(segment);
             return;
         }
 
         transform.position = to;
+        FaceSegment(path.Length - 2);
         if (flightAudio != null && flightAudio.isPlaying) flightAudio.Stop();
 
         if (glow == null)
@@ -217,6 +249,17 @@ public class ScoutArrowVisual : MonoBehaviour
 
         if (age >= flight + seconds)
             Destroy(gameObject);
+    }
+
+    void FaceSegment(int segment)
+    {
+        Vector3 direction = path[segment + 1] - path[segment];
+        if (direction.sqrMagnitude > 0.0001f) transform.rotation = Quaternion.LookRotation(direction);
+    }
+
+    void OnDestroy()
+    {
+        if (pulseMaterial != null) Destroy(pulseMaterial);
     }
 
     void OnDisable()
