@@ -39,7 +39,7 @@ public class KickAbility : NetworkBehaviour
 
         FirstPersonKick.Play(fpc.playerCamera);
         PlayBodyKick();
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
 
         var eye = fpc.playerCamera.transform;

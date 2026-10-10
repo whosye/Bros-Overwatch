@@ -128,8 +128,8 @@ public class FlashAbility : NetworkBehaviour
         ball.AddComponent<FlashGrenadeVisual>().Init(from, to, seconds);
 
         // vystrel z granatometu: tupe bouchnuti a zablesk u hlavne
-        ProceduralSfx.Play(ProceduralSfx.Gunshot, from, 0.9f);
-        ProceduralSfx.Play(ProceduralSfx.Dash, from, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Gunshot, from, 0.9f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, from, 0.6f);
         Fx.Sparks(from, PulseColor);
     }
 

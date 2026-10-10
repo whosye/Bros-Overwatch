@@ -52,7 +52,7 @@ public class BlinkAbility : NetworkBehaviour
         Vector3 from = transform.position;
         controller.Move(Direction() * ability.power);
 
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
         BlinkServerRpc(from + Vector3.up * 1f, transform.position + Vector3.up * 1f);
     }

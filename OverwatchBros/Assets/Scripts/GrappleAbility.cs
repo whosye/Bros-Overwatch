@@ -36,7 +36,7 @@ public class GrappleAbility : NetworkBehaviour
         var eye = fpc.playerCamera.transform;
         if (!TryFindAnchor(eye.position, eye.forward, out Vector3 anchor, out Vector3 normal))
         {
-            ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.5f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.5f);
             return;
         }
 
@@ -50,7 +50,7 @@ public class GrappleAbility : NetworkBehaviour
         float seconds = Mathf.Clamp(Vector3.Distance(transform.position, destination) / Mathf.Max(1f, ability.speed), 0.15f, 1.2f);
         fpc.OwnerGrapplePull(destination, seconds, anchor, normal);
 
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
         RopeServerRpc(anchor, seconds);
     }

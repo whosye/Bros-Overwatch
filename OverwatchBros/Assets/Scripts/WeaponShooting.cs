@@ -131,7 +131,7 @@ public class WeaponShooting : NetworkBehaviour
 
             reloading = false;
             currentAmmo = MaxAmmo;
-            ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.8f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.8f);
         }
 
         // Prazdny zasobnik se prebije sam.
@@ -196,7 +196,7 @@ public class WeaponShooting : NetworkBehaviour
         if (weapon.HasAmmo && currentAmmo < cost)
         {
             nextFireTime = Time.time + 0.35f;
-            ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.6f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.6f);
             if (currentAmmo <= 0) Reload();
             return;
         }
@@ -230,7 +230,7 @@ public class WeaponShooting : NetworkBehaviour
             if (headshot)
             {
                 damage *= weapon.headshotMultiplier;
-                ProceduralSfx.Play(ProceduralSfx.StunConfirm, playerCamera.transform.position, 1f);
+                ProceduralSfx.PlayForActor(this, ProceduralSfx.StunConfirm, playerCamera.transform.position, 1f);
             }
 
             ApplyHit(hit.collider, hit.point, full ? 2f : 1.2f, damage);
@@ -316,8 +316,8 @@ public class WeaponShooting : NetworkBehaviour
 
     void FireArrow(float charge, bool rapidShot)
     {
-        ProceduralSfx.Play(ProceduralSfx.BowRelease, playerCamera.transform.position,
-            0.45f + 0.3f * charge, 30f, spatial: Bot != null);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.BowRelease, playerCamera.transform.position,
+            0.45f + 0.3f * charge, 30f);
         ShotFxServerRpc(true, false);
         held.Swing();
 
@@ -332,7 +332,7 @@ public class WeaponShooting : NetworkBehaviour
         if (weapon.HasAmmo && currentAmmo <= 0)
         {
             nextFireTime = Time.time + 0.35f;
-            ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.6f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.6f);
             return;
         }
 
@@ -340,7 +340,7 @@ public class WeaponShooting : NetworkBehaviour
         if (weapon.HasAmmo)
             currentAmmo--;
 
-        if (melee) ProceduralSfx.Play(ProceduralSfx.Dash, playerCamera.transform.position, 0.6f);
+        if (melee) ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, playerCamera.transform.position, 0.6f);
         else PlayShot(playerCamera.transform.position, false, 0.8f);
         ShotFxServerRpc(melee, false);
         held.Swing();
@@ -372,7 +372,7 @@ public class WeaponShooting : NetworkBehaviour
                 && hit.point.y >= hit.collider.bounds.max.y - HeadHeight)
             {
                 float body = DamageFor(hit.collider, hit.point);
-                ProceduralSfx.Play(ProceduralSfx.StunConfirm, playerCamera.transform.position, 0.8f);
+                ProceduralSfx.PlayForActor(this, ProceduralSfx.StunConfirm, playerCamera.transform.position, 0.8f);
                 ApplyHit(hit.collider, hit.point, 1.3f, body * weapon.headshotMultiplier);
                 break;
             }
@@ -497,7 +497,7 @@ public class WeaponShooting : NetworkBehaviour
         if (boulder != null && boulder.Owner != null && boulder.Owner.NetworkObject != NetworkObject)
         {
             RequestBoulderDamageServerRpc(boulder.Owner.NetworkObject, damage);
-            ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.8f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, transform.position, 0.8f);
         }
 
         // Nepratelska past na medvedy jde rozstrilet.
@@ -505,7 +505,7 @@ public class WeaponShooting : NetworkBehaviour
         if (trap != null && trap.Owner != null && !trap.IsFriendly(gameObject))
         {
             RequestTrapDamageServerRpc(trap.Owner.NetworkObject, damage);
-            ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.8f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, transform.position, 0.8f);
             if (Bot == null) HudUI.NotifyHit(false);
         }
 
@@ -513,7 +513,7 @@ public class WeaponShooting : NetworkBehaviour
         if (hitNetworkObject != null && hitNetworkObject != NetworkObject)
         {
             RequestDamageServerRpc(hitNetworkObject, damage);
-            ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.8f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, transform.position, 0.8f);
         }
 
         Fx.BulletImpact(point, weapon.projectileColor, fxScale);
@@ -543,9 +543,9 @@ public class WeaponShooting : NetworkBehaviour
     {
         var clip = weapon != null ? weapon.ShotSound(scoped) : null;
         if (clip != null)
-            ProceduralSfx.Play(clip, position, volume, WeaponDefinition.FireSoundRange);
+            ProceduralSfx.PlayForActor(this, clip, position, volume, WeaponDefinition.FireSoundRange);
         else
-            ProceduralSfx.Play(ProceduralSfx.Gunshot, position, volume * 0.85f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Gunshot, position, volume * 0.85f);
     }
 
     [ServerRpc]
@@ -561,8 +561,8 @@ public class WeaponShooting : NetworkBehaviour
         if (IsOwner) return;
         held.Swing();
         if (melee && weapon != null && weapon.IsCharged)
-            ProceduralSfx.Play(ProceduralSfx.BowRelease, transform.position, 0.6f);
-        else if (melee) ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.BowRelease, transform.position, 0.6f);
+        else if (melee) ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
         else PlayShot(transform.position, scoped, 0.9f);
     }
 
@@ -684,7 +684,7 @@ public class WeaponShooting : NetworkBehaviour
         reloading = true;
         reloadEndTime = Time.time + duration;
 
-        ProceduralSfx.Play(ProceduralSfx.Reload, transform.position, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Reload, transform.position, 0.6f);
         held.PlayReload(duration);
         ReloadFxServerRpc(duration);
     }
@@ -701,6 +701,6 @@ public class WeaponShooting : NetworkBehaviour
         if (IsOwner) return;
 
         held.PlayReload(Mathf.Clamp(duration, 0.05f, 10f));
-        ProceduralSfx.Play(ProceduralSfx.Reload, transform.position, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Reload, transform.position, 0.6f);
     }
 }

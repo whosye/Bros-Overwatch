@@ -79,7 +79,7 @@ public class RecallAbility : NetworkBehaviour
     {
         rewinding = true;
         fpc.AbilityActive = true;
-        ProceduralSfx.Play(ProceduralSfx.UltCharge, transform.position, 0.5f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.UltCharge, transform.position, 0.5f);
 
         var points = new List<Vector3>();
         for (int i = path.Count - 1; i >= 0; i--)

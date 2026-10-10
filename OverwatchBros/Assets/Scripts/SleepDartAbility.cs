@@ -37,7 +37,7 @@ public class SleepDartAbility : NetworkBehaviour
         nextUseTime = Time.time + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.45f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.45f);
         GetComponent<PlayerHero>().SayAbility(ability);
         FireServerRpc(eye.position, eye.forward);
     }

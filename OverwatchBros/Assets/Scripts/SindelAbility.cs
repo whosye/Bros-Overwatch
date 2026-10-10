@@ -56,7 +56,7 @@ public class SindelAbility : NetworkBehaviour
             fpc.OwnerHover(leap.power, leap.duration);
             // skok ve smeru, kterym hrac jde (bez pohybu dopredu)
             fpc.AddImpulse(LeapDirection() * 8f);
-            ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 0.5f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, transform.position, 0.5f);
             hero.SayAbility(leap);
             LeapServerRpc();
         }
@@ -65,7 +65,7 @@ public class SindelAbility : NetworkBehaviour
         {
             nextGrenade = Time.time + grenade.Cooldown;
             var eye = fpc.playerCamera.transform;
-            ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.5f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
             hero.SayAbility(grenade);
             var held = GetComponent<HeldWeapons>();
             if (held != null) held.PlayThrow();

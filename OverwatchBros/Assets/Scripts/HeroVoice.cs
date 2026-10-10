@@ -169,8 +169,8 @@ public class HeroVoice : MonoBehaviour
         source.Stop();
         source.clip = clip;
         source.volume = volume;
-        // Hlaska k ultimatce (Q) je slyset pres celou mapu, ostatni jen v okoli.
-        source.spatialBlend = kind == VoiceKind.Ability && slot == 0 ? 0f : 1f;
+        // Vlastni hlas je vystredeny; cizi hlasy jsou prostorove, ultimatky globalni.
+        source.spatialBlend = ult || ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
         source.Play();
         playingPriority = priority;
         playingUlt = ult;
@@ -186,7 +186,7 @@ public class HeroVoice : MonoBehaviour
         source.Stop();
         source.clip = clip;
         source.volume = 1f;
-        source.spatialBlend = 1f;
+        source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
         source.Play();
         playingPriority = 99;
         playingUlt = false;
@@ -209,6 +209,8 @@ public class HeroVoice : MonoBehaviour
             go.transform.localPosition = new Vector3(0f, 1.6f, 0f);
 
             source = go.AddComponent<AudioSource>();
+            source.panStereo = 0f;
+            source.dopplerLevel = 0f;
             source.spatialBlend = 1f;
             source.rolloffMode = AudioRolloffMode.Linear;
             source.minDistance = 4f;

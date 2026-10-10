@@ -701,7 +701,7 @@ public class PlayerHero : NetworkBehaviour
 
         if (firstTime)
         {
-            ProceduralSfx.Play(ProceduralSfx.Spawn, transform.position, 0.5f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Spawn, transform.position, 0.5f);
             // Spawn hlaska jen v rozbehnutem zapase (v lobby ne; na startu zapasu ji spusti MatchManager).
             var match = MatchManager.Instance;
             if (IsServer && match != null && !match.IsLobby && !match.IsOver)
@@ -875,7 +875,7 @@ public class PlayerHero : NetworkBehaviour
         if (!HeroVoice.HasLines(Hero, VoiceKind.Hurt, 0))
         {
             nextHurtSound = Time.time + 0.35f;
-            ProceduralSfx.Play(ProceduralSfx.Hurt, transform.position, 0.7f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Hurt, transform.position, 0.7f);
         }
         else if (IsServer)
         {
@@ -1003,7 +1003,7 @@ public class PlayerHero : NetworkBehaviour
 
     void OnDeath()
     {
-        ProceduralSfx.Play(ProceduralSfx.Death, transform.position, 0.8f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Death, transform.position, 0.8f);
         if (IsServer)
         {
             Say(VoiceKind.Death);

@@ -86,7 +86,7 @@ public class MaxAbility : NetworkBehaviour
         busy = true;
         nextReap = Time.time + reap.Cooldown;
         hero.SayAbility(reap);
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.7f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.7f);
 
         // smer pohledu; pri pohledu nahoru i kousek do vyse
         Vector3 look = fpc.playerCamera.transform.forward;
@@ -137,7 +137,7 @@ public class MaxAbility : NetworkBehaviour
             float a = i * Mathf.PI / 4f;
             Fx.Sparks(position + new Vector3(Mathf.Cos(a), 1f, Mathf.Sin(a)) * (reap != null ? reap.radius * 0.7f : 2f), ShadowColor);
         }
-        ProceduralSfx.Play(ProceduralSfx.Hit, position, 0.9f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, position, 0.9f);
         // za kazdeho zasazeneho o sekundu kratsi cooldown
         if (IsOwner && hits > 0)
             nextReap = Mathf.Max(Time.time, nextReap - hits);
@@ -203,8 +203,8 @@ public class MaxAbility : NetworkBehaviour
         if (shadowSmoke != null) shadowSmoke.Emit(40);
         Fx.Sparks(chest, ShadowColor);
         Fx.Sparks(chest + Vector3.up * 0.4f, new Color(0.9f, 0.5f, 1f));
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.9f);
-        ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 0.35f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.9f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, transform.position, 0.35f);
     }
 
     // Kourova stopa: tmave fialove chuchvalce ve svete (zustavaji za Maxem) a svetle fialove jiskricky.
@@ -424,7 +424,7 @@ public class MaxAbility : NetworkBehaviour
     void SlashWindupClientRpc()
     {
         // napraah: slysitelne a videt (fialova jiskra u Maxe), at se da utect
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.5f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
         Fx.Sparks(transform.position + Vector3.up * 1.8f, ShadowColor);
     }
 
@@ -469,8 +469,8 @@ public class MaxAbility : NetworkBehaviour
     [ClientRpc]
     void SlashClientRpc(Vector3 origin, Vector3 direction, float length)
     {
-        ProceduralSfx.Play(ProceduralSfx.Dash, origin, 1f);
-        ProceduralSfx.Play(ProceduralSfx.LeapStart, origin, 0.4f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, origin, 1f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, origin, 0.4f);
         var wave = new GameObject("FX_DlouhyRez").AddComponent<ReachWave>();
         wave.Init(origin - Vector3.up * 1.55f, direction, length, SlashWidth);   // (origin = oci, vlna jede po zemi)
     }

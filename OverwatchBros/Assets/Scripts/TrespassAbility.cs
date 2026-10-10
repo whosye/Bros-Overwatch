@@ -59,7 +59,7 @@ public class TrespassAbility : NetworkBehaviour
         var target = FindTarget();
         if (target == null)
         {
-            ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.6f);   // nikdo na dosah
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.6f);   // nikdo na dosah
             return;
         }
 
@@ -203,7 +203,7 @@ public class TrespassAbility : NetworkBehaviour
     void BeginClientRpc(ulong targetId)
     {
         Fx.Sparks(transform.position + Vector3.up, MaxAbility.ShadowColor);
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.9f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.9f);
 
         // obet: tmavy fialovy okraj a varovani
         var network = NetworkManager.Singleton;

@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788ef6b0b8f14533a04f9686a56caea7, type: 3}
+  m_Name: GameAudioLibrary
+  m_EditorClassIdentifier:
+  menuMusic: {fileID: 8300000, guid: 7f12ce19870d9924da0e9f834eae1e06, type: 3}
+  villageAmbient: {fileID: 8300000, guid: ba790264115b4e218e79718f773d7c83, type: 3}

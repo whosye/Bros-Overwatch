@@ -72,7 +72,7 @@ public class VisorAbility : NetworkBehaviour
         }
 
         if (current && !IsOwner)
-            ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 0.7f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, transform.position, 0.7f);
     }
 
     void Update()
@@ -122,7 +122,7 @@ public class VisorAbility : NetworkBehaviour
         if (shooting != null)
             shooting.SetMagazineOverride(UltAmmo);
 
-        ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 0.7f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, transform.position, 0.7f);
     }
 
     const int UltAmmo = 30;

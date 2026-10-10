@@ -113,7 +113,7 @@ public class BardAbility : NetworkBehaviour
         if (HeroInput.Pressed(this, HeroInput.Key.Shift) && Time.time >= nextToggle)
         {
             nextToggle = Time.time + crossfade.Cooldown;
-            ProceduralSfx.Play(ProceduralSfx.CaptureTick, transform.position, 0.7f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.CaptureTick, transform.position, 0.7f);
             hero.SayAbility(crossfade);
             ToggleServerRpc();
         }
@@ -158,7 +158,7 @@ public class BardAbility : NetworkBehaviour
             fpc.AddImpulse(push);
         }
 
-        ProceduralSfx.Play(ProceduralSfx.Explosion, transform.position, 0.35f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Explosion, transform.position, 0.35f);
         hero.SayAbility(wave);
         SoundwaveServerRpc(eye.position, forward);
     }
@@ -291,7 +291,7 @@ public class BardAbility : NetworkBehaviour
         if (strong)
         {
             Fx.Sparks(point + Vector3.up * 0.5f, Color.white);
-            ProceduralSfx.Play(ProceduralSfx.CaptureUnlock, point, 0.9f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.CaptureUnlock, point, 0.9f);
         }
         else if (!IsOwner)
         {

@@ -154,7 +154,7 @@ public class BlockAbility : NetworkBehaviour
     {
         Vector3 position = transform.position + transform.forward * 0.7f + Vector3.up * 0.4f;
         Fx.Sparks(position, SparkColor);
-        ProceduralSfx.Play(broken ? ProceduralSfx.Explosion : ProceduralSfx.Hit, position, broken ? 0.4f : 0.7f);
+        ProceduralSfx.PlayForActor(this, broken ? ProceduralSfx.Explosion : ProceduralSfx.Hit, position, broken ? 0.4f : 0.7f);
 
         if (broken)
             Fx.BulletImpact(position, SparkColor, 1.6f);

@@ -319,7 +319,7 @@ public static class Fx
         go.AddComponent<TracerFade>().Init(line, strong ? 0.35f : 0.2f);
     }
 
-    public static void PlaySpatial(AudioClip clip, Vector3 position, float volume, float minDistance = 4f, float maxDistance = 30f)
+    public static void PlaySpatial(AudioClip clip, Vector3 position, float volume, float minDistance = 4f, float maxDistance = 30f, bool spatial = true)
     {
         if (clip == null) return;
         ReplayLog.SpatialSound(clip, position, volume, minDistance, maxDistance);
@@ -330,7 +330,9 @@ public static class Fx
         var source = go.AddComponent<AudioSource>();
         source.clip = clip;
         source.volume = volume;
-        source.spatialBlend = 1f;
+        source.spatialBlend = spatial ? 1f : 0f;
+        source.panStereo = 0f;
+        source.dopplerLevel = 0f;
         source.rolloffMode = AudioRolloffMode.Linear;
         source.minDistance = minDistance;
         source.maxDistance = maxDistance;

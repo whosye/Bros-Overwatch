@@ -54,7 +54,7 @@ public class ScoutArrowAbility : NetworkBehaviour
         nextUseTime = Time.time + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
-        ProceduralSfx.Play(ProceduralSfx.BowRelease, transform.position, 0.5f, 30f, spatial: fpc.Bot != null);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.BowRelease, transform.position, 0.5f, 30f);
         GetComponent<PlayerHero>().SayAbility(ability);
         ShootServerRpc(eye.position, eye.forward);
     }

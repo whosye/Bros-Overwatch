@@ -115,9 +115,9 @@ public class RushAbility : NetworkBehaviour, ICooldownCut
     void PlayStartSound(float volume)
     {
         if (ability != null && ability.sound != null)
-            Fx.PlaySpatial(ability.sound, transform.position, volume);
+            Fx.PlaySpatial(ability.sound, transform.position, volume, spatial: !ProceduralSfx.IsLocalPlayer(this));
         else
-            ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, volume);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, volume);
     }
 
     void SetAura(bool on)

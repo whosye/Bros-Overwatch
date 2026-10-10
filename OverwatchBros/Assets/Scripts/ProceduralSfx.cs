@@ -221,6 +221,28 @@ public static class ProceduralSfx
 
     // Zvuk efektu v miste deje s omezenym dosahem (pres celou mapu jsou slyset jen ultimatky - Fx.PlayGlobal).
     // Drive AudioSource.PlayClipAtPoint: logaritmicky utlum s dosahem 500 m = vystrely a vybuchy slyset vsude.
+    // Host-owned bots and replay actors must still sound like other actors in the world.
+    public static bool IsLocalPlayer(Component actor)
+    {
+        if (actor == null) return false;
+        var network = actor.GetComponent<Unity.Netcode.NetworkObject>();
+        var hero = actor.GetComponent<PlayerHero>();
+        return network != null && network.IsSpawned && network.IsOwner
+            && actor.GetComponent<BotBrain>() == null && (hero == null || !hero.isBot.Value);
+    }
+
+    // Use only for actor actions/feedback, never for projectile travel or world impacts.
+    // Keep the world position in the replay log even when the owner hears a centered sound.
+    public static void PlayForActor(Component actor, AudioClip clip, Vector3 position, float volume = 1f)
+    {
+        PlayForActor(actor, clip, position, volume, clip == explosion ? 60f : clip == gunshot ? 45f : 30f);
+    }
+
+    public static void PlayForActor(Component actor, AudioClip clip, Vector3 position, float volume, float maxDistance)
+    {
+        Play(clip, position, volume, maxDistance, spatial: !IsLocalPlayer(actor));
+    }
+
     public static void Play(AudioClip clip, Vector3 position, float volume = 1f)
     {
         // Hlasite zvuky dal (vybuch, vystrel), drobne bliz.

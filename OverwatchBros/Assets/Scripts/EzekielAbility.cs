@@ -349,7 +349,7 @@ public class EzekielAbility : NetworkBehaviour
     void BeginClientRpc()
     {
         Fx.Sparks(transform.position + Vector3.up, HolyColor);
-        ProceduralSfx.Play(ProceduralSfx.LeapStart, transform.position, 0.8f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, transform.position, 0.8f);
     }
 
     [ClientRpc]

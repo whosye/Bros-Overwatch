@@ -92,8 +92,10 @@ public class PulseBombAbility : NetworkBehaviour
     void StuckToPlayerClientRpc(NetworkObjectReference targetRef, Vector3 localPoint)
     {
         if (targetRef.TryGet(out NetworkObject target))
+        {
             PulseBombVisual.StickTo(this, target.transform, localPoint);
-        ProceduralSfx.Play(ProceduralSfx.Hit, transform.position, 0.5f);
+            ProceduralSfx.Play(ProceduralSfx.Hit, target.transform.TransformPoint(localPoint), 0.5f);
+        }
     }
 
     [ClientRpc]

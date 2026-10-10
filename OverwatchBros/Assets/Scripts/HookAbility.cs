@@ -44,7 +44,7 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
         nextUseTime = Time.time + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
         ThrowServerRpc(eye.position, eye.forward);
     }

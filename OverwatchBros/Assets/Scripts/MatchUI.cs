@@ -23,6 +23,8 @@ public class MatchUI : MonoBehaviour
     GameObject restartButton;
     GameObject lobbyButton;
     GameObject crosshair;
+    CanvasGroup crosshairFade;
+    ScopeOverlay scopeOverlay;
     readonly HudUI hud = new HudUI();
     readonly MatchOverlayUI overlay = new MatchOverlayUI();
     readonly CaptureUI capture = new CaptureUI();
@@ -36,6 +38,8 @@ public class MatchUI : MonoBehaviour
     TextMeshProUGUI volumeText;
     Slider sensitivitySlider;
     Slider volumeSlider;
+    Slider ambientSlider;
+    TextMeshProUGUI ambientText;
     Button headBobButton;
     Slider headBobSlider;
     TextMeshProUGUI headBobText;
@@ -86,6 +90,13 @@ public class MatchUI : MonoBehaviour
         var root = canvasObject.transform;
         var center = new Vector2(0.5f, 0.5f);
 
+        // Below the HUD and all menus: the optic never covers health, charge or hit feedback.
+        var scopeObject = new GameObject("SniperScope", typeof(RectTransform), typeof(ScopeOverlay));
+        scopeObject.transform.SetParent(root, false);
+        scopeOverlay = scopeObject.GetComponent<ScopeOverlay>();
+        UiKit.Stretch(scopeOverlay.rectTransform);
+        scopeObject.SetActive(false);
+
         scoreText = UiKit.MakeText(root, "Score", "", 48, TextAlignmentOptions.Center, new Vector2(0.5f, 1f),
             new Vector2(0f, -20f), new Vector2(1200f, 70f));
         infoText = UiKit.MakeText(root, "Info", "", 30, TextAlignmentOptions.Left, new Vector2(0f, 0f),
@@ -108,6 +119,9 @@ public class MatchUI : MonoBehaviour
         UiKit.MakeImage(cross.transform, "H", new Color(1f, 1f, 1f, 0.95f), center, Vector2.zero, new Vector2(16f, 2f));
         UiKit.MakeImage(cross.transform, "V", new Color(1f, 1f, 1f, 0.95f), center, Vector2.zero, new Vector2(2f, 16f));
         crosshair = cross.gameObject;
+        crosshairFade = crosshair.AddComponent<CanvasGroup>();
+        crosshairFade.blocksRaycasts = false;
+        crosshairFade.interactable = false;
 
         // Bar bloku pod zaměřovačem (velikost = zbývající kapacita bloku).
         blockBar = UiKit.MakeImage(root, "BlockBar", new Color(0f, 0f, 0f, 0.55f), center, new Vector2(0f, -70f), new Vector2(240f, 14f)).gameObject;
@@ -165,39 +179,45 @@ public class MatchUI : MonoBehaviour
     {
         var center = new Vector2(0.5f, 0.5f);
 
-        var panel = UiKit.MakeImage(root, "SettingsPanel", new Color(0.05f, 0.07f, 0.10f, 0.92f), center, Vector2.zero, new Vector2(780f, 700f));
+        var panel = UiKit.MakeImage(root, "SettingsPanel", new Color(0.05f, 0.07f, 0.10f, 0.92f), center, Vector2.zero, new Vector2(780f, 840f));
         panel.raycastTarget = true;
         settingsPanel = panel.gameObject;
 
         UiKit.MakeText(settingsPanel.transform, "Title", "NASTAVENÍ", 52, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 290f), new Vector2(700f, 70f), UiKit.Accent);
+            new Vector2(0f, 360f), new Vector2(700f, 70f), UiKit.Accent);
 
         sensText = UiKit.MakeText(settingsPanel.transform, "Sens", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 210f), new Vector2(700f, 50f));
+            new Vector2(0f, 280f), new Vector2(700f, 50f));
         volumeText = UiKit.MakeText(settingsPanel.transform, "Volume", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 100f), new Vector2(700f, 50f));
+            new Vector2(0f, 170f), new Vector2(700f, 50f));
 
         // Logarithmic sensitivity keeps low values easy to adjust across the full range.
         sensitivitySlider = UiKit.MakeSlider(settingsPanel.transform, "SensitivitySlider", center,
-            new Vector2(0f, 165f), new Vector2(620f, 44f), 0f, 1f, SensitivityToSlider(),
+            new Vector2(0f, 235f), new Vector2(620f, 44f), 0f, 1f, SensitivityToSlider(),
             value => GameSettings.Sensitivity = Mathf.Round(GameSettings.MinSensitivity
                 * Mathf.Pow(GameSettings.MaxSensitivity / GameSettings.MinSensitivity, value) * 100f) / 100f);
         volumeSlider = UiKit.MakeSlider(settingsPanel.transform, "VolumeSlider", center,
-            new Vector2(0f, 55f), new Vector2(620f, 44f), 0f, 100f, GameSettings.Volume * 100f,
+            new Vector2(0f, 125f), new Vector2(620f, 44f), 0f, 100f, GameSettings.Volume * 100f,
             value => GameSettings.Volume = value / 100f, wholeNumbers: true);
 
+        ambientText = UiKit.MakeText(settingsPanel.transform, "AmbientVolume", "", 32, TextAlignmentOptions.Center, center,
+            new Vector2(0f, 60f), new Vector2(700f, 50f));
+        ambientSlider = UiKit.MakeSlider(settingsPanel.transform, "AmbientSlider", center,
+            new Vector2(0f, 15f), new Vector2(620f, 44f), 0f, 100f, GameSettings.AmbientVolume * 100f,
+            value => GameSettings.AmbientVolume = value / 100f, wholeNumbers: true);
+
         headBobButton = UiKit.MakeButton(settingsPanel.transform, "Pohupování kamery: ZAPNUTO", center,
-            new Vector2(0f, -30f), new Vector2(620f, 60f),
+            new Vector2(0f, -70f), new Vector2(620f, 60f),
             () => GameSettings.HeadBobEnabled = !GameSettings.HeadBobEnabled, fontSize: 30f);
         headBobText = UiKit.MakeText(settingsPanel.transform, "HeadBobIntensity", "", 32, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -100f), new Vector2(700f, 50f));
+            new Vector2(0f, -140f), new Vector2(700f, 50f));
         headBobSlider = UiKit.MakeSlider(settingsPanel.transform, "HeadBobSlider", center,
-            new Vector2(0f, -145f), new Vector2(620f, 44f), 0f, 200f, GameSettings.HeadBobIntensity * 100f,
+            new Vector2(0f, -185f), new Vector2(620f, 44f), 0f, 200f, GameSettings.HeadBobIntensity * 100f,
             value => GameSettings.HeadBobIntensity = value / 100f, wholeNumbers: true);
 
-        UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -260f), new Vector2(340f, 76f),
+        UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -320f), new Vector2(340f, 76f),
             () => Cursor.lockState = CursorLockMode.Locked, UiKit.Green, 32f);
-        UiKit.MakeButton(settingsPanel.transform, "OPUSTIT HRU", center, new Vector2(190f, -260f), new Vector2(340f, 76f),
+        UiKit.MakeButton(settingsPanel.transform, "OPUSTIT HRU", center, new Vector2(190f, -320f), new Vector2(340f, 76f),
             LeaveGame, new Color(0.45f, 0.18f, 0.18f, 1f), 32f);
 
         settingsPanel.SetActive(false);
@@ -314,7 +334,9 @@ public class MatchUI : MonoBehaviour
         UpdateLegacyHud(playing);
 
         bool locked = GameSettings.CursorLocked;
-        crosshair.SetActive((playing && !over && locked && !replay) || (replay && ReplayPlayer.Frame != null && (killcam || !ReplayPlayer.Frame.thirdPerson)));
+        UpdateScope(localHero, playing && !over && locked && !replay && !PotgUI.IsShowing);
+        crosshairFade.alpha = 1f - (scopeOverlay.IsVisible ? scopeOverlay.Opacity : 0f);
+        crosshair.SetActive(crosshairFade.alpha > 0.005f && ((playing && !over && locked && !replay) || (replay && ReplayPlayer.Frame != null && (killcam || !ReplayPlayer.Frame.thirdPerson))));
         UpdateBlockBar(localHero, playing && !over);
 
         bool showSettings = playing && !over && !locked && !heroPicker.IsOpen;
@@ -325,6 +347,8 @@ public class MatchUI : MonoBehaviour
         {
             sensitivitySlider.SetValueWithoutNotify(SensitivityToSlider());
             volumeSlider.SetValueWithoutNotify(GameSettings.Volume * 100f);
+            ambientSlider.SetValueWithoutNotify(GameSettings.AmbientVolume * 100f);
+            ambientText.text = $"Zvuky prostředí: {Mathf.RoundToInt(GameSettings.AmbientVolume * 100f)} %";
             sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0#}  <size=65%>(max {GameSettings.MaxSensitivity:0})</size>";
             volumeText.text = $"Hlasitost: {Mathf.RoundToInt(GameSettings.Volume * 100f)} %";
             UiKit.SetButtonLabel(headBobButton, GameSettings.HeadBobEnabled ? "Pohupování kamery: ZAPNUTO" : "Pohupování kamery: VYPNUTO");
@@ -332,6 +356,25 @@ public class MatchUI : MonoBehaviour
             headBobSlider.interactable = GameSettings.HeadBobEnabled;
             headBobText.text = $"Intenzita pohupování: {Mathf.RoundToInt(GameSettings.HeadBobIntensity * 100f)} %";
         }
+    }
+
+    void UpdateScope(PlayerHero localHero, bool allowed)
+    {
+        var scope = allowed && localHero != null ? localHero.GetComponent<ScopeZoom>() : null;
+        var fpc = scope != null ? localHero.GetComponent<FirstPersonController>() : null;
+        float blend = scope != null && scope.isActiveAndEnabled && fpc != null && !fpc.IsDead && !fpc.ThirdPerson
+            ? scope.ScopeBlend : 0f;
+        // POTG already records the camera FOV. Killcam uses its own unzoomed camera.
+        if (ReplayPlayer.Active && !ReplayPlayer.IsKillcam && ReplayPlayer.Frame != null && ReplayPlayer.Camera != null)
+        {
+            var frame = ReplayPlayer.Frame;
+            var definition = HeroRegistry.Get(frame.hudHero);
+            var weapon = definition != null ? definition.weapon : null;
+            if (!frame.thirdPerson && frame.health > 0f && weapon != null && weapon.HasScopedShot)
+                blend = ScopeZoom.BlendForFov(ReplayPlayer.Camera.fieldOfView, scope != null ? scope.BaseFov : 60f, weapon.scopeFov);
+        }
+        scopeOverlay.SetBlend(blend);
+        scopeOverlay.gameObject.SetActive(blend > 0.005f);
     }
 
     // Bar bloku se ukazuje, kdyz hrdina blokuje, nebo kdyz bar neni plny (ubyva pri zásazích, po 5 s bez poškození se obnovuje).

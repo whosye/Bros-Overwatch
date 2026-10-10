@@ -23,6 +23,7 @@ public class LobbyUI
     Button enterButton;
     Button modeButton;
     Button testButton;
+    Button musicButton;
     TextMeshProUGUI waitText;
 
     // Boti (jen host): hrdina a tym pristiho bota, pridat / odebrat vsechny.
@@ -40,6 +41,7 @@ public class LobbyUI
         UiKit.Stretch(root.rectTransform);
         root.raycastTarget = true;
         Root = root.gameObject;
+        musicButton = MainMenuUI.BuildMusicToggle(Root.transform);
 
         title = UiKit.MakeText(Root.transform, "Title", "LOBBY", 70, TextAlignmentOptions.Center, center,
             new Vector2(0f, 455f), new Vector2(1600f, 90f), UiKit.Accent);
@@ -138,6 +140,7 @@ public class LobbyUI
     // joining = zapas uz bezi a tenhle hrac si po pripojeni teprve vybira tym a hrdinu.
     public void Tick(PlayerHero localHero, bool joining = false)
     {
+        MainMenuUI.RefreshMusicToggle(musicButton);
         if (Root == null || !Root.activeSelf || Time.unscaledTime < nextRefresh) return;
         nextRefresh = Time.unscaledTime + 0.15f;
 

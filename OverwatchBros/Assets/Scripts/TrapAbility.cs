@@ -77,7 +77,7 @@ public class TrapAbility : NetworkBehaviour
 
         nextUseTime = Time.time + ability.Cooldown;
         placed = true;
-        ProceduralSfx.Play(ProceduralSfx.Reload, transform.position, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Reload, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
         PlaceServerRpc(point);
     }
@@ -240,7 +240,7 @@ public class TrapAbility : NetworkBehaviour
         var held = GetComponent<HeldWeapons>();
         if (held != null)
             held.PlayThrow();
-        ProceduralSfx.Play(ProceduralSfx.Dash, from, 0.4f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, from, 0.4f);
 
         var flying = BuildVisual(out var a, out var b);
         flying.name = "TrapThrow";

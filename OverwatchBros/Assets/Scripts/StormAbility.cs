@@ -96,7 +96,7 @@ public class StormAbility : NetworkBehaviour
         // Smrst leti presne tam, kam miri zamerovac (i nahoru nebo dolu).
         var eye = fpc.playerCamera.transform;
         Vector3 direction = eye.forward;
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.9f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.9f);
         LaunchServerRpc(eye.position + direction * 2.5f, direction);
     }
 
@@ -194,7 +194,7 @@ public class StormAbility : NetworkBehaviour
         var go = new GameObject("Storm");
         go.transform.position = origin;
         go.AddComponent<StormVisual>().Init(direction, speed, seconds, radius, StormColor);
-        ProceduralSfx.Play(ProceduralSfx.LeapStart, origin, 1f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, origin, 1f);
     }
 }
 

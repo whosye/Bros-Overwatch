@@ -55,7 +55,7 @@ public class RapidFireAbility : NetworkBehaviour
         active = true;
         shotsLeft = Mathf.Max(1, ability.charges);
         endTime = Time.time + ability.duration;
-        ProceduralSfx.Play(ProceduralSfx.Reload, transform.position, 0.7f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Reload, transform.position, 0.7f);
         GetComponent<PlayerHero>().SayAbility(ability);
     }
 

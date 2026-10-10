@@ -10,6 +10,22 @@ public static class GameSettings
 
     const string SensitivityKey = "settings.sensitivity";
     const string VolumeKey = "settings.volume";
+    const string AmbientVolumeKey = "settings.ambientVolume";
+    public static bool MusicEnabled
+    {
+        get => PlayerPrefs.GetInt("settings.musicEnabled", 1) != 0;
+        set
+        {
+            PlayerPrefs.SetInt("settings.musicEnabled", value ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+    }
+
+    public static float AmbientVolume
+    {
+        get => Mathf.Clamp01(PlayerPrefs.GetFloat(AmbientVolumeKey, 0.12f));
+        set => PlayerPrefs.SetFloat(AmbientVolumeKey, Mathf.Clamp01(value));
+    }
     const string HeadBobEnabledKey = "settings.headBobEnabled";
     const string HeadBobIntensityKey = "settings.headBobIntensity";
 

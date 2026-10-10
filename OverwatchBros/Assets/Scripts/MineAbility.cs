@@ -111,7 +111,7 @@ public class MineAbility : NetworkBehaviour
 
             // Bez naboje: cvaknuti, at je jasne, ze stisk prosel, jen neni cim hazet.
             if (charges <= 0 && !fpc.InputBlocked)
-                ProceduralSfx.Play(ProceduralSfx.Empty, transform.position, 0.7f);
+                ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.7f);
         }
 
         if (Time.time > bufferedUntil || fpc.InputBlocked || charges <= 0) return;
@@ -124,7 +124,7 @@ public class MineAbility : NetworkBehaviour
 
         var eye = fpc.playerCamera.transform;
         Vector3 direction = (eye.forward + Vector3.up * 0.12f).normalized;
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.5f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
         GetComponent<PlayerHero>().SayAbility(ability);
         ThrowServerRpc(eye.position + eye.forward * 0.6f, direction);
     }

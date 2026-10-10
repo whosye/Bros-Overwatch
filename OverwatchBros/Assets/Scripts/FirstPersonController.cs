@@ -267,7 +267,7 @@ public class FirstPersonController : NetworkBehaviour
     {
         SleepMarker.Show(transform, seconds);
         if (NetworkManager.LocalClientId == attackerClientId && Camera.main != null)
-            ProceduralSfx.Play(ProceduralSfx.StunConfirm, Camera.main.transform.position, 0.9f);
+            ProceduralSfx.Play(ProceduralSfx.StunConfirm, Camera.main.transform.position, 0.9f, 30f, spatial: false);
 
         if (!IsOwner || IsDead) return;
 
@@ -306,9 +306,9 @@ public class FirstPersonController : NetworkBehaviour
     {
         // Zvuk omraceni slysi vsichni v okoli; ten, kdo trefil, dostane navic potvrzeni (i kdyz je daleko).
         if (blind)
-            ProceduralSfx.Play(ProceduralSfx.Stun, transform.position + Vector3.up * 1.5f, 1f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Stun, transform.position + Vector3.up * 1.5f, 1f);
         if (NetworkManager.LocalClientId == attackerClientId && Camera.main != null)
-            ProceduralSfx.Play(ProceduralSfx.StunConfirm, Camera.main.transform.position, 0.9f);
+            ProceduralSfx.Play(ProceduralSfx.StunConfirm, Camera.main.transform.position, 0.9f, 30f, spatial: false);
 
         if (!IsOwner || IsDead) return;
 
@@ -731,7 +731,7 @@ public class FirstPersonController : NetworkBehaviour
             airJumpUsed = true;
             abilityFlight = false;
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * JumpGravity);
-            ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.35f);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.35f);
         }
 
         // Ve vzduchu a s pohybem dopredu se hrdina chyti hrany a vytahne se na ni.
@@ -777,7 +777,7 @@ public class FirstPersonController : NetworkBehaviour
             if (stepAccumulator >= stride)
             {
                 stepAccumulator %= stride;
-                ProceduralSfx.Play(ProceduralSfx.Footstep, transform.position, 0.3f);
+                ProceduralSfx.PlayForActor(this, ProceduralSfx.Footstep, transform.position, 0.3f);
             }
         }
     }

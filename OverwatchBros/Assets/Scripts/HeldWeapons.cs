@@ -50,6 +50,7 @@ public class HeldWeapons : MonoBehaviour
     float swingDuration = 0.3f;
     FirstPersonArms fpArms;
     BlockAbility block;
+    ScopeZoom scope;
     float blockBlend;
     float runBlend;
     float runPhase;
@@ -182,6 +183,21 @@ public class HeldWeapons : MonoBehaviour
         // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
         bool hiddenByReplay = !ghost && (ReplayPlayer.Active || (CurrentHeroComponent != null && CurrentHeroComponent.IsSpawned && CurrentHeroComponent.IsUntargetable));
         bool cameraHandsVisible = !dead && !(owner && thirdPerson) && !hiddenByReplay;
+        float scopeBlend = 0f;
+        if (owner && CurrentWeapon != null && CurrentWeapon.HasScopedShot)
+        {
+            if (ghost && ghostCamera != null && ghostCamera.TryGetComponent<Camera>(out var replayCamera))
+                scopeBlend = ScopeZoom.BlendForFov(replayCamera.fieldOfView, 60f, CurrentWeapon.scopeFov);
+            else if (!ghost)
+            {
+                if (scope == null) scope = GetComponent<ScopeZoom>();
+                if (scope != null && scope.isActiveAndEnabled) scopeBlend = scope.ScopeBlend;
+            }
+        }
+        // Move the first-person rifle out of the lens as the optic settles in.
+        // Body weapons remain visible to other players, and weapon animations keep advancing.
+        if (root != null)
+            root.transform.localPosition = owner ? Vector3.down * (0.9f * Mathf.SmoothStep(0f, 1f, scopeBlend)) : Vector3.zero;
         if (root != null && root.activeSelf != cameraHandsVisible)
             root.SetActive(cameraHandsVisible);
 

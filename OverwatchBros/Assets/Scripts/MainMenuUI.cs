@@ -16,6 +16,7 @@ public class MainMenuUI
     TextMeshProUGUI statusText;
     TextMeshProUGUI noGamesText;
     Button testButton;
+    Button musicButton;
     readonly List<Button> gameRows = new List<Button>();
     readonly List<LanDiscovery.Game> shownGames = new List<LanDiscovery.Game>();
     float nextRefresh;
@@ -48,6 +49,7 @@ public class MainMenuUI
         testButton = UiKit.MakeButton(Root.transform, "TEST", new Vector2(0f, 1f), new Vector2(40f, -40f), new Vector2(470f, 70f),
             ToggleTestCooldowns, UiKit.ButtonBase, 26f);
         RefreshTestButton();
+        musicButton = BuildMusicToggle(Root.transform);
 
         UiKit.MakeButton(Root.transform, "UKONČIT HRU", new Vector2(1f, 1f), new Vector2(-40f, -40f), new Vector2(300f, 70f),
             QuitGame, new Color(0.45f, 0.18f, 0.18f, 1f), 30f);
@@ -135,6 +137,7 @@ public class MainMenuUI
 
     public void Tick()
     {
+        RefreshMusicToggle(musicButton);
         if (Root == null || !Root.activeSelf || Time.unscaledTime < nextRefresh) return;
         nextRefresh = Time.unscaledTime + 0.5f;
 
@@ -171,6 +174,20 @@ public class MainMenuUI
         PlayerHero.PreferredName = nick;
         PlayerPrefs.SetString("nick", nick);
         PlayerPrefs.SetString("gameName", gameNameInput.text.Trim());
+    }
+
+    public static Button BuildMusicToggle(Transform parent)
+    {
+        var button = UiKit.MakeButton(parent, "", new Vector2(1f, 1f), new Vector2(-40f, -125f),
+            new Vector2(300f, 60f), () => GameSettings.MusicEnabled = !GameSettings.MusicEnabled, UiKit.ButtonBase, 24f);
+        RefreshMusicToggle(button);
+        return button;
+    }
+
+    public static void RefreshMusicToggle(Button button)
+    {
+        if (button != null)
+            UiKit.SetButtonLabel(button, GameSettings.MusicEnabled ? "♪ HUDBA: ZAPNUTO" : "♪ HUDBA: VYPNUTO");
     }
 
     void ToggleTestCooldowns()

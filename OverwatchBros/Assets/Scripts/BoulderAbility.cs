@@ -204,7 +204,7 @@ public class BoulderAbility : NetworkBehaviour
 
         position.Value = start;
         rolling.Value = true;
-        ProceduralSfx.Play(ProceduralSfx.LeapStart, start, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, start, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
     }
 

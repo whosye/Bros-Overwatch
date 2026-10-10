@@ -82,7 +82,7 @@ public class DashAbility : NetworkBehaviour
     void DashFxClientRpc()
     {
         if (IsOwner) return;
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.7f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.7f);
     }
 
     IEnumerator DashRoutine()
@@ -92,7 +92,7 @@ public class DashAbility : NetworkBehaviour
 
         Vector3 direction = DashDirection();
 
-        ProceduralSfx.Play(ProceduralSfx.Dash, transform.position, 0.7f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.7f);
         DashFxServerRpc();
         GetComponent<PlayerHero>().SayAbility(ability);
 

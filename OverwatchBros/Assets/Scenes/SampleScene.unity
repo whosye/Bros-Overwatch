@@ -41435,6 +41435,52 @@ Transform:
   - {fileID: 1207822582}
   m_Father: {fileID: 1822751591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &152235121
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 152235123}
+  - component: {fileID: 152235122}
+  m_Layer: 0
+  m_Name: MenuMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &152235122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 152235121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59be13e9beca4663a69d5d013ab49c36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MenuMusic
+  clip: {fileID: 8300000, guid: 7f12ce19870d9924da0e9f834eae1e06, type: 3}
+  volume: 1
+--- !u!4 &152235123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 152235121}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &152334084
 GameObject:
   m_ObjectHideFlags: 0
@@ -118730,6 +118776,7 @@ GameObject:
   - component: {fileID: 459340798}
   - component: {fileID: 459340800}
   - component: {fileID: 459340799}
+  - component: {fileID: 459340801}
   m_Layer: 0
   m_Name: Stit
   m_TagString: Untagged
@@ -118808,6 +118855,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 459340797}
+  m_Mesh: {fileID: 1310389954}
+--- !u!64 &459340801
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 459340797}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 1310389954}
 --- !u!1 &459456408
 GameObject:
@@ -138691,6 +138760,7 @@ GameObject:
   - component: {fileID: 539587591}
   - component: {fileID: 539587593}
   - component: {fileID: 539587592}
+  - component: {fileID: 539587594}
   m_Layer: 0
   m_Name: Stit
   m_TagString: Untagged
@@ -138769,6 +138839,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 539587590}
+  m_Mesh: {fileID: 206685286}
+--- !u!64 &539587594
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539587590}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 206685286}
 --- !u!1 &539624762
 GameObject:
@@ -166937,6 +167029,7 @@ GameObject:
   - component: {fileID: 637018692}
   - component: {fileID: 637018694}
   - component: {fileID: 637018693}
+  - component: {fileID: 637018695}
   m_Layer: 0
   m_Name: Hreben
   m_TagString: Untagged
@@ -167016,6 +167109,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 637018691}
   m_Mesh: {fileID: 663269486}
+--- !u!65 &637018695
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637018691}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.22, y: 0.22, z: 6.5999985}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!43 &637780051
 Mesh:
   m_ObjectHideFlags: 0
@@ -260439,6 +260553,7 @@ GameObject:
   - component: {fileID: 992675954}
   - component: {fileID: 992675956}
   - component: {fileID: 992675955}
+  - component: {fileID: 992675957}
   m_Layer: 0
   m_Name: Strecha_P
   m_TagString: Untagged
@@ -260518,6 +260633,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 992675953}
   m_Mesh: {fileID: 580801840}
+--- !u!65 &992675957
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992675953}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.9972591, y: 0.14, z: 6.6}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &993853190
 GameObject:
   m_ObjectHideFlags: 0
@@ -268134,6 +268270,55 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1015402795}
   m_Mesh: {fileID: 68109418}
+--- !u!1 &1015562162
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1015562163}
+  - component: {fileID: 1015562164}
+  m_Layer: 0
+  m_Name: VillageAmbient
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1015562163
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1015562162}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1880279437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1015562164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1015562162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a0ef70fb55144b19e021ab26c01b221, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VillageAmbient
+  clip: {fileID: 8300000, guid: ba790264115b4e218e79718f773d7c83, type: 3}
+  volumeBoost: 2.67
+  crossfadeSeconds: 3
+  minDistance: 18
+  maxDistance: 140
 --- !u!1 &1015809490
 GameObject:
   m_ObjectHideFlags: 0
@@ -313288,6 +313473,7 @@ GameObject:
   - component: {fileID: 1175490843}
   - component: {fileID: 1175490845}
   - component: {fileID: 1175490844}
+  - component: {fileID: 1175490846}
   m_Layer: 0
   m_Name: Strecha_L
   m_TagString: Untagged
@@ -313367,6 +313553,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1175490842}
   m_Mesh: {fileID: 620315254}
+--- !u!65 &1175490846
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175490842}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.9972591, y: 0.14, z: 6.6}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1175609446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -401706,7 +401913,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -501998,6 +502205,7 @@ Transform:
   - {fileID: 1244901220}
   - {fileID: 444918064}
   - {fileID: 1337866484}
+  - {fileID: 1015562163}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1880661562
@@ -570597,3 +570805,4 @@ SceneRoots:
   - {fileID: 1880279437}
   - {fileID: 649318148}
   - {fileID: 1100320035}
+  - {fileID: 152235123}

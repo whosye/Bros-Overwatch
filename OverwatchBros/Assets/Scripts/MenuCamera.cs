@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Netcode;
 
 // Kamera pro hlavni menu a lobby, kdyz ve scene zadna jina nebezi (scena sama kameru nema - ma ji az hrac).
 // Bez ni Unity hlasi "No cameras rendering" a "no audio listeners". Jakmile se zapne jina kamera
@@ -33,6 +34,13 @@ public class MenuCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        // The fallback listener also serves character selection. Keep it near
+        // the local player once connected, so 3D ambience is not 5 km away.
+        var network = NetworkManager.Singleton;
+        var player = network != null && network.IsClient && network.IsListening && network.LocalClient != null
+            ? network.LocalClient.PlayerObject : null;
+        if (player != null) transform.position = player.transform.position + Vector3.up * 1.6f;
+        else transform.position = new Vector3(0f, -5000f, 0f);
         bool other = false;
         foreach (var cam in Camera.allCameras)
             if (cam != view && cam.enabled && cam.targetTexture == null)
@@ -42,6 +50,15 @@ public class MenuCamera : MonoBehaviour
             }
 
         if (view.enabled == other) view.enabled = !other;
-        if (listener.enabled == other) listener.enabled = !other;
+        // A rendering camera is not necessarily an audio listener (previews,
+        // cinematic cameras, etc.). Keep our fallback until a real listener is active.
+        bool otherListener = false;
+        foreach (var candidate in FindObjectsByType<AudioListener>())
+            if (candidate != listener && candidate.isActiveAndEnabled)
+            {
+                otherListener = true;
+                break;
+            }
+        listener.enabled = !otherListener;
     }
 }

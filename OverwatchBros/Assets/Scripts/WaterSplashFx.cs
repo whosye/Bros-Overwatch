@@ -113,7 +113,8 @@ public class WaterSplashFx : MonoBehaviour
         rush.clip = ProceduralSfx.WaterRush;
         rush.loop = true;
         rush.volume = 0f;
-        rush.spatialBlend = 1f;
+        rush.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        rush.panStereo = 0f;
         rush.rolloffMode = AudioRolloffMode.Linear;
         rush.minDistance = 3f;
         rush.maxDistance = 25f;
