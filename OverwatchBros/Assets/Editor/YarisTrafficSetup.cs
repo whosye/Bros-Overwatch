@@ -9,6 +9,7 @@ using Object = UnityEngine.Object;
 public static class YarisTrafficSetup
 {
     const string RootName = "ProvozYaris";
+    const string RadioMusicPath = "Assets/Audio/Music/why_is_this_dealer_loop.mp3";
     const float Cell = 1.5f;
     static int resourceRetries;
     static YarisTrafficSetup()
@@ -45,9 +46,8 @@ public static class YarisTrafficSetup
         if (map == null) return;
         var car = map.transform.Find("Props/ToyotaYaris");
         var traffic = car != null ? car.GetComponent<YarisTraffic>() : null;
-        // Existing routes used to skip Configure, leaving new audio fields empty in an open scene.
-        // Bind missing clips independently of rebuilding the route, including after a Play-mode reload.
-        if (traffic != null) BindMissingAudio(traffic);
+        // Keep the radio in sync with RadioMusicPath even when the route already exists.
+        if (traffic != null) BindAudio(traffic);
         if (EditorApplication.isPlayingOrWillChangePlaymode) return;
         if (map.transform.Find(RootName + "/_v4") != null && traffic != null)
         {
@@ -56,13 +56,14 @@ public static class YarisTrafficSetup
         else Build(map.transform);
     }
 
-    static void BindMissingAudio(YarisTraffic traffic)
+    static void BindAudio(YarisTraffic traffic)
     {
         bool changed = traffic.UpgradeRadioRange();
-        if (traffic.radioMusic == null)
+        var radioClip = AssetDatabase.LoadAssetAtPath<AudioClip>(RadioMusicPath);
+        if (radioClip != null && traffic.radioMusic != radioClip)
         {
-            traffic.radioMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Traffic/why_is_this_dealer.mp3");
-            changed |= traffic.radioMusic != null;
+            traffic.radioMusic = radioClip;
+            changed = true;
         }
         if (traffic.impactSound == null)
         {
@@ -74,7 +75,7 @@ public static class YarisTrafficSetup
             EditorUtility.SetDirty(traffic);
             EditorSceneManager.MarkSceneDirty(traffic.gameObject.scene);
         }
-        if ((traffic.radioMusic == null || traffic.impactSound == null) && resourceRetries++ < 30)
+        if ((radioClip == null || traffic.impactSound == null) && resourceRetries++ < 30)
             EditorApplication.delayCall += Run;
     }
 
@@ -250,7 +251,7 @@ public static class YarisTrafficSetup
         var clip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Traffic/YarisHorn.wav");
         traffic.impactSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Misc/bohuno_cut.mp3");
         traffic.impactVolume = 0.7f;
-        traffic.radioMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Traffic/why_is_this_dealer.mp3");
+        traffic.radioMusic = AssetDatabase.LoadAssetAtPath<AudioClip>(RadioMusicPath);
         if (clip == null)
         {
             if (resourceRetries++ < 30) EditorApplication.delayCall += Run;

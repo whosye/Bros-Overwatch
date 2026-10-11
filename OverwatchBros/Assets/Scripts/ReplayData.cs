@@ -105,7 +105,7 @@ public enum ReplayEventType : byte
 {
     Explosion, Sparks, Impact, Tracer, SpatialSound, GlobalSound, Sfx, ProjectileSpawn, ProjectileEnd,
     Voice, Swing, Reload, StopReload, Kick, FirstPersonKick, HudHit, HudFlash, HudSleep, HudTint, HudEnd,
-    NanoAura, SleepShow, SleepHide, KillFeed
+    NanoAura, SleepShow, SleepHide, KillFeed, SurfaceMark
 }
 
 public class ReplayEvent

@@ -235,12 +235,13 @@ public class ProjectileSim : MonoBehaviour
         else if (health != null && hitDamage > 0f)
             Combat.DamagePlayer(shooter.gameObject, health, hitDamage, weapon.IsCharged ? "weapon:bow" : "weapon:gun");
 
-        Finish(point, KindHit);
+        bool embedArrow = weapon.IsCharged && BulletHoleDecals.CanMark(collider);
+        Finish(point, KindHit, normal, velocity.normalized, embedArrow);
     }
 
-    void Finish(Vector3 position, int kind)
+    void Finish(Vector3 position, int kind, Vector3 normal = default, Vector3 direction = default, bool embedArrow = false)
     {
-        shooter.NotifyProjectileEnd(id, position, kind, heroId);
+        shooter.NotifyProjectileEnd(id, position, kind, heroId, normal, direction, embedArrow);
         Destroy(gameObject);
     }
 }

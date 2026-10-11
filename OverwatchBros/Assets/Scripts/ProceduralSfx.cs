@@ -8,12 +8,16 @@ public static class ProceduralSfx
 
     static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock, potgIntro, ultCharge, splash, bigSplash, waterRush, jokerJingle;
     static AudioClip bowRelease, arrowFlight;
+    static AudioClip bulletImpact;
+    static AudioClip surfaceSlash;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
     {
         gunshot = empty = reload = hit = dash = leapStart = explosion = death = spawn = footstep = hurt = null;
         bowRelease = arrowFlight = null;
+        bulletImpact = null;
+        surfaceSlash = null;
     }
 
     public static AudioClip Gunshot => gunshot ??= Make("gunshot", 0.28f, (t, r) =>
@@ -28,6 +32,14 @@ public static class ProceduralSfx
     });
 
     public static AudioClip Hit => hit ??= Make("hit", 0.07f, (t, r) => Mathf.Sin(2f * Mathf.PI * 1400f * t) * Mathf.Exp(-t * 55f) * 0.6f);
+
+    public static AudioClip BulletImpact => bulletImpact ??= Make("bulletImpact", 0.11f, (t, r) =>
+        Mathf.Clamp01(t / 0.001f) * (Noise(r) * 0.65f * Mathf.Exp(-t * 65f)
+        + Mathf.Sin(2f * Mathf.PI * 240f * t) * 0.35f * Mathf.Exp(-t * 38f)));
+
+    public static AudioClip SurfaceSlash => surfaceSlash ??= Make("surfaceSlash", 0.18f, (t, r) =>
+        Mathf.Clamp01(t / 0.002f) * (Noise(r) * 0.55f * Mathf.Exp(-t * 25f)
+        + Mathf.Sin(2f * Mathf.PI * 160f * t) * 0.3f * Mathf.Exp(-t * 45f)));
 
     public static AudioClip Dash => dash ??= Sweep("dash", 0.35f, 0.6f);
 

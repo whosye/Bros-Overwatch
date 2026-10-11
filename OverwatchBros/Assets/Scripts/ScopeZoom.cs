@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 // a citlivost mysi se umerne snizi. Funguje jen u zbrani s dalekohledem a kdyz prave tlacitko nema jinou schopnost.
 public class ScopeZoom : MonoBehaviour
 {
-    const float ZoomSpeed = 10f;
+    const float ZoomSpeed = 20f;
 
     FirstPersonController fpc;
     PlayerHero hero;

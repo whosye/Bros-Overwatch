@@ -134,6 +134,13 @@ public class WeaponDefinition : ScriptableObject
     [Tooltip("Zvuk odstrelu s pribliseni (sniper). Prazdne = 'Fire Sound'.")]
     public AudioClip scopedFireSound;
 
+    [Header("Dopad kulek (hitscan)")]
+    [Tooltip("Zvuk v miste dopadu. Prazdne = kratky generovany zvuk dopadu.")]
+    public AudioClip bulletImpactSound;
+    [Range(0f, 1f)] public float bulletImpactVolume = 0.5f;
+    [Tooltip("Stopy po kulkach na pevnem prostredi; nikdy na postavach nebo pohyblivych objektech.")]
+    public bool bulletHoles = true;
+
     // Dosah zvuku vystrelu (od teto vzdalenosti uz neni slyset).
     public const float FireSoundRange = 45f;
 

@@ -480,6 +480,10 @@ public static class ReplayLog
     public static void Explosion(Vector3 p, float radius) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Explosion, p0 = p, f0 = radius }); }
     public static void Sparks(Vector3 p, Color c) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Sparks, p0 = p, color = c }); }
     public static void Impact(Vector3 p, Color c, float scale) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Impact, p0 = p, color = c, f0 = scale }); }
+    public static void SurfaceMark(Vector3 point, Vector3 normal, SurfaceMarkKind kind, float angle)
+    {
+        if (Recording) Add(new ReplayEvent { type = ReplayEventType.SurfaceMark, p0 = point, p1 = normal, a = (int)kind, f0 = angle });
+    }
     public static void Tracer(Vector3 from, Vector3 to, Color c, bool strong) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Tracer, p0 = from, p1 = to, color = c, flag = strong }); }
 
     public static void SpatialSound(AudioClip clip, Vector3 p, float volume, float min, float max)
@@ -506,10 +510,12 @@ public static class ReplayLog
             Add(new ReplayEvent { type = ReplayEventType.ProjectileSpawn, id = id, p0 = p, p1 = v, p2 = offset, name = weapon.name });
     }
 
-    public static void ProjectileEnd(int id, Vector3 p, int kind, WeaponDefinition weapon)
+    public static void ProjectileEnd(int id, Vector3 p, int kind, WeaponDefinition weapon,
+        Vector3 normal = default, Vector3 direction = default, bool embedArrow = false)
     {
         if (Recording)
-            Add(new ReplayEvent { type = ReplayEventType.ProjectileEnd, id = id, p0 = p, a = kind, name = weapon != null ? weapon.name : "" });
+            Add(new ReplayEvent { type = ReplayEventType.ProjectileEnd, id = id, p0 = p, p1 = normal, p2 = direction,
+                flag = embedArrow, a = kind, name = weapon != null ? weapon.name : "" });
     }
 
     public static void Voice(Component speaker, VoiceKind kind, int slot, int pick)

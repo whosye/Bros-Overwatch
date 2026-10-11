@@ -526,6 +526,10 @@ public class ReplayPlayer : MonoBehaviour
             case ReplayEventType.Explosion: Fx.Explosion(e.p0, e.f0); break;
             case ReplayEventType.Sparks: Fx.Sparks(e.p0, e.color); break;
             case ReplayEventType.Impact: Fx.BulletImpact(e.p0, e.color, e.f0); break;
+            case ReplayEventType.SurfaceMark:
+                if (BulletHoleDecals.TryResolveSurface(e.p0, e.p1, out var surface))
+                    BulletHoleDecals.Place(surface.collider, surface.point, surface.normal, (SurfaceMarkKind)e.a, e.f0);
+                break;
             case ReplayEventType.Tracer: Fx.Tracer(e.p0, e.p1, e.color, e.flag); break;
             case ReplayEventType.SpatialSound: Fx.PlaySpatial(FindSound(e.name), e.p0, e.f0, e.f1, e.f2); break;
             case ReplayEventType.GlobalSound: Fx.PlayGlobal(FindSound(e.name), e.f0); break;
@@ -535,7 +539,7 @@ public class ReplayPlayer : MonoBehaviour
                 if (weapon != null) ProjectileVisual.Spawn(e.id + ProjectileIdOffset, e.p0, e.p1, weapon, e.p2);
                 break;
             case ReplayEventType.ProjectileEnd:
-                ProjectileVisual.End(e.id + ProjectileIdOffset, e.p0, e.a, FindWeapon(e.name));
+                ProjectileVisual.End(e.id + ProjectileIdOffset, e.p0, e.a, FindWeapon(e.name), e.p1, e.p2, e.flag);
                 break;
             case ReplayEventType.Voice:
                 if (g != null && g.voice != null) g.voice.Play(HeroRegistry.Get(g.hero), (VoiceKind)e.id, e.a, e.b);

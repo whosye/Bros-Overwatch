@@ -233,7 +233,7 @@ public class WeaponShooting : NetworkBehaviour
                 ProceduralSfx.PlayForActor(this, ProceduralSfx.StunConfirm, playerCamera.transform.position, 1f);
             }
 
-            ApplyHit(hit.collider, hit.point, full ? 2f : 1.2f, damage);
+            ApplyHit(hit.collider, hit.point, full ? 2f : 1.2f, damage, hit.normal);
             end = hit.point;
             break;
         }
@@ -373,11 +373,11 @@ public class WeaponShooting : NetworkBehaviour
             {
                 float body = DamageFor(hit.collider, hit.point);
                 ProceduralSfx.PlayForActor(this, ProceduralSfx.StunConfirm, playerCamera.transform.position, 0.8f);
-                ApplyHit(hit.collider, hit.point, 1.3f, body * weapon.headshotMultiplier);
+                ApplyHit(hit.collider, hit.point, 1.3f, body * weapon.headshotMultiplier, hit.normal);
                 break;
             }
 
-            ApplyHit(hit.collider, hit.point, 1f);
+            ApplyHit(hit.collider, hit.point, 1f, normal: hit.normal);
             break;
         }
     }
@@ -388,9 +388,14 @@ public class WeaponShooting : NetworkBehaviour
     const float ComboWindow = 1f;
     int comboStep;
     float lastSwing = -10f;
+    int surfaceSwingCount;
+    float surfaceSlashAngle;
 
     void SwingMelee()
     {
+        surfaceSlashAngle = weapon.heldModel == HeldModel.Axe
+            ? (surfaceSwingCount % 2 == 0 ? -45f : 45f) : 0f;
+        surfaceSwingCount++;
         Vector3 origin = playerCamera.transform.position;
         Vector3 forward = playerCamera.transform.forward;
 
@@ -459,7 +464,7 @@ public class WeaponShooting : NetworkBehaviour
             if (owner != null && owner == NetworkObject) continue;
 
             Vector3 point = hit.distance > 0f ? hit.point : hit.collider.ClosestPoint(origin);
-            ApplyHit(hit.collider, point, 1.4f);
+            ApplyHit(hit.collider, point, 1.4f, normal: hit.normal);
             return;
         }
     }
@@ -472,7 +477,7 @@ public class WeaponShooting : NetworkBehaviour
 
     // Spolecny zasah pro hitscan i melee: damage, zvuk zasahu a maly vybuch v miste dopadu.
     // damageOverride >= 0: pevne poskozeni (odstrel s pribliseni), jinak podle zbrane a vzdalenosti.
-    void ApplyHit(Collider collider, Vector3 point, float fxScale, float damageOverride = -1f)
+    void ApplyHit(Collider collider, Vector3 point, float fxScale, float damageOverride = -1f, Vector3 normal = default)
     {
         // Strelba na dalku je slabsi (jen zbrane s nastavenym poklesem poskozeni).
         float damage = damageOverride >= 0f ? damageOverride : DamageFor(collider, point);
@@ -480,8 +485,7 @@ public class WeaponShooting : NetworkBehaviour
         // Mimo ucinny dosah strela nic nezpusobi (jen dopad na povrchu, bez zvuku zasahu).
         if (damage <= 0f)
         {
-            Fx.BulletImpact(point, weapon.projectileColor, fxScale);
-            ImpactFxServerRpc(point, fxScale);
+            ShowImpact(collider, point, normal, fxScale);
             return;
         }
 
@@ -516,18 +520,40 @@ public class WeaponShooting : NetworkBehaviour
             ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, transform.position, 0.8f);
         }
 
+        ShowImpact(collider, point, normal, fxScale);
+    }
+
+    void ShowImpact(Collider collider, Vector3 point, Vector3 normal, float fxScale)
+    {
+        bool bullet = weapon.fireMode == FireMode.Hitscan && normal.sqrMagnitude > 0.5f;
+        bool slash = weapon.IsMelee && normal.sqrMagnitude > 0.5f
+            && (weapon.heldModel == HeldModel.Scythe || weapon.heldModel == HeldModel.Axe);
+        bool hole = ((bullet && weapon.bulletHoles) || slash) && BulletHoleDecals.CanMark(collider);
         Fx.BulletImpact(point, weapon.projectileColor, fxScale);
-        ImpactFxServerRpc(point, fxScale);
+        if (bullet) PlayBulletImpact(weapon, point);
+        if (slash) ProceduralSfx.Play(ProceduralSfx.SurfaceSlash, point, 0.5f, 18f, spatial: true);
+        if (hole) BulletHoleDecals.Place(collider, point, normal,
+            slash ? SurfaceMarkKind.Slash : SurfaceMarkKind.Bullet, surfaceSlashAngle);
+        ImpactFxServerRpc(point, normal, fxScale, bullet, hole, slash, surfaceSlashAngle);
+    }
+
+    static void PlayBulletImpact(WeaponDefinition definition, Vector3 point)
+    {
+        var clip = definition != null && definition.bulletImpactSound != null
+            ? definition.bulletImpactSound : ProceduralSfx.BulletImpact;
+        float volume = definition != null ? definition.bulletImpactVolume : 0.5f;
+        // Always spatial, including for the shooter: this sound comes from the hit, not the gun.
+        ProceduralSfx.Play(clip, point, volume, 24f, spatial: true);
     }
 
     [ServerRpc]
-    void ImpactFxServerRpc(Vector3 point, float fxScale)
+    void ImpactFxServerRpc(Vector3 point, Vector3 normal, float fxScale, bool bullet, bool hole, bool slash, float angle)
     {
-        ImpactFxClientRpc(point, fxScale);
+        ImpactFxClientRpc(point, normal, fxScale, bullet, hole, slash, angle);
     }
 
     [ClientRpc]
-    void ImpactFxClientRpc(Vector3 point, float fxScale)
+    void ImpactFxClientRpc(Vector3 point, Vector3 normal, float fxScale, bool bullet, bool hole, bool slash, float angle)
     {
         if (IsOwner) return;
 
@@ -536,6 +562,13 @@ public class WeaponShooting : NetworkBehaviour
             ? playerHero.Hero.weapon.projectileColor
             : Color.white;
         Fx.BulletImpact(point, tint, Mathf.Clamp(fxScale, 0.5f, 3f));
+        if (bullet)
+            PlayBulletImpact(playerHero != null && playerHero.Hero != null ? playerHero.Hero.weapon : null, point);
+        // Resolve only the surface at the transmitted point; never attach marks to a nearby player.
+        if (slash) ProceduralSfx.Play(ProceduralSfx.SurfaceSlash, point, 0.5f, 18f, spatial: true);
+        if (hole && BulletHoleDecals.TryResolveSurface(point, normal, out var surface))
+            BulletHoleDecals.Place(surface.collider, surface.point, surface.normal,
+                slash ? SurfaceMarkKind.Slash : SurfaceMarkKind.Bullet, angle);
     }
 
     // Zvuk vystrelu: vlastni nahravka zbrane (WeaponDefinition.fireSound), jinak generovany zastupny.
@@ -657,16 +690,17 @@ public class WeaponShooting : NetworkBehaviour
     }
 
     // Vola serverova simulace projektilu, kdyz projektil skoncil (zasah / vybuch / vyprsel dostrel).
-    public void NotifyProjectileEnd(int id, Vector3 position, int kind, int heroId)
+    public void NotifyProjectileEnd(int id, Vector3 position, int kind, int heroId,
+        Vector3 normal = default, Vector3 direction = default, bool embedArrow = false)
     {
         if (!IsServer) return;
-        ProjectileEndClientRpc(id, position, kind, heroId);
+        ProjectileEndClientRpc(id, position, kind, heroId, normal, direction, embedArrow);
     }
 
     [ClientRpc]
-    void ProjectileEndClientRpc(int id, Vector3 position, int kind, int heroId)
+    void ProjectileEndClientRpc(int id, Vector3 position, int kind, int heroId, Vector3 normal, Vector3 direction, bool embedArrow)
     {
-        ProjectileVisual.End(id, position, kind, WeaponOfHero(heroId));
+        ProjectileVisual.End(id, position, kind, WeaponOfHero(heroId), normal, direction, embedArrow);
     }
 
     WeaponDefinition WeaponOfHero(int heroId)

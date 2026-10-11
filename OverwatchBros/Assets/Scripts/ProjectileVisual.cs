@@ -80,22 +80,40 @@ public class ProjectileVisual : MonoBehaviour
         Active[id] = visual;
     }
 
-    public static void End(int id, Vector3 position, int kind, WeaponDefinition weapon)
+    public static void End(int id, Vector3 position, int kind, WeaponDefinition weapon,
+        Vector3 normal = default, Vector3 direction = default, bool embedArrow = false)
     {
         // (vybuch a jiskry, ktere konec sam vyvola, se zvlast nezapisuji)
-        ReplayLog.ProjectileEnd(id, position, kind, weapon);
+        ReplayLog.ProjectileEnd(id, position, kind, weapon, normal, direction, embedArrow);
         using (ReplayLog.Mute())
-            EndInternal(id, position, kind, weapon);
+            EndInternal(id, position, kind, weapon, normal, direction, embedArrow);
     }
 
-    static void EndInternal(int id, Vector3 position, int kind, WeaponDefinition weapon)
+    static void EndInternal(int id, Vector3 position, int kind, WeaponDefinition weapon,
+        Vector3 normal, Vector3 direction, bool embedArrow)
     {
-        if (Active.TryGetValue(id, out var visual) && visual != null)
+        Active.TryGetValue(id, out var visual);
+        if (visual != null)
         {
             visual.StopFlightAudio();
-            Destroy(visual.gameObject);
+            visual.enabled = false;
         }
         Active.Remove(id);
+
+        bool embedded = false;
+        if (kind == ProjectileSim.KindHit && embedArrow && weapon != null && weapon.IsCharged
+            && BulletHoleDecals.TryResolveSurface(position, normal, out var surface))
+        {
+            var arrow = visual != null ? visual.gameObject
+                : weapon.projectilePrefab != null ? Instantiate(weapon.projectilePrefab) : CreateDefaultVisual(weapon);
+            embedded = BulletHoleDecals.EmbedArrow(surface.collider, surface.point, surface.normal, direction, arrow);
+            if (!embedded && visual == null) Destroy(arrow);
+        }
+        if (visual != null)
+        {
+            if (embedded) Destroy(visual); // The decal pool now owns the visible, stationary arrow.
+            else Destroy(visual.gameObject);
+        }
 
         if (weapon == null) return;
 

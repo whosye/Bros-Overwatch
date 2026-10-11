@@ -18,6 +18,10 @@ public class FirstPersonController : NetworkBehaviour
     [Min(1f)] public float movementGravityScale = 2.5f;
     [Tooltip("Extra gravity after the apex of a regular jump.")]
     [Min(1f)] public float fallingGravityScale = 1.2f;
+    [Tooltip("Stronger gravity and launch speed on the way up after a knock-up. Reaches roughly the same height sooner; does not change falling gravity or hover ascent.")]
+    [Min(1f)] public float abilityRisingGravityScale = 1.5f;
+    [Tooltip("Extra gravity while falling after a mine launch or other knock-up; ascent stays the same. Active hover keeps its slow fall.")]
+    [Min(1f)] public float abilityFallingGravityScale = 1.8f;
     public float mouseSensitivity = 2f;
     public float standHeight = 2f;
     public float crouchHeight = 1f;
@@ -32,6 +36,7 @@ public class FirstPersonController : NetworkBehaviour
     PlayerHero hero;
     float verticalVelocity;
     bool abilityFlight;
+    float abilityRiseScale = 1f;
     float JumpGravity => gravity * Mathf.Max(1f, movementGravityScale);
     float cameraPitch;
     float stepAccumulator;
@@ -176,8 +181,13 @@ public class FirstPersonController : NetworkBehaviour
         externalVelocity = Vector3.ClampMagnitude(externalVelocity + new Vector3(impulse.x, 0f, impulse.z), 20f);
         if (impulse.y > 0f)
         {
+            // Add stacked impulses in the original speed units, then scale speed and
+            // ascent gravity together to keep the launch height while reaching it sooner.
+            float previousSpeedScale = abilityFlight ? Mathf.Sqrt(abilityRiseScale) : 1f;
+            float launchSpeed = Mathf.Max(verticalVelocity, 0f) / previousSpeedScale;
+            abilityRiseScale = Mathf.Max(1f, abilityRisingGravityScale);
             abilityFlight = true;
-            verticalVelocity = Mathf.Min(Mathf.Max(verticalVelocity, 0f) + impulse.y, 13f);
+            verticalVelocity = Mathf.Min(launchSpeed + impulse.y, 13f) * Mathf.Sqrt(abilityRiseScale);
         }
     }
 
@@ -189,6 +199,7 @@ public class FirstPersonController : NetworkBehaviour
         if (!IsOwner || IsDead) return;
         verticalVelocity = Mathf.Max(verticalVelocity, upSpeed);
         abilityFlight = true;
+        abilityRiseScale = 1f;
         hoverUntil = Time.time + seconds;
     }
 
@@ -744,10 +755,12 @@ public class FirstPersonController : NetworkBehaviour
             verticalVelocity = Mathf.Max(verticalVelocity + gravity * 0.1f * Time.deltaTime, -1.2f);
         else
         {
-            // Keep authored knock-up and hover trajectories on their original gravity.
+            // Knock-up ascent and descent can be tuned independently.
             float acceleration = abilityFlight ? gravity : JumpGravity;
-            if (!abilityFlight && verticalVelocity < 0f)
-                acceleration *= Mathf.Max(1f, fallingGravityScale);
+            if (verticalVelocity < 0f)
+                acceleration *= Mathf.Max(1f, abilityFlight ? abilityFallingGravityScale : fallingGravityScale);
+            else if (abilityFlight)
+                acceleration *= abilityRiseScale;
             verticalVelocity += acceleration * Time.deltaTime;
         }
         controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
