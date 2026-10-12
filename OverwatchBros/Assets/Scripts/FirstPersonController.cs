@@ -164,7 +164,28 @@ public class FirstPersonController : NetworkBehaviour
     // Hrac se pripojil do rozehraneho zapasu a jeste si vybira tym / hrdinu.
     public bool Joining => hero != null && hero.IsJoining;
     public bool CannotAct => IsDead || MatchOver || InLobby || Joining || Stunned;
-    public bool InputBlocked => CannotAct || AbilityActive || UltCasting;
+    public bool InputBlocked => ShootBlocked || Silenced;
+    // Strelba (a pribliseni): jako InputBlocked, ale vystraseny hrac strilet muze.
+    public bool ShootBlocked => CannotAct || AbilityActive || UltCasting;
+
+    // Vystraseni (Sindeluv "Say what again?!"): chvili nejde pouzivat schopnosti. Hlida vlastnik.
+    float silencedUntil;
+    public bool Silenced => Time.time < silencedUntil;
+
+    public void ServerSilence(float seconds)
+    {
+        if (IsServer)
+            SilenceClientRpc(seconds);
+    }
+
+    [ClientRpc]
+    void SilenceClientRpc(float seconds)
+    {
+        FearMarker.Show(transform, seconds);
+        if (!IsOwner || IsDead) return;
+        silencedUntil = Time.time + seconds;
+        if (Bot == null) HudUI.NotifyTint(new Color(0.55f, 0.1f, 0.65f, 0.35f), seconds);
+    }
 
     // Priprava ultimatky (viz UltWindup): hrac chodi, ale nestrili a nepouziva schopnosti; UltWindup = postup 0-1.
     public bool UltCasting { get; set; }
@@ -364,14 +385,14 @@ public class FirstPersonController : NetworkBehaviour
     {
         if (!pulling) return false;
 
-        if (grappleAutoMantle && !InputBlocked && TryStartGrappleMantle())
+        if (grappleAutoMantle && !ShootBlocked && TryStartGrappleMantle())
             return false;
 
         pullTimeLeft -= Time.deltaTime;
         Vector3 toTarget = pullTarget - transform.position;
         float step = pullSpeed * Time.deltaTime;
 
-        if (IsDead || (grappleAutoMantle && InputBlocked) || pullTimeLeft <= 0f || toTarget.magnitude <= Mathf.Max(0.25f, step))
+        if (IsDead || (grappleAutoMantle && ShootBlocked) || pullTimeLeft <= 0f || toTarget.magnitude <= Mathf.Max(0.25f, step))
         {
             pulling = false;
             grappleAutoMantle = false;

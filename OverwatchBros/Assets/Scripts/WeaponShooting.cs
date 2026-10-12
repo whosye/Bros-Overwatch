@@ -141,7 +141,7 @@ public class WeaponShooting : NetworkBehaviour
             return;
         }
 
-        if ((fpc != null && (fpc.InputBlocked || fpc.RushActive || fpc.BlockActive)) || (Bot == null && !GameSettings.CursorLocked))
+        if ((fpc != null && (fpc.ShootBlocked || fpc.RushActive || fpc.BlockActive)) || (Bot == null && !GameSettings.CursorLocked))
         {
             charging = false;
             return;
@@ -261,7 +261,7 @@ public class WeaponShooting : NetworkBehaviour
 
     bool charging;
     public bool IsDrawingBow => isActiveAndEnabled && weapon != null && weapon.IsCharged && charging
-        && FireHeld && (fpc == null || !fpc.InputBlocked)
+        && FireHeld && (fpc == null || !fpc.ShootBlocked)
         && (Bot != null || GameSettings.CursorLocked)
         && !(rapid != null && rapid.enabled && rapid.IsActive);
 

@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 // Drzi se poslednich RingSeconds; PotgRecorder si z nej po akci odlozi klip.
 public class ReplayCapture : MonoBehaviour
 {
-    public const float RingSeconds = 14.5f;
+    public const float RingSeconds = 25.5f;   // (delsi klip, kdyz akce zacala dlouhou hlaskou ultimatky)
     const float FrameInterval = 1f / 30f;
     const int MaxNodes = 64;
     const int MaxObjects = 48;
@@ -78,10 +78,19 @@ public class ReplayCapture : MonoBehaviour
             baseline.Add(root);
     }
 
+    // Po konci zapasu se jeste chvili nahrava: posledni zabiti (casto to nejlepsi) ukonci zapas hned,
+    // a jeho efekty (vybuch, sloup svetla...) by jinak v zaznamu chybely. Play of the game zacina az po 3,5 s.
+    const float AfterMatchSeconds = 3f;
+    float matchOverSince = -1f;
+
     bool ShouldRecord()
     {
         var match = MatchManager.Instance;
-        return match != null && !match.IsLobby && !match.IsOver && hero != null && hero.IsSpawned && BotBrain.IsLocalHuman(hero)
+        if (match == null || match.IsLobby) return false;
+        if (!match.IsOver) matchOverSince = -1f;
+        else if (matchOverSince < 0f) matchOverSince = Time.unscaledTime;
+        bool overGrace = match.IsOver && Time.unscaledTime - matchOverSince < AfterMatchSeconds;
+        return (!match.IsOver || overGrace) && hero != null && hero.IsSpawned && BotBrain.IsLocalHuman(hero)
             && !hero.IsJoining && hero.Hero != null && !ReplayPlayer.Active;
     }
 
@@ -150,6 +159,8 @@ public class ReplayCapture : MonoBehaviour
             if (block != null && block.enabled && block.IsBlocking) flags |= ReplayPlayerSnap.Blocking;
             if (p.IsBoosted) flags |= ReplayPlayerSnap.Boosted;
             if (p.revealed.Value) flags |= ReplayPlayerSnap.Revealed;
+            var ezekiel = p.GetComponent<EzekielAbility>();
+            if (ezekiel != null && ezekiel.IsSpawned && ezekiel.IsCasting) flags |= ReplayPlayerSnap.Preaching;
 
             list.Add(new ReplayPlayerSnap
             {
@@ -198,6 +209,12 @@ public class ReplayCapture : MonoBehaviour
 
         frame.locked = HudUI.LockFrame >= Time.frameCount - 1;
         frame.lockPoint = HudUI.LockPoint;
+
+        var match = MatchManager.Instance;
+        frame.pickupMask = match != null ? match.pickupMask.Value : ulong.MaxValue;
+        frame.buffFastCooldown = Mathf.Max(0f, AbilityDefinition.FastCooldownUntil - Time.time);
+        frame.buffInvulnerable = Mathf.Max(0f, PickupBuffs.InvulnerableUntil - Time.time);
+        frame.buffTramal = Mathf.Max(0f, PickupBuffs.TramalUntil - Time.time);
 
         hero.GetAbilitySlots(slotBuffer);
         var slots = new ReplaySlot[slotBuffer.Count];
@@ -402,6 +419,23 @@ public class ReplayCapture : MonoBehaviour
     // ---------------- vyber klipu ----------------
 
     // Poslednich 'seconds' sekund jako samostatny klip (casy od zacatku klipu).
+    const float VoiceLead = 20f;   // (Sindelova ultimatka ma hlasku pres 17 s)
+
+    // Pred kolika sekundami (od posledniho snimku) zacala hlaska ultimatky tohoto hrace; -1 = v zaznamu neni.
+    public float SecondsSinceOwnUltVoice()
+    {
+        if (frames.Count == 0 || hero == null) return -1f;
+        float end = frames[frames.Count - 1].time;
+        int self = (int)hero.NetworkObjectId;
+        for (int i = events.Count - 1; i >= 0; i--)
+        {
+            var e = events[i];
+            if (e.type == ReplayEventType.Voice && e.player == self && e.id == (int)VoiceKind.Ability && e.a == 0)
+                return end - e.time;
+        }
+        return -1f;
+    }
+
     public ReplayClip Extract(float seconds)
     {
         if (frames.Count < 10) return null;
@@ -420,7 +454,9 @@ public class ReplayCapture : MonoBehaviour
         }
         foreach (var e in events)
         {
-            if (e.time < start - 0.05f || e.time > end) continue;
+            // hlaska, ktera zacala kousek pred klipem, v nem jeste zni - vzit ji taky (prehraje se od spravneho mista)
+            float earliest = e.type == ReplayEventType.Voice ? start - VoiceLead : start - 0.05f;
+            if (e.time < earliest || e.time > end) continue;
             clip.events.Add(new ReplayEvent
             {
                 time = e.time - start, type = e.type, player = e.player, id = e.id, a = e.a, b = e.b,
@@ -442,6 +478,7 @@ public class ReplayCapture : MonoBehaviour
             thirdPerson = f.thirdPerson, ultCasting = f.ultCasting, blocking = f.blocking, ultWindup = f.ultWindup, charge = f.charge,
             hudHero = f.hudHero, hudTeam = f.hudTeam, health = f.health, maxHealth = f.maxHealth, slots = f.slots,
             ammo = f.ammo, maxAmmo = f.maxAmmo, reloading = f.reloading, locked = f.locked, lockPoint = f.lockPoint,
+            pickupMask = f.pickupMask, buffFastCooldown = f.buffFastCooldown, buffInvulnerable = f.buffInvulnerable, buffTramal = f.buffTramal,
             objects = f.objects,
         };
     }
@@ -526,6 +563,9 @@ public static class ReplayLog
             Add(new ReplayEvent { type = ReplayEventType.Voice, player = PlayerOf(speaker), id = (int)kind, a = slot, b = pick });
     }
 
+    public static void Taunt(Component player) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Taunt, player = PlayerOf(player) }); }
+    public static void SayWhatWave(Vector3 origin, Vector3 direction, float range) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.SayWhatWave, p0 = origin, p1 = direction, f0 = range }); }
+    public static void FearShow(Transform player, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.FearShow, player = PlayerOf(player), f0 = seconds }); }
     public static void Swing(Component player) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Swing, player = PlayerOf(player) }); }
     public static void Reload(Component player, float duration) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Reload, player = PlayerOf(player), f0 = duration }); }
     public static void StopReload(Component player) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.StopReload, player = PlayerOf(player) }); }

@@ -131,7 +131,8 @@ public class PickupSpot : MonoBehaviour
     void Update()
     {
         var match = MatchManager.Instance;
-        bool available = match == null || match.PickupAvailable(Index);
+        // (v POTG / killcamu podle zaznamu, ne podle stavu po zapase)
+        bool available = ReplayPlayer.Active ? ReplayPlayer.PickupAvailable(Index) : match == null || match.PickupAvailable(Index);
         if (available != shown)
         {
             shown = available;

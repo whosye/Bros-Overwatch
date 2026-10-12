@@ -221,7 +221,8 @@ public partial class MatchManager : NetworkBehaviour
     // Chvili po konci zapasu se vsem prehraje zaznam hrace s nejlepsi akci (nejvic zabiti v kratkem case).
     System.Collections.IEnumerator PlayOfTheGame()
     {
-        yield return new WaitForSeconds(2.5f);
+        // (po rozhodujicim zabiti se jeste 3 s nahrava - klip konci 2,5 s po zabiti)
+        yield return new WaitForSeconds(3.5f);
         if (!IsSpawned || !matchOver.Value)
         {
             PotgPending = false;

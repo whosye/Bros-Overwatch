@@ -23,10 +23,13 @@ MonoBehaviour:
   blockAbility: {fileID: 0}
   altAbilityKind: 28
   altAbility: {fileID: 11400000, guid: 2b6beac6cd90658458c7074be38b3746, type: 2}
-  rmbAbilityKind: 0
-  rmbAbility: {fileID: 0}
+  rmbAbilityKind: 34
+  rmbAbility: {fileID: 11400000, guid: e2302ceace8533d4fb42f49773b35b79, type: 2}
   doubleJump: 0
   ledgeClimb: 0
+  moveSpeed: 1
+  lifesteal: 0
+  takedownCooldownCut: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5

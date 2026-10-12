@@ -17,6 +17,21 @@ public class ReplayPlayer : MonoBehaviour
     public static bool IsKillcam => Active && instance.killcamVictim >= 0;
     public static bool Finished => instance == null || instance.clip == null || instance.time >= instance.clip.duration;
     public static ReplayFrame Frame => instance != null ? instance.current : null;
+
+    // Stav ze zaznamu pro mapu a HUD: balicky k sebrani a buffy hrace, z jehoz pohledu se prehrava.
+    public static bool PickupAvailable(int index)
+    {
+        var f = Frame;
+        return f == null || index < 0 || index >= 64 || (f.pickupMask & (1UL << index)) != 0;
+    }
+
+    // 0 = rychle cooldowny (Respin Joker), 1 = nesmrtelnost (dedova slivovice), 2 = Tramal
+    public static float BuffRemaining(int which)
+    {
+        var f = Frame;
+        if (f == null || IsKillcam) return 0f;
+        return which == 0 ? f.buffFastCooldown : which == 1 ? f.buffInvulnerable : f.buffTramal;
+    }
     public static Camera Camera => instance != null ? instance.view : null;
 
     // Jmenovka nad hlavou hrace v prehravani (stejne jako v zapase).
@@ -98,6 +113,9 @@ public class ReplayPlayer : MonoBehaviour
         public HeroVoice voice;
         public int hero = -1;
         public ParticleSystem rushAura;
+        public ParticleSystem holyAura;
+        public bool boosted;
+        public Light holyLight;
     }
 
     readonly Dictionary<int, Ghost> ghosts = new Dictionary<int, Ghost>();
@@ -286,6 +304,37 @@ public class ReplayPlayer : MonoBehaviour
                 g.held.GhostUltCasting = a.ultCasting;
                 g.held.GhostUltWindup = a.ultWindup;
                 g.held.GhostCharge = a.charge;
+            }
+
+            // posileni (Annina ultimatka, slivovice): modra aura jako ve hre - i kdyz zacalo pred klipem
+            bool boosted = (p.flags & ReplayPlayerSnap.Boosted) != 0 && alive;
+            if (boosted != g.boosted)
+            {
+                g.boosted = boosted;
+                NanoAura.Set(g.go.transform, boosted);
+            }
+
+            // Sindelova ultimatka: zarici aura a svetlo kolem postavy (jako ve hre)
+            bool preaching = (p.flags & ReplayPlayerSnap.Preaching) != 0 && alive;
+            if (preaching && g.holyAura == null)
+            {
+                g.holyAura = Fx.CreateAura(g.go.transform, EzekielAbility.HolyColor);
+                g.holyAura.transform.localPosition = new Vector3(0f, 0.6f, 0f);
+                var glow = new GameObject("HolyGlow");
+                glow.transform.SetParent(g.go.transform, false);
+                glow.transform.localPosition = new Vector3(0f, 2.2f, 0f);
+                g.holyLight = glow.AddComponent<Light>();
+                g.holyLight.type = LightType.Point;
+                g.holyLight.color = EzekielAbility.HolyColor;
+                g.holyLight.range = 6f;
+                g.holyLight.shadows = LightShadows.None;
+            }
+            if (g.holyAura != null)
+            {
+                if (preaching && !g.holyAura.isPlaying) g.holyAura.Play();
+                if (!preaching && g.holyAura.isPlaying) g.holyAura.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                g.holyLight.enabled = preaching;
+                if (preaching) g.holyLight.intensity = 2.5f + Mathf.Sin(Time.time * 6f) * 0.7f;
             }
 
             bool rushing = g.visual.GhostFrenzy && alive;
@@ -542,9 +591,14 @@ public class ReplayPlayer : MonoBehaviour
                 ProjectileVisual.End(e.id + ProjectileIdOffset, e.p0, e.a, FindWeapon(e.name), e.p1, e.p2, e.flag);
                 break;
             case ReplayEventType.Voice:
-                if (g != null && g.voice != null) g.voice.Play(HeroRegistry.Get(g.hero), (VoiceKind)e.id, e.a, e.b);
+                // presne jak zaznelo (bez preskakovani, kdyz mluvi vic postav); zacala-li pred klipem, od spravneho mista
+                if (g != null && g.voice != null)
+                    g.voice.PlayReplay(HeroRegistry.Get(g.hero), (VoiceKind)e.id, e.a, e.b, Mathf.Max(0f, -e.time), e.player == clip.povId);
                 break;
             case ReplayEventType.Swing: if (g != null) g.held.Swing(); break;
+            case ReplayEventType.Taunt: if (g != null) g.held.PlayTaunt(); break;
+            case ReplayEventType.SayWhatWave: SayWhatWave.Spawn(e.p0, e.p1, e.f0); break;
+            case ReplayEventType.FearShow: if (g != null) FearMarker.Show(g.go.transform, e.f0); break;
             case ReplayEventType.Reload: if (g != null) g.held.PlayReload(e.f0); break;
             case ReplayEventType.StopReload: if (g != null) g.held.StopReload(); break;
             case ReplayEventType.Kick: if (g != null) g.visual.PlayKick(e.f0); break;

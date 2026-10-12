@@ -408,7 +408,7 @@ public class EzekielAbility : NetworkBehaviour
     void BuildVisual()
     {
         circle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        circle.name = "FX_EzekielCircle";
+        circle.name = "EzekielCircle";   // (bez FX_: zaznam pro POTG ho zachyti)
         DestroyImmediate(circle.GetComponent<Collider>());
         Fx.Paint(circle, HolyColor);
         circleMaterial = circle.GetComponent<Renderer>().material;

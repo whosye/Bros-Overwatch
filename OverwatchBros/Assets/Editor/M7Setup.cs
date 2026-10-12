@@ -54,6 +54,7 @@ public static class M7Setup
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Bard.asset") != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Bard.asset").rmbAbility != null
             && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Sindel.asset") != null
+            && AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Sindel.asset").rmbAbility != null
             && AssetDatabase.LoadAssetAtPath<AbilityDefinition>("Assets/Data/SinnerMark_Data.asset") == null;
         var ayranWeapon = AssetDatabase.LoadAssetAtPath<WeaponDefinition>("Assets/Data/Ayran_Weapon.asset");
         var ayranHero = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Ayran.asset");
@@ -224,6 +225,7 @@ public static class M7Setup
         { "Assets/Data/RighteousLeap_Data.asset", "Assets/Resources/Icons/sindel_leap.png" },
         { "Assets/Data/HolyGrenade_Data.asset", "Assets/Resources/Icons/sindel_grenade.png" },
         { "Assets/Data/Ezekiel_Data.asset", "Assets/Resources/Icons/sindel_ezekiel.png" },
+        { "Assets/Data/SayWhat_Data.asset", "Assets/Resources/Icons/sindel_saywhat.png" },
         { "Assets/Data/MaxReap_Data.asset", "Assets/Resources/Icons/max_reap.png" },
         { "Assets/Data/ShadowStep_Data.asset", "Assets/Resources/Icons/max_step.png" },
         { "Assets/Data/MaxSlash_Data.asset", "Assets/Resources/Icons/max_slash.png" },
@@ -688,7 +690,7 @@ public static class M7Setup
             w.weaponName = "Odstřelovačka";
             w.fireMode = FireMode.Hitscan;
             w.heldModel = HeldModel.Gun;
-            w.damage = 7f;
+            w.damage = 9f;
             w.fireRate = 8f;
             w.maxAmmo = 16;
             w.reloadTime = 1.8f;
@@ -704,8 +706,8 @@ public static class M7Setup
             w.scopedFalloffMin = 0.4f;
             w.scopeFov = 25f;
             w.scopedChargeTime = 1.2f;
-            w.scopedMinDamage = 30f;
-            w.scopedMaxDamage = 65f;
+            w.scopedMinDamage = 40f;
+            w.scopedMaxDamage = 85f;
             w.headshotMultiplier = 2f;
             w.scopedAmmoCost = 2;
             w.scopedMoveSpeed = 0.5f;
@@ -975,6 +977,25 @@ public static class M7Setup
             h.altAbility = grenade;
             h.sleeveColor = new Color(0.07f, 0.07f, 0.08f);
         });
+
+        // Prave tlacitko: "Say what again?!" (pridano pozdeji - doplnit i do existujiciho hrdiny)
+        var sayWhat = LoadOrCreate<AbilityDefinition>("Assets/Data/SayWhat_Data.asset", a =>
+        {
+            a.abilityName = "Say what again?!";
+            a.cooldown = 10f;
+            a.power = 10f;       // male poskozeni
+            a.range = 9f;        // dosah kuzele (m)
+            a.radius = 45f;      // polovicni uhel kuzele (st.)
+            a.duration = 1.5f;   // jak dlouho je nepritel vystraseny
+            a.speed = 0.6f;      // zpomaleni (60 % rychlosti)
+            a.knockback = 4f;    // odstrceni
+        });
+        if (sindel.rmbAbility == null)
+        {
+            sindel.rmbAbilityKind = AbilityKind.SayWhat;
+            sindel.rmbAbility = sayWhat;
+            EditorUtility.SetDirty(sindel);
+        }
 
         // Na E byl puvodne "Oznaceni hrisnika" - nahrazen granatem.
         if (sindel.altAbility != grenade)

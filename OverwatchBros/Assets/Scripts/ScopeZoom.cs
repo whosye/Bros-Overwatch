@@ -29,6 +29,18 @@ public class ScopeZoom : MonoBehaviour
 
     void Update()
     {
+        // bot: pribliseni jen jako stav (nabijeni rany, pomalejsi chuze), bez zmeny kamery
+        if (fpc != null && fpc.Bot != null && hero != null && fpc.IsSpawned && fpc.IsOwner)
+        {
+            var botDefinition = hero.Hero;
+            bool canScope = botDefinition != null && botDefinition.weapon != null && botDefinition.rmbAbility == null
+                && botDefinition.blockAbility == null && botDefinition.weapon.scopeFov > 0f;
+            Zoomed = canScope && !fpc.ShootBlocked && fpc.Bot.IsHeld(HeroInput.Key.RightMouse);
+            fpc.ScopeSpeedScale = Zoomed && botDefinition.weapon.HasScopedShot ? botDefinition.weapon.scopedMoveSpeed : 1f;
+            ScopeBlend = 0f;
+            return;
+        }
+
         if (fpc == null || hero == null || fpc.playerCamera == null || !fpc.IsSpawned || !fpc.IsOwner || fpc.Bot != null)
         {
             Zoomed = false;
@@ -44,7 +56,7 @@ public class ScopeZoom : MonoBehaviour
         float scopeFov = definition != null && definition.weapon != null && definition.rmbAbility == null && definition.blockAbility == null
             ? definition.weapon.scopeFov : 0f;
 
-        Zoomed = scopeFov > 0f && GameSettings.CursorLocked && !fpc.InputBlocked && !fpc.ThirdPerson
+        Zoomed = scopeFov > 0f && GameSettings.CursorLocked && !fpc.ShootBlocked && !fpc.ThirdPerson
             && !ReplayPlayer.Active && !PotgIntro.Active
             && Mouse.current != null && Mouse.current.rightButton.isPressed;
 

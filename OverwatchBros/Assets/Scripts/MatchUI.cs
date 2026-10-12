@@ -328,7 +328,7 @@ public class MatchUI : MonoBehaviour
         // Po konci zapasu (a po dohrani play of the game) je tabulka hracu videt porad, ne jen na Tab.
         overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing && !killcam);
         capture.Tick(localHero, playing && !over, match);
-        buffs.Tick(playing && !over && !replay);
+        buffs.Tick((playing && !over && !replay) || (replay && !killcam));   // v POTG buffy hrace ze zaznamu
         boilerPrompt.text = playing && !over && !replay ? Boiler.PromptText : "";
         UpdateEndScreen(network, match, over);
         UpdateLegacyHud(playing);

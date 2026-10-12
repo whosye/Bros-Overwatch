@@ -177,6 +177,28 @@ public class HeroVoice : MonoBehaviour
         playingRide = false;
     }
 
+    // Prehrani v zaznamu (POTG, killcam): hlaska presne jak zaznela, bez pravidel proti zvukovemu chaosu.
+    // 'offset' = kolik sekund uz hlaska hrala pred zacatkem klipu. Hlas hrace, z jehoz pohledu se prehrava, je vystredeny.
+    public void PlayReplay(HeroDefinition hero, VoiceKind kind, int slot, int pick, float offset, bool pov)
+    {
+        var lines = Lines(hero, kind, slot);
+        if (lines == null || lines.Length == 0) return;
+        var clip = Pick(lines, pick);
+        if (clip == null || offset >= clip.length - 0.05f) return;
+
+        bool ult = kind == VoiceKind.Ability && slot == 0;
+        EnsureSource();
+        source.Stop();
+        source.clip = clip;
+        source.volume = volume;
+        source.spatialBlend = ult || pov ? 0f : 1f;
+        source.time = offset;
+        source.Play();
+        playingPriority = Priority(kind);
+        playingUlt = ult;
+        playingRide = false;
+    }
+
     // Hudba jizdy z toboganu (stejny "hlas" hrace - mezitim nemluvi, jen ultimatka ji prerusi).
     public void PlayRide(AudioClip clip)
     {

@@ -7,10 +7,139 @@ using UnityEngine.InputSystem;
 //   Shift (Spravedlivy skok): vyskoci rychlosti 'power' m/s a kus nad zemi se vznasi (pomaly pad), celkem 'duration' s;
 //   E (Svaty granat): hodi granat obloukem rychlosti 'speed'. Vybuchne hned o nepritele, jinak chvili po dopadu:
 //     'power' poskozeni ve stredu, k okraji 'radius' mene. Neprochazi zdmi, nezrani vlastni tym.
+//   prave tlacitko ("Say what again?!"): vykrik do kuzele pred sebe (dosah 'range' m, polovicni uhel 'radius' st.).
+//     Zasazene nepratele (s primym vyhledem) na 'duration' s vystrasi: zpomali je na 'speed' (0.6 = 60 %) a nemohou
+//     pouzivat schopnosti (strilet muzou). Lehce je odstrci ('knockback') a zrani ('power').
+// "Say what again?!" - zlata zvukova vlna (oblouky) letici do kuzele pred Sindelem, s napisem.
+public class SayWhatWave : MonoBehaviour
+{
+    const float Lifetime = 0.55f;
+    const int Arcs = 4;
+    const int Segments = 18;
+    const float HalfAngle = 45f;
+
+    Vector3 origin, direction;
+    float range, age;
+    LineRenderer[] arcs;
+    TMPro.TextMeshPro label;
+
+    public static void Spawn(Vector3 origin, Vector3 direction, float range)
+    {
+        ReplayLog.SayWhatWave(origin, direction, range);
+        if (direction.sqrMagnitude < 0.01f) return;
+        var go = new GameObject("FX_SayWhat");
+        var wave = go.AddComponent<SayWhatWave>();
+        wave.origin = origin;
+        wave.direction = direction.normalized;
+        wave.range = range;
+        wave.arcs = new LineRenderer[Arcs];
+        var material = Fx.ParticleMaterial;   // (pruhledny, barva z cary)
+        for (int i = 0; i < Arcs; i++)
+        {
+            var arc = new GameObject("Arc").AddComponent<LineRenderer>();
+            arc.transform.SetParent(go.transform, false);
+            arc.positionCount = Segments;
+            arc.useWorldSpace = true;
+            arc.material = material;
+            arc.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            arc.numCapVertices = 4;
+            wave.arcs[i] = arc;
+        }
+        var text = new GameObject("Label");
+        text.transform.SetParent(go.transform, false);
+        wave.label = text.AddComponent<TMPro.TextMeshPro>();
+        wave.label.text = "SAY WHAT?!";
+        wave.label.fontSize = 5f;
+        wave.label.fontStyle = TMPro.FontStyles.Bold;
+        wave.label.alignment = TMPro.TextAlignmentOptions.Center;
+        wave.label.color = new Color(1f, 0.85f, 0.4f);
+        wave.Update();
+    }
+
+    void Update()
+    {
+        age += Time.deltaTime;
+        float t = Mathf.Clamp01(age / Lifetime);
+        Vector3 flat = Vector3.ProjectOnPlane(direction, Vector3.up);
+        Vector3 up = flat.sqrMagnitude > 0.01f ? Vector3.Cross(direction, Vector3.Cross(Vector3.up, direction)).normalized : Vector3.forward;
+        for (int i = 0; i < Arcs; i++)
+        {
+            // oblouky postupne vyleti a rozsiri se do kuzele
+            float local = Mathf.Clamp01(t * 1.6f - i * 0.18f);
+            float distance = Mathf.Lerp(0.8f, range, local);
+            float half = HalfAngle * Mathf.Deg2Rad;
+            float alpha = local <= 0f ? 0f : (1f - local) * 0.9f;
+            var arc = arcs[i];
+            arc.enabled = alpha > 0.01f;
+            if (!arc.enabled) continue;
+            arc.startWidth = arc.endWidth = Mathf.Lerp(0.12f, 0.03f, local);
+            var color = new Color(1f, 0.82f, 0.35f, alpha);
+            arc.startColor = arc.endColor = color;
+            for (int s = 0; s < Segments; s++)
+            {
+                float a = Mathf.Lerp(-half, half, s / (Segments - 1f));
+                Vector3 dir = Quaternion.AngleAxis(a * Mathf.Rad2Deg, up) * direction;
+                arc.SetPosition(s, origin + dir * distance + Vector3.down * 0.25f);
+            }
+        }
+
+        // napis vyleti z ust a zmizi
+        label.transform.position = origin + direction * Mathf.Lerp(1.2f, 3.5f, t) + Vector3.up * (0.3f + t * 0.4f);
+        var cam = Camera.main;
+        if (cam != null) label.transform.rotation = Quaternion.LookRotation(label.transform.position - cam.transform.position);
+        label.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 1.25f, Mathf.Min(1f, t * 3f));
+        label.alpha = t < 0.7f ? 1f : 1f - (t - 0.7f) / 0.3f;
+
+        if (age >= Lifetime) Destroy(gameObject);
+    }
+}
+
+// "?!" nad hlavou vystraseneho hrace (vsichni ho vidi; zmizi po case).
+public class FearMarker : MonoBehaviour
+{
+    float until;
+    TMPro.TextMeshPro text;
+
+    public static void Show(Transform player, float seconds)
+    {
+        ReplayLog.FearShow(player, seconds);
+        var marker = player.GetComponentInChildren<FearMarker>(true);
+        if (marker == null)
+        {
+            var go = new GameObject("FearMarker");
+            go.transform.SetParent(player, false);
+            marker = go.AddComponent<FearMarker>();
+            marker.text = go.AddComponent<TMPro.TextMeshPro>();
+            marker.text.text = "?!";
+            marker.text.fontSize = 7f;
+            marker.text.alignment = TMPro.TextAlignmentOptions.Center;
+            marker.text.color = new Color(0.85f, 0.35f, 1f);
+            marker.text.fontStyle = TMPro.FontStyles.Bold;
+        }
+        marker.until = Time.time + seconds;
+        marker.gameObject.SetActive(true);
+    }
+
+    void LateUpdate()
+    {
+        if (Time.time >= until)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+        var cam = Camera.main;
+        if (cam != null)
+            transform.rotation = Quaternion.LookRotation(transform.position - cam.transform.position);
+        // trese se strachy
+        transform.localPosition = new Vector3(Mathf.Sin(Time.time * 40f) * 0.04f, 2.4f, 0f);
+    }
+}
+
 public class SindelAbility : NetworkBehaviour
 {
     public AbilityDefinition leap;      // Shift
     public AbilityDefinition grenade;   // E
+    public AbilityDefinition sayWhat;   // prave tlacitko
 
     public static readonly Color GrenadeColor = new Color(1f, 0.82f, 0.35f, 1f);
     const float Gravity = 14f;
@@ -28,15 +157,17 @@ public class SindelAbility : NetworkBehaviour
     FirstPersonController fpc;
     PlayerHero hero;
     Health health;
-    float nextLeap, nextGrenade;
+    float nextLeap, nextGrenade, nextSayWhat;
 
     public float LeapRemaining => Mathf.Max(0f, nextLeap - Time.time);
     public float GrenadeRemaining => Mathf.Max(0f, nextGrenade - Time.time);
+    public float SayWhatRemaining => Mathf.Max(0f, nextSayWhat - Time.time);
 
-    public void Configure(AbilityDefinition shift, AbilityDefinition e)
+    public void Configure(AbilityDefinition shift, AbilityDefinition e, AbilityDefinition rmb = null)
     {
         leap = shift;
         grenade = e;
+        sayWhat = rmb;
     }
 
     void Awake()
@@ -70,6 +201,74 @@ public class SindelAbility : NetworkBehaviour
             var held = GetComponent<HeldWeapons>();
             if (held != null) held.PlayThrow();
             ThrowServerRpc(eye.position + eye.forward * 0.5f, eye.forward);
+        }
+
+        if (sayWhat != null && HeroInput.Pressed(this, HeroInput.Key.RightMouse) && Time.time >= nextSayWhat)
+        {
+            nextSayWhat = Time.time + sayWhat.Cooldown;
+            var eye = fpc.playerCamera.transform;
+            hero.SayAbility(sayWhat);
+            var held = GetComponent<HeldWeapons>();
+            if (held != null) held.PlayTaunt();
+            SayWhatServerRpc(eye.position, eye.forward);
+        }
+    }
+
+    float SayWhatRange => sayWhat != null && sayWhat.range > 0.5f ? sayWhat.range : 9f;
+    float SayWhatAngle => sayWhat != null && sayWhat.radius > 5f ? sayWhat.radius : 45f;
+
+    [ServerRpc]
+    void SayWhatServerRpc(Vector3 origin, Vector3 direction)
+    {
+        var match = MatchManager.Instance;
+        if (sayWhat == null || direction.sqrMagnitude < 0.01f || (match != null && (match.IsOver || match.IsLobby))) return;
+        if ((origin - transform.position).sqrMagnitude > 9f) origin = transform.position + Vector3.up * 1.6f;
+        direction.Normalize();
+
+        float range = SayWhatRange;
+        float seconds = sayWhat.duration > 0.1f ? sayWhat.duration : 1.5f;
+        float slow = sayWhat.speed > 0.05f && sayWhat.speed < 1f ? sayWhat.speed : 0.6f;
+        foreach (var other in FindObjectsByType<PlayerHero>())
+        {
+            if (other.gameObject == gameObject || !other.IsSpawned || other.IsJoining || other.IsUntargetable) continue;
+            if (Combat.SameTeam(gameObject, other.gameObject)) continue;
+            var otherHealth = other.GetComponent<Health>();
+            if (otherHealth == null || otherHealth.currentHealth.Value <= 0f) continue;
+
+            Vector3 chest = other.transform.position + Vector3.up * 1.2f;
+            Vector3 to = chest - origin;
+            if (to.magnitude > range + 0.5f || Vector3.Angle(direction, to) > SayWhatAngle) continue;
+            if (Physics.Linecast(origin, chest, out RaycastHit block, ~0, QueryTriggerInteraction.Ignore))
+            {
+                var blocker = block.collider.GetComponentInParent<PlayerHero>();
+                if (blocker == null) continue;   // zed mezi nimi
+            }
+
+            if (sayWhat.power > 0f)
+                Combat.DamagePlayer(gameObject, otherHealth, sayWhat.power, Combat.AbilitySource(sayWhat));
+            if (otherHealth.currentHealth.Value <= 0f) continue;
+
+            var movement = other.GetComponent<FirstPersonController>();
+            if (movement == null) continue;
+            movement.ServerSlow(seconds, slow);
+            movement.ServerSilence(seconds);
+            Vector3 push = to;
+            push.y = 0f;
+            if (sayWhat.knockback > 0f && push.sqrMagnitude > 0.01f)
+                movement.ServerKnockback(push.normalized * sayWhat.knockback + Vector3.up * 1.5f);
+        }
+        SayWhatClientRpc(origin, direction, range);
+    }
+
+    [ClientRpc]
+    void SayWhatClientRpc(Vector3 origin, Vector3 direction, float range)
+    {
+        SayWhatWave.Spawn(origin, direction, range);
+        // ostatni vidi gesto s pistoli na postave (vlastnik ho uz prehral)
+        if (!IsOwner)
+        {
+            var held = GetComponent<HeldWeapons>();
+            if (held != null) held.PlayTaunt();
         }
     }
 

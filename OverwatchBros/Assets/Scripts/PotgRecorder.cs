@@ -10,8 +10,9 @@ using UnityEngine;
 public class PotgRecorder : NetworkBehaviour
 {
     // Klip ma 12 s: s 5s uvodni kartou a sekundou dojezdu to dohromady vyjde na 18s znelku.
-    public const float ClipSeconds = 12f;
-    const float AfterKillSeconds = 1.5f;   // kolik zaznamu po zabiti se jeste vezme
+    public const float ClipSeconds = 13f;
+    const float MaxClipSeconds = 24.5f;
+    const float AfterKillSeconds = 2.5f;   // kolik zaznamu po zabiti se jeste vezme
     const int ChunkBytes = 30000;
     const int MaxClipBytes = 16 * 1024 * 1024;
 
@@ -83,7 +84,14 @@ public class PotgRecorder : NetworkBehaviour
     {
         if (score < bestScore || capture == null) return;
 
-        var clip = capture.Extract(ClipSeconds);
+        // Akce s ultimatkou, jejiz hlaska zacala driv nez beznych 12 s (Sindelovo kazani ~17 s): klip od zacatku hlasky,
+        // at je slyset cela (nejvys MaxClipSeconds).
+        float seconds = ClipSeconds;
+        float sinceUlt = capture.SecondsSinceOwnUltVoice();
+        if (sinceUlt > ClipSeconds - 0.5f && sinceUlt < MaxClipSeconds)
+            seconds = sinceUlt + 0.5f;
+
+        var clip = capture.Extract(seconds);
         if (clip == null) return;
 
         bestClip = clip;

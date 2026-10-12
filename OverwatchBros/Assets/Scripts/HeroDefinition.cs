@@ -35,7 +35,8 @@ public enum AbilityKind
     MaxReap,       // Max: Rozpolceni - vypad a otocka kosou (Shift)
     ShadowStep,    // Max: Stinovy krok - pruchod zdi (E)
     MaxSlash,      // Max: Dlouhy rez - pruh pred sebou se zpomalenim (prave tlacitko)
-    Trespass       // Max: Vpad do stinu - zmizi v nepriteli a vyrazi ven (Q)
+    Trespass,      // Max: Vpad do stinu - zmizi v nepriteli a vyrazi ven (Q)
+    SayWhat        // Sindel: "Say what again?!" - vykrik do kuzele, nepratele zpomali a umlci (prave tlacitko)
 }
 
 [CreateAssetMenu(fileName = "NewHero", menuName = "BrosOverwatch/Hero")]

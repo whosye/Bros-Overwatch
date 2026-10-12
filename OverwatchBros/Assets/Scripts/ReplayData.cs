@@ -19,7 +19,7 @@ public struct ReplayPlayerSnap
     public byte flags;        // ReplayPlayerFlags
     public float health, maxHealth;
 
-    public const byte Alive = 1, Rushing = 2, Blocking = 4, Boosted = 8, Hidden = 16, Revealed = 32;
+    public const byte Alive = 1, Rushing = 2, Blocking = 4, Boosted = 8, Hidden = 16, Revealed = 32, Preaching = 64;
 }
 
 public struct ReplaySlot
@@ -57,6 +57,10 @@ public class ReplayFrame
     public bool reloading;
     public bool locked;
     public Vector3 lockPoint;
+
+    // balicky na mape (ktere jsou k sebrani) a buffy hrace na HUDu (zbyva sekund)
+    public ulong pickupMask = ulong.MaxValue;
+    public float buffFastCooldown, buffInvulnerable, buffTramal;
 
     public List<ReplayObjectState> objects = new List<ReplayObjectState>();
 }
@@ -105,7 +109,7 @@ public enum ReplayEventType : byte
 {
     Explosion, Sparks, Impact, Tracer, SpatialSound, GlobalSound, Sfx, ProjectileSpawn, ProjectileEnd,
     Voice, Swing, Reload, StopReload, Kick, FirstPersonKick, HudHit, HudFlash, HudSleep, HudTint, HudEnd,
-    NanoAura, SleepShow, SleepHide, KillFeed, SurfaceMark
+    NanoAura, SleepShow, SleepHide, KillFeed, SurfaceMark, Taunt, SayWhatWave, FearShow
 }
 
 public class ReplayEvent
@@ -126,7 +130,7 @@ public class ReplayEvent
 
 public class ReplayClip
 {
-    public const int Version = 2;
+    public const int Version = 3;
 
     public int povId;
     public float duration;
@@ -299,6 +303,10 @@ public class ReplayClip
         w.Write(f.ammo);
         w.Write(f.maxAmmo);
         if (f.locked) WriteV(w, f.lockPoint);
+        w.Write(f.pickupMask);
+        w.Write(f.buffFastCooldown);
+        w.Write(f.buffInvulnerable);
+        w.Write(f.buffTramal);
         var slots = f.slots ?? new ReplaySlot[0];
         w.Write((byte)slots.Length);
         foreach (var s in slots)
@@ -378,6 +386,10 @@ public class ReplayClip
         f.ammo = r.ReadInt16();
         f.maxAmmo = r.ReadInt16();
         if (f.locked) f.lockPoint = ReadV(r);
+        f.pickupMask = r.ReadUInt64();
+        f.buffFastCooldown = r.ReadSingle();
+        f.buffInvulnerable = r.ReadSingle();
+        f.buffTramal = r.ReadSingle();
         f.slots = new ReplaySlot[r.ReadByte()];
         for (int i = 0; i < f.slots.Length; i++)
             f.slots[i] = new ReplaySlot

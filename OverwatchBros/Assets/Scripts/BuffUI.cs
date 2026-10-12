@@ -37,11 +37,11 @@ public class BuffUI
         buffs = new[]
         {
             new Buff { key = "respin_joker", shortName = "RJ", color = new Color(1f, 0.82f, 0.2f),
-                until = () => AbilityDefinition.FastCooldownUntil },
+                until = () => ReplayPlayer.Active ? Time.time + ReplayPlayer.BuffRemaining(0) : AbilityDefinition.FastCooldownUntil },
             new Buff { key = "dedova_slivovice", shortName = "DS", color = new Color(1f, 0.72f, 0.25f),
-                until = () => PickupBuffs.InvulnerableUntil },
+                until = () => ReplayPlayer.Active ? Time.time + ReplayPlayer.BuffRemaining(1) : PickupBuffs.InvulnerableUntil },
             new Buff { key = "tramal", shortName = "TR", color = new Color(0.35f, 0.75f, 0.55f),
-                until = () => PickupBuffs.TramalUntil },
+                until = () => ReplayPlayer.Active ? Time.time + ReplayPlayer.BuffRemaining(2) : PickupBuffs.TramalUntil },
         };
         foreach (var b in buffs) Create(b);
     }

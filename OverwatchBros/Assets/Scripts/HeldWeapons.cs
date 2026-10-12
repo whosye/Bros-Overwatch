@@ -59,6 +59,8 @@ public class HeldWeapons : MonoBehaviour
     float reloadDuration = 1f;
     float throwElapsed = 99f;
     const float ThrowDuration = 0.45f;
+    float tauntElapsed = 99f;
+    public const float TauntDuration = 0.8f;
 
     void Awake()
     {
@@ -143,6 +145,15 @@ public class HeldWeapons : MonoBehaviour
     }
 
     // Hod (Honzova past): zbran u kamery uhne dolu a stranou, postava mavne rukou.
+    // Sindeluv "Say what again?!": pistoli prudce namiri dopredu, naklopi ji na bok, chvili drzi a vrati.
+    public void PlayTaunt()
+    {
+        ReplayLog.Taunt(this);
+        tauntElapsed = 0f;
+        if (visual != null && visual.HasModel)
+            visual.PlayAttack(false, 0.5f);
+    }
+
     public void PlayThrow()
     {
         throwElapsed = 0f;
@@ -175,6 +186,8 @@ public class HeldWeapons : MonoBehaviour
             reloadElapsed += Time.deltaTime;
         if (throwElapsed < ThrowDuration)
             throwElapsed += Time.deltaTime;
+        if (tauntElapsed < TauntDuration)
+            tauntElapsed += Time.deltaTime;
 
         if (builtModel == HeldModel.Bow)
             UpdateArrows();
@@ -265,6 +278,16 @@ public class HeldWeapons : MonoBehaviour
 
             if (reloadElapsed < reloadDuration)
                 AnimateReload(reloadElapsed / reloadDuration, hand.side, ref position, ref euler);
+
+            if (tauntElapsed < TauntDuration)
+            {
+                // rychle vyrazit (15 %), drzet, pomalu vratit (od 60 %)
+                float t = tauntElapsed / TauntDuration;
+                float u = t < 0.15f ? Mathf.SmoothStep(0f, 1f, t / 0.15f) : t < 0.6f ? 1f : Mathf.SmoothStep(1f, 0f, (t - 0.6f) / 0.4f);
+                float shake = t > 0.15f && t < 0.6f ? Mathf.Sin(tauntElapsed * 70f) * 0.006f : 0f;
+                position += new Vector3(-0.12f * hand.side + shake, 0.06f, 0.16f) * u;
+                euler += new Vector3(-6f, -8f * hand.side, 78f * hand.side) * u;
+            }
 
             if (throwElapsed < ThrowDuration)
             {

@@ -664,8 +664,10 @@ public class PlayerHero : NetworkBehaviour
         bool hasSindelGrenade = definition.altAbilityKind == AbilityKind.HolyGrenade && definition.altAbility != null;
         if (sindel != null)
         {
-            sindel.Configure(hasSindelLeap ? definition.secondaryAbility : null, hasSindelGrenade ? definition.altAbility : null);
-            sindel.enabled = hasSindelLeap || hasSindelGrenade;
+            bool hasSayWhat = definition.rmbAbilityKind == AbilityKind.SayWhat && definition.rmbAbility != null;
+            sindel.Configure(hasSindelLeap ? definition.secondaryAbility : null, hasSindelGrenade ? definition.altAbility : null,
+                hasSayWhat ? definition.rmbAbility : null);
+            sindel.enabled = hasSindelLeap || hasSindelGrenade || hasSayWhat;
         }
 
         if (ezekiel != null)
@@ -774,6 +776,9 @@ public class PlayerHero : NetworkBehaviour
 
         if (Hero.altAbilityKind == AbilityKind.HolyGrenade && sindel != null && Hero.altAbility != null)
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = sindel.GrenadeRemaining, active = false, charge = -1f });
+
+        if (Hero.rmbAbilityKind == AbilityKind.SayWhat && sindel != null && Hero.rmbAbility != null)
+            slots.Add(new AbilitySlot { key = "PTM", ability = Hero.rmbAbility, remaining = sindel.SayWhatRemaining, active = false, charge = -1f });
 
         if (Hero.secondaryAbilityKind == AbilityKind.RighteousLeap && sindel != null && Hero.secondaryAbility != null)
             slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = sindel.LeapRemaining, active = false, charge = -1f });

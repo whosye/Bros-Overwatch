@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SniperRifle_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: "Odst\u0159elova\u010Dka"
-  damage: 7
+  damage: 9
   fireRate: 8
   maxAmmo: 16
   reloadTime: 1.8
@@ -31,8 +31,8 @@ MonoBehaviour:
   allyHeal: 0
   scopeFov: 10
   scopedChargeTime: 1.2
-  scopedMinDamage: 30
-  scopedMaxDamage: 65
+  scopedMinDamage: 40
+  scopedMaxDamage: 85
   headshotMultiplier: 2
   scopedFalloffStart: 30
   scopedFalloffEnd: 70

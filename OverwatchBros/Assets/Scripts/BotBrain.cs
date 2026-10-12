@@ -200,6 +200,294 @@ public class BotBrain : MonoBehaviour
     static float Reach(AbilityDefinition ability, float fallback) =>
         ability != null && ability.range > 0.5f && ability.range < 60f ? ability.range : fallback;
 
+
+    // ---------------- role: healer / strelec na dalku / ostatni ----------------
+
+    enum Role { Fighter, Ranged, Support }
+
+    // Healer: zbran leci spoluhrace (Anna) nebo hrdina s aurou (Bard). Na dalku: odstrel, luk, puska s priblizenim.
+    Role CurrentRole(WeaponDefinition weapon)
+    {
+        var def = hero != null ? hero.Hero : null;
+        if (def == null || weapon == null) return Role.Fighter;
+        if (weapon.allyHeal > 0f || def.secondaryAbilityKind == AbilityKind.Crossfade) return Role.Support;
+        if (!weapon.IsMelee && (weapon.HasScopedShot || weapon.IsCharged || weapon.scopeFov > 0f)) return Role.Ranged;
+        return Role.Fighter;
+    }
+
+    static void RangedBand(WeaponDefinition weapon, out float min, out float max)
+    {
+        min = Mathf.Clamp(weapon.falloffStart > 0f ? weapon.falloffStart : 15f, 12f, 25f);
+        max = min + 20f;
+    }
+
+    // spoluhraci (3x za sekundu): kdo potrebuje leceni nejvic (zraneni + blizkost)
+    readonly List<PlayerHero> allies = new List<PlayerHero>();
+    PlayerHero healTarget;
+    bool healVisible;
+
+    static bool IsSupportHero(PlayerHero p)
+    {
+        var def = p != null ? p.Hero : null;
+        return def != null && ((def.weapon != null && def.weapon.allyHeal > 0f) || def.secondaryAbilityKind == AbilityKind.Crossfade);
+    }
+
+    // Je s kym hrat jako healer: nekdo zraneny, nebo spoluhrac, ktery neni healer.
+    bool HasSupportAnchor()
+    {
+        if (healTarget != null) return true;
+        foreach (var ally in allies)
+            if (!IsSupportHero(ally)) return true;
+        return false;
+    }
+
+    static float HealthFraction(PlayerHero p)
+    {
+        var h = p != null ? p.GetComponent<Health>() : null;
+        return h != null && h.maxHealth > 0f ? h.currentHealth.Value / h.maxHealth : 1f;
+    }
+
+    void ScanAllies(Vector3 eye)
+    {
+        allies.Clear();
+        healTarget = null;
+        float best = float.MaxValue;
+        foreach (var other in FindObjectsByType<PlayerHero>())
+        {
+            if (other == hero || !other.IsSpawned || other.IsJoining || !Combat.SameTeam(gameObject, other.gameObject)) continue;
+            var otherHealth = other.GetComponent<Health>();
+            if (otherHealth == null || otherHealth.currentHealth.Value <= 0f) continue;
+            allies.Add(other);
+            float fraction = HealthFraction(other);
+            float distance = Vector3.Distance(transform.position, other.transform.position);
+            if (fraction >= 0.92f || distance > 45f) continue;
+            float score = fraction + distance / 120f;
+            if (score < best)
+            {
+                best = score;
+                healTarget = other;
+            }
+        }
+        healVisible = healTarget != null && CanSee(eye, healTarget);
+    }
+
+    // Healer: drzi se kousek za spoluhracem, ktery leceni potrebuje (jinak za tim, kdo je nejbliz boji / bodu).
+    Vector3 supportSpot;
+    Vector3 supportAnchorPos;
+    float nextSupportSpot;
+
+    Vector3 SupportSpot(MatchManager match, bool aura)
+    {
+        PlayerHero anchor = healTarget;
+        if (anchor == null)
+        {
+            Vector3 front = target != null ? (targetVisible ? target.transform.position : lastSeenPos)
+                : match != null && match.IsAttackMode ? match.pointPosition.Value : transform.position;
+            float best = float.MaxValue;
+            foreach (var ally in allies)
+            {
+                if (IsSupportHero(ally)) continue;   // healeri by se drzeli jeden druheho a stali by
+                float score = Vector3.Distance(ally.transform.position, front) + Vector3.Distance(ally.transform.position, transform.position) * 0.5f;
+                if (score < best) { best = score; anchor = ally; }
+            }
+        }
+        if (anchor == null) return transform.position;
+
+        Vector3 anchorPos = anchor.transform.position;
+        if (Time.time >= nextSupportSpot || Vector3.Distance(anchorPos, supportAnchorPos) > 3f)
+        {
+            nextSupportSpot = Time.time + Random.Range(1f, 2f);
+            supportAnchorPos = anchorPos;
+            Vector3 threat = target != null ? (targetVisible ? target.transform.position : lastSeenPos) : anchorPos + anchor.transform.forward * 10f;
+            Vector3 away = anchorPos - threat;
+            away.y = 0f;
+            away = away.sqrMagnitude > 0.01f ? away.normalized : -anchor.transform.forward;
+            Vector3 side = Vector3.Cross(Vector3.up, away) * Random.Range(-2f, 2f);
+            Vector3 candidate = anchorPos + away * (aura ? 2.5f : 5f) + side;
+            supportSpot = NavMesh.SamplePosition(candidate, out var hit, 2.5f, BotNavigation.Filter) ? hit.position : anchorPos;
+        }
+        return supportSpot;
+    }
+
+    // Strelec na dalku: misto s vyhledem na cil (nepritel / bod), v pasmu dosahu zbrane, radeji vys,
+    // nedaleko od bota a ne na stejnem miste jako jini boti.
+    class Spot { public Vector3 position, focus; public float next, arrivedAt = -1f, hold; public bool valid; }
+    readonly Spot combatSpot = new Spot();
+    readonly Spot watchSpot = new Spot();
+
+    Vector3 FiringSpot(Spot cache, Vector3 focus, float minR, float maxR)
+    {
+        // na miste chvili vyckat; kdyz odtud nikoho nevidi, jit vykouknout jinam (ne kempit porad na jednom miste)
+        bool atSpot = cache.valid && Vector3.Distance(transform.position, cache.position) < 1.8f;
+        if (atSpot && cache.arrivedAt < 0f)
+        {
+            cache.arrivedAt = Time.time;
+            cache.hold = Random.Range(3.5f, 7f);
+        }
+        bool stale = atSpot && !targetVisible && Time.time - cache.arrivedAt > cache.hold;
+        lookFocus = focus;
+        lookFocusUntil = Time.time + 0.5f;
+        if (!stale && cache.valid && Time.time < cache.next && Vector3.Distance(focus, cache.focus) < 6f) return cache.position;
+        Vector3 previous = cache.valid ? cache.position : Vector3.one * 1e6f;
+        cache.arrivedAt = -1f;
+        cache.next = Time.time + Random.Range(4f, 7f);
+        cache.focus = focus;
+
+        Vector3 focusEye = focus + Vector3.up * 1.2f;
+        Vector3 ourSide = transform.position - focus;
+        ourSide.y = 0f;
+        float baseAngle = ourSide.sqrMagnitude > 0.01f ? Mathf.Atan2(ourSide.x, ourSide.z) * Mathf.Rad2Deg : Random.Range(0f, 360f);
+        float mid = (minR + maxR) * 0.5f;
+
+        bool found = false;
+        float bestScore = float.MinValue;
+        Vector3 best = transform.position;
+        for (int i = 0; i < 14; i++)
+        {
+            Vector3 candidate;
+            if (i == 0)
+            {
+                if (stale) continue;
+                candidate = transform.position;   // zustat, kde je (kdyz je to dobre misto)
+            }
+            else
+            {
+                float angle = (baseAngle + Random.Range(-85f, 85f)) * Mathf.Deg2Rad;
+                candidate = focus + new Vector3(Mathf.Sin(angle), 0f, Mathf.Cos(angle)) * Random.Range(minR, maxR);
+            }
+            if (!NavMesh.SamplePosition(candidate, out var hit, 3f, BotNavigation.Filter)) continue;
+            Vector3 p = hit.position;
+            float d = Vector3.Distance(p, focus);
+            if (d < minR * 0.7f || d > maxR * 1.25f) continue;
+            if (Physics.Linecast(p + Vector3.up * 1.6f, focusEye, out RaycastHit block, ~0, QueryTriggerInteraction.Ignore)
+                && block.collider.GetComponentInParent<PlayerHero>() == null) continue;   // bez vyhledu
+
+            float score = (p.y - focus.y) * 1.5f - Vector3.Distance(p, transform.position) * 0.35f - Mathf.Abs(d - mid) * 0.1f;
+            foreach (var bot in All)
+                if (bot != this && bot.combatSpot.valid && Vector3.Distance(p, bot.combatSpot.position) < 4f) score -= 5f;
+            if (Vector3.Distance(p, previous) < 6f) score -= stale ? 25f : 0f;   // vykouknout odjinud
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = p;
+                found = true;
+            }
+        }
+        cache.valid = found;
+        cache.position = found ? best : focus;
+        if (!found) cache.next = Time.time + 1.5f;   // nic s vyhledem: jit bliz a brzy zkusit znovu
+        return cache.position;
+    }
+
+    // Kam se divat, kdyz strelec stoji na miste a ceka (oblast nepritele / bod), s pomalym rozhlizenim.
+    Vector3 lookFocus;
+    float lookFocusUntil;
+
+    // Schopnost mirena na spoluhrace (Annino posileni, granat): chvili na nej mirit, pak zmacknout.
+    PlayerHero aimAlly;
+    HeroInput.Key aimAllyKey;
+    float aimAllyUntil;
+
+    void AimAllyAndPress(PlayerHero ally, HeroInput.Key key)
+    {
+        aimAlly = ally;
+        aimAllyKey = key;
+        aimAllyUntil = Time.time + 1f;
+    }
+
+    // Healer: leceni a podpora maji prednost pred utokem.
+    void SupportAbilities(HeroDefinition def, float hp, bool combat, Vector3 eye)
+    {
+        if (def.secondaryAbilityKind == AbilityKind.Crossfade)
+        {
+            var bard = GetComponent<BardAbility>();
+            if (bard == null) return;
+            float radius = def.secondaryAbility != null && def.secondaryAbility.radius > 0.5f ? def.secondaryAbility.radius : 10f;
+            int inAura = 0, hurt = 0;
+            float lowest = hp, sum = hp;
+            foreach (var ally in allies)
+            {
+                if (Vector3.Distance(ally.transform.position, transform.position) > radius) continue;
+                float f = HealthFraction(ally);
+                inAura++;
+                sum += f;
+                if (f < 0.9f) hurt++;
+                lowest = Mathf.Min(lowest, f);
+            }
+            if (hp < 0.9f) hurt++;
+
+            // rytmus: leceni, kdyz je nekdo zraneny nebo se bojuje; jinak zrychleni (presun)
+            bool wantSpeed = hurt == 0 && !combat && healTarget == null;
+            if (bard.SpeedMode != wantSpeed) Press(HeroInput.Key.Shift);
+            else if (!wantSpeed && (hurt >= 2 || lowest < 0.45f)) Press(HeroInput.Key.E);   // zesileni leceni
+
+            // koncert (stit): vic spoluhracu v boji a zranenych
+            if (hero.UltReady && combat && inAura >= 1 && sum / (inAura + 1) < 0.65f)
+                Press(HeroInput.Key.Q, 0.15f);
+
+            // basovy uder: nepritel tesne u nej
+            if (combat && target != null && def.rmbAbility != null && Vector3.Distance(transform.position, target.transform.position) < Reach(def.rmbAbility, 8f) * 0.8f)
+                Press(HeroInput.Key.RightMouse);
+            return;
+        }
+
+        // Anna
+        if (def.abilityKind == AbilityKind.NanoBoost && def.ability != null && hero.UltReady && aimAlly == null)
+        {
+            // posileni: na spoluhrace, ktery bojuje (nebo je zraneny), s vyhledem a v dosahu
+            PlayerHero pick = null;
+            foreach (var ally in allies)
+            {
+                float d = Vector3.Distance(ally.transform.position, transform.position);
+                if (d > Mathf.Max(8f, def.ability.range * 0.9f) || !CanSee(eye, ally)) continue;
+                if (combat || HealthFraction(ally) < 0.6f) { pick = ally; break; }
+            }
+            if (pick != null)
+            {
+                AimAllyAndPress(pick, HeroInput.Key.Q);
+                return;
+            }
+        }
+
+        if (def.altAbilityKind == AbilityKind.BioticGrenade && def.altAbility != null && aimAlly == null)
+        {
+            float reach = Reach(def.altAbility, 20f);
+            // granat na zraneneho spoluhrace (leci i okoli)
+            if (healTarget != null && healVisible && HealthFraction(healTarget) < 0.6f
+                && Vector3.Distance(healTarget.transform.position, transform.position) < reach)
+            {
+                AimAllyAndPress(healTarget, HeroInput.Key.E);
+                return;
+            }
+            // jinak na nepritele, kdyz na nej miri
+            if (combat && target != null && Vector3.Distance(target.transform.position, transform.position) < reach && Random.value < 0.35f)
+            {
+                Vector3 forward = Quaternion.Euler(Pitch, Yaw, 0f) * Vector3.forward;
+                if (Vector3.Angle(forward, target.transform.position + Vector3.up * 1.2f - eye) < 12f) Press(HeroInput.Key.E);
+            }
+        }
+
+        // uspavaci sipka: obrana, kdyz je nepritel blizko
+        if (def.secondaryAbilityKind == AbilityKind.SleepDart && combat && target != null
+            && Vector3.Distance(target.transform.position, transform.position) < 12f)
+        {
+            Vector3 forward = Quaternion.Euler(Pitch, Yaw, 0f) * Vector3.forward;
+            if (Vector3.Angle(forward, target.transform.position + Vector3.up * 1.2f - eye) < 8f) Press(HeroInput.Key.Shift);
+        }
+    }
+
+    // Anna: strelba do spoluhrace (leci ho).
+    bool healing;
+    bool healPhase;
+    float nextHealSwitch;
+
+    void HealShoot(Vector3 eye)
+    {
+        Vector3 forward = Quaternion.Euler(Pitch, Yaw, 0f) * Vector3.forward;
+        bool aligned = Vector3.Angle(forward, healTarget.transform.position + Vector3.up * 1.2f - eye) < 3f + aimError * 0.5f;
+        SetFire(aligned && !FireHeld);   // po jedne rane
+    }
+
     // Kdy co zmacknout: ultimatku na nepritele v dosahu, E a PTM v boji na zamereneho nepritele, Shift pri pribliazeni.
     // (Kdyz je schopnost na cooldownu, stisk prosté nic neudela.)
     void UseAbilities(WeaponDefinition weapon, bool combat, bool chase)
@@ -208,6 +496,13 @@ public class BotBrain : MonoBehaviour
         nextAbilityThink = Time.time + Random.Range(0.35f, 0.75f);
         var def = hero.Hero;
         float hp = health != null && health.maxHealth > 0f ? health.currentHealth.Value / health.maxHealth : 1f;
+
+        if (CurrentRole(weapon) == Role.Support)
+        {
+            Vector3 supportEye = fpc.playerCamera != null ? fpc.playerCamera.transform.position : transform.position + Vector3.up * 1.6f;
+            SupportAbilities(def, hp, combat, supportEye);
+            return;
+        }
 
         // leceni (Viktorovo pole) i bez boje, kdyz je zraneny
         if (def.altAbility != null && def.altAbilityKind == AbilityKind.HealField && hp < 0.6f)
@@ -260,7 +555,10 @@ public class BotBrain : MonoBehaviour
         if (Time.time >= nextThink)
         {
             nextThink = Time.time + 0.2f;
+            var thinkWeapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
+            viewDistance = thinkWeapon != null && CurrentRole(thinkWeapon) == Role.Ranged ? 95f : 55f;
             PickTarget();
+            ScanAllies(fpc.playerCamera != null ? fpc.playerCamera.transform.position : transform.position + Vector3.up * 1.6f);
         }
         TrackTarget();
 
@@ -287,11 +585,23 @@ public class BotBrain : MonoBehaviour
         // opatrny bot za nepritelem, ktereho uz nevidi, nejde (jen dravec ho hleda)
         if (chase && !targetVisible && aggression < 0.5f && !melee)
             chase = false;
+        Role role = CurrentRole(weapon);
+        bool supporting = role == Role.Support && HasSupportAnchor();
+        // healer se za nepratelem nezene - drzi se u svych (strili, kdyz vidi)
+        // healer se drzi u svych; za nepritelem jde jen kousek (do 18 m), kdyz ho vidi a nikdo nepotrebuje leceni
+        if (supporting)
+            chase = chase && healTarget == null && targetVisible && Vector3.Distance(transform.position, target.transform.position) < 18f;
         chasing = chase;
         Hunch();
+        float minR = 0f, maxR = 0f;
+        if (role == Role.Ranged) RangedBand(weapon, out minR, out maxR);
 
         if (wantsHealth)
             goal = healthPos;
+        else if (supporting)
+            goal = SupportSpot(match, role == Role.Support && weapon.allyHeal <= 0f);
+        else if (chase && role == Role.Ranged)
+            goal = FiringSpot(combatSpot, targetVisible ? target.transform.position : lastSeenPos, minR, maxR);
         else if (chase)
             goal = targetVisible ? target.transform.position : lastSeenPos;
         else if (hasObjective)
@@ -300,7 +610,8 @@ public class BotBrain : MonoBehaviour
             goal = transform.position;              // drzi pozici a strili (opatrny / uz jdou jini)
         else if (Time.time < investigateUntil)
         {
-            goal = investigatePos;                  // slysel strelbu / tusi, kde nepritel je
+            // slysel strelbu / tusi, kde nepritel je (strelec na dalku si najde misto s vyhledem tam)
+            goal = role == Role.Ranged ? FiringSpot(watchSpot, investigatePos, minR, maxR) : investigatePos;
             if (Vector3.Distance(transform.position, investigatePos) < 3f) investigateUntil = -1f;
         }
         else
@@ -317,7 +628,21 @@ public class BotBrain : MonoBehaviour
             goal = detourGoal;
 
         Vector3 moveDir = Vector3.zero;
-        if (combat && chase && !wantsHealth && weapon != null && Time.time >= detourUntil)
+        if (combat && chase && role == Role.Ranged && !wantsHealth && Time.time >= detourUntil)
+        {
+            // na dalku: dojit na misto s vyhledem a odtud strilet, jen lehce uhybat; kdyz je nepritel moc blizko, couvat
+            float distance = Vector3.Distance(feet, target.transform.position);
+            Vector3 toTarget = target.transform.position - feet;
+            toTarget.y = 0f;
+            Vector3 side = Vector3.Cross(Vector3.up, toTarget.normalized);
+            Vector3 toSpot = goal - feet;
+            toSpot.y = 0f;
+            bool atSpot = toSpot.magnitude <= 1.2f;
+            Vector3 approach = atSpot ? Vector3.zero : FollowPath(goal);
+            if (distance < minR * 0.5f) approach = -toTarget.normalized;
+            moveDir = approach + side * strafeSign * (atSpot ? 0.45f : 0.15f);
+        }
+        else if (combat && chase && !wantsHealth && weapon != null && Time.time >= detourUntil)
         {
             // v boji: drzet vzdalenost podle zbrane a uhybat do stran
             float distance = Vector3.Distance(feet, target.transform.position);
@@ -349,8 +674,51 @@ public class BotBrain : MonoBehaviour
 
         // natoceni: na cil, jinak ve smeru chuze
         Vector3 eye = fpc.playerCamera != null ? fpc.playerCamera.transform.position : feet + Vector3.up * 1.6f;
-        Vector3 lookAt = combat ? AimPoint(weapon, eye) : (moveDir.sqrMagnitude > 0.01f ? eye + moveDir * 10f : eye + transform.forward * 10f);
-        TurnTowards(lookAt - eye, combat);
+        if (aimAlly != null && (Time.time > aimAllyUntil || !aimAlly.IsSpawned)) aimAlly = null;
+        // Anna leci strelbou: zraneny spoluhrac na dohled ma prednost (pokud ji nepritel neni tesne u tela)
+        // Anna: leci i strili. Hodne zraneny spoluhrac (pod 60 %) ma prednost; jinak v boji strida leceni a strelbu
+        // (cim je spoluhrac zranenejsi, tim dele leci). Bez boje jen leci. Nepritel tesne u ni = brani se.
+        bool canHeal = role == Role.Support && weapon != null && weapon.allyHeal > 0f && healTarget != null && healVisible
+            && Vector3.Distance(feet, healTarget.transform.position) < 40f;
+        if (canHeal && combat && Time.time >= nextHealSwitch)
+        {
+            float need = Mathf.InverseLerp(0.92f, 0.6f, HealthFraction(healTarget));   // 0 = skoro zdravy, 1 = hodne zraneny
+            healPhase = !healPhase;
+            nextHealSwitch = Time.time + (healPhase ? Mathf.Lerp(0.8f, 2.2f, need) : Mathf.Lerp(2f, 0.8f, need));
+        }
+        healing = canHeal && (!combat || HealthFraction(healTarget) < 0.6f || healPhase)
+            && !(combat && Vector3.Distance(feet, target.transform.position) < 6f);
+        Vector3 lookAt;
+        if (aimAlly != null)
+        {
+            lookAt = aimAlly.transform.position + Vector3.up * 1.1f;
+            TurnTowards(lookAt - eye, true, true);
+            Vector3 forward = Quaternion.Euler(Pitch, Yaw, 0f) * Vector3.forward;
+            if (Vector3.Angle(forward, lookAt - eye) < 4f)
+            {
+                Press(aimAllyKey, 0.15f);
+                aimAlly = null;
+            }
+        }
+        else if (healing)
+        {
+            lookAt = healTarget.transform.position + Vector3.up * 1.2f;
+            TurnTowards(lookAt - eye, true);
+        }
+        else
+        {
+            if (combat)
+                lookAt = AimPoint(weapon, eye);
+            else if (Time.time < lookFocusUntil && (moveDir.sqrMagnitude < 0.3f || Vector3.Distance(feet, lookFocus) < 45f))
+            {
+                // hlida oblast: diva se tam a pomalu se rozhlizi do stran
+                Vector3 toFocus = lookFocus + Vector3.up * 1.2f - eye;
+                lookAt = eye + Quaternion.Euler(0f, Mathf.Sin(Time.time * 0.7f + aggression * 5f) * 28f, 0f) * toFocus;
+            }
+            else
+                lookAt = moveDir.sqrMagnitude > 0.01f ? eye + moveDir * 10f : eye + transform.forward * 10f;
+            TurnTowards(lookAt - eye, combat);
+        }
 
         // pohyb v mistnich osach tela
         Vector3 local = Quaternion.Euler(0f, -Yaw, 0f) * moveDir;
@@ -358,7 +726,9 @@ public class BotBrain : MonoBehaviour
         Run = !combat && moveDir.sqrMagnitude > 0.25f;
 
         CheckStuck(moveDir);
-        Shoot(weapon, eye, combat);
+        if (aimAlly != null) SetFire(false);
+        else if (healing) HealShoot(eye);
+        else Shoot(weapon, eye, combat);
         UseAbilities(weapon, combat, chase);
     }
 
@@ -464,26 +834,30 @@ public class BotBrain : MonoBehaviour
         return point;
     }
 
-    void TurnTowards(Vector3 direction, bool combat)
+    void TurnTowards(Vector3 direction, bool combat, bool precise = false)
     {
         if (direction.sqrMagnitude < 0.0001f) return;
         if (combat && Time.time >= nextAimJitter)
         {
             nextAimJitter = Time.time + 0.5f;
-            aimOffset = Random.insideUnitCircle * aimError;
+            aimOffset = Random.insideUnitCircle * aimError * (scoping ? 0.3f : 1f);
         }
-        float wantYaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + (combat ? aimOffset.x : 0f);
+        Vector2 jitter = combat && !precise ? aimOffset : Vector2.zero;
+        float wantYaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + jitter.x;
         float flat = new Vector2(direction.x, direction.z).magnitude;
-        float wantPitch = combat ? -Mathf.Atan2(direction.y, flat) * Mathf.Rad2Deg + aimOffset.y : 0f;
+        float wantPitch = combat ? -Mathf.Atan2(direction.y, flat) * Mathf.Rad2Deg + jitter.y : 0f;
         Yaw = Mathf.MoveTowardsAngle(Yaw, wantYaw, turnSpeed * Time.deltaTime);
         Pitch = Mathf.Clamp(Mathf.MoveTowardsAngle(Pitch, wantPitch, turnSpeed * Time.deltaTime), -80f, 80f);
     }
+
+    bool scoping;
 
     void Shoot(WeaponDefinition weapon, Vector3 eye, bool combat)
     {
         if (!combat || weapon == null || seenSince < 0f || Time.time - seenSince < reactionTime)
         {
             SetFire(false);
+            scoping = false;
             return;
         }
 
@@ -492,6 +866,24 @@ public class BotBrain : MonoBehaviour
         Vector3 toAim = AimPoint(weapon, eye) - eye;
         bool aligned = Vector3.Angle(forward, toAim) < (weapon.IsMelee ? 25f : 5f + aimError);
         bool inRange = distance <= EffectiveRange(weapon);
+
+        // sniper na dalku: drzet pribliseni (PTM), nechat ranu nabit a vystrelit
+        scoping = weapon.HasScopedShot && distance > 14f && distance < 95f;
+        if (scoping)
+        {
+            holdUntil[(int)HeroInput.Key.RightMouse] = Time.time + 0.3f;
+            if (FireHeld)
+            {
+                SetFire(false);
+                return;
+            }
+            if (aligned && shooting.ChargeFraction >= chargeRelease)
+            {
+                SetFire(true);
+                chargeRelease = Random.Range(0.7f, 1f);
+            }
+            return;
+        }
 
         if (weapon.IsCharged)
         {
@@ -563,6 +955,19 @@ public class BotBrain : MonoBehaviour
 
         bool attacker = team.teamId.Value == match.attackTeam.Value;
         Vector3 point = match.pointPosition.Value;
+
+        // priprava: utocnici cekaji ve spawnu (bod je zamceny), obranci se rozestavuji kolem bodu
+        if (attacker && match.roundPhase.Value == MatchManager.RoundSetup && SpawnZone.TryGetCenter(team.teamId.Value, out Vector3 spawn))
+        {
+            leash = 6f;
+            if (Time.time >= nextObjectiveSpot || Vector3.Distance(objectiveSpot, spawn) > SpawnZone.Radius)
+            {
+                nextObjectiveSpot = Time.time + Random.Range(3f, 6f);
+                objectiveSpot = AroundPoint(spawn, SpawnZone.Radius * 0.6f);
+            }
+            goal = objectiveSpot;
+            return true;
+        }
         bool contested = attacker || EnemyOnPoint(match);
         bool inside = OnPoint(match, transform.position);
 
@@ -577,6 +982,17 @@ public class BotBrain : MonoBehaviour
             holdPoint = contested && inside;
         }
 
+        // strelec na dalku: kdyz uz na bodu stoji nekdo z jeho tymu, kryje ho z mista s vyhledem na bod
+        var weapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
+        if (weapon != null && CurrentRole(weapon) == Role.Ranged && (AlliesOnPoint(match) > 0 || (!attacker && !contested)))
+        {
+            RangedBand(weapon, out float minR, out float maxR);
+            leash = maxR + 5f;
+            holdPoint = false;
+            goal = FiringSpot(watchSpot, point, Mathf.Min(minR, 12f), Mathf.Min(maxR, 28f));
+            return true;
+        }
+
         // misto: utocnik a obrance pri zabirani uvnitr bodu, obrance jinak v okoli (kryti, vyhled na bod)
         bool wantInside = attacker || contested;
         if (Time.time >= nextObjectiveSpot || objectiveSpotOnPoint != wantInside
@@ -588,6 +1004,14 @@ public class BotBrain : MonoBehaviour
         }
         goal = objectiveSpot;
         return true;
+    }
+
+    int AlliesOnPoint(MatchManager match)
+    {
+        int count = 0;
+        foreach (var ally in allies)
+            if (OnPoint(match, ally.transform.position)) count++;
+        return count;
     }
 
     // Je misto uvnitr obdelniku bodu (natoceni bodu, vyska do 4 m)?
@@ -637,8 +1061,8 @@ public class BotBrain : MonoBehaviour
         return match.pointPosition.Value;
     }
 
-    // Bez nepritele: hraje se kolem bodu. V utoku a obrane kolem aktivniho bodu (prochazi ho a okoli),
-    // v team deathmatchi strida klicova mista mapy: velka chata (A), mala chata (B), rozhledna (C).
+    // Bez nepritele: v utoku a obrane kolem aktivniho bodu (prochazi ho a okoli). V deathmatchi body nehraji roli:
+    // bot jde lovit - do oblasti, kde je nektery nepritel (jako hrac, ktery vi, odkud strilelo), jinak po mape.
     Vector3 IdleGoal(MatchManager match)
     {
         bool arrived = Vector3.Distance(transform.position, wanderGoal) < 2.5f;
@@ -653,22 +1077,49 @@ public class BotBrain : MonoBehaviour
             return wanderGoal;
         }
 
-        if (Time.time >= nextHotspotSwitch || hotspot == Vector3.zero)
+        if (Time.time >= nextHotspotSwitch || hotspot == Vector3.zero || Vector3.Distance(transform.position, hotspot) < 6f)
         {
-            nextHotspotSwitch = Time.time + Random.Range(18f, 30f);
-            hotspot = RandomHotspot();
+            var huntWeapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
+            bool rangedHunter = huntWeapon != null && CurrentRole(huntWeapon) == Role.Ranged;
+            nextHotspotSwitch = Time.time + (rangedHunter ? Random.Range(5f, 8f) : Mathf.Lerp(16f, 8f, aggression) * Random.Range(0.8f, 1.2f));
+            hotspot = HuntSpot();
             nextWander = 0f;
         }
         if (Time.time >= nextWander || arrived)
         {
-            nextWander = Time.time + Random.Range(5f, 9f);
-            wanderGoal = AroundPoint(hotspot, 8f);
+            nextWander = Time.time + Random.Range(4f, 7f);
+            wanderGoal = AroundPoint(hotspot, 6f);
+        }
+        // strelec na dalku: v blizkosti oblasti nepritele si najde misto s vyhledem na ni
+        var weapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
+        if (weapon != null && CurrentRole(weapon) == Role.Ranged)
+        {
+            RangedBand(weapon, out float minR, out float maxR);
+            if (Vector3.Distance(transform.position, hotspot) < maxR + 15f)
+                return FiringSpot(watchSpot, hotspot, minR, maxR);
         }
         return wanderGoal;
     }
 
     Vector3 hotspot;
     float nextHotspotSwitch;
+
+    // Deathmatch: oblast nahodneho nepritele (s nepresnosti), kdyz zadny neni, klicove misto mapy.
+    Vector3 HuntSpot()
+    {
+        var enemies = new List<PlayerHero>();
+        foreach (var other in FindObjectsByType<PlayerHero>())
+        {
+            if (other == hero || !other.IsSpawned || other.IsJoining || other.IsUntargetable || Combat.SameTeam(gameObject, other.gameObject)) continue;
+            var otherHealth = other.GetComponent<Health>();
+            if (otherHealth != null && otherHealth.currentHealth.Value > 0f) enemies.Add(other);
+        }
+        if (enemies.Count == 0) return RandomHotspot();
+        var weapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
+        float spread = weapon != null && CurrentRole(weapon) == Role.Ranged ? 5f : Mathf.Lerp(14f, 6f, aggression);
+        Vector2 jitter = Random.insideUnitCircle * spread;
+        return enemies[Random.Range(0, enemies.Count)].transform.position + new Vector3(jitter.x, 0f, jitter.y);
+    }
 
     // Klicova mista mapy = mista bodu A, B, C (CapturePoint_1..3 ve scene).
     Vector3 RandomHotspot()
@@ -724,10 +1175,23 @@ public class BotBrain : MonoBehaviour
 
         if (corner >= path.Count)
         {
-            // bez cesty (mimo sit): primo k cili
+            // bez cesty: primo k cili, jen kdyz je blizko a nic mezi tim neni (jinak by sel do zdi)
             Vector3 direct = goal - feet;
             direct.y = 0f;
-            return direct.magnitude > 1f ? direct.normalized : Vector3.zero;
+            if (direct.magnitude <= 1f) return Vector3.zero;
+            // (bot mimo navigacni sit, napr. na spawnu, jde rovne, dokud pred nim nic neni)
+            if (Physics.Raycast(feet + Vector3.up * 0.8f, direct.normalized, Mathf.Min(direct.magnitude, 1.5f), ~0, QueryTriggerInteraction.Ignore))
+            {
+                // cesta nevede a primo to nejde: za chvili jiny cil (ne kazdy snimek - hledani cesty neco stoji)
+                if (Time.time >= nextNoPathReset)
+                {
+                    nextNoPathReset = Time.time + 1f;
+                    ForgetGoal();
+                    nextRepath = 0f;
+                }
+                return Vector3.zero;
+            }
+            return direct.normalized;
         }
 
         Vector3 next = path[corner];
@@ -744,19 +1208,36 @@ public class BotBrain : MonoBehaviour
         path.Clear();
         corner = 0;
         if (!BotNavigation.Ready) return;
-        if (!NavMesh.SamplePosition(from, out var start, 3f, BotNavigation.Filter)) return;
-        if (!NavMesh.SamplePosition(to, out var end, 6f, BotNavigation.Filter)) return;
+        if (!NavMesh.SamplePosition(from, out var start, 3f, BotNavigation.Filter))
+        {
+            if (!reportedOffMesh)
+            {
+                reportedOffMesh = true;
+                Debug.LogWarning($"[Boti] {name} ({(hero != null && hero.Hero != null ? hero.Hero.heroName : "?")}) stoji mimo navigacni sit na {from} - jde rovne k cili.");
+            }
+            return;
+        }
         var navPath = new NavMeshPath();
-        if (!NavMesh.CalculatePath(start.position, end.position, BotNavigation.Filter, navPath)) return;
+        if (!NavMesh.SamplePosition(to, out var end, 6f, BotNavigation.Filter)
+            || !NavMesh.CalculatePath(start.position, end.position, BotNavigation.Filter, navPath))
+        {
+            ForgetGoal();
+            return;
+        }
         path.AddRange(navPath.corners);
         corner = path.Count > 1 ? 1 : 0;
-        // cil, kam nevede cela cesta (nedosazitelne misto): pri toulani / hledani si vybrat jiny
+        // cil, kam nevede cela cesta (nedosazitelne misto, napr. strecha): vybrat jiny
         if (navPath.status != NavMeshPathStatus.PathComplete)
-        {
-            nextWander = 0f;
-            nextHotspotSwitch = 0f;
-            investigateUntil = -1f;
-        }
+            ForgetGoal();
+    }
+
+    // Cil je nedosazitelny: pri toulani, hledani i na bodu si vybrat jine misto.
+    void ForgetGoal()
+    {
+        nextWander = 0f;
+        nextHotspotSwitch = 0f;
+        investigateUntil = -1f;
+        nextObjectiveSpot = 0f;
     }
 
     // Kdyz chce jit, ale skoro se nehne: vyskocit; opakovane - zkusit jinou cestu kousek vedle.
@@ -765,9 +1246,14 @@ public class BotBrain : MonoBehaviour
         if (Time.time < nextStuckCheck) return;
         nextStuckCheck = Time.time + 1f;
         bool wantsMove = moveDir.sqrMagnitude > 0.25f;
-        float moved = Vector3.Distance(transform.position, stuckCheckPos);
+        Vector3 delta = transform.position - stuckCheckPos;
+        delta.y = 0f;
         stuckCheckPos = transform.position;
-        if (!wantsMove || moved > 0.5f)
+        // postup ve smeru, kam chce jit (a ve smeru z minule kontroly) - kdyz se jen tre o zed, je to malo
+        Vector3 wanted = (moveDir.normalized + stuckLastDir).normalized;
+        stuckLastDir = moveDir.normalized;
+        float progress = wanted.sqrMagnitude > 0.1f ? Vector3.Dot(delta, wanted) : delta.magnitude;
+        if (!wantsMove || progress > 0.6f)
         {
             stuckCount = 0;
             return;
@@ -790,6 +1276,9 @@ public class BotBrain : MonoBehaviour
 
     Vector3 detourGoal;
     float detourUntil;
+    Vector3 stuckLastDir;
+    float nextNoPathReset;
+    bool reportedOffMesh;
 }
 
 // Navigacni sit pro boty: postavi se za behu na hostu (z koliznich tvaru mapy), poprve pri pridani bota.
@@ -799,7 +1288,7 @@ public static class BotNavigation
     static NavMeshSurface surface;
     public static bool Ready => surface != null && surface.navMeshData != null;
 
-    // Vlastni typ agenta: jako postava hrace (polomer 0,45 m, vyska 2 m, schod jen 0,3 m, svah 42 st.).
+    // Vlastni typ agenta: jako postava hrace (polomer 0,6 m = postava 0,5 m + rezerva, vyska 2 m, schod jen 0,3 m, svah 42 st.).
     // Vychozi "Humanoid" pocita se schodem 0,75 m - sit pak vedla i pres hrany, ktere postava nevyjde.
     static int agentType = -1;
     public static NavMeshQueryFilter Filter => new NavMeshQueryFilter { agentTypeID = agentType >= 0 ? agentType : 0, areaMask = NavMesh.AllAreas };
@@ -825,7 +1314,7 @@ public static class BotNavigation
         }
 
         var settings = NavMesh.CreateSettings();
-        settings.agentRadius = 0.45f;
+        settings.agentRadius = 0.6f;
         settings.agentHeight = 2f;
         settings.agentClimb = 0.3f;
         settings.agentSlope = 42f;
