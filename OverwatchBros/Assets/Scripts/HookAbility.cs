@@ -10,7 +10,8 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
     public AbilityDefinition ability;
 
     public const float PullSeconds = 0.35f;
-    const float HookRadius = 0.35f;
+    const float HookRadius = 0.35f;       // zed / prekazka sekeru zastavi (tenky paprsek)
+    const float PlayerHitRadius = 1.1f;   // hrace sekera chyti i pri mene presnem miereni
     const float PullDistance = 2.2f;   // jak daleko pred Ayranem pritazeny skonci
 
     FirstPersonController fpc;
@@ -59,8 +60,10 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
 
         direction.Normalize();
         Vector3 end = origin + direction * ability.range;
+        float reach = ability.range;
         Health victim = null;
 
+        // 1) tenky paprsek: kde sekeru zastavi prekazka (nebo koho trefi primo)
         var hits = Physics.SphereCastAll(origin, HookRadius, direction, ability.range, ~0, QueryTriggerInteraction.Ignore);
         System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         foreach (var hit in hits)
@@ -70,11 +73,32 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
             if (hit.collider.GetComponentInParent<BoulderHitbox>() != null) continue;
 
             end = hit.distance > 0f ? hit.point : origin;
+            reach = hit.distance;
 
             var health = hit.collider.GetComponentInParent<Health>();
             if (health != null && health.currentHealth.Value > 0f)
                 victim = health;
             break;
+        }
+
+        // 2) sirsi paprsek jen na nepratele pred prekazkou (velkorysejsi hitbox)
+        if (victim == null)
+        {
+            var wide = Physics.SphereCastAll(origin, PlayerHitRadius, direction, ability.range, ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(wide, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in wide)
+            {
+                if (hit.distance > reach) break;
+                var health = hit.collider.GetComponentInParent<Health>();
+                if (health == null || health.gameObject == gameObject || health.currentHealth.Value <= 0f) continue;
+                if (Combat.SameTeam(gameObject, health.gameObject)) continue;
+                var other = health.GetComponent<PlayerHero>();
+                if (other != null && other.IsUntargetable) continue;
+                if (!Combat.HasLineOfSight(origin, hit.collider)) continue;
+                victim = health;
+                end = hit.collider.bounds.center;
+                break;
+            }
         }
 
         if (victim == null)

@@ -224,7 +224,8 @@ public class ReplayCapture : MonoBehaviour
     {
         return name.StartsWith("FX_") || name.StartsWith("SFX_") || name == "Tracer" || name.StartsWith("Projectile")
             || name.StartsWith("Ghost") || name.StartsWith("Replay") || name.StartsWith("SpawnZone") || name.StartsWith("CapturePoint")
-            || name == "One shot audio";
+            || name == "One shot audio"
+            || name == "BulletHoleDecals";   // diry po kulkach se v zaznamu prehravaji vlastni udalosti (SurfaceMark)
     }
 
     bool Candidate(GameObject root)
@@ -312,7 +313,8 @@ public class ReplayCapture : MonoBehaviour
                 if (material != null)
                 {
                     n.material = material.name;
-                    n.color = material.HasProperty("_BaseColor") ? material.GetColor("_BaseColor") : material.color;
+                    n.color = material.HasProperty("_BaseColor") ? material.GetColor("_BaseColor")
+                        : material.HasProperty("_Color") ? material.color : Color.white;
                 }
             }
 

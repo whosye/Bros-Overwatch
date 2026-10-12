@@ -175,7 +175,7 @@ public static class M7Setup
         w.damage = 35f;
         w.fireRate = 2.2f;
         w.maxAmmo = 0;
-        w.range = 2.8f;
+        w.range = 2.1f;
         w.meleeRadius = 0.7f;
         w.dualWield = true;
         w.heldModel = HeldModel.Axe;
@@ -693,10 +693,15 @@ public static class M7Setup
             w.maxAmmo = 16;
             w.reloadTime = 1.8f;
             w.range = 250f;
-            w.falloffStart = 12f;
+            w.falloffStart = 15f;
             w.falloffEnd = 30f;
-            w.falloffMin = 0.25f;
-            w.maxDamageRange = 40f;
+            w.falloffMin = 0.4f;
+            w.farFalloffEnd = 50f;
+            w.farFalloffMin = 0.1f;
+            w.maxDamageRange = 60f;
+            w.scopedFalloffStart = 30f;
+            w.scopedFalloffEnd = 70f;
+            w.scopedFalloffMin = 0.4f;
             w.scopeFov = 25f;
             w.scopedChargeTime = 1.2f;
             w.scopedMinDamage = 30f;

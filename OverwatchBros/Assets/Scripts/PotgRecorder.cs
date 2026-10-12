@@ -290,13 +290,21 @@ public class PotgRecorder : NetworkBehaviour
         }
 
         if (bestClip != null && bestClip.frames.Count > 1)
-            StartCoroutine(SendClip(bestClip.Serialize()));
+            StartCoroutine(SendClip(bestClip.Serialize(), ClipHero(bestClip)));
+    }
+
+    // Hrdina, se kterym hrac akci udelal (posledni snimek klipu), at intro i jmeno sedi i po zmene postavy.
+    int ClipHero(ReplayClip clip)
+    {
+        for (int i = clip.frames.Count - 1; i >= 0; i--)
+            if (clip.frames[i].hudHero >= 0) return clip.frames[i].hudHero;
+        return hero != null ? hero.heroId.Value : -1;
     }
 
     // Zaznam se posila po kouscich (jeden za snimek hry), at se nezahlti sit.
-    IEnumerator SendClip(byte[] data)
+    IEnumerator SendClip(byte[] data, int heroIndex)
     {
-        BeginClipServerRpc(data.Length);
+        BeginClipServerRpc(data.Length, heroIndex);
         for (int offset = 0; offset < data.Length; offset += ChunkBytes)
         {
             var chunk = new byte[Mathf.Min(ChunkBytes, data.Length - offset)];
@@ -307,7 +315,7 @@ public class PotgRecorder : NetworkBehaviour
     }
 
     [ServerRpc]
-    void BeginClipServerRpc(int totalBytes)
+    void BeginClipServerRpc(int totalBytes, int heroIndex)
     {
         var match = MatchManager.Instance;
         if (match == null || !match.IsOver || totalBytes <= 0 || totalBytes > MaxClipBytes) return;
@@ -316,15 +324,17 @@ public class PotgRecorder : NetworkBehaviour
         serverExpected = totalBytes;
         serverReceived = 0;
         ServerLastProgress = Time.unscaledTime;
-        BeginClipClientRpc(totalBytes, ServerBestCategory);
+        BeginClipClientRpc(totalBytes, ServerBestCategory, heroIndex);
     }
 
     [ClientRpc]
-    void BeginClipClientRpc(int totalBytes, int category)
+    void BeginClipClientRpc(int totalBytes, int category, int heroIndex)
     {
         var team = GetComponent<PlayerTeam>();
-        PotgUI.Begin(hero != null ? hero.DisplayName : "?", hero != null && hero.Hero != null ? hero.Hero.heroName : "",
-            team != null ? team.teamId.Value : 0, totalBytes, CategoryName(category), hero != null ? hero.heroId.Value : -1);
+        if (heroIndex < 0 && hero != null) heroIndex = hero.heroId.Value;
+        var clipHero = HeroRegistry.Get(heroIndex);
+        PotgUI.Begin(hero != null ? hero.DisplayName : "?", clipHero != null ? clipHero.heroName : "",
+            team != null ? team.teamId.Value : 0, totalBytes, CategoryName(category), heroIndex);
     }
 
     [ServerRpc]

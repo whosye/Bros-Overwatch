@@ -5,11 +5,10 @@ using UnityEngine.InputSystem;
 
 // Ayranuv Modry plamen (Left Shift): jeden plynuly vypad dopredu (delka 'range' m za 'duration' s), kamera ve 3. osobe,
 // postava v utocne poze a za ni zustava modra ohniva stopa. Kazdeho nepritele v dosahu 'radius' po ceste zasahne
-// jednou ('power'), omraci ho na 1 s a Ayran si o zpusobene poskozeni (x healRatio) leci. Pak cooldown.
+// jednou ('power') a Ayran si o zpusobene poskozeni (x healRatio) leci. Pak cooldown.
 public class RushAbility : NetworkBehaviour, ICooldownCut
 {
     public AbilityDefinition ability;
-    const float StunSeconds = 1f;   // zasazeny nepritel je na chvili omraceny
     public Vector3 thirdPersonCameraOffset = new Vector3(0f, 2.0f, -5.2f);
     public float pressBuffer = 0.4f;
 
@@ -294,11 +293,6 @@ public class RushAbility : NetworkBehaviour, ICooldownCut
             float before = other.currentHealth.Value;
             Combat.DamagePlayer(gameObject, other, ability.power, Combat.AbilitySource(ability));
             float applied = before - other.currentHealth.Value;
-
-            // zasah omraci na 'StunSeconds' (bez oslepeni)
-            var movement = other.GetComponent<FirstPersonController>();
-            if (movement != null && other.currentHealth.Value > 0f)
-                movement.ServerStun(StunSeconds, gameObject, false);
 
             if (applied > 0f)
             {

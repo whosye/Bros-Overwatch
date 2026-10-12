@@ -27,6 +27,9 @@ MonoBehaviour:
   rmbAbility: {fileID: 11400000, guid: e3db740e8b8b76a46bcb1c13365cde0b, type: 2}
   doubleJump: 1
   ledgeClimb: 1
+  moveSpeed: 1
+  lifesteal: 0
+  takedownCooldownCut: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
@@ -50,6 +53,8 @@ MonoBehaviour:
   idleLines:
   - {fileID: 8300000, guid: ae4b249eb7a9f824caf058eca2a6a114, type: 3}
   - {fileID: 8300000, guid: dbd01630ce197c64090901753c2b7078, type: 3}
+  - {fileID: 8300000, guid: 03842daae669dfb4f913013e5d5e34e2, type: 3}
+  - {fileID: 8300000, guid: 0bc990a2ada775346864ba5a707f13f1, type: 3}
   snareLines:
   - {fileID: 8300000, guid: cd26453a1b1ebf243816fa909159f08c, type: 3}
   - {fileID: 8300000, guid: 1917394b2df5cb542854c34d95d396dc, type: 3}

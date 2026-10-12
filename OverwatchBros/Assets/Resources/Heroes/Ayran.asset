@@ -46,6 +46,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 20577f11616c1794e99523be8fd6ed5d, type: 3}
   - {fileID: 8300000, guid: a882444aeb0c3b845a2661c5a7168597, type: 3}
   - {fileID: 8300000, guid: 55de25943cc77404dab8f552cedc92f8, type: 3}
+  - {fileID: 8300000, guid: 507bed60a728d554291f1947990bd010, type: 3}
   deathLines: []
   hurtLines:
   - {fileID: 8300000, guid: d4bdbc9344b8bee4fa143fde1438c141, type: 3}
@@ -54,6 +55,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 630e82b320602c349b6de9cf28285c73, type: 3}
   - {fileID: 8300000, guid: 3902e3bd8c63c724e96b65406eb59f6f, type: 3}
   - {fileID: 8300000, guid: c8cd74ee529408347a4a41de4d3e8f1f, type: 3}
+  - {fileID: 8300000, guid: 087d41e470a6f4d49ba09c7a0b1b95d4, type: 3}
   - {fileID: 8300000, guid: feb2ab13b8e80ef4585eee6fd0c9ef15, type: 3}
   snareLines:
   - {fileID: 8300000, guid: d8fb27a500a994441b2a56033b6bf5e9, type: 3}

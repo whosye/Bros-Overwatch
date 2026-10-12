@@ -16,7 +16,7 @@ MonoBehaviour:
   damage: 35
   fireRate: 2.2
   maxAmmo: 0
-  range: 2.8
+  range: 2.1
   fireMode: 2
   projectileSpeed: 40
   projectileGravity: 0
