@@ -455,7 +455,9 @@ public class ReplayCapture : MonoBehaviour
         foreach (var e in events)
         {
             // hlaska, ktera zacala kousek pred klipem, v nem jeste zni - vzit ji taky (prehraje se od spravneho mista)
-            float earliest = e.type == ReplayEventType.Voice ? start - VoiceLead : start - 0.05f;
+            float lead = e.type == ReplayEventType.Voice ? VoiceLead
+                : e.type == ReplayEventType.SniperTracer ? SniperShotTrail.Lifetime : 0.05f;
+            float earliest = start - lead;
             if (e.time < earliest || e.time > end) continue;
             clip.events.Add(new ReplayEvent
             {
@@ -524,6 +526,10 @@ public static class ReplayLog
         if (Recording) Add(new ReplayEvent { type = ReplayEventType.SurfaceMark, p0 = point, p1 = normal, a = (int)kind, f0 = angle });
     }
     public static void Tracer(Vector3 from, Vector3 to, Color c, bool strong) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Tracer, p0 = from, p1 = to, color = c, flag = strong }); }
+    public static void SniperTracer(Vector3 from, Vector3 to, int shooterTeam, bool full)
+    {
+        if (Recording) Add(new ReplayEvent { type = ReplayEventType.SniperTracer, p0 = from, p1 = to, a = shooterTeam, flag = full });
+    }
 
     public static void SpatialSound(AudioClip clip, Vector3 p, float volume, float min, float max)
     {

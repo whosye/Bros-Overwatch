@@ -580,6 +580,9 @@ public class ReplayPlayer : MonoBehaviour
                     BulletHoleDecals.Place(surface.collider, surface.point, surface.normal, (SurfaceMarkKind)e.a, e.f0);
                 break;
             case ReplayEventType.Tracer: Fx.Tracer(e.p0, e.p1, e.color, e.flag); break;
+            case ReplayEventType.SniperTracer:
+                Fx.SniperTracer(e.p0, e.p1, e.a, e.flag, Mathf.Max(0f, time - e.time));
+                break;
             case ReplayEventType.SpatialSound: Fx.PlaySpatial(FindSound(e.name), e.p0, e.f0, e.f1, e.f2); break;
             case ReplayEventType.GlobalSound: Fx.PlayGlobal(FindSound(e.name), e.f0); break;
             case ReplayEventType.Sfx: ProceduralSfx.Play(FindSound(e.name), e.p0, e.f0); break;

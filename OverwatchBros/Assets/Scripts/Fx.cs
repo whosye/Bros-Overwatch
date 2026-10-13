@@ -295,10 +295,7 @@ public static class Fx
         return ps;
     }
 
-    // Prostorovy zvuk vychazejici z pozice hrace: plna hlasitost poblíž (vlastnik i blizci spoluhraci),
-    // pak plynuly utlum az k tichu v maxDistance. Na rozdil od AudioSource.PlayClipAtPoint (vychozi logaritmicky
-    // rolloff s dosahem 500 m) jde o falloff prizpusobeny velikosti mapy.
-    // Stopa vystrelu (sniper): tenka svitici cara, ktera rychle zmizi. Plne nabita rana je silnejsi.
+    // Short generic streak, also used by Blink. Scoped sniper fire has its own lingering afterimage.
     public static void Tracer(Vector3 from, Vector3 to, Color color, bool strong)
     {
         ReplayLog.Tracer(from, to, color, strong);
@@ -317,6 +314,12 @@ public static class Fx
         line.startColor = c;
         line.endColor = new Color(c.r, c.g, c.b, 0.4f);
         go.AddComponent<TracerFade>().Init(line, strong ? 0.35f : 0.2f);
+    }
+
+    public static void SniperTracer(Vector3 from, Vector3 to, int shooterTeam, bool full, float elapsed = 0f)
+    {
+        ReplayLog.SniperTracer(from, to, shooterTeam, full);
+        SniperShotTrail.Spawn(from, to, SniperShotTrail.ColorForTeams(shooterTeam, SniperShotTrail.ViewerTeam), full, elapsed);
     }
 
     public static void PlaySpatial(AudioClip clip, Vector3 position, float volume, float minDistance = 4f, float maxDistance = 30f, bool spatial = true)

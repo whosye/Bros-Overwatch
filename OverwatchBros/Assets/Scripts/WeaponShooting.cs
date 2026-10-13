@@ -240,21 +240,25 @@ public class WeaponShooting : NetworkBehaviour
 
         // Stopa vystrelu (vidi ji vsichni, at je jasne, odkud sniper strili).
         Vector3 muzzle = origin + playerCamera.transform.right * 0.15f - playerCamera.transform.up * 0.12f;
-        Fx.Tracer(muzzle, end, weapon.projectileColor, full);
+        var team = GetComponent<PlayerTeam>();
+        if (!ReplayPlayer.Active) Fx.SniperTracer(muzzle, end, team != null ? team.teamId.Value : -1, full);
         TracerServerRpc(muzzle, end, full);
     }
 
     [ServerRpc]
     void TracerServerRpc(Vector3 from, Vector3 to, bool full)
     {
-        TracerClientRpc(from, to, full);
+        var team = GetComponent<PlayerTeam>();
+        TracerClientRpc(from, to, full, team != null ? team.teamId.Value : -1);
     }
 
     [ClientRpc]
-    void TracerClientRpc(Vector3 from, Vector3 to, bool full)
+    void TracerClientRpc(Vector3 from, Vector3 to, bool full, int shooterTeam)
     {
-        if (IsOwner) return;
-        Fx.Tracer(from, to, weapon != null ? weapon.projectileColor : Color.white, full);
+        // Owners already predicted this effect (including host-owned bots). Color is viewer-relative,
+        // not ownership-relative: an enemy bot is still red on its owning host.
+        if (IsOwner || ReplayPlayer.Active) return;
+        Fx.SniperTracer(from, to, shooterTeam, full);
     }
 
     // ---------------- luk ----------------
