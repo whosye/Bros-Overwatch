@@ -45,6 +45,10 @@ public static class CharacterSetup
 
         foreach (var look in Looks)
         {
+            foreach (string hair in look.hair)
+                if (!HairImporterOk(HairDir + hair + ".fbx")) return false;
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabDir}/Char_{look.hero}.prefab");
+            if (prefab != null && UpdateHairBinding(prefab, false)) return false;
             var hero = AssetDatabase.LoadAssetAtPath<HeroDefinition>($"Assets/Resources/Heroes/{look.hero}.asset");
             if (hero == null || hero.characterPrefab == null) return false;
         }
@@ -70,12 +74,99 @@ public static class CharacterSetup
         importer.SaveAndReimport();
     }
 
+    static bool HairImporterOk(string path)
+    {
+        return AssetImporter.GetAtPath(path) is ModelImporter importer && importer.bakeAxisConversion;
+    }
+
+    static void ConfigureHairImporters()
+    {
+        var paths = new HashSet<string>();
+        foreach (var look in Looks)
+            foreach (string hair in look.hair) paths.Add(HairDir + hair + ".fbx");
+
+        foreach (string path in paths)
+        {
+            if (HairImporterOk(path)) continue;
+            if (!(AssetImporter.GetAtPath(path) is ModelImporter importer)) continue;
+            // Body and modular hair must use the same bone coordinate system. Remapping
+            // names alone leaves unconverted hair bind poses rotated onto the face.
+            importer.bakeAxisConversion = true;
+            importer.SaveAndReimport();
+        }
+    }
+
+    // Also migrate existing generated prefabs, without rebuilding their body or materials.
+    // Their FBX mesh references pick up the corrected bind poses on reimport.
+    static bool UpdateHairBinding(GameObject root, bool apply)
+    {
+        bool changed = false;
+        foreach (var skin in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+        {
+            string path = AssetDatabase.GetAssetPath(skin.sharedMesh);
+            if (!path.StartsWith(HairDir, System.StringComparison.Ordinal)) continue;
+            var fbx = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (fbx == null) continue;
+            foreach (var source in fbx.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if (source.sharedMesh != skin.sharedMesh) continue;
+                var target = skin.transform;
+                var origin = source.transform;
+                // These modular hairstyles are weighted entirely to Head. Let their
+                // culling bounds follow it, including during crouches and death poses.
+                int headIndex = System.Array.FindIndex(skin.bones, bone => bone != null && bone.name == "Head");
+                if (headIndex < 0) break;
+                var head = skin.bones[headIndex];
+                var bounds = HairHeadBounds(skin.sharedMesh, headIndex);
+                if ((target.localPosition - origin.localPosition).sqrMagnitude < 0.00000001f
+                    && Quaternion.Angle(target.localRotation, origin.localRotation) < 0.01f
+                    && (target.localScale - origin.localScale).sqrMagnitude < 0.00000001f
+                    && skin.rootBone == head && skin.localBounds == bounds) break;
+
+                changed = true;
+                if (!apply) return true;
+                target.SetLocalPositionAndRotation(origin.localPosition, origin.localRotation);
+                target.localScale = origin.localScale;
+                skin.rootBone = head;
+                skin.localBounds = bounds;
+                break;
+            }
+        }
+        return changed;
+    }
+
+    static Bounds HairHeadBounds(Mesh mesh, int headIndex)
+    {
+        var pose = mesh.bindposes[headIndex];
+        var meshBounds = mesh.bounds;
+        var bounds = new Bounds(pose.MultiplyPoint3x4(meshBounds.center), Vector3.zero);
+        for (int i = 0; i < 8; i++)
+        {
+            var corner = meshBounds.center + Vector3.Scale(meshBounds.extents,
+                new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+            bounds.Encapsulate(pose.MultiplyPoint3x4(corner));
+        }
+        bounds.Expand(0.02f);
+        return bounds;
+    }
+
+    static void RepairHairPrefab(string path)
+    {
+        var root = PrefabUtility.LoadPrefabContents(path);
+        try
+        {
+            if (UpdateHairBinding(root, true)) PrefabUtility.SaveAsPrefabAsset(root, path);
+        }
+        finally { PrefabUtility.UnloadPrefabContents(root); }
+    }
+
     public static void Setup()
     {
         if (!Present) return;
 
         ConfigureImporter(MaleFbx);
         ConfigureImporter(AnimFbx);
+        ConfigureHairImporters();
         if (!ImporterOk(MaleFbx) || !ImporterOk(AnimFbx)) return;
 
         var animSet = CreateAnimSet();
@@ -86,9 +177,12 @@ public static class CharacterSetup
 
         foreach (var look in Looks)
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabDir}/Char_{look.hero}.prefab");
+            string path = $"{PrefabDir}/Char_{look.hero}.prefab";
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (prefab == null)
                 prefab = BuildPrefab(look);
+            else if (UpdateHairBinding(prefab, false))
+                RepairHairPrefab(path);
 
             var hero = AssetDatabase.LoadAssetAtPath<HeroDefinition>($"Assets/Resources/Heroes/{look.hero}.asset");
             if (hero != null && prefab != null && hero.characterPrefab == null)
@@ -223,6 +317,7 @@ public static class CharacterSetup
                 Object.DestroyImmediate(hair);
             }
 
+            UpdateHairBinding(root, true);
             return PrefabUtility.SaveAsPrefabAsset(root, $"{PrefabDir}/Char_{look.hero}.prefab");
         }
         finally

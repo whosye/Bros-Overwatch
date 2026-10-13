@@ -2,10 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // A standard RawImage, like the other fullscreen HUD effects. The shared sight texture
-// is generated once; clamped black borders fill any screen aspect ratio without stretching the circle.
+// is generated once; translucent borders retain peripheral vision at any screen aspect ratio.
 [RequireComponent(typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage))]
 public class ScopeOverlay : MonoBehaviour
 {
+    // Ztmaveni okoli dalekohledu: 0 = pruhledne, 1 = uplne cerne.
+    const float PeripheralDarkness = 0.95f;
+
     const int TextureSize = 1024;
     static Texture2D sightTexture;
     RawImage image;
@@ -69,12 +72,25 @@ public class ScopeOverlay : MonoBehaviour
             float dx = x + 0.5f - TextureSize * 0.5f;
             float dy = y + 0.5f - TextureSize * 0.5f;
             float distance = Mathf.Sqrt(dx * dx + dy * dy) / radius;
-            float alpha = distance < 0.975f
-                ? Mathf.SmoothStep(0f, 0.6f, Mathf.InverseLerp(0.88f, 0.975f, distance))
-                : Mathf.Lerp(0.6f, 1f, Mathf.InverseLerp(0.975f, 1f, distance));
+            // Clear lens, a narrow dark housing, then a readable peripheral view.
+            // Keep the outer shade constant before the texture edge: its clamped
+            // pixels also cover the extra width of widescreen and ultrawide displays.
+            float alpha;
+            if (distance < 0.978f)
+                alpha = Mathf.SmoothStep(0f, 0.12f, Mathf.InverseLerp(0.93f, 0.978f, distance));
+            else if (distance < 0.99f)
+                alpha = Mathf.Lerp(0.12f, 0.96f, Mathf.InverseLerp(0.978f, 0.99f, distance));
+            else if (distance < 1.008f)
+                alpha = 0.96f;
+            else
+                alpha = Mathf.SmoothStep(0.96f, PeripheralDarkness, Mathf.InverseLerp(1.008f, 1.045f, distance));
             Color pixel = new Color(frame.r, frame.g, frame.b, alpha);
             if (distance >= 0.989f && distance <= 0.994f)
                 pixel = Color.Lerp(pixel, new Color(0.20f, 0.23f, 0.25f, alpha), 0.4f);
+            // Four restrained cyan rim accents, away from the aiming area.
+            if (distance >= 0.969f && distance <= 0.972f
+                && Mathf.Abs(Mathf.Abs(dx) - Mathf.Abs(dy)) < radius * 0.16f)
+                pixel = new Color(0.38f, 0.72f, 0.77f, 0.55f);
             pixels[y * TextureSize + x] = pixel;
         }
 
