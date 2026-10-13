@@ -270,7 +270,7 @@ public static class M7Setup
         w.fireMode = FireMode.Projectile;
         w.projectileSpeed = 24f;
         w.projectileGravity = 14f;
-        w.projectileRadius = 0.22f;
+        w.projectileRadius = 0.175f;
         w.projectileBounce = 0.45f;
         w.projectileFuse = 0.9f;
         w.explosionRadius = 3.2f;

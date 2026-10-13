@@ -36,11 +36,11 @@ MonoBehaviour:
   headshotMultiplier: 2
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
-  proximityRadius: 1
+  proximityRadius: 0.5
   fireMode: 1
   projectileSpeed: 32
   projectileGravity: 14
-  projectileRadius: 0.35
+  projectileRadius: 0.175
   explosionRadius: 3.2
   projectileBounce: 0.45
   projectileFuse: 0.9
