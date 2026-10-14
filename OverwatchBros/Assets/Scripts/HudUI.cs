@@ -89,6 +89,10 @@ public class HudUI
     public static int LockFrame = -1;
     RectTransform lockMarker;
     GameObject chargeBar;
+
+    // Rychlopalba: zbyvajici sipy jako modre kosoctverce pod zamerovacem (po kazdem vystrelu jeden zmizi).
+    const int MaxRapidPips = 10;
+    readonly Image[] rapidPips = new Image[MaxRapidPips];
     TextMeshProUGUI testLabel;
     Image chargeFill;
 
@@ -121,10 +125,33 @@ public class HudUI
         public bool locked;
         public Vector3 lockPoint;
         public Camera camera;
+        public int rapidShots = -1;   // zbyvajici sipy rychlopalby (-1 = neni aktivni)
     }
 
     readonly HudData liveData = new HudData();
     readonly HudData replayData = new HudData();
+    readonly HudData killcamData = new HudData();
+
+    // Killcam: jen jmeno hrdiny a zdravi vraha (jeho schopnosti a naboje v zaznamu obeti nejsou).
+    public void TickKillcam(int heroIndex, int team, float health, float maxHealth)
+    {
+        if (root == null || !root.activeSelf) return;
+        var hero = HeroRegistry.Get(heroIndex);
+        if (hero == null) return;
+
+        var d = killcamData;
+        d.key = this;
+        d.hero = hero;
+        d.team = team;
+        d.health = health;
+        d.maxHealth = maxHealth;
+        d.shield = 0f;
+        d.slots.Clear();
+        UpdateHealth(d);
+        UpdateAbilities(d);   // (prazdne - schovaji se)
+        ammoText.text = "";
+        if (chargeBar.activeSelf) chargeBar.SetActive(false);
+    }
 
     static readonly Color Dark = new Color(0.05f, 0.07f, 0.10f, 0.72f);
     static readonly Color HealthColor = new Color(0.95f, 0.96f, 1f, 0.95f);
@@ -230,6 +257,15 @@ public class HudUI
         chargeBar = chargeBackground.gameObject;
         chargeFill = UiKit.MakeImage(chargeBar.transform, "Fill", Color.white, new Vector2(0f, 0.5f), new Vector2(2f, 0f), new Vector2(0f, 6f));
         chargeBar.SetActive(false);
+
+        for (int i = 0; i < MaxRapidPips; i++)
+        {
+            var pip = UiKit.MakeImage(root.transform, "RapidPip", new Color(0.35f, 0.75f, 1f, 0.95f), center, new Vector2(0f, -64f), new Vector2(11f, 11f));
+            pip.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+            pip.gameObject.AddComponent<Outline>().effectColor = new Color(0.02f, 0.1f, 0.25f, 0.9f);
+            pip.gameObject.SetActive(false);
+            rapidPips[i] = pip;
+        }
 
         flashImage = UiKit.MakeImage(root.transform, "Flash", new Color(1f, 1f, 1f, 0f), center, Vector2.zero, Vector2.zero);
         UiKit.Stretch(flashImage.rectTransform);
@@ -363,6 +399,8 @@ public class HudUI
         d.camera = fpc != null ? fpc.playerCamera : null;
         d.locked = LockFrame >= Time.frameCount - 1;
         d.lockPoint = LockPoint;
+        var rapid = hero.GetComponent<RapidFireAbility>();
+        d.rapidShots = rapid != null && rapid.enabled && rapid.IsActive ? rapid.ShotsLeft : -1;
         Render(d);
     }
 
@@ -400,9 +438,27 @@ public class HudUI
         Render(d);
     }
 
+    void UpdateRapidPips(HudData d)
+    {
+        int count = Mathf.Clamp(d.rapidShots, 0, MaxRapidPips);
+        const float spacing = 18f;
+        float start = -(count - 1) * spacing * 0.5f;
+        float pulse = 0.8f + 0.2f * Mathf.Sin(Time.unscaledTime * 10f);
+        for (int i = 0; i < MaxRapidPips; i++)
+        {
+            bool used = d.rapidShots >= 0 && i < count;
+            if (rapidPips[i].gameObject.activeSelf != used)
+                rapidPips[i].gameObject.SetActive(used);
+            if (!used) continue;
+            rapidPips[i].rectTransform.anchoredPosition = new Vector2(start + i * spacing, -64f);
+            rapidPips[i].color = new Color(0.35f, 0.75f, 1f, 0.95f * pulse);
+        }
+    }
+
     void Render(HudData d)
     {
         UpdateHealth(d);
+        UpdateRapidPips(d);
         UpdateVignette(d);
         UpdateAbilities(d);
         UpdateHitMarker();

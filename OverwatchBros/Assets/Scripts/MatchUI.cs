@@ -319,8 +319,9 @@ public class MatchUI : MonoBehaviour
         // HUD: zivy hrac, nebo pri prehravani POTG HUD hrace, ktery akci predvedl (podle zaznamu).
         // (killcam: HUD vraha v zaznamu neni - jen obraz a zamerovac)
         bool killcam = ReplayPlayer.IsKillcam;
-        hud.SetVisible((replay && !killcam) || (playing && !over && localHero != null && !replay));
-        if (killcam) { }
+        bool killerHealth = ReplayPlayer.KillerHealth(out int killerHero, out int killerTeam, out float killerHp, out float killerMax);
+        hud.SetVisible((replay && !killcam) || (killcam && killerHealth) || (playing && !over && localHero != null && !replay));
+        if (killcam) { if (killerHealth) hud.TickKillcam(killerHero, killerTeam, killerHp, killerMax); }
         else if (replay)
             hud.TickReplay(ReplayPlayer.Frame, ReplayPlayer.Camera);
         else
@@ -329,7 +330,7 @@ public class MatchUI : MonoBehaviour
         overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing && !killcam);
         capture.Tick(localHero, playing && !over, match);
         buffs.Tick((playing && !over && !replay) || (replay && !killcam));   // v POTG buffy hrace ze zaznamu
-        boilerPrompt.text = playing && !over && !replay ? Boiler.PromptText : "";
+        boilerPrompt.text = playing && !over && !replay ? (Tractor.PromptText != "" ? Tractor.PromptText : Boiler.PromptText) : "";
         UpdateEndScreen(network, match, over);
         UpdateLegacyHud(playing);
 

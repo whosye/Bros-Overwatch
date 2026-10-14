@@ -23,6 +23,13 @@ MonoBehaviour:
   blockAbility: {fileID: 0}
   altAbilityKind: 5
   altAbility: {fileID: 11400000, guid: f31aac637cf5af64585176dd80a2114e, type: 2}
+  rmbAbilityKind: 0
+  rmbAbility: {fileID: 0}
+  doubleJump: 0
+  ledgeClimb: 0
+  moveSpeed: 1
+  lifesteal: 0
+  takedownCooldownCut: 0
   deathGrenades: 4
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
@@ -32,5 +39,8 @@ MonoBehaviour:
   skinColor: {r: 0.82, g: 0.63, b: 0.52, a: 1}
   spawnLines: []
   killLines: []
-  deathLines: []
+  deathLines:
+  - {fileID: 8300000, guid: 6dc18c162f1df64498c3a73a6096715e, type: 3}
   hurtLines: []
+  idleLines: []
+  snareLines: []

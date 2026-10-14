@@ -4,12 +4,14 @@ using UnityEngine;
 // natahnou ke zbranim (dvoukloubova IK) a prsty jsou sevrene v pest. Funguje pro kazdy Humanoid model.
 public class FirstPersonArms
 {
-    class Arm
+    public class Arm
     {
         public Transform upper, lower, hand;
         public float upperLength, lowerLength;
         public Quaternion handFrameLocal;
         public float side;
+        public Vector3 upperRestLocal;   // vychozi poloha ramene (pro posunuti ramene, kdyz paze nedosahne)
+        public Quaternion upperRest, lowerRest, handRest;   // vychozi natoceni (paze mimo obraz)
     }
 
     GameObject rig;
@@ -64,6 +66,9 @@ public class FirstPersonArms
         foreach (var collider in rig.GetComponentsInChildren<Collider>())
             Object.DestroyImmediate(collider);
 
+        // jen paze (po skryti casti nad rameny - orezany model ma stred u ramen)
+        TrimToArms(rig, result.arms[0].upper, result.arms[1].upper);
+
         Vector3 headLocal = rig.transform.InverseTransformPoint(head.position);
         rig.transform.localPosition = -headLocal + new Vector3(0f, -0.10f, 0.10f);
 
@@ -71,7 +76,7 @@ public class FirstPersonArms
         return result;
     }
 
-    static Arm BuildArm(Animator animator, bool right)
+    public static Arm BuildArm(Animator animator, bool right)
     {
         var upper = animator.GetBoneTransform(right ? HumanBodyBones.RightUpperArm : HumanBodyBones.LeftUpperArm);
         var lower = animator.GetBoneTransform(right ? HumanBodyBones.RightLowerArm : HumanBodyBones.LeftLowerArm);
@@ -98,8 +103,79 @@ public class FirstPersonArms
             side = right ? 1f : -1f,
             upperLength = Vector3.Distance(upper.position, lower.position),
             lowerLength = Vector3.Distance(lower.position, hand.position),
-            handFrameLocal = Quaternion.Inverse(hand.rotation) * Quaternion.LookRotation(fingers, back.normalized)
+            handFrameLocal = Quaternion.Inverse(hand.rotation) * Quaternion.LookRotation(fingers, back.normalized),
+            upperRestLocal = upper.localPosition,
+            upperRest = upper.localRotation,
+            lowerRest = lower.localRotation,
+            handRest = hand.localRotation,
         };
+    }
+
+    // Z modelu postavy u kamery nechat jen paze (od ramene po prsty): trup, ramena, limec a vlasy by byly tesne
+    // u kamery videt jako "cary" (a pri posunuti ramene by se roztahovaly). Trojuhelnik zustane, kdyz vsechny jeho
+    // vrcholy patri vic nez z poloviny kostem paze. Jen u citelnych modelu (Read/Write), jinak se nic nemeni.
+    static void TrimToArms(GameObject rig, Transform rightUpper, Transform leftUpper)
+    {
+        foreach (var skinned in rig.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+        {
+            var mesh = skinned.sharedMesh;
+            var bones = skinned.bones;
+            if (mesh == null || !mesh.isReadable || bones == null || bones.Length == 0) continue;
+
+            var armBone = new bool[bones.Length];
+            bool anyArm = false;
+            for (int i = 0; i < bones.Length; i++)
+            {
+                var bone = bones[i];
+                armBone[i] = bone != null && (bone.IsChildOf(rightUpper) || bone.IsChildOf(leftUpper));
+                anyArm |= armBone[i];
+            }
+            if (!anyArm)
+            {
+                skinned.enabled = false;   // cast bez pazi (napr. kalhoty, boty)
+                continue;
+            }
+
+            var weights = mesh.boneWeights;
+            if (weights == null || weights.Length != mesh.vertexCount) continue;
+            var onArm = new bool[weights.Length];
+            for (int v = 0; v < weights.Length; v++)
+            {
+                var w = weights[v];
+                float arm = (armBone[w.boneIndex0] ? w.weight0 : 0f) + (armBone[w.boneIndex1] ? w.weight1 : 0f)
+                    + (armBone[w.boneIndex2] ? w.weight2 : 0f) + (armBone[w.boneIndex3] ? w.weight3 : 0f);
+                onArm[v] = arm > 0.5f;
+            }
+
+            var trimmed = Object.Instantiate(mesh);
+            trimmed.name = mesh.name + "_Arms";
+            bool kept = false;
+            for (int sub = 0; sub < mesh.subMeshCount; sub++)
+            {
+                var triangles = mesh.GetTriangles(sub);
+                var keep = new System.Collections.Generic.List<int>(triangles.Length);
+                for (int t = 0; t + 2 < triangles.Length; t += 3)
+                {
+                    if (!onArm[triangles[t]] || !onArm[triangles[t + 1]] || !onArm[triangles[t + 2]]) continue;
+                    keep.Add(triangles[t]);
+                    keep.Add(triangles[t + 1]);
+                    keep.Add(triangles[t + 2]);
+                }
+                trimmed.SetTriangles(keep, sub);
+                kept |= keep.Count > 0;
+            }
+            if (kept) skinned.sharedMesh = trimmed;
+            else
+            {
+                Object.Destroy(trimmed);
+                skinned.enabled = false;
+            }
+        }
+
+        // pevne (neskinovane) casti: jen to, co je pripojene k pazi (napr. hodinky), zbytek pryc
+        foreach (var renderer in rig.GetComponentsInChildren<MeshRenderer>(true))
+            if (!renderer.transform.IsChildOf(rightUpper) && !renderer.transform.IsChildOf(leftUpper))
+                renderer.enabled = false;
     }
 
     static void CurlFingers(Animator animator, Transform root)
@@ -124,24 +200,54 @@ public class FirstPersonArms
     }
 
     // Natahne pazi tak, aby dlan drzela zbran v miste 'grip' (svetove souradnice); orientace podle drzaku zbrane.
-    public void Solve(bool right, Vector3 grip, Transform holder, Transform cameraRoot)
+    // underhand: ruka podpira hlaven zespodu (dlan nahoru, hrbet ruky dolu) - predpazbi u zbrane obema rukama.
+    public void Solve(bool right, Vector3 grip, Transform holder, Transform cameraRoot, bool underhand = false, bool stretch = false)
     {
         var arm = arms[right ? 0 : 1];
         if (arm == null || rig == null) return;
+        // Loket miri dolu a ven od tela.
+        // (v prvni osobe je rameno mimo obraz - kdyz paze na zbran nedosahne, rameno se k ni posune)
+        SolveArm(arm, grip, holder, cameraRoot.TransformDirection(new Vector3(0.7f * arm.side, -1f, -0.3f)), underhand, underhand || stretch);
+    }
+
+    // Vrati paze do vychozi pozy (mimo obraz) - napr. prava ruka luku, kdyz se zrovna nenatahuje.
+    public void ResetArm(bool right)
+    {
+        var arm = arms[right ? 0 : 1];
+        if (arm == null || rig == null) return;
+        arm.upper.localPosition = arm.upperRestLocal;
+        arm.upper.localRotation = arm.upperRest;
+        arm.lower.localRotation = arm.lowerRest;
+        arm.hand.localRotation = arm.handRest;
+    }
+
+    // Dvoukloubova IK jedne paze (i paze postavy ve 3. osobe): dlan na 'grip', loket smerem 'pole'.
+    public static void SolveArm(Arm arm, Vector3 grip, Transform holder, Vector3 pole, bool underhand, bool stretch = false)
+    {
+        if (arm == null || arm.upper == null) return;
+        if (stretch) arm.upper.localPosition = arm.upperRestLocal;
 
         // Prsty miri dopredu pres rukojet, dlan je privracena k rukojeti, palec nahoru.
-        Quaternion handFrame = Quaternion.LookRotation(holder.forward, holder.right * arm.side);
+        // (zespodu: prsty sikmo dopredu a ke zbrani, hrbet ruky dolu)
+        Quaternion handFrame = underhand
+            ? Quaternion.LookRotation((holder.forward - holder.right * arm.side * 0.35f).normalized, -holder.up)
+            : Quaternion.LookRotation(holder.forward, holder.right * arm.side);
         Vector3 wrist = grip - handFrame * PalmOffset;
 
         Vector3 shoulder = arm.upper.position;
         Vector3 toTarget = wrist - shoulder;
         float reach = arm.upperLength + arm.lowerLength - 0.002f;
+        if (stretch && toTarget.magnitude > reach * 0.97f)
+        {
+            // posunout rameno k cili (lehce pokrcena paze vypada prirozeneji nez napnuta)
+            arm.upper.position = shoulder + toTarget.normalized * (toTarget.magnitude - reach * 0.97f);
+            shoulder = arm.upper.position;
+            toTarget = wrist - shoulder;
+        }
         float distance = Mathf.Clamp(toTarget.magnitude, 0.05f, reach);
         Vector3 direction = toTarget.normalized;
         Vector3 target = shoulder + direction * distance;
 
-        // Loket miri dolu a ven od tela.
-        Vector3 pole = cameraRoot.TransformDirection(new Vector3(0.7f * arm.side, -1f, -0.3f));
         Vector3 poleOnPlane = (pole - direction * Vector3.Dot(pole, direction)).normalized;
 
         float along = (arm.upperLength * arm.upperLength - arm.lowerLength * arm.lowerLength + distance * distance) / (2f * distance);

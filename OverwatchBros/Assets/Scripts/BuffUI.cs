@@ -42,6 +42,8 @@ public class BuffUI
                 until = () => ReplayPlayer.Active ? Time.time + ReplayPlayer.BuffRemaining(1) : PickupBuffs.InvulnerableUntil },
             new Buff { key = "tramal", shortName = "TR", color = new Color(0.35f, 0.75f, 0.55f),
                 until = () => ReplayPlayer.Active ? Time.time + ReplayPlayer.BuffRemaining(2) : PickupBuffs.TramalUntil },
+            new Buff { key = "karburator", shortName = "HK", color = new Color(0.95f, 0.45f, 0.15f),
+                until = () => ReplayPlayer.Active ? 0f : MatchManager.LocalCarburetorUntil },
         };
         foreach (var b in buffs) Create(b);
     }

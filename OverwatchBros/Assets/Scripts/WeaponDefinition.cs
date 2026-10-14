@@ -125,6 +125,10 @@ public class WeaponDefinition : ScriptableObject
     public HeldModel heldModel = HeldModel.Auto;
     [Tooltip("Hrdina drzi zbran v obou rukou (napr. dve sekyrky), utoky se strida.")]
     public bool dualWield = false;
+    [Tooltip("Jedna velka zbran drzena obema rukama (jako puska Soldiera): leva ruka na predpazbi, zbran vic u stredu.")]
+    public bool twoHanded = false;
+    [Tooltip("Zvetseni modelu zbrane v ruce (1 = jak je v prefabu).")]
+    public float heldScale = 1f;
     [Tooltip("Volitelny vlastni model zbrane. Kdyz je prazdny, pouzije se model z kostek.")]
     public GameObject heldPrefab;
 

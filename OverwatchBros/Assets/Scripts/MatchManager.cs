@@ -325,6 +325,7 @@ public partial class MatchManager : NetworkBehaviour
     {
         ServerResetPickups();
         ServerResetBoiler();
+        ServerResetTractor();
         team0Score.Value = 0;
         team1Score.Value = 0;
         winnerTeam.Value = -1;

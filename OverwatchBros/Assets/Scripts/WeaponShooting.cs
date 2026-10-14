@@ -274,9 +274,15 @@ public class WeaponShooting : NetworkBehaviour
     RapidFireAbility rapid;
 
     // Jak moc je luk natazeny (0-1), pro HUD a model zbrane.
-    public float ChargeFraction => Mathf.Max(Mathf.Max(ForcedCharge, scopedCharge), charging && weapon != null && weapon.chargeTime > 0f
+    public float ChargeFraction => Mathf.Max(Mathf.Max(Mathf.Max(ForcedCharge, scopedCharge), RapidDraw), charging && weapon != null && weapon.chargeTime > 0f
         ? Mathf.Clamp01((Time.time - chargeStart) / weapon.chargeTime)
         : 0f);
+
+    // Rychlopalba: kazdy sip se rychle natahne (za 'interval') a hned vyleti - jen pro vzhled natahovani.
+    float rapidDrawStart = -1f;
+    float RapidDraw => rapidDrawStart >= 0f && rapid != null && rapid.interval > 0f
+        ? Mathf.Clamp01((Time.time - rapidDrawStart) / rapid.interval) : 0f;
+    public bool RapidDrawing => rapidDrawStart >= 0f;
 
     // Natazeni ridi schopnost (priprava Mirkovy ultimatky), ne hrac.
     public float ForcedCharge { get; set; }
@@ -288,18 +294,27 @@ public class WeaponShooting : NetworkBehaviour
 
         bool down = FireHeld;
 
-        // Rychlopalba: sipy leti hned plnou rychlosti, jeden za druhym.
+        // Rychlopalba: sipy leti plnou rychlosti jeden za druhym - kazdy se rychle natahne (za 'interval') a hned vyleti.
         if (rapid != null && rapid.enabled && rapid.IsActive)
         {
             charging = false;
-            if (down && Time.time >= nextFireTime)
+            if (!down)
             {
-                nextFireTime = Time.time + rapid.interval;
+                rapidDrawStart = -1f;
+                return;
+            }
+            if (rapidDrawStart < 0f)
+                rapidDrawStart = Time.time;
+            if (Time.time - rapidDrawStart >= rapid.interval && Time.time >= nextFireTime)
+            {
+                nextFireTime = Time.time + rapid.interval * 0.5f;
                 FireArrow(1f, true);
                 rapid.ConsumeShot();
+                rapidDrawStart = rapid.IsActive ? Time.time : -1f;   // hned dalsi sip
             }
             return;
         }
+        rapidDrawStart = -1f;
 
         if (down)
         {

@@ -164,7 +164,7 @@ public class FirstPersonController : NetworkBehaviour
     // Hrac se pripojil do rozehraneho zapasu a jeste si vybira tym / hrdinu.
     public bool Joining => hero != null && hero.IsJoining;
     public bool CannotAct => IsDead || MatchOver || InLobby || Joining || Stunned;
-    public bool InputBlocked => ShootBlocked || Silenced;
+    public bool InputBlocked => ShootBlocked || Silenced || riding;
     // Strelba (a pribliseni): jako InputBlocked, ale vystraseny hrac strilet muze.
     public bool ShootBlocked => CannotAct || AbilityActive || UltCasting;
 
@@ -446,6 +446,8 @@ public class FirstPersonController : NetworkBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         playerCamera.transform.localPosition = new Vector3(0f, eyeHeight, 0f);
+        // ruce a zbran jsou tesne u kamery - pri 0,3 m by je kamera pri chuzi orezavala (kousky paze mizi a objevuji se)
+        playerCamera.nearClipPlane = 0.03f;
     }
 
     void Update()
@@ -469,10 +471,120 @@ public class FirstPersonController : NetworkBehaviour
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
             Cursor.lockState = CursorLockMode.None;
 
+        UpdateDriving();
         HandleLook();
         HandleMovement();
+        if (driving)
+            ThirdPersonCamera.PlaceOrbit(transform, NetworkObject, playerCamera, new Vector3(0f, 2.4f, 0f), 8f, 2.5f);
         UpdateEyePosition();
     }
+
+    // ---------------- rizeni traktoru (Honzuv karburator, viz Tractor) ----------------
+
+    bool driving;
+    bool riding;   // spolujezdec na vleku: jede s traktorem, rozhlizi se a strili, schopnosti ne
+    float driveSpeed;
+
+    public bool DrivingTractor => driving;
+    public bool RidingTractor => riding;
+
+    void UpdateDriving()
+    {
+        var match = MatchManager.Instance;
+        bool nowRiding = match != null && match.IsSpawned && IsSpawned && match.IsRiding(NetworkObjectId);
+        if (nowRiding != riding)
+        {
+            riding = nowRiding;
+            verticalVelocity = 0f;
+            externalVelocity = Vector3.zero;
+            var trailer = Tractor.Instance;
+            if (riding)
+                controller.enabled = false;   // poloha podle vleku (HandleMovement)
+            // (seskoceni vedle vleku jen kdyz na nem opravdu stal - ne po oziveni na zacatku kola)
+            else if (trailer != null && !IsDead && Vector3.Distance(transform.position, trailer.SeatPosition) < 3f)
+                Teleport(trailer.SeatPosition + trailer.transform.forward * Tractor.ExitSide + Vector3.down * 0.5f, transform.eulerAngles.y);
+            else
+                controller.enabled = true;
+        }
+
+        bool now = match != null && match.IsSpawned && IsSpawned && match.IsDriving(NetworkObjectId);
+        if (now == driving) return;
+        driving = now;
+        driveSpeed = 0f;
+        verticalVelocity = 0f;
+        externalVelocity = Vector3.zero;
+        // behem jizdy se nestrili a nepouzivaji schopnosti; kamera za traktorem
+        AbilityActive = driving;
+        var tractor = Tractor.Instance;
+        if (driving && tractor != null)
+        {
+            // nasednout: do kabiny, pohled ve smeru jizdy
+            Teleport(tractor.CabPosition + Vector3.up * 0.05f, tractor.transform.eulerAngles.y + 90f);
+        }
+        else if (!driving)
+        {
+            playerCamera.transform.localPosition = new Vector3(0f, eyeHeight, 0f);
+            // vystoupit: vedle kabiny (kde je misto)
+            if (tractor != null && !IsDead && Vector3.Distance(transform.position, tractor.CabPosition) < 3f)
+                foreach (float side in new[] { 1f, -1f })
+                {
+                    Vector3 spot = tractor.CabPosition + tractor.transform.forward * side * Tractor.ExitSide + Vector3.up * 0.1f;
+                    if (Physics.CheckCapsule(spot + Vector3.up * 0.6f, spot + Vector3.up * 1.6f, 0.45f, ~0, QueryTriggerInteraction.Ignore)) continue;
+                    Teleport(spot, transform.eulerAngles.y);
+                    break;
+                }
+        }
+    }
+
+    // spolujezdec: dorovnat na vlek az po pohybu traktoru (at se netrese o snimek pozadu)
+    void LateUpdate()
+    {
+        if (IsOwner && riding && Tractor.Instance != null)
+            transform.position = Tractor.Instance.SeatPosition;
+    }
+
+    void Teleport(Vector3 feet, float yaw)
+    {
+        controller.enabled = false;
+        transform.SetPositionAndRotation(feet, Quaternion.Euler(0f, yaw, 0f));
+        controller.enabled = true;
+    }
+
+    void DriveTick()
+    {
+        float throttle = 0f, steer = 0f;
+        if (!CannotAct && GameSettings.CursorLocked)
+        {
+            if (Keyboard.current.wKey.isPressed) throttle += 1f;
+            if (Keyboard.current.sKey.isPressed) throttle -= 1f;
+            if (Keyboard.current.dKey.isPressed) steer += 1f;
+            if (Keyboard.current.aKey.isPressed) steer -= 1f;
+        }
+
+        float target = throttle > 0f ? Tractor.MaxSpeed : throttle < 0f ? -Tractor.ReverseSpeed : 0f;
+        bool braking = Mathf.Abs(driveSpeed) > 0.2f && target != 0f && Mathf.Sign(target) != Mathf.Sign(driveSpeed);
+        float acceleration = throttle == 0f ? 6f : braking ? 10f : 3.5f;
+        driveSpeed = Mathf.MoveTowards(driveSpeed, target, acceleration * Time.deltaTime);
+
+        // zataci jen za jizdy (pri couvani obracene, jako auto)
+        transform.Rotate(0f, steer * 60f * Mathf.Clamp(driveSpeed / 3f, -1f, 1f) * Time.deltaTime, 0f);
+
+        // kolize resi kapsle ridice jako pri chuzi: schody (do 0,3 m) a rampy vyjede, dvermi projede
+        Vector3 step = transform.forward * driveSpeed * Time.deltaTime;
+        if (controller.isGrounded && verticalVelocity < 0f) verticalVelocity = -2f;
+        verticalVelocity += gravity * Time.deltaTime;
+        var flags = controller.Move(step);
+        controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
+
+        // naraz do zdi: rana a zpomaleni
+        if ((flags & CollisionFlags.Sides) != 0 && Mathf.Abs(driveSpeed) > 1.5f)
+        {
+            if (Mathf.Abs(driveSpeed) > 4f)
+                ProceduralSfx.Play(ProceduralSfx.Hit, transform.position + transform.forward, 0.9f);
+            driveSpeed *= 0.35f;
+        }
+    }
+
 
     void UpdateEyePosition()
     {
@@ -506,6 +618,14 @@ public class FirstPersonController : NetworkBehaviour
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
         float sensitivity = mouseSensitivity * GameSettings.Sensitivity * LookScale;
+
+        // v traktoru se zataci klavesami; mysi jen kamera nahoru / dolu
+        if (driving)
+        {
+            cameraPitch = Mathf.Clamp(cameraPitch - mouseDelta.y * sensitivity * Time.deltaTime, -15f, 40f);
+            playerCamera.transform.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
+            return;
+        }
 
         transform.Rotate(Vector3.up * mouseDelta.x * sensitivity * Time.deltaTime);
 
@@ -678,6 +798,18 @@ public class FirstPersonController : NetworkBehaviour
 
     void HandleMovement()
     {
+        if (driving)
+        {
+            DriveTick();
+            return;
+        }
+        if (riding)
+        {
+            // na vleku: stoji na nem, jede s traktorem
+            var trailer = Tractor.Instance;
+            if (trailer != null) transform.position = trailer.SeatPosition;
+            return;
+        }
         if (TickPull()) return;
         if (AbilityActive || Joining) return;
         if (TickMantle()) return;

@@ -538,7 +538,7 @@ public static class M7Setup
             w.heldModel = HeldModel.Bow;
             w.damage = 75f;
             w.minChargeDamage = 20f;
-            w.chargeTime = 1f;
+            w.chargeTime = 0.5f;
             w.fireRate = 2.5f;
             w.maxAmmo = 0;
             w.range = 160f;

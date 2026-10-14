@@ -10,6 +10,7 @@ public enum PickupKind
     Shield,       // stit: docasny stit nad zdravim
     Invulnerable, // dedova slivovice (spiz velke chaty): nesmrtelnost
     Tramal,       // Tramal ve skrince pod diplomem MUDr. Tomaska: plne zdravi + kratce mensi poskozeni
+    Carburetor,   // Honzuv karburator: minutu u sebe, s nim jde nastartovat sneznou rolbu u chaty (R)
 }
 
 // Buffy z balicku, ktere zobrazuje HUD mistniho hrace (BuffUI). Nastavuje je MatchManager, kdyz balicek sebere
@@ -72,6 +73,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Power => 45f,
         PickupKind.Invulnerable => 60f,
         PickupKind.Tramal => 30f,
+        PickupKind.Carburetor => 90f,
         _ => 30f,
     };
 
@@ -85,6 +87,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Power => new Color(0.75f, 0.35f, 1f),
         PickupKind.Invulnerable => new Color(1f, 0.72f, 0.25f),
         PickupKind.Tramal => new Color(0.35f, 0.75f, 0.55f),
+        PickupKind.Carburetor => new Color(0.95f, 0.45f, 0.15f),
         _ => new Color(0.45f, 0.85f, 1f),
     };
 
@@ -96,6 +99,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Power => "Slivovice",
         PickupKind.Invulnerable => "Dědova slivovice",
         PickupKind.Tramal => "Tramal",
+        PickupKind.Carburetor => "Honzův karburátor",
         _ => "Štít",
     };
 
@@ -214,6 +218,17 @@ public class PickupSpot : MonoBehaviour
                 Part(PrimitiveType.Cube, item, new Vector3(-0.05f, 0f, 0f), new Vector3(0.05f, 0.072f, 0.112f), color, 0.8f);
                 Part(PrimitiveType.Cube, item, new Vector3(0.04f, 0.036f, 0f), new Vector3(0.09f, 0.002f, 0.04f), new Color(0.2f, 0.25f, 0.6f));
                 Part(PrimitiveType.Cube, item, new Vector3(0.02f, -0.02f, 0.11f), new Vector3(0.12f, 0.008f, 0.06f), new Color(0.82f, 0.84f, 0.86f), 0.2f);
+                break;
+            case PickupKind.Carburetor:
+                // Karburator: hlinikove telo s plovakovou komorou, vzduchovy filtr nahore, sani a oranzovy stitek.
+                var metal = new Color(0.72f, 0.74f, 0.78f);
+                Part(PrimitiveType.Cube, item, Vector3.zero, new Vector3(0.26f, 0.2f, 0.2f), metal, 0.15f);
+                Part(PrimitiveType.Cylinder, item, new Vector3(0f, -0.13f, 0f), new Vector3(0.24f, 0.05f, 0.24f), new Color(0.55f, 0.57f, 0.6f));
+                Part(PrimitiveType.Cylinder, item, new Vector3(0f, 0.17f, 0f), new Vector3(0.3f, 0.05f, 0.3f), new Color(0.15f, 0.15f, 0.17f));
+                var intake = Part(PrimitiveType.Cylinder, item, new Vector3(0.19f, 0.02f, 0f), new Vector3(0.1f, 0.07f, 0.1f), metal, 0.15f);
+                intake.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                Part(PrimitiveType.Cube, item, new Vector3(0f, 0f, 0.105f), new Vector3(0.12f, 0.1f, 0.01f), color, 1.2f);
+                Part(PrimitiveType.Cube, item, new Vector3(-0.11f, 0.06f, 0f), new Vector3(0.03f, 0.03f, 0.16f), new Color(0.75f, 0.6f, 0.2f));
                 break;
             default:
                 // Modry sestiuhelnikovy stit.

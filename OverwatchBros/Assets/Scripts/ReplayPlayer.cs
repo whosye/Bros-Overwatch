@@ -48,6 +48,23 @@ public class ReplayPlayer : MonoBehaviour
     public static int PovTeam => instance != null && instance.current != null
         ? (instance.killcamVictim >= 0 ? instance.TeamOf(instance.clip.povId) : instance.current.hudTeam) : -1;
 
+    // Killcam: zdravi vraha (z jehoz pohledu se prehrava) v aktualnim okamziku zaznamu.
+    public static bool KillerHealth(out int hero, out int team, out float health, out float maxHealth)
+    {
+        hero = -1; team = -1; health = 0f; maxHealth = 100f;
+        if (!IsKillcam || instance.current == null || instance.current.players == null) return false;
+        foreach (var p in instance.current.players)
+        {
+            if (p.id != instance.clip.povId) continue;
+            hero = p.hero;
+            team = p.team;
+            health = p.health;
+            maxHealth = p.maxHealth;
+            return true;
+        }
+        return false;
+    }
+
     int TeamOf(int id)
     {
         if (current != null)

@@ -105,6 +105,7 @@ public partial class MatchManager
             ServerAttackTick();
             ServerPickupTick();
             ServerBoilerTick();
+            ServerTractorTick();
         }
 
         CapturePointView.Sync(this);
@@ -406,6 +407,7 @@ public partial class MatchManager
         attackTeam.Value = 1 - attackTeam.Value;
         ServerResetPickups();
         ServerResetBoiler();
+        ServerResetTractor();
 
         // Vsichni zpet na spawny (nove role), zivoty dopoli.
         foreach (var client in PlayerSlots())

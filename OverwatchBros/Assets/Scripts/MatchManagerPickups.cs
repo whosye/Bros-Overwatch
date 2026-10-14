@@ -96,6 +96,9 @@ public partial class MatchManager
                 if (!health.HealBlocked) health.Heal(health.maxHealth);
                 health.ServerDamageReduction(PickupBuffs.TramalDamageTaken, PickupBuffs.TramalSeconds);
                 return true;
+            case PickupKind.Carburetor:
+                ServerGiveCarburetor(hero);
+                return true;
             default:
                 health.ServerAddShield(60f, 10f);
                 return true;
@@ -120,6 +123,8 @@ public partial class MatchManager
             PickupBuffs.TramalUntil = Time.time + PickupBuffs.TramalSeconds;
             CaptureUI.Announce("Užil jsi Tramal", PickupSpot.KindColor(kind), 3f);
         }
+        if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Carburetor)
+            CaptureUI.Announce($"Máš Honzův karburátor - nastartuj rolbu u chaty [R] ({CarburetorSeconds:0} s)", PickupSpot.KindColor(kind), 4f);
         Fx.Sparks(position + Vector3.up * 0.8f, PickupSpot.KindColor(kind));
         bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth || kind == PickupKind.Tramal;
         ProceduralSfx.Play(heal ? ProceduralSfx.Spawn : ProceduralSfx.CaptureUnlock, position, 0.8f);

@@ -199,6 +199,8 @@ public class CharacterVisual : MonoBehaviour
         return animator != null && animator.isHuman ? animator.GetBoneTransform(bone) : null;
     }
 
+    public Animator BodyAnimator => animator != null && animator.isHuman ? animator : null;
+
     public Transform GetHand(bool right)
     {
         return animator != null && animator.isHuman

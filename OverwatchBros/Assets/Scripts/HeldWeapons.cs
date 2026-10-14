@@ -18,6 +18,11 @@ public class HeldWeapons : MonoBehaviour
         public Transform forearm;
         public Vector3 grip;
 
+        // Zbran obema rukama: leva ruka drzi predpazbi (mistni bod v drzaku zbrane).
+        public bool twoHanded;
+        public Vector3 foregrip;
+        public Transform forearm2;
+
         // Zbrane v rukou postavy: poza v klidu a v bloku (mistni vuci kosti ruky).
         public Vector3 idlePosition, blockPosition;
         public Quaternion idleRotation, blockRotation;
@@ -26,10 +31,17 @@ public class HeldWeapons : MonoBehaviour
         // Luk: sip na tetive (pri natahovani se posouva dozadu).
         public Transform arrow;
         public Vector3 arrowRest, arrowBack;
+        // konec sipu u tetivy (mistni v drzaku) - tam pri natahovani drzi prava ruka
+        public Vector3 nockLocal;
+        public bool hasNock;
     }
 
     // Jak daleko se sip pri plnem natazeni posune dozadu (m) a jak dlouho po vystrelu chybi.
     const float DrawLength = 0.24f;
+    // luk v leve ruce u kamery: pri plnem natazeni je prava ruka stazena k obliceji (pod obrazem, jako Hanzo),
+    // sip vede od zamerovace dolu
+    const float CameraDrawLength = 0.34f;
+    static float CameraDrawFor(float charge) => CameraDrawLength * Mathf.SmoothStep(0f, 1f, charge);
     const float ArrowHiddenAfterShot = 0.3f;
     float lastCharge;
     float arrowHiddenUntil;
@@ -45,6 +57,52 @@ public class HeldWeapons : MonoBehaviour
     GameObject root;
     Hand[] hands = new Hand[0];
     Hand[] bodyHands = new Hand[0];
+
+    // Rychlopalba (Mirek, PTM): luk v ruce zari modre (jako Hanzovy Storm Arrows) - jen svitici material luku.
+    static readonly Color StormColor = new Color(0.25f, 0.65f, 1f, 1f);
+    RapidFireAbility rapidAbility;
+    System.Collections.Generic.List<Material> stormMaterials;
+    bool stormShown;
+
+    void UpdateStorm()
+    {
+        if (builtModel != HeldModel.Bow || hands.Length == 0 || hands[0].holder == null) return;
+        if (rapidAbility == null) rapidAbility = GetComponent<RapidFireAbility>();
+        bool on = !ghost && rapidAbility != null && rapidAbility.enabled && rapidAbility.IsActive;
+        if (!on && !stormShown) return;
+
+        var holder = hands[0].holder;
+        if (stormMaterials == null)
+        {
+            stormMaterials = new System.Collections.Generic.List<Material>();
+            foreach (var renderer in holder.GetComponentsInChildren<Renderer>(true))
+                if (!(renderer is ParticleSystemRenderer))
+                    foreach (var material in renderer.materials)
+                    {
+                        material.EnableKeyword("_EMISSION");
+                        stormMaterials.Add(material);
+                    }
+        }
+        float pulse = 0.65f + 0.35f * Mathf.Sin(Time.time * 14f);
+        // (jen luk sam - zare a svetlo kolem by hraci zakryvaly vyhled)
+        Color emission = on ? StormColor * (1.1f * pulse) : Color.black;
+        foreach (var material in stormMaterials)
+            if (material != null) material.SetColor("_EmissionColor", emission);
+        stormShown = on;
+    }
+    FirstPersonArms.Arm bodySupportArm;   // leva paze postavy u zbrane obema rukama
+
+    // Po animaci: leva ruka postavy podpira zbran zespodu (pro ostatni hrace, POTG, killcam).
+    void LateUpdate()
+    {
+        if (bodySupportArm == null || visual == null || visual.ModelRoot == null) return;
+        foreach (var hand in bodyHands)
+        {
+            if (hand.holder == null || !hand.twoHanded || !hand.holder.gameObject.activeInHierarchy) continue;
+            Vector3 pole = visual.ModelRoot.TransformDirection(new Vector3(-0.7f, -1f, -0.3f));
+            FirstPersonArms.SolveArm(bodySupportArm, hand.holder.TransformPoint(hand.foregrip), hand.holder, pole, true);
+        }
+    }
     HeldModel builtModel;
     int nextHand;
     float swingDuration = 0.3f;
@@ -163,6 +221,8 @@ public class HeldWeapons : MonoBehaviour
 
     void PlayBodyAttack(WeaponDefinition weapon)
     {
+        // zbran obema rukama (strelba od pasu): postava pri vystrelu nezveda ruce, zbran zustava u boku
+        if (weapon != null && weapon.twoHanded && !weapon.IsMelee) return;
         if (visual != null && visual.HasModel)
             visual.PlayAttack(weapon != null && weapon.IsMelee, weapon != null ? Mathf.Clamp(1.25f / Mathf.Max(0.5f, weapon.fireRate), 0.25f, 0.7f) : 0.4f);
     }
@@ -190,7 +250,10 @@ public class HeldWeapons : MonoBehaviour
             tauntElapsed += Time.deltaTime;
 
         if (builtModel == HeldModel.Bow)
+        {
             UpdateArrows();
+            UpdateStorm();
+        }
 
         // Zbrane u kamery (majitel v 1. osobe) a zbrane v rukou postavy (ostatni, majitel ve 3. osobe).
         // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
@@ -306,12 +369,22 @@ public class HeldWeapons : MonoBehaviour
                 euler.z += 8f * hand.side * raise;
             }
 
-            // Luk se pri natahovani pritahne k telu a lehce zvedne.
+            // Luk pri natahovani: v leve ruce (jako Hanzo) se vysune ke stredu a nahoru, at napnuty sip vede
+            // od zamerovace dolu a i s pravou rukou zustane v obraze; jinak se pritahne k telu a lehce zvedne.
             if (builtModel == HeldModel.Bow)
             {
                 float charge = ghost ? GhostCharge : shooting.ChargeFraction;
-                position += new Vector3(-0.03f, 0.03f, -0.10f) * charge;
-                euler.z += 6f * charge;
+                if (hand.side < 0f)
+                {
+                    float drawn = Mathf.SmoothStep(0f, 1f, charge);
+                    position += new Vector3(0.05f, 0.06f, 0.08f) * drawn;
+                    euler += new Vector3(-4f, -4f, 10f) * drawn;
+                }
+                else
+                {
+                    position += new Vector3(-0.03f, 0.03f, -0.10f) * charge;
+                    euler.z += 6f * charge;
+                }
             }
 
             Quaternion rotation = Quaternion.Euler(euler);
@@ -327,7 +400,35 @@ public class HeldWeapons : MonoBehaviour
             hand.holder.localRotation = rotation;
 
             if (fpArms != null)
-                fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform);
+            {
+                fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, builtModel == HeldModel.Bow);   // (luk v natazene ruce)
+                if (hand.twoHanded)
+                    fpArms.Solve(false, hand.holder.TransformPoint(hand.foregrip), hand.holder, root.transform, true);
+
+                // luk: pri natahovani drzi prava ruka tetivu za konec sipu a tahne ji s nim dozadu
+                if (builtModel == HeldModel.Bow && hand.side < 0f && hand.hasNock)
+                {
+                    float charge = ghost ? GhostCharge : shooting != null ? shooting.ChargeFraction : 0f;
+                    bool arrowShown = hand.arrow == null || hand.arrow.gameObject.activeSelf;
+                    if (charge > 0.01f && arrowShown)
+                    {
+                        Vector3 nock = hand.holder.TransformPoint(hand.nockLocal + Vector3.back * CameraDrawFor(charge));
+                        fpArms.Solve(true, nock, hand.holder, root.transform, false, true);
+                    }
+                    else
+                        fpArms.ResetArm(true);
+                }
+            }
+
+            if (hand.forearm2 != null)
+            {
+                Vector3 fist = root.transform.InverseTransformPoint(hand.holder.TransformPoint(hand.foregrip));
+                Vector3 elbow = new Vector3(-0.40f, -0.62f, 0.25f);
+                Vector3 along = fist - elbow;
+                hand.forearm2.localPosition = (fist + elbow) * 0.5f;
+                hand.forearm2.localRotation = Quaternion.FromToRotation(Vector3.up, along.normalized);
+                hand.forearm2.localScale = new Vector3(0.095f, along.magnitude * 0.5f, 0.095f);
+            }
 
             if (hand.forearm != null)
             {
@@ -345,13 +446,17 @@ public class HeldWeapons : MonoBehaviour
     void UpdateArrows()
     {
         float charge = ghost ? GhostCharge : shooting != null ? shooting.ChargeFraction : 0f;
-        if (lastCharge > 0.05f && charge <= 0.001f)
-            arrowHiddenUntil = Time.time + ArrowHiddenAfterShot;
+        bool rapidDrawing = !ghost && shooting != null && shooting.RapidDrawing;
+        // vystrel = natazeni spadne (u rychlopalby z plneho natazeni na zacatek dalsiho)
+        bool released = rapidDrawing ? lastCharge > 0.6f && charge < lastCharge - 0.5f : lastCharge > 0.05f && charge <= 0.001f;
+        if (released)
+            arrowHiddenUntil = Time.time + (rapidDrawing ? 0.05f : ArrowHiddenAfterShot);
         lastCharge = charge;
 
         bool show = Time.time >= arrowHiddenUntil;
         float draw = DrawLength * Mathf.SmoothStep(0f, 1f, charge);
-        foreach (var hand in hands) DrawArrow(hand, draw, show);
+        // v prvni osobe se sip na luku objevi az pri natahovani (i kratke - hned vystrel)
+        foreach (var hand in hands) DrawArrow(hand, hand.side < 0f ? CameraDrawFor(charge) : draw, show && charge > 0.001f);
         foreach (var hand in bodyHands) DrawArrow(hand, draw, show);
     }
 
@@ -363,6 +468,41 @@ public class HeldWeapons : MonoBehaviour
         hand.arrow.localPosition = hand.arrowRest + hand.arrowBack * draw;
     }
 
+    // Luk v leve ruce (prvni osoba): sip z modelu luku sedi tam, kde ho ma model (pro svisly luk v prave ruce).
+    // Presadi se na operku sipu tesne nad rukojeti (na levou stranu madla), osou ve smeru mireni, konec na tetive.
+    const float ArrowRestAbove = 0.06f;   // operka nad stredem rukojeti (m)
+    const float BraceHeight = 0.17f;      // tetiva za madlem (m) - tam lezi konec sipu
+
+    static void SnapArrowToRest(Transform holder, Vector3 grip)
+    {
+        Transform arrow = null;
+        foreach (var child in holder.GetComponentsInChildren<Transform>(true))
+            if (child != holder && child.name.IndexOf("arrow", System.StringComparison.OrdinalIgnoreCase) >= 0) { arrow = child; break; }
+        if (arrow == null) return;
+        var filter = arrow.GetComponentInChildren<MeshFilter>(true);
+        if (filter == null || filter.sharedMesh == null) return;
+
+        // osa sipu = nejdelsi rozmer jeho meshe
+        var bounds = filter.sharedMesh.bounds;
+        Vector3 size = bounds.size;
+        Vector3 axisLocal = size.x >= size.y && size.x >= size.z ? Vector3.right : size.y >= size.z ? Vector3.up : Vector3.forward;
+        float lengthLocal = Vector3.Dot(size, axisLocal);
+        Vector3 axisWorld = filter.transform.TransformVector(axisLocal * lengthLocal);
+        float length = axisWorld.magnitude;
+        Vector3 axis = holder.InverseTransformDirection(axisWorld).normalized;
+        if (axis.z < 0f) axis = -axis;   // hrot dopredu (v puvodnim modelu miri sip dopredu)
+
+        // natocit osou ve smeru mireni (+Z drzaku)
+        Quaternion turn = holder.rotation * Quaternion.FromToRotation(axis, Vector3.forward) * Quaternion.Inverse(holder.rotation);
+        arrow.rotation = turn * arrow.rotation;
+
+        // stred sipu: nad rukojeti, kousek vlevo od madla; konec sipu na tetive za madlem
+        Vector3 rest = grip + new Vector3(-0.02f, ArrowRestAbove, 0f);
+        Vector3 center = new Vector3(rest.x, rest.y, rest.z - BraceHeight + length * 0.5f);
+        Vector3 currentCenter = filter.transform.TransformPoint(bounds.center);
+        arrow.position += holder.TransformPoint(center) - currentCenter;
+    }
+
     static void FindArrow(Hand hand)
     {
         foreach (var child in hand.holder.GetComponentsInChildren<Transform>(true))
@@ -372,6 +512,23 @@ public class HeldWeapons : MonoBehaviour
             hand.arrowRest = child.localPosition;
             // smer "dozadu" (k hraci) v prostoru rodice sipu, vcetne meritka
             hand.arrowBack = child.parent.InverseTransformVector(hand.holder.TransformVector(Vector3.back));
+
+            // zadni konec sipu (nejmensi z v drzaku) = misto, kde se drzi tetiva
+            bool any = false;
+            Vector3 nock = Vector3.zero;
+            foreach (var renderer in child.GetComponentsInChildren<Renderer>(true))
+            {
+                var b = renderer.bounds;
+                Vector3 center = hand.holder.InverseTransformPoint(b.center);
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector3 corner = new Vector3((i & 1) == 0 ? b.min.x : b.max.x, (i & 2) == 0 ? b.min.y : b.max.y, (i & 4) == 0 ? b.min.z : b.max.z);
+                    float z = hand.holder.InverseTransformPoint(corner).z;
+                    if (!any || z < nock.z) { nock = new Vector3(center.x, center.y, z); any = true; }
+                }
+            }
+            hand.nockLocal = nock;
+            hand.hasNock = any;
             return;
         }
     }
@@ -516,6 +673,9 @@ public class HeldWeapons : MonoBehaviour
         fpArms = null;
         hands = new Hand[0];
         bodyHands = new Hand[0];
+        bodySupportArm = null;
+        stormMaterials = null;
+        stormShown = false;
         built = true;
         builtVersion = visual != null ? visual.Version : 0;
         builtWeapon = CurrentWeapon;
@@ -546,8 +706,9 @@ public class HeldWeapons : MonoBehaviour
             hands = new Hand[count];
             for (int i = 0; i < count; i++)
             {
-                // Jedna zbran je vpravo, dve jsou po obou stranach.
-                float side = count == 1 ? 1f : (i == 0 ? 1f : -1f);
+                // Jedna zbran je vpravo, dve jsou po obou stranach. Luk (v prvni osobe) drzi leva ruka jako Hanzo.
+                bool bowLeft = owner && count == 1 && model == HeldModel.Bow;
+                float side = count == 1 ? (bowLeft ? -1f : 1f) : (i == 0 ? 1f : -1f);
 
                 var hand = new Hand { side = side };
                 var holder = new GameObject(i == 0 ? "RightHand" : "LeftHand").transform;
@@ -560,14 +721,36 @@ public class HeldWeapons : MonoBehaviour
                     : new Vector3(0.62f * side, 0.15f, 0.30f);
                 hand.restEuler = model == HeldModel.Scythe ? new Vector3(10f, 0f, -12f * side)
                     : model == HeldModel.Axe ? new Vector3(15f, 0f, -9f * side) : Vector3.zero;
+                if (bowLeft)
+                {
+                    // luk v natazene leve ruce zleva zdola, sklopeny sikmo pres obraz (horni rameno doprava nahoru)
+                    hand.restPosition = new Vector3(-0.04f, -0.22f, 0.55f);
+                    hand.restEuler = new Vector3(4f, 6f, -62f);
+                }
 
                 BuildModel(holder, weapon, model, side);
+                if (bowLeft) SnapArrowToRest(holder, GripInWeapon(weapon, model));
                 FindArrow(hand);
                 holder.localPosition = hand.restPosition;
                 holder.localRotation = Quaternion.Euler(hand.restEuler);
                 hands[i] = hand;
 
                 hand.grip = GripInWeapon(weapon, model);
+
+                // jedna velka zbran obema rukama: vic u stredu a niz, leva ruka na predpazbi
+                if (weapon.twoHanded && count == 1 && model == HeldModel.Gun)
+                {
+                    hand.twoHanded = true;
+                    hand.foregrip = ForegripInWeapon(holder, hand.grip);
+                    if (owner)
+                    {
+                        // strelba od pasu: zbran nize u praveho boku, hlaven sikmo nahoru ke stredu obrazovky
+                        hand.restPosition = new Vector3(0.22f, -0.42f, 0.34f);
+                        hand.restEuler = new Vector3(-7f, -7f, 4f);
+                        holder.localPosition = hand.restPosition;
+                        holder.localRotation = Quaternion.Euler(hand.restEuler);
+                    }
+                }
             }
 
             // Ruce z prvni osoby: skutecne paze modelu postavy, jinak jednoducha pest s rukavem.
@@ -597,6 +780,15 @@ public class HeldWeapons : MonoBehaviour
                 FindArrow(hand);
                 AttachToBone(hand, weapon, model);
                 bodyHands[i] = hand;
+
+                // zbran obema rukama: leva ruka postavy na predpazbi (IK po animaci, viz LateUpdate)
+                if (weapon.twoHanded && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null)
+                {
+                    hand.twoHanded = true;
+                    hand.grip = GripInWeapon(weapon, model);
+                    hand.foregrip = ForegripInWeapon(holder, hand.grip);
+                    bodySupportArm = FirstPersonArms.BuildArm(visual.BodyAnimator, false);
+                }
             }
 
             // Poza sekyr v bloku (jen sekyry): spocita se z pozy s rukama vpredu.
@@ -623,6 +815,33 @@ public class HeldWeapons : MonoBehaviour
 
         var cuff = Limb(PrimitiveType.Cylinder, root.transform, sleeve);
         hand.forearm = cuff;
+
+        if (hand.twoHanded)
+        {
+            var support = Limb(PrimitiveType.Sphere, hand.holder, skin);
+            support.localPosition = hand.foregrip;
+            support.localScale = new Vector3(0.10f, 0.095f, 0.12f);
+            hand.forearm2 = Limb(PrimitiveType.Cylinder, root.transform, sleeve);
+        }
+    }
+
+    // Predpazbi: kus pred rukojeti smerem k hlavni (podle delky modelu), kousek pod osou zbrane.
+    static Vector3 ForegripInWeapon(Transform holder, Vector3 grip)
+    {
+        float front = grip.z + 0.25f;
+        bool any = false;
+        foreach (var renderer in holder.GetComponentsInChildren<Renderer>())
+        {
+            var b = renderer.bounds;
+            for (int i = 0; i < 8; i++)
+            {
+                Vector3 corner = new Vector3((i & 1) == 0 ? b.min.x : b.max.x, (i & 2) == 0 ? b.min.y : b.max.y, (i & 4) == 0 ? b.min.z : b.max.z);
+                float z = holder.InverseTransformPoint(corner).z;
+                if (!any || z > front) { front = z; any = true; }
+            }
+        }
+        float forward = Mathf.Clamp((front - grip.z) * 0.45f, 0.15f, 0.32f);
+        return new Vector3(grip.x, grip.y + 0.01f, grip.z + forward);
     }
 
     static Transform Limb(PrimitiveType type, Transform parent, Color color)
@@ -692,6 +911,8 @@ public class HeldWeapons : MonoBehaviour
             var instance = Instantiate(weapon.heldPrefab, holder);
             instance.transform.localPosition = Vector3.zero;
             instance.transform.localRotation = Quaternion.identity;
+            if (weapon.heldScale > 0.01f && !Mathf.Approximately(weapon.heldScale, 1f))
+                instance.transform.localScale *= weapon.heldScale;
             foreach (var collider in instance.GetComponentsInChildren<Collider>())
                 DestroyImmediate(collider);
             foreach (var renderer in instance.GetComponentsInChildren<Renderer>())

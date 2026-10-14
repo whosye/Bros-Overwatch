@@ -14,7 +14,13 @@ public class BotBrain : MonoBehaviour
     public static readonly List<BotBrain> All = new List<BotBrain>();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void ResetStatics() => All.Clear();
+    static void ResetStatics()
+    {
+        All.Clear();
+        trails.Clear();
+        trailFrame = -1;
+        nextTrailSample = 0f;
+    }
 
     public static bool IsBot(GameObject go) => go != null && go.TryGetComponent<BotBrain>(out _);
 
@@ -27,7 +33,7 @@ public class BotBrain : MonoBehaviour
     public float turnSpeed = 180f;         // stupnu za sekundu
     public float aimError = 3f;          // stupnu (nahodna odchylka, meni se kazdou pul sekundu)
     public float viewDistance = 55f;
-    public float memorySeconds = 7f;       // jak dlouho si pamatuje, kde naposledy videl nepritele
+    public float memorySeconds = 11f;      // jak dlouho si pamatuje, kde naposledy videl nepritele
     public float burstSeconds = 0.7f;      // strili v davkach: tak dlouho strili, pak chvili ne
     public float burstPause = 0.6f;
 
@@ -102,7 +108,7 @@ public class BotBrain : MonoBehaviour
         Yaw = transform.eulerAngles.y;
 
         // kazdy bot je trochu jiny: agresivita, reakce, presnost
-        aggression = Random.Range(0.3f, 0.95f);
+        aggression = Random.Range(0.5f, 1f);
         reactionTime *= Random.Range(0.8f, 1.35f);
         aimError *= Random.Range(0.8f, 1.35f);
         nextHunch = Time.time + Random.Range(8f, 20f);
@@ -112,7 +118,7 @@ public class BotBrain : MonoBehaviour
 
     // 0 = opatrny (drzi pozici, strili z dalky), 1 = dravec (jde po nepritelich)
     float aggression;
-    const int MaxChasers = 2;            // za jednim hracem se aktivne zenou nejvys dva boti
+    const int MaxChasers = 3;            // za jednim hracem se aktivne zenou nejvys tri boti
     const float HearDistance = 35f;
 
     // tusena poloha nepritele (slysel strelbu / tuseni) - jde se tam podivat
@@ -583,7 +589,7 @@ public class BotBrain : MonoBehaviour
         if (chase && !melee && !chasing && ChasersOf(target, this) >= MaxChasers && aggression < 0.85f)
             chase = false;
         // opatrny bot za nepritelem, ktereho uz nevidi, nejde (jen dravec ho hleda)
-        if (chase && !targetVisible && aggression < 0.5f && !melee)
+        if (chase && !targetVisible && aggression < 0.6f && !melee)
             chase = false;
         Role role = CurrentRole(weapon);
         bool supporting = role == Role.Support && HasSupportAnchor();
@@ -592,6 +598,8 @@ public class BotBrain : MonoBehaviour
         if (supporting)
             chase = chase && healTarget == null && targetVisible && Vector3.Distance(transform.position, target.transform.position) < 18f;
         chasing = chase;
+        chaseTarget = chase ? target : null;
+        RecordTrails();
         Hunch();
         float minR = 0f, maxR = 0f;
         if (role == Role.Ranged) RangedBand(weapon, out minR, out maxR);
@@ -726,6 +734,7 @@ public class BotBrain : MonoBehaviour
         Run = !combat && moveDir.sqrMagnitude > 0.25f;
 
         CheckStuck(moveDir);
+        CheckLoiter(combat || holdPoint || wantsHealth || supporting);
         if (aimAlly != null) SetFire(false);
         else if (healing) HealShoot(eye);
         else Shoot(weapon, eye, combat);
@@ -1114,6 +1123,12 @@ public class BotBrain : MonoBehaviour
             var otherHealth = other.GetComponent<Health>();
             if (otherHealth != null && otherHealth.currentHealth.Value > 0f) enemies.Add(other);
         }
+        // kdyz o nikom nevi nebo obcas (at prochazi i chaty): nahodne misto pod strechou
+        if (enemies.Count == 0 || Random.value < 0.3f)
+        {
+            var indoor = BotNavigation.RandomIndoorSpot();
+            if (indoor.HasValue) return indoor.Value;
+        }
         if (enemies.Count == 0) return RandomHotspot();
         var weapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
         float spread = weapon != null && CurrentRole(weapon) == Role.Ranged ? 5f : Mathf.Lerp(14f, 6f, aggression);
@@ -1173,6 +1188,11 @@ public class BotBrain : MonoBehaviour
             corner++;
         }
 
+        // navigace k pronasledovanemu nevede (dvere, prah, je v chate): po jeho stope
+        if (pathIncomplete && chaseTarget != null && (corner >= path.Count || Vector3.Distance(feet, path[path.Count - 1]) < 2.5f)
+            && TrailDirection(chaseTarget, out Vector3 trailDir))
+            return trailDir;
+
         if (corner >= path.Count)
         {
             // bez cesty: primo k cili, jen kdyz je blizko a nic mezi tim neni (jinak by sel do zdi)
@@ -1197,7 +1217,7 @@ public class BotBrain : MonoBehaviour
         Vector3 next = path[corner];
         Vector3 dir = next - feet;
         // schod nebo vyvyseni kousek pred botem: vyskocit
-        if (dir.y > 0.4f && new Vector2(dir.x, dir.z).magnitude < 1.6f)
+        if (dir.y > 0.25f && new Vector2(dir.x, dir.z).magnitude < 1.6f)
             jumpRequest = true;
         dir.y = 0f;
         return dir.normalized;
@@ -1207,6 +1227,7 @@ public class BotBrain : MonoBehaviour
     {
         path.Clear();
         corner = 0;
+        pathIncomplete = true;
         if (!BotNavigation.Ready) return;
         if (!NavMesh.SamplePosition(from, out var start, 3f, BotNavigation.Filter))
         {
@@ -1226,6 +1247,8 @@ public class BotBrain : MonoBehaviour
         }
         path.AddRange(navPath.corners);
         corner = path.Count > 1 ? 1 : 0;
+        // cil musi byt opravdu na konci cesty (SamplePosition muze cil "pritahnout" ven z chaty)
+        pathIncomplete = navPath.status != NavMeshPathStatus.PathComplete || Vector3.Distance(end.position, to) > 1.5f;
         // cil, kam nevede cela cesta (nedosazitelne misto, napr. strecha): vybrat jiny
         if (navPath.status != NavMeshPathStatus.PathComplete)
             ForgetGoal();
@@ -1274,6 +1297,87 @@ public class BotBrain : MonoBehaviour
         }
     }
 
+    // Mimo boj (a mimo drzeni bodu) nema bot stat dlouho na jednom miste: kdyz se 7 s nepohne o 4 m,
+    // jde jinam - nejcasteji prozkoumat nejakou chatu.
+    Vector3 loiterPos;
+    float loiterSince = -1f;
+
+    void CheckLoiter(bool busy)
+    {
+        if (busy || loiterSince < 0f || Vector3.Distance(transform.position, loiterPos) > 4f)
+        {
+            loiterPos = transform.position;
+            loiterSince = Time.time;
+            return;
+        }
+        if (Time.time - loiterSince < 7f) return;
+
+        loiterPos = transform.position;
+        loiterSince = Time.time;
+        ForgetGoal();
+        var indoor = BotNavigation.RandomIndoorSpot();
+        if (indoor.HasValue && Random.value < 0.7f)
+        {
+            investigatePos = indoor.Value;   // (investigace = jit se tam podivat)
+            investigateUntil = Time.time + 15f;
+        }
+        nextRepath = 0f;
+    }
+
+    // ---------------- stopy hracu (bot jde za nepritelem tam, kam navigacni sit nevede - dvere, prahy) ----------------
+
+    const float TrailStep = 0.6f;       // novy bod stopy po tolika metrech
+    const int TrailLength = 60;         // ~ poslednich 15-20 s chuze
+    static readonly Dictionary<PlayerHero, List<Vector3>> trails = new Dictionary<PlayerHero, List<Vector3>>();
+    static int trailFrame = -1;
+    static float nextTrailSample;
+
+    static void RecordTrails()
+    {
+        if (trailFrame == Time.frameCount || Time.time < nextTrailSample) return;
+        trailFrame = Time.frameCount;
+        nextTrailSample = Time.time + 0.2f;
+        foreach (var player in FindObjectsByType<PlayerHero>())
+        {
+            if (!player.IsSpawned) continue;
+            if (!trails.TryGetValue(player, out var trail)) trails[player] = trail = new List<Vector3>();
+            Vector3 feet = player.transform.position;
+            var health = player.GetComponent<Health>();
+            if (health != null && health.currentHealth.Value <= 0f) { trail.Clear(); continue; }   // (po smrti nova stopa)
+            if (trail.Count > 0 && (trail[trail.Count - 1] - feet).sqrMagnitude < TrailStep * TrailStep) continue;
+            if (trail.Count > 0 && (trail[trail.Count - 1] - feet).sqrMagnitude > 64f) trail.Clear();   // teleport / oziveni
+            trail.Add(feet);
+            if (trail.Count > TrailLength) trail.RemoveAt(0);
+        }
+    }
+
+    // Smer po stope cile: nejnovejsi bod stopy, ktery bot primo vidi (a neni moc daleko).
+    bool TrailDirection(PlayerHero who, out Vector3 direction)
+    {
+        direction = Vector3.zero;
+        if (who == null || !trails.TryGetValue(who, out var trail) || trail.Count == 0) return false;
+        Vector3 feet = transform.position;
+        Vector3 eye = feet + Vector3.up * 1.0f;
+        for (int i = trail.Count - 1; i >= 0; i--)
+        {
+            Vector3 point = trail[i];
+            Vector3 flat = point - feet;
+            flat.y = 0f;
+            if (flat.magnitude > 20f) continue;
+            if (flat.magnitude < 0.5f) return false;   // uz stoji na nejnovejsim viditelnem bode
+            if (Physics.Linecast(eye, point + Vector3.up * 1.0f, out RaycastHit hit, ~0, QueryTriggerInteraction.Ignore)
+                && hit.collider.GetComponentInParent<PlayerHero>() == null) continue;
+            // prah / schod: vyskocit
+            if (point.y - feet.y > 0.25f && flat.magnitude < 1.6f) jumpRequest = true;
+            direction = flat.normalized;
+            return true;
+        }
+        return false;
+    }
+
+    PlayerHero chaseTarget;   // koho prave pronasleduje (pro stopu)
+    bool pathIncomplete;      // navigace k cili nevede cela
+
     Vector3 detourGoal;
     float detourUntil;
     Vector3 stuckLastDir;
@@ -1288,7 +1392,7 @@ public static class BotNavigation
     static NavMeshSurface surface;
     public static bool Ready => surface != null && surface.navMeshData != null;
 
-    // Vlastni typ agenta: jako postava hrace (polomer 0,6 m = postava 0,5 m + rezerva, vyska 2 m, schod jen 0,3 m, svah 42 st.).
+    // Vlastni typ agenta: jako postava hrace (polomer 0,4 m - projde dvermi, vyska 1,85 m, schod jen 0,3 m, svah 42 st.).
     // Vychozi "Humanoid" pocita se schodem 0,75 m - sit pak vedla i pres hrany, ktere postava nevyjde.
     static int agentType = -1;
     public static NavMeshQueryFilter Filter => new NavMeshQueryFilter { agentTypeID = agentType >= 0 ? agentType : 0, areaMask = NavMesh.AllAreas };
@@ -1298,6 +1402,7 @@ public static class BotNavigation
     {
         surface = null;
         agentType = -1;
+        indoorSpots.Clear();
     }
 
     public static void EnsureBuilt()
@@ -1314,9 +1419,9 @@ public static class BotNavigation
         }
 
         var settings = NavMesh.CreateSettings();
-        settings.agentRadius = 0.6f;
-        settings.agentHeight = 2f;
-        settings.agentClimb = 0.3f;
+        settings.agentRadius = 0.4f;    // (0,6 m zavrelo dvere chaty - boti nemeli kudy dovnitr)
+        settings.agentHeight = 1.85f;   // (zarubne a prostor pod schody)
+        settings.agentClimb = 0.45f;   // prahy a vyssi schody - bot je preskoci
         settings.agentSlope = 42f;
         agentType = settings.agentTypeID;
 
@@ -1326,13 +1431,52 @@ public static class BotNavigation
         surface.collectObjects = CollectObjects.All;
         surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
         surface.overrideVoxelSize = true;
-        surface.voxelSize = 0.2f;
+        surface.voxelSize = 0.15f;   // jemnejsi mrizka - uzke pruchody (dvere) v siti zustanou
         float started = Time.realtimeSinceStartup;
         surface.BuildNavMesh();
 
         for (int i = 0; i < controllers.Length; i++)
             if (controllers[i] != null) controllers[i].enabled = states[i];
 
-        Debug.Log($"[Boti] Navigacni sit postavena za {Time.realtimeSinceStartup - started:0.0} s.");
+        FindIndoorSpots();
+        for (int i = 1; i <= MatchManager.CapturePointCount; i++)
+        {
+            var marker = GameObject.Find($"CapturePoint_{i}");
+            if (marker == null) continue;
+            bool on = NavMesh.SamplePosition(marker.transform.position, out var hit, 2.5f, Filter);
+            Debug.Log($"[Boti] Bod {MatchManager.PointNames[i - 1]}: navigacni sit {(on ? $"dosahuje ({Vector3.Distance(hit.position, marker.transform.position):0.0} m)" : "NEDOSAHUJE")}.");
+        }
+        Debug.Log($"[Boti] Navigacni sit postavena za {Time.realtimeSinceStartup - started:0.0} s, mist pod strechou: {indoorSpots.Count}.");
+    }
+
+    // Mista uvnitr budov (chaty, kulna...): body navigacni site, nad kterymi je do 6 m strop.
+    static readonly List<Vector3> indoorSpots = new List<Vector3>();
+
+    static void FindIndoorSpots()
+    {
+        indoorSpots.Clear();
+        var mesh = NavMesh.CalculateTriangulation();
+        if (mesh.indices == null || mesh.indices.Length < 3) return;
+        var random = new System.Random(12345);
+        int triangles = mesh.indices.Length / 3;
+        for (int attempt = 0; attempt < 1500 && indoorSpots.Count < 80; attempt++)
+        {
+            int t = random.Next(triangles) * 3;
+            Vector3 a = mesh.vertices[mesh.indices[t]], b = mesh.vertices[mesh.indices[t + 1]], c = mesh.vertices[mesh.indices[t + 2]];
+            float u = (float)random.NextDouble(), v = (float)random.NextDouble();
+            if (u + v > 1f) { u = 1f - u; v = 1f - v; }
+            Vector3 p = a + (b - a) * u + (c - a) * v;
+            if (!Physics.Raycast(p + Vector3.up * 0.3f, Vector3.up, 6f, ~0, QueryTriggerInteraction.Ignore)) continue;
+            bool near = false;
+            foreach (var s in indoorSpots)
+                if ((s - p).sqrMagnitude < 9f) { near = true; break; }
+            if (!near) indoorSpots.Add(p);
+        }
+    }
+
+    public static Vector3? RandomIndoorSpot()
+    {
+        if (indoorSpots.Count == 0) return null;
+        return indoorSpots[Random.Range(0, indoorSpots.Count)];
     }
 }

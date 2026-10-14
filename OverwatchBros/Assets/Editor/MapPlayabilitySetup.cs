@@ -46,6 +46,10 @@ public static class MapPlayabilitySetup
         ("SchodisteRozhledny", 5), // druhy pristup na rozhlednu: schodiste z jihu (od bodu C) na nizsi plosinu; v2: zastresene; v3: i bocni steny; v4: hladka rampa, vyssi strecha; v5: soucasti rozhledny
               // kotel na piliny v kotelne velke chaty: packa (R) prehreje horni patra
         ("StartToboganu", 1),      // jizda z toboganu jen pro toho, kdo vyjde na plosinu (skluzavka zustava, kde je)
+        ("Karburator", 1),         // Honzuv karburator (balicek) vedle traktoru - s nim jde traktor nastartovat a ridit
+        ("TraktorPojizdny", 1),    // traktor bez statickeho slucovani (static batching) - jinak by se za jizdy nehybal
+        ("Rolba", 1),              // misto traktoru mala snezna rolba (projede dvermi, vyjede schody) - jezdi se s ni misto traktoru
+        ("RolbaNaZemi", 1),        // rolba se postavila na strechu traktoru (byl jeste ve scene) - posadit ji na zem
     };
 
     static MapPlayabilitySetup()
@@ -182,6 +186,18 @@ public static class MapPlayabilitySetup
                 break;
             case "StartToboganu":
                 SlideStart(extra);
+                break;
+            case "Karburator":
+                Carburetor(map, extra);
+                break;
+            case "TraktorPojizdny":
+                MovableTractor(map);
+                break;
+            case "Rolba":
+                SnowGroomer(map, covers);
+                break;
+            case "RolbaNaZemi":
+                GroomerOnGround(map);
                 break;
             case "DedovaSlivovice":
             {
@@ -1166,6 +1182,109 @@ public static class MapPlayabilitySetup
     }
 
     // Lekarnicka (50 HP) na viku kazdeho zachodu ve scene - jako podobjekt zachodu, posouva se s nim.
+    // Honzuv karburator: balicek kousek vedle kabiny traktoru (na zemi). Da se pak presunout kamkoli.
+    static void Carburetor(Transform map, Transform parent)
+    {
+        Transform tractor = null;
+        foreach (var t in map.GetComponentsInChildren<Transform>(true))
+            if (t.name == "TraktorSVlekem") { tractor = t; break; }
+        Vector3 spot = tractor != null ? tractor.TransformPoint(new Vector3(-0.3f, 0f, 2.8f)) : new Vector3(-6f, 0f, -19f);
+        if (Physics.Raycast(spot + Vector3.up * 4f, Vector3.down, out var hit, 10f, ~0, QueryTriggerInteraction.Ignore))
+            spot = hit.point;
+
+        var go = new GameObject("Balicek_Karburator");
+        Undo.RegisterCreatedObjectUndo(go, "Honzuv karburator");
+        go.transform.SetParent(parent, true);
+        go.transform.position = spot + Vector3.up * 0.01f;
+        var pickup = go.AddComponent<PickupSpot>();
+        pickup.kind = PickupKind.Carburetor;
+        Debug.Log($"[Hratelnost] Honzuv karburator: balicek u traktoru ({(tractor != null ? "nalezen" : "traktor nenalezen - vychozi misto")}).");
+    }
+
+    // Traktor se za hry hybe (ridi ho hrac) - staticky sloucene dily by zustaly stat na miste.
+    static void MovableTractor(Transform map)
+    {
+        int cleared = 0;
+        foreach (var t in map.GetComponentsInChildren<Transform>(true))
+        {
+            if (t.name != "TraktorSVlekem") continue;
+            foreach (var part in t.GetComponentsInChildren<Transform>(true))
+            {
+                if (GameObjectUtility.GetStaticEditorFlags(part.gameObject) == 0) continue;
+                Undo.RecordObject(part.gameObject, "Traktor pojizdny");
+                GameObjectUtility.SetStaticEditorFlags(part.gameObject, 0);
+                cleared++;
+            }
+        }
+        Debug.Log($"[Hratelnost] Traktor pojizdny: zrusen staticky priznak u {cleared} dilu.");
+    }
+
+    // Mala snezna rolba (+X = dopredu): pasy s pojezdovymi koly, cervena karoserie, prosklena kabina s majakem,
+    // radlice vpredu, freza s hrebenem vzadu a plosinka pro spolujezdce. Uzka (1,1 m) a kratka, aby projela dvermi
+    // a vyjela schody. Stoji tam, kde stal traktor (traktor se odstrani). Bez statickeho slucovani - za hry se hybe.
+    static void SnowGroomer(Transform map, Transform fallbackParent)
+    {
+        Transform tractor = null;
+        foreach (var t in map.GetComponentsInChildren<Transform>(true))
+            if (t.name == "TraktorSVlekem") { tractor = t; break; }
+        Vector3 foot = tractor != null ? tractor.position : new Vector3(-6f, 0f, -22f);
+        float yaw = tractor != null ? tractor.eulerAngles.y : 25f;
+        var parent = tractor != null ? tractor.parent : fallbackParent;
+        if (tractor != null)
+        {
+            Undo.DestroyObjectImmediate(tractor.gameObject);
+            tractor = null;
+            Physics.SyncTransforms();
+        }
+
+        var white = MapBuildKit.Mat(MatDir + "RolbaRadlice.mat", null, new Color(0.93f, 0.93f, 0.9f), Vector2.one, 0.5f);
+        var orange = MapBuildKit.Mat(MatDir + "RolbaOranzova.mat", null, new Color(1f, 0.55f, 0.1f), Vector2.one, 0.5f);
+
+        var o = Object(parent, "SneznaRolba", foot, yaw);
+        var axle = Quaternion.Euler(90f, 0f, 0f);
+        foreach (float side in new[] { -1f, 1f })
+        {
+            Local(o, "Pas", new Vector3(-0.1f, 0.25f, side * 0.42f), new Vector3(1.7f, 0.45f, 0.28f), mats["tyre"], true);
+            foreach (float x in new[] { -0.75f, -0.1f, 0.55f })
+                Cylinder(o, "Kolo", new Vector3(x, 0.25f, side * 0.57f), 0.17f, 0.06f, axle, mats["iron"], false);
+        }
+        Local(o, "Karoserie", new Vector3(-0.15f, 0.68f, 0f), new Vector3(1.5f, 0.45f, 0.62f), mats["tractor"], true);
+        Local(o, "Kabina", new Vector3(-0.05f, 1.35f, 0f), new Vector3(0.85f, 0.9f, 0.86f), mats["cabin"], true);
+        Local(o, "Strecha", new Vector3(-0.05f, 1.83f, 0f), new Vector3(0.95f, 0.08f, 0.95f), mats["tractor"], false);
+        Local(o, "Majak", new Vector3(-0.05f, 1.93f, 0f), new Vector3(0.12f, 0.1f, 0.12f), orange, false);
+        Local(o, "Radlice", new Vector3(0.95f, 0.45f, 0f), new Vector3(0.08f, 0.6f, 1.35f), white, false, Quaternion.Euler(0f, 0f, 12f));
+        foreach (float side in new[] { -1f, 1f })
+            Local(o, "Rameno", new Vector3(0.72f, 0.5f, side * 0.3f), new Vector3(0.38f, 0.06f, 0.06f), mats["iron"], false);
+        Cylinder(o, "Freza", new Vector3(-1.0f, 0.3f, 0f), 0.18f, 1.1f, axle, orange, false);
+        Local(o, "Hreben", new Vector3(-1.2f, 0.16f, 0f), new Vector3(0.22f, 0.04f, 1.1f), mats["iron"], false);
+        Local(o, "Plosinka", new Vector3(-0.85f, 0.55f, 0f), new Vector3(0.45f, 0.06f, 0.8f), mats["iron"], true);
+
+        foreach (var part in o.GetComponentsInChildren<Transform>(true))
+            GameObjectUtility.SetStaticEditorFlags(part.gameObject, 0);
+        Undo.RegisterCreatedObjectUndo(o.gameObject, "Snezna rolba");
+        Debug.Log("[Hratelnost] Snezna rolba postavena misto traktoru.");
+    }
+
+    // Rolbu (kdekoli ve scene) posadit na zem pod ni - paprsek dolu, jeji vlastni dily se preskoci.
+    static void GroomerOnGround(Transform map)
+    {
+        foreach (var t in map.GetComponentsInChildren<Transform>(true))
+        {
+            if (t.name != "SneznaRolba") continue;
+            Physics.SyncTransforms();
+            var hits = Physics.RaycastAll(t.position + Vector3.up * 0.5f, Vector3.down, 20f, ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in hits)
+            {
+                if (hit.collider.transform.IsChildOf(t)) continue;
+                Undo.RecordObject(t, "Rolba na zemi");
+                Debug.Log($"[Hratelnost] Rolba posazena na zem (o {t.position.y - hit.point.y:0.00} m niz).");
+                t.position = new Vector3(t.position.x, hit.point.y, t.position.z);
+                break;
+            }
+        }
+    }
+
     static void ToiletHealthPacks(Transform map)
     {
         int added = 0;

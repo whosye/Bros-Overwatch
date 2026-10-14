@@ -19,7 +19,7 @@ MonoBehaviour:
   reloadTime: 1.5
   reloadAnimation: 0
   range: 160
-  chargeTime: 1
+  chargeTime: 0.5
   minChargeDamage: 20
   minChargeSpeed: 55
   falloffStart: 20
