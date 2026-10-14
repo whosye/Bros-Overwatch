@@ -63,7 +63,17 @@ public static class GardenSetup
     static string Marker(Transform map)
     {
         Vector3 shift = MapBuildKit.TowerShift(map);
-        return $"{Version}_{shift.x:0.0}_{shift.z:0.0}";
+        // (vzdy s teckou - nezavisle na jazyku Windows; drive se pouzival format systemu: v cestine "0,0")
+        return Version + "_" + shift.x.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+            + "_" + shift.z.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    // Je cast uz postavena? Znacka s teckou, nebo starsi s carkou (postaveno na pocitaci s ceskym nastavenim) -
+    // jinak by se na pocitaci s jinym jazykem cela cast smazala a postavila znovu (a s ni rucni upravy).
+    static bool IsBuilt(Transform root, Transform map)
+    {
+        string marker = Marker(map);
+        return root.Find(marker) != null || root.Find(marker.Replace('.', ',')) != null;
     }
 
     static GardenSetup()
@@ -85,7 +95,7 @@ public static class GardenSetup
         if (map == null) return;
 
         var root = map.transform.Find(RootName);
-        if (root != null && root.Find(Marker(map.transform)) != null) return;
+        if (root != null && IsBuilt(root, map.transform)) return;
 
         if (Build(map.transform))
         {
