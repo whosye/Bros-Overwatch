@@ -71,6 +71,8 @@ public class WeaponDefinition : ScriptableObject
     public float scopedMaxDamage = 120f;
     [Tooltip("Nasobek pri zasahu do hlavy (jen plne nabita rana). 1 = bez zasahu do hlavy.")]
     public float headshotMultiplier = 2f;
+    [Tooltip("Tloustka strely okamziteho zasahu (m) - jen vuci hracum, zdi bere dal jako tenky paprsek. 0 = tenky paprsek.")]
+    public float hitscanRadius = 0f;
     [Tooltip("Odstrel s pribliseni: plne poskozeni do teto vzdalenosti (0 = bez poklesu).")]
     public float scopedFalloffStart = 0f;
     [Tooltip("Odstrel s pribliseni: na teto vzdalenosti uz jen 'Scoped Falloff Min' poskozeni.")]

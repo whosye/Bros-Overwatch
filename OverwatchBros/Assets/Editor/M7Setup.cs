@@ -925,7 +925,7 @@ public static class M7Setup
             w.heldModel = HeldModel.Gun;
             w.damage = 38f;
             w.fireRate = 2.4f;
-            w.maxAmmo = 8;
+            w.maxAmmo = 10;
             w.reloadTime = 1.5f;
             w.range = 120f;
             w.falloffStart = 25f;
@@ -948,7 +948,7 @@ public static class M7Setup
             a.abilityName = "Svatý granát";
             a.cooldown = 10f;
             a.power = 70f;       // poskozeni ve stredu vybuchu
-            a.radius = 3.5f;
+            a.radius = 7f;
             a.speed = 20f;       // rychlost hodu
         });
 

@@ -187,6 +187,12 @@ public class Health : NetworkBehaviour
             healBlockedUntil = Mathf.Max(healBlockedUntil, Time.time + seconds);
     }
 
+    public void ServerClearHealBlock()
+    {
+        if (IsServer)
+            healBlockedUntil = 0f;
+    }
+
     public void ResetHealth()
     {
         if (!IsServer) return;

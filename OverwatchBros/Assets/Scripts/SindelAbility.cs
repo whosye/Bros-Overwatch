@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 // Sindel - Shift a E v jedne komponente:
 //   Shift (Spravedlivy skok): vyskoci rychlosti 'power' m/s a kus nad zemi se vznasi (pomaly pad), celkem 'duration' s;
+//     zaroven se zbavi veskereho omezeni (omraceni, uspani, past, zpomaleni, umlceni, blokace leceni) a je 1 s
+//     nesmrtelny - jde pouzit i kdyz je omraceny / uspany / umlceny;
 //   E (Svaty granat): hodi granat obloukem rychlosti 'speed'. Vybuchne hned o nepritele, jinak chvili po dopadu:
 //     'power' poskozeni ve stredu, k okraji 'radius' mene. Neprochazi zdmi, nezrani vlastni tym.
 //   prave tlacitko ("Say what again?!"): vykrik do kuzele pred sebe (dosah 'range' m, polovicni uhel 'radius' st.).
@@ -120,6 +122,12 @@ public class FearMarker : MonoBehaviour
         marker.gameObject.SetActive(true);
     }
 
+    public static void Hide(Transform player)
+    {
+        var marker = player.GetComponentInChildren<FearMarker>(true);
+        if (marker != null) marker.gameObject.SetActive(false);
+    }
+
     void LateUpdate()
     {
         if (Time.time >= until)
@@ -179,11 +187,14 @@ public class SindelAbility : NetworkBehaviour
 
     void Update()
     {
-        if (!IsOwner || !HeroInput.Locked(this) || fpc.InputBlocked || health.currentHealth.Value <= 0f) return;
+        if (!IsOwner || !HeroInput.Locked(this) || health.currentHealth.Value <= 0f) return;
 
-        if (leap != null && HeroInput.Pressed(this, HeroInput.Key.Shift) && Time.time >= nextLeap && !fpc.Rooted)
+        // Shift jde i pri omezeni (omraceni, uspani, past, umlceni) - ocista
+        bool canLeap = !fpc.MatchOver && !fpc.InLobby && !fpc.Joining && !fpc.AbilityActive && !fpc.UltCasting;
+        if (leap != null && canLeap && HeroInput.Pressed(this, HeroInput.Key.Shift) && Time.time >= nextLeap)
         {
             nextLeap = Time.time + leap.Cooldown;
+            fpc.OwnerCleanse();
             fpc.OwnerHover(leap.power, leap.duration);
             // skok ve smeru, kterym hrac jde (bez pohybu dopredu)
             fpc.AddImpulse(LeapDirection() * 8f);
@@ -191,6 +202,8 @@ public class SindelAbility : NetworkBehaviour
             hero.SayAbility(leap);
             LeapServerRpc();
         }
+
+        if (fpc.InputBlocked) return;
 
         if (grenade != null && HeroInput.Pressed(this, HeroInput.Key.E) && Time.time >= nextGrenade)
         {
@@ -288,8 +301,14 @@ public class SindelAbility : NetworkBehaviour
     [ServerRpc]
     void LeapServerRpc()
     {
+        // ocista: nesmrtelnost na 1 s, konec uspani a blokace leceni (zbytek omezeni zrusi vlastnik sam)
+        health.ServerInvulnerable(CleanseInvulnerableSeconds);
+        health.ServerClearHealBlock();
+        fpc.ServerWake();
         LeapClientRpc(transform.position + Vector3.up * 0.3f);
     }
+
+    const float CleanseInvulnerableSeconds = 1f;
 
     [ServerRpc]
     void ThrowServerRpc(Vector3 origin, Vector3 direction)
@@ -345,6 +364,8 @@ public class SindelAbility : NetworkBehaviour
     [ClientRpc]
     void LeapClientRpc(Vector3 point)
     {
+        FearMarker.Hide(transform);
+        Fx.Sparks(point + Vector3.up, new Color(1f, 0.95f, 0.75f));   // ocista: zlaty zablesk
         Fx.Sparks(point, EzekielAbility.HolyColor);
         if (!IsOwner)
             ProceduralSfx.Play(ProceduralSfx.LeapStart, point, 0.5f);

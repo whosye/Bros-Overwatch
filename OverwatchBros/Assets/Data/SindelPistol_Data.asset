@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: "Dev\xEDtka"
   damage: 38
   fireRate: 2.4
-  maxAmmo: 8
+  maxAmmo: 10
   reloadTime: 1.5
   reloadAnimation: 0
   range: 120
@@ -33,7 +33,8 @@ MonoBehaviour:
   scopedChargeTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
-  headshotMultiplier: 2
+  headshotMultiplier: 2.5
+  hitscanRadius: 0.12
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0

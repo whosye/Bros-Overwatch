@@ -404,6 +404,19 @@ public class FirstPersonController : NetworkBehaviour
         return true;
     }
 
+    // Ocista (Sindeluv Shift): pryc omraceni, past, zpomaleni, umlceni, pritahovani; konec prekryvu obrazovky.
+    public void OwnerCleanse()
+    {
+        if (!IsOwner) return;
+        stunnedUntil = 0f;
+        rootedUntil = 0f;
+        slowUntil = 0f;
+        silencedUntil = 0f;
+        pulling = false;
+        externalVelocity = Vector3.zero;
+        if (Bot == null) HudUI.EndOverlay();
+    }
+
     public void ClearForces()
     {
         abilityFlight = false;

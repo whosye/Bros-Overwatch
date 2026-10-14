@@ -379,12 +379,44 @@ public class WeaponShooting : NetworkBehaviour
         }
 
         // Vlastni telo strelu nezastavi (kamera je uvnitr kapsle hrace).
-        var hits = Physics.RaycastAll(playerCamera.transform.position, AimDirection(), weapon.range, ~0, QueryTriggerInteraction.Ignore);
+        Vector3 shotOrigin = playerCamera.transform.position;
+        Vector3 shotDirection = AimDirection();
+        var hits = Physics.RaycastAll(shotOrigin, shotDirection, weapon.range, ~0, QueryTriggerInteraction.Ignore);
         System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        RaycastHit? first = null;
         foreach (var hit in hits)
         {
             var owner = hit.collider.GetComponentInParent<NetworkObject>();
             if (owner != null && owner == NetworkObject) continue;
+            first = hit;
+            break;
+        }
+
+        // Tlustsi strela (Sindel): kdyz tenky paprsek tesne mine nepritele, chyti ho - ale jen pred prvni prekazkou.
+        bool firstIsPlayer = first.HasValue && first.Value.collider.GetComponentInParent<Health>() != null;
+        if (weapon.hitscanRadius > 0.001f && !firstIsPlayer)
+        {
+            float reach = first.HasValue ? first.Value.distance : weapon.range;
+            var thick = Physics.SphereCastAll(shotOrigin, weapon.hitscanRadius, shotDirection, reach, ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(thick, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in thick)
+            {
+                if (hit.distance <= 0f) continue;
+                var owner = hit.collider.GetComponentInParent<NetworkObject>();
+                if (owner != null && owner == NetworkObject) continue;
+                var target = hit.collider.GetComponentInParent<Health>();
+                if (target == null || Combat.SameTeam(gameObject, target.gameObject)) continue;
+                if (Physics.Linecast(shotOrigin, hit.point, out RaycastHit blocker, ~0, QueryTriggerInteraction.Ignore)
+                    && blocker.collider.GetComponentInParent<Health>() == null
+                    && blocker.collider.GetComponentInParent<NetworkObject>() != NetworkObject) continue;   // roh / hrana mezi
+                first = hit;
+                break;
+            }
+        }
+
+        if (first.HasValue)
+        {
+            var hit = first.Value;
 
             // Zasah do hlavy u bezne hitscan zbrane (napr. Sindelova pistole; sniper ma vlastni odstrel s pribliseni).
             if (weapon.headshotMultiplier > 1f && !weapon.HasScopedShot && hit.collider.GetComponentInParent<Health>() != null
@@ -393,11 +425,9 @@ public class WeaponShooting : NetworkBehaviour
                 float body = DamageFor(hit.collider, hit.point);
                 ProceduralSfx.PlayForActor(this, ProceduralSfx.StunConfirm, playerCamera.transform.position, 0.8f);
                 ApplyHit(hit.collider, hit.point, 1.3f, body * weapon.headshotMultiplier, hit.normal);
-                break;
             }
-
-            ApplyHit(hit.collider, hit.point, 1f, normal: hit.normal);
-            break;
+            else
+                ApplyHit(hit.collider, hit.point, 1f, normal: hit.normal);
         }
     }
 

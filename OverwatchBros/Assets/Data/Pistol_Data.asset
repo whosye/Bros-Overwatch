@@ -33,7 +33,7 @@ MonoBehaviour:
   scopedChargeTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
-  headshotMultiplier: 2
+  headshotMultiplier: 1.5
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0
