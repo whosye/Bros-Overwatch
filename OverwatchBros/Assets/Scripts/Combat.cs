@@ -66,6 +66,9 @@ public static class Combat
             {
                 attackerHero.ServerNotifyHit(killed);
                 attackerHero.ServerAddUltCharge(before - target.Effective);
+                // zasah zbrani: obcas hlaska k utoku (pri zabiti mluvi hlaska k zabiti)
+                if (!killed && source != null && source.StartsWith("weapon:"))
+                    attackerHero.ServerAttackLine();
             }
 
             var recorder = attacker.GetComponent<PotgRecorder>();

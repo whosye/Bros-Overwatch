@@ -903,6 +903,28 @@ public class PlayerHero : NetworkBehaviour
             SayServerRpc((int)kind, slot, phase);
     }
 
+    // Veta z rozhovoru dvou hrdinu (MatchManagerBanter): nahravka Resources/Banter/<slozka>, poradi 'index'.
+    [ClientRpc]
+    public void SayBanterClientRpc(string folder, int index)
+    {
+        if (voice == null) return;
+        var clips = new System.Collections.Generic.List<AudioClip>(Resources.LoadAll<AudioClip>("Banter/" + folder));
+        clips.Sort((x, y) => string.CompareOrdinal(x.name, y.name));
+        if (index >= 0 && index < clips.Count)
+            voice.PlayLine(clips[index], 3);
+    }
+
+    // Hlaska k utoku (vola server pri zasahu nepritele zbrani): obcas, nejvys jednou za 12-20 s, at to neotravuje.
+    float nextAttackLine;
+
+    public void ServerAttackLine()
+    {
+        if (!IsServer || Time.time < nextAttackLine || !HeroVoice.HasLines(Hero, VoiceKind.Attack, 0)) return;
+        nextAttackLine = Time.time + Random.Range(12f, 20f);
+        if (Random.value < 0.45f)
+            Say(VoiceKind.Attack);
+    }
+
     // Hlaska ke schopnosti (vola schopnost na vlastnikovi, kdyz se spusti). Viceprazova schopnost posila cislo faze.
     public void SayAbility(AbilityDefinition ability, int phase = 0)
     {

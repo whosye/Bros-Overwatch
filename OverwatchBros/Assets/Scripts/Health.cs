@@ -27,6 +27,7 @@ public class Health : NetworkBehaviour
     public const float RegenDelay = 10f;
     public const float RegenPerSecond = 10f;
     float lastHurtTime = -1000f;
+    public float LastHurtTime => lastHurtTime;
 
     void Update()
     {

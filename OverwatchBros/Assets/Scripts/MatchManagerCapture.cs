@@ -106,6 +106,7 @@ public partial class MatchManager
             ServerPickupTick();
             ServerBoilerTick();
             ServerTractorTick();
+            ServerBanterTick();
         }
 
         CapturePointView.Sync(this);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 // Hlasky hrdinu ze slozek: nahravky (mp3 / wav / ogg) staci nakopirovat do Assets/Audio/<Hrdina>/<druh>/
 // a samy se priradi do prislusne schranky hrdiny nebo jeho schopnosti. Slozky se vytvori samy.
-//   spawn, kill, death, hurt, idle, snare          -> HeroDefinition
+//   spawn, kill, death, hurt, idle, snare, attack  -> HeroDefinition
 //   ability_Q, ability_Shift, ability_E, ability_Block -> AbilityDefinition.voiceLines dane schopnosti
 // Nahravky prirazene rucne v Inspectoru (odjinud nez z techto slozek) zustavaji.
 public class VoiceLineSetup : AssetPostprocessor
@@ -54,6 +54,7 @@ public class VoiceLineSetup : AssetPostprocessor
             changed |= Assign(ref hero.hurtLines, $"{root}/hurt", hero);
             changed |= Assign(ref hero.idleLines, $"{root}/idle", hero);
             changed |= Assign(ref hero.snareLines, $"{root}/snare", hero);
+            changed |= Assign(ref hero.attackLines, $"{root}/attack", hero);
 
             var abilities = new[] { hero.ability, hero.secondaryAbility, hero.blockAbility, hero.altAbility, hero.rmbAbility };
             for (int i = 0; i < abilities.Length; i++)

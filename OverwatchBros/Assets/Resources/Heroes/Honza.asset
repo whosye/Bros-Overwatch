@@ -37,10 +37,23 @@ MonoBehaviour:
   tintCharacter: 0
   sleeveColor: {r: 0.7, g: 0.8, b: 0.92, a: 1}
   skinColor: {r: 0.82, g: 0.63, b: 0.52, a: 1}
-  spawnLines: []
-  killLines: []
+  spawnLines:
+  - {fileID: 8300000, guid: e1963790e4da8e34f83b574152a5a237, type: 3}
+  killLines:
+  - {fileID: 8300000, guid: 68d1c11168025a543bf5d11dc16a6cef, type: 3}
+  - {fileID: 8300000, guid: ab941ca8c666d6b498db95a8a745ddd4, type: 3}
+  - {fileID: 8300000, guid: 4895a8428d3600a4d9d7dd3be467c357, type: 3}
   deathLines:
   - {fileID: 8300000, guid: 6dc18c162f1df64498c3a73a6096715e, type: 3}
-  hurtLines: []
+  - {fileID: 8300000, guid: b634d0857daa63b4abb30e36b420bf04, type: 3}
+  - {fileID: 8300000, guid: 8600fc569f87b4c4f9df14edaede84b5, type: 3}
+  hurtLines:
+  - {fileID: 8300000, guid: 20d59beb4e2cc834fa6ff5ae75eb82d3, type: 3}
+  - {fileID: 8300000, guid: 9e76a89fd1acc3049b12fec83376e599, type: 3}
+  - {fileID: 8300000, guid: 8ad21ca0b3f5cbc49a0b21a18caacfd3, type: 3}
   idleLines: []
   snareLines: []
+  attackLines:
+  - {fileID: 8300000, guid: f67cd20aa0a5cbd4b8ef32da44e90060, type: 3}
+  - {fileID: 8300000, guid: 2281cb020c956b746ba181819661b857, type: 3}
+  - {fileID: 8300000, guid: f8588ddf49458544d857fd3b41efed9f, type: 3}

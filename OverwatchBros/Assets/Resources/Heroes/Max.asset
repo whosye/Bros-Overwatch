@@ -61,3 +61,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e87ab37cba0cc994e8b0261159baf18a, type: 3}
   snareLines:
   - {fileID: 8300000, guid: 815deb9529f48b34f9968439976fc66a, type: 3}
+  attackLines:
+  - {fileID: 8300000, guid: 4e05ea0fe82cc4149adb529473ee854d, type: 3}

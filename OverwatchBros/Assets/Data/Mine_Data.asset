@@ -15,6 +15,7 @@ MonoBehaviour:
   abilityName: "N\xE1lo\u017E"
   icon: {fileID: 2800000, guid: dc62453528dba954baa02dc6beef4710, type: 3}
   cooldown: 8
+  ultCost: 0
   power: 60
   duration: 0.2
   radius: 4.5
@@ -22,6 +23,10 @@ MonoBehaviour:
   knockback: 12
   charges: 2
   sound: {fileID: 0}
+  voiceLines:
+  - {fileID: 8300000, guid: ae76568e7dcf5214994437fc005bcde9, type: 3}
+  - {fileID: 8300000, guid: f44aead66ed0e6e4abbe830520253cc7, type: 3}
+  - {fileID: 8300000, guid: f136bbfe5b7322843aa3bb74f9833d3f, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

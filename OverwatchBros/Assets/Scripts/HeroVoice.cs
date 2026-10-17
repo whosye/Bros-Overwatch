@@ -9,7 +9,8 @@ public enum VoiceKind
     Hurt,      // dostal poskozeni
     Idle,      // nahodna hlaska pri chozeni
     Ability,   // pouzil schopnost (kazda schopnost ma vlastni hlasky)
-    Snare      // nekdo ho znehybnil nebo zpomalil (past apod.)
+    Snare,     // nekdo ho znehybnil nebo zpomalil (past apod.)
+    Attack     // strili po nepriteli a trefuje ho (obcas, ne pri kazde rane)
 }
 
 // Hlasove hlasky hrdiny. Nahravky se berou z HeroDefinition (spawn / kill / death / hurt / idle) a z AbilityDefinition
@@ -61,6 +62,7 @@ public class HeroVoice : MonoBehaviour
             case VoiceKind.Ability: return 4;
             case VoiceKind.Snare: return 3;
             case VoiceKind.Spawn: return 2;
+            case VoiceKind.Attack: return 2;
             case VoiceKind.Hurt: return 1;
             default: return 0;
         }
@@ -79,6 +81,7 @@ public class HeroVoice : MonoBehaviour
             case VoiceKind.Hurt: return hero.hurtLines;
             case VoiceKind.Idle: return hero.idleLines;
             case VoiceKind.Snare: return hero.snareLines;
+            case VoiceKind.Attack: return hero.attackLines;
             case VoiceKind.Ability:
                 var ability = AbilityInSlot(hero, slot);
                 return ability != null ? ability.voiceLines : null;
@@ -174,6 +177,23 @@ public class HeroVoice : MonoBehaviour
         source.Play();
         playingPriority = priority;
         playingUlt = ult;
+        playingRide = false;
+    }
+
+    // Konkretni nahravka (veta z rozhovoru hrdinu): prerusi jen mene dulezitou hlasku, ultimatku nikdy.
+    public void PlayLine(AudioClip clip, int priority)
+    {
+        if (clip == null) return;
+        bool busy = source != null && source.isPlaying;
+        if (busy && (playingUlt || priority < playingPriority)) return;
+        EnsureSource();
+        source.Stop();
+        source.clip = clip;
+        source.volume = volume;
+        source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        source.Play();
+        playingPriority = priority;
+        playingUlt = false;
         playingRide = false;
     }
 

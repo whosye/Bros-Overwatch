@@ -105,4 +105,6 @@ public class HeroDefinition : ScriptableObject
     public AudioClip[] idleLines;
     [Tooltip("Kdyz ho nekdo znehybni nebo zpomali (napr. slapne na past).")]
     public AudioClip[] snareLines;
+    [Tooltip("Kdyz strili po nepriteli a trefuje ho (obcas, nejvys jednou za nekolik sekund).")]
+    public AudioClip[] attackLines;
 }

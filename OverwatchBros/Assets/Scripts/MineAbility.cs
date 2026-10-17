@@ -102,7 +102,10 @@ public class MineAbility : NetworkBehaviour
         if (!HeroInput.Locked(this) || fpc.CannotAct) return;
 
         if (minesOut > 0 && HeroInput.Pressed(this, HeroInput.Key.RightMouse))
+        {
+            GetComponent<PlayerHero>().SayAbility(ability, 2);   // hlaska k odpaleni (ability_Shift/step_2)
             DetonateServerRpc();
+        }
 
         // Stisk se chvili pamatuje: zmacknuti tesne pred dobitim naboje se nezahodi.
         if (HeroInput.Pressed(this, HeroInput.Key.Shift))
@@ -125,8 +128,16 @@ public class MineAbility : NetworkBehaviour
         var eye = fpc.playerCamera.transform;
         Vector3 direction = (eye.forward + Vector3.up * 0.12f).normalized;
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
-        GetComponent<PlayerHero>().SayAbility(ability);
+        GetComponent<PlayerHero>().SayAbility(ability, 1);   // hlaska k hozeni (ability_Shift/step_1)
         ThrowServerRpc(eye.position + eye.forward * 0.6f, direction);
+    }
+
+    bool HasPhase(HeroDefinition definition, int phase)
+    {
+        if (ability == null || ability.voiceLines == null) return false;
+        foreach (var clip in ability.voiceLines)
+            if (clip != null && clip.name.ToLowerInvariant() == "step_" + phase) return true;
+        return false;
     }
 
     // Vola PlayerRespawn (vlastnik): po smrti / restartu naloze zmizi bez vybuchu.
@@ -213,13 +224,19 @@ public class MineAbility : NetworkBehaviour
         var mines = new List<ServerMine>(serverMines);
         serverMines.Clear();
 
+        bool selfLaunch = false;
         foreach (var mine in mines)
         {
             Vector3 center = mine.position + Vector3.up * 0.1f;
             Combat.Explode(gameObject, center, ability.radius, ability.power, 0.5f, null, Combat.AbilitySource(ability));
             Combat.Knockback(gameObject, center, ability.radius, ability.knockback, 1f);
             EndClientRpc(mine.id, mine.position, true);
+            if (Vector3.Distance(transform.position + Vector3.up, center) <= ability.radius) selfLaunch = true;
         }
+        // skok na vlastni nalozi: vlastni hlaska (ability_Shift/step_3), kdyz ji hrdina ma
+        var hero = GetComponent<PlayerHero>();
+        if (selfLaunch && hero != null && HasPhase(hero.Hero, 3))
+            hero.SayAbility(ability, 3);
     }
 
     [ServerRpc]
