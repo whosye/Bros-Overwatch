@@ -94,6 +94,9 @@ public class PotgUI : MonoBehaviour
     public static void Begin(string playerName, string heroName, int team, int totalBytes, string category = "", int heroIndex = -1)
     {
         if (instance == null) return;
+        // vse, co jeste dohrava ze hry (hlasky, ultimatky), hned utichne
+        HeroVoice.SilenceAll();
+        Fx.StopGlobalSounds();
         instance.BeginInternal(playerName, heroName, team, totalBytes, category);
 
         // Scenka hrdiny; kdyz nejde (hrdina bez modelu), zustane cerna karta.

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
   m_Name: Concert_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
-  abilityName: Koncert
+  abilityName: Drop the Beat
   icon: {fileID: 2800000, guid: ae630322a77c65a4b85391d3c30d4648, type: 3}
   cooldown: 30
   ultCost: 450

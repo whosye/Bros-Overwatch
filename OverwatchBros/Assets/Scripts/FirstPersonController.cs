@@ -86,6 +86,17 @@ public class FirstPersonController : NetworkBehaviour
     public NetworkVariable<bool> waterRiding = new NetworkVariable<bool>(false,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+    // Sindel behem kazani (Ezechiel): nejde prerusit ani ovladat - jde jen zabit.
+    EzekielAbility ezekiel;
+    public bool Unstoppable
+    {
+        get
+        {
+            if (ezekiel == null) ezekiel = GetComponent<EzekielAbility>();
+            return ezekiel != null && ezekiel.enabled && ezekiel.IsSpawned && ezekiel.IsCasting;
+        }
+    }
+
     public void ServerSpeedBoost(float seconds, float factor)
     {
         if (IsServer)
@@ -116,7 +127,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerSlow(float seconds, float factor)
     {
-        if (IsServer)
+        if (IsServer && !Unstoppable)
             SlowClientRpc(seconds, factor);
     }
 
@@ -151,6 +162,7 @@ public class FirstPersonController : NetworkBehaviour
     // Pasivni schopnosti hrdiny (nastavuje PlayerHero).
     public bool DoubleJump { get; set; }
     public bool LedgeClimb { get; set; }
+    public bool WallRide { get; set; }   // Bard: jizda po zdech (jako Lucio)
     bool airJumpUsed;
     bool mantling;
     Vector3 mantleTarget;
@@ -174,7 +186,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerSilence(float seconds)
     {
-        if (IsServer)
+        if (IsServer && !Unstoppable)
             SilenceClientRpc(seconds);
     }
 
@@ -230,7 +242,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerKnockback(Vector3 impulse)
     {
-        if (IsServer)
+        if (IsServer && !Unstoppable)
             KnockbackClientRpc(impulse);
     }
 
@@ -243,7 +255,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerRoot(float seconds)
     {
-        if (!IsServer) return;
+        if (!IsServer || Unstoppable) return;
 
         RootClientRpc(seconds);
 
@@ -277,7 +289,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerSleep(float seconds, GameObject attacker)
     {
-        if (!IsServer) return;
+        if (!IsServer || Unstoppable) return;
 
         serverSleepUntil = Time.time + seconds;
         var attackerObject = attacker != null ? attacker.GetComponent<NetworkObject>() : null;
@@ -298,6 +310,8 @@ public class FirstPersonController : NetworkBehaviour
     void SleepClientRpc(float seconds, ulong attackerClientId)
     {
         SleepMarker.Show(transform, seconds);
+        var sleepVisual = GetComponent<CharacterVisual>();
+        if (sleepVisual != null) sleepVisual.SleepUntil = Time.time + seconds;
         if (NetworkManager.LocalClientId == attackerClientId && Camera.main != null)
             ProceduralSfx.Play(ProceduralSfx.StunConfirm, Camera.main.transform.position, 0.9f, 30f, spatial: false);
 
@@ -312,6 +326,8 @@ public class FirstPersonController : NetworkBehaviour
     void WakeClientRpc()
     {
         SleepMarker.Hide(transform);
+        var sleepVisual = GetComponent<CharacterVisual>();
+        if (sleepVisual != null) sleepVisual.SleepUntil = 0f;
         if (!IsOwner) return;
 
         stunnedUntil = 0f;
@@ -325,7 +341,7 @@ public class FirstPersonController : NetworkBehaviour
     // blind = oslepujici granat (bila obrazovka a piskani); hak omracuje bez oslepeni.
     public void ServerStun(float seconds, GameObject attacker = null, bool blind = true)
     {
-        if (!IsServer) return;
+        if (!IsServer || Unstoppable) return;
 
         var attackerObject = attacker != null ? attacker.GetComponent<NetworkObject>() : null;
         StunClientRpc(seconds, attackerObject != null ? attackerObject.OwnerClientId : ulong.MaxValue, blind);
@@ -361,7 +377,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerPull(Vector3 destination, float seconds)
     {
-        if (IsServer)
+        if (IsServer && !Unstoppable)
             PullClientRpc(destination, seconds);
     }
 
@@ -465,6 +481,10 @@ public class FirstPersonController : NetworkBehaviour
 
     void Update()
     {
+        // mrtve telo nebrani zivym v ceste (ostatni kapsle jim projdou)
+        if (controller != null && controller.detectCollisions == IsDead)
+            controller.detectCollisions = !IsDead;
+
         if (!IsOwner) return;
 
         gaitSpeed = 0f;
@@ -809,6 +829,73 @@ public class FirstPersonController : NetworkBehaviour
         return true;
     }
 
+    // ---------------- jizda po zdi (Bard) ----------------
+    // Ve vzduchu u zdi s drzenym mezernikem a pohybem dopredu jede podel zdi (max. 2 s); pusteni mezerniku = odraz od zdi.
+    const float WallRideMaxSeconds = 2f;
+    const float WallRideSpeedScale = 1.3f;
+    bool wallRiding;
+    float wallRideStart, wallRideReadyAt;
+    Vector3 wallNormal;
+    public bool WallRiding => wallRiding;
+
+    bool UpdateWallRide(bool grounded, bool frozen, Vector2 input, ref Vector3 move)
+    {
+        bool hold = WallRide && Bot == null && !frozen && !Rooted && !IsDead && Keyboard.current != null && Keyboard.current.spaceKey.isPressed;
+        if (grounded || !hold)
+        {
+            if (wallRiding) EndWallRide(!grounded && WallRide && !frozen);
+            return false;
+        }
+
+        // zed vedle (vlevo / vpravo, i sikmo dopredu)
+        Vector3 center = transform.position + Vector3.up * (controller.height * 0.5f);
+        float reach = controller.radius + 0.45f;
+        bool found = false;
+        RaycastHit wall = default;
+        foreach (var dir in new[] { transform.right, -transform.right, (transform.right + transform.forward).normalized, (-transform.right + transform.forward).normalized })
+        {
+            if (!Physics.Raycast(center, dir, out var hit, reach, ~0, QueryTriggerInteraction.Ignore)) continue;
+            if (Mathf.Abs(hit.normal.y) > 0.3f || hit.collider.GetComponentInParent<PlayerHero>() != null) continue;
+            wall = hit;
+            found = true;
+            break;
+        }
+
+        if (!wallRiding)
+        {
+            if (!found || input.y <= 0f || Time.time < wallRideReadyAt) return false;
+            wallRiding = true;
+            wallRideStart = Time.time;
+            externalVelocity = Vector3.zero;
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.4f);
+        }
+        else if (!found || Time.time - wallRideStart > WallRideMaxSeconds)
+        {
+            EndWallRide(false);   // zed skoncila / dojel cas: jen spadne
+            return false;
+        }
+
+        wallNormal = wall.normal;
+        Vector3 along = Vector3.ProjectOnPlane(transform.forward, wallNormal);
+        along.y = 0f;
+        if (along.sqrMagnitude < 0.01f) along = Vector3.Cross(Vector3.up, wallNormal);
+        move = along.normalized * Mathf.Max(0.7f, input.y) - wallNormal * 0.25f;   // jede podel zdi a drzi se ji
+        airJumpUsed = false;
+        return true;
+    }
+
+    void EndWallRide(bool kick)
+    {
+        wallRiding = false;
+        wallRideReadyAt = Time.time + 0.35f;
+        if (!kick) return;
+        // odraz od zdi: sikmo od ni a nahoru
+        externalVelocity = Vector3.ClampMagnitude(externalVelocity + wallNormal * 7f + Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized * 2f, 20f);
+        abilityFlight = false;
+        verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * JumpGravity);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
+    }
+
     void HandleMovement()
     {
         if (driving)
@@ -881,6 +968,8 @@ public class FirstPersonController : NetworkBehaviour
         if (shooting == null) shooting = GetComponent<WeaponShooting>();
         float drawScale = shooting != null && shooting.IsDrawingBow ? 0.5f : 1f;
         float speed = (running ? runSpeed : walkSpeed) * SpeedMultiplier * HeroSpeedScale * ScopeSpeedScale * AbilitySpeedScale * SlowScale * BoostScale * TunnelScale * HoverScale * BardAbility.SpeedScaleFor(gameObject) * drawScale;
+        bool ridingWall = UpdateWallRide(isGrounded || onLadder, frozen, input, ref move);
+        if (ridingWall) speed *= WallRideSpeedScale;
         Vector3 beforeMove = transform.position;
         var flags = controller.Move((move * speed + externalVelocity) * Time.deltaTime);
         Vector3 travelled = transform.position - beforeMove;
@@ -917,6 +1006,9 @@ public class FirstPersonController : NetworkBehaviour
 
         if (onLadder)
             verticalVelocity = input.y > 0f ? Ladder.ClimbSpeed : input.y < 0f ? -Ladder.ClimbSpeed : 0f;
+        else if (ridingWall && wallRiding)
+            // na zdi drzi vysku, ke konci jizdy pomalu klesa
+            verticalVelocity = Time.time - wallRideStart < WallRideMaxSeconds * 0.7f ? 0.2f : -1.8f;
         else if (Time.time < hoverUntil && verticalVelocity <= 0f && !isGrounded)
             verticalVelocity = Mathf.Max(verticalVelocity + gravity * 0.1f * Time.deltaTime, -1.2f);
         else

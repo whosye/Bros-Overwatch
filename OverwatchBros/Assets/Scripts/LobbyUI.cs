@@ -37,7 +37,7 @@ public class LobbyUI
     {
         var center = new Vector2(0.5f, 0.5f);
 
-        var root = UiKit.MakeImage(canvas, "Lobby", new Color(0.03f, 0.04f, 0.07f, 0.80f), center, Vector2.zero, Vector2.zero);
+        var root = UiKit.MakeImage(canvas, "Lobby", new Color(0.03f, 0.04f, 0.07f, 0.30f), center, Vector2.zero, Vector2.zero);
         UiKit.Stretch(root.rectTransform);
         root.raycastTarget = true;
         Root = root.gameObject;
@@ -49,17 +49,18 @@ public class LobbyUI
         for (int team = 0; team < PlayerTeam.TeamCount; team++)
         {
             int t = team;
-            float x = team == 0 ? -450f : 450f;
+            // karty u kraju - uprostred stoji vybrany hrdina (LobbyShowcase)
+            float x = team == 0 ? -640f : 640f;
 
-            var card = UiKit.MakeImage(Root.transform, $"Team{team}Card", UiKit.PanelLight, center, new Vector2(x, 145f), new Vector2(800f, 440f));
+            var card = UiKit.MakeImage(Root.transform, $"Team{team}Card", UiKit.PanelLight, center, new Vector2(x, 145f), new Vector2(560f, 440f));
             UiKit.MakeText(card.transform, "Heading", $"TÝM {team}", 48, TextAlignmentOptions.Center, center,
-                new Vector2(0f, 185f), new Vector2(760f, 60f), UiKit.TeamColor(team));
+                new Vector2(0f, 185f), new Vector2(520f, 60f), UiKit.TeamColor(team));
 
-            teamLists[team] = UiKit.MakeText(card.transform, "List", "", 34, TextAlignmentOptions.TopLeft, center,
-                new Vector2(0f, 10f), new Vector2(720f, 270f));
+            teamLists[team] = UiKit.MakeText(card.transform, "List", "", 30, TextAlignmentOptions.TopLeft, center,
+                new Vector2(0f, 10f), new Vector2(500f, 270f));
 
             teamButtons[team] = UiKit.MakeButton(card.transform, $"PŘEJÍT DO TÝMU {team}", center, new Vector2(0f, -175f),
-                new Vector2(520f, 66f), () => SelectTeam(t), UiKit.ButtonBase, 30f);
+                new Vector2(460f, 66f), () => SelectTeam(t), UiKit.ButtonBase, 28f);
         }
 
         UiKit.MakeText(Root.transform, "HeroHeading", "HRDINA", 40, TextAlignmentOptions.Center, center,
@@ -135,6 +136,7 @@ public class LobbyUI
             Root.SetActive(visible);
             nextRefresh = 0f;
         }
+        if (!visible) LobbyShowcase.Hide();
     }
 
     // joining = zapas uz bezi a tenhle hrac si po pripojeni teprve vybira tym a hrdinu.
@@ -153,6 +155,9 @@ public class LobbyUI
 
         RefreshTeams(localHero);
         RefreshHeroes(localHero);
+        var localTeamComponent = localHero != null ? localHero.GetComponent<PlayerTeam>() : null;
+        LobbyShowcase.Show(localHero != null ? localHero.heroId.Value : PlayerHero.PreferredHero,
+            localTeamComponent != null ? localTeamComponent.teamId.Value : -1);
 
         // Rezim hry voli host (ostatni ho jen vidi): team deathmatch na pocet zabiti, nebo utok a obrana.
         bool captureMode = match != null && match.IsAttackMode;

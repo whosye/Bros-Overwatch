@@ -362,6 +362,14 @@ public static class Fx
         Object.Destroy(go, clip.length + 0.1f);
     }
 
+    // Zacatek POTG: dohravajici zvuky ultimatek pres celou mapu utnout.
+    public static void StopGlobalSounds()
+    {
+        foreach (var source in Object.FindObjectsByType<AudioSource>())
+            if (source != null && source.gameObject.name.StartsWith("SFX_Global_"))
+                Object.Destroy(source.gameObject);
+    }
+
     public static GameObject CreateMarker()
     {
         var marker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);

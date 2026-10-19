@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: NanoBoost_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Pos\xEDlen\xED"
-  icon: {fileID: 2800000, guid: 3cb03cbb87acacf40acf88dba24a5423, type: 3}
+  icon: {fileID: 2800000, guid: b999efc7c5224deb9865c9fcdf684f1d, type: 3}
   cooldown: 30
   ultCost: 400
   power: 50
-  duration: 8
+  duration: 12
   radius: 6
   range: 45
   knockback: 0

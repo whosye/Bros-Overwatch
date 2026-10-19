@@ -72,6 +72,12 @@ public class PlayerHero : NetworkBehaviour
 
     public void ServerClearAttackers() => recentAttackers.Clear();
 
+    // Pred kolika sekundami tohoto hrace zranil 'attacker' (velke cislo = nikdy / davno).
+    public float ServerSecondsSinceHitBy(GameObject attacker)
+    {
+        return attacker != null && recentAttackers.TryGetValue(attacker, out float at) ? Time.time - at : 999f;
+    }
+
     // Zabiti nebo asistence: zkratit zbyvajici cooldowny (Pova). Cooldowny drzi vlastnik hrace.
     public void ServerTakedownRefund()
     {
@@ -699,6 +705,7 @@ public class PlayerHero : NetworkBehaviour
             controller.DoubleJump = definition.doubleJump;
             controller.HeroSpeedScale = Mathf.Max(0.5f, definition.moveSpeed);
             controller.LedgeClimb = definition.ledgeClimb;
+            controller.WallRide = hasBard;
         }
 
         if (firstTime)

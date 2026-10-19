@@ -23,6 +23,20 @@ public class Health : NetworkBehaviour
         shieldDecay = shield.Value / Mathf.Max(0.5f, seconds - 1f);
     }
 
+    // Stit, ktery 'seconds' s drzi naplno (dokud ho poskozeni nezbori), pak rychle zmizi (Sindelova a Povova ultimatka).
+    public void ServerHoldShield(float amount, float seconds)
+    {
+        if (!IsServer || currentHealth.Value <= 0f || amount <= 0f) return;
+        shield.Value = Mathf.Max(shield.Value, amount);
+        shieldHoldUntil = Time.time + seconds;
+        shieldDecay = shield.Value / 0.4f;
+    }
+
+    public void ServerClearShield()
+    {
+        if (IsServer) shield.Value = 0f;
+    }
+
     // Samoleceni: kdo 'RegenDelay' s nedostal poskozeni, zacne sam regenerovat 'RegenPerSecond' HP za sekundu.
     public const float RegenDelay = 10f;
     public const float RegenPerSecond = 10f;
@@ -115,9 +129,7 @@ public class Health : NetworkBehaviour
         if (currentHealth.Value <= 0f) shield.Value = 0f;
         Debug.Log($"{gameObject.name}: {currentHealth.Value}/{maxHealth} HP");
 
-        // Uspany hrac se zasahem probudi (Annina uspavaci sipka).
-        if (controller != null && currentHealth.Value > 0f)
-            controller.ServerWake();
+        // (uspany hrac se zasahem neprobudi - Davidova sipka uspi napevno na 'duration' s)
     }
 
     // Jista smrt (pad mimo mapu): bez ohledu na blok.

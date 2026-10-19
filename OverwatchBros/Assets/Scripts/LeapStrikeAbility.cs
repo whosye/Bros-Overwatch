@@ -172,6 +172,7 @@ public class LeapStrikeAbility : NetworkBehaviour, ICooldownCut
         savedCameraLocalPosition = playerCamera.transform.localPosition;
 
         airborne.Value = true;
+        UltShieldServerRpc();
         // Faze 1 hlasky: vzlet do vzduchu.
         GetComponent<PlayerHero>().SayAbility(ability, 1);
     }
@@ -372,6 +373,16 @@ public class LeapStrikeAbility : NetworkBehaviour, ICooldownCut
     void ImpactFxClientRpc(Vector3 position)
     {
         Fx.Explosion(position, ability.radius);
+    }
+
+    // Pri vykasteni ultimatky stit UltShield HP na UltShieldSeconds s (nebo dokud ho poskozeni nezbori).
+    const float UltShield = 100f;
+    const float UltShieldSeconds = 4f;
+
+    [ServerRpc]
+    void UltShieldServerRpc()
+    {
+        GetComponent<Health>().ServerHoldShield(UltShield, UltShieldSeconds);
     }
 
     // Zvuk schopnosti se prehraje, kdyz se zacne padat dolu (potvrzeni miření), ne az pri dopadu.

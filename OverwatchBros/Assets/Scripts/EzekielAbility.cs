@@ -3,10 +3,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Sindelova ultimatka (Q): "Ezechiel 25:17". Vznese se vysoko do vzduchu, pres celou mapu hraje hlaska a na zemi, kam miri,
-// sviti kruh - vidi ho jen Sindel a jeho tym (nepratele slysi hlasku a vidi zariciho Sindela na nebi, ale nevi, kam miri).
-// Ve vzduchu se da pomalu pohybovat.
+// sviti kruh - vidi ho jen Sindel sam (a pak killcam / POTG ze zaznamu); ostatni slysi hlasku a vidi zariciho Sindela na nebi.
+// Mireni ignoruje zdi a strechy: kruh lezi tam, kde paprsek z kamery protne nejspodnejsi podlahu (ne patro), a krome
+// plneho kruhu je videt i cerchovany obrys pres vse (i kdyz je kruh v dome). Ve vzduchu se da pomalu pohybovat.
 // Na konci hlasky ("...when I lay my vengeance upon thee!") do kruhu uderi sloup svetla: 'power' ve stredu, k okraji
-// mene ('radius'). Sloup zasahne kazdeho ve svislem valci nad kruhem, i skrz stropy (lidi v patrech nad nim). Doba = delka nahravky ultimatky (Audio/Sindel/ability_Q), bez nahravky 'duration'.
+// mene ('radius'). Sloup zasahne kazdeho ve svislem valci nad i pod kruhem (vsechna patra, sklepy). Doba = delka nahravky
+// ultimatky (Audio/Sindel/ability_Q), bez nahravky 'duration'.
+// Behem kazani nejde Sindel prerusit (omraceni, uspani, hak... - FirstPersonController.Unstoppable), ale ma jen stit
+// CastShield HP navic - da se zabit.
 public class EzekielAbility : NetworkBehaviour
 {
     enum Phase { Idle, Rising, Preaching, Descending }
@@ -19,8 +23,10 @@ public class EzekielAbility : NetworkBehaviour
     public float cameraDistance = 6.5f;
     public float cameraLift = 1.2f;
     const float StrikeEdge = 0.35f;
-    const float BeamBelow = 2f;      // sloup zasahuje i kousek pod misto dopadu (sklep, schody dolu)
-    const float BeamHeight = 60f;    // a nahoru az k nebi (vsechna patra nad kruhem)
+    const float BeamBelow = 300f;    // sloup zasahuje vse pod kruhem
+    const float BeamHeight = 300f;   // i nad nim (vsechna patra)
+    const float CastShield = 3000f;  // stit po dobu kazani
+    const float FloorSearchDepth = 120f;
     public static readonly Color HolyColor = new Color(1f, 0.85f, 0.45f, 1f);
 
     CharacterController controller;
@@ -32,6 +38,7 @@ public class EzekielAbility : NetworkBehaviour
     float phaseTimer;
     float castEnd;
     float targetY;
+    float aimFloorY;   // vyska podlahy, se kterou se paprsek mireni naposled protnul
     Vector3 savedCameraLocalPosition;
     float nextUseTime;
 
@@ -46,6 +53,10 @@ public class EzekielAbility : NetworkBehaviour
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public bool IsCasting => casting.Value;
+    public bool AimValid => aimValid.Value;
+    public Vector3 Aim => aim.Value;
+    public float CastProgress => casting.Value ? Mathf.Clamp01((Time.time - castStartLocal) / Mathf.Max(0.5f, castSeconds.Value)) : 0f;
+    public float Radius => ability != null ? ability.radius : 5f;
     bool UsesCharge => hero != null && hero.UsesUltCharge;
     bool CanUse => UsesCharge ? hero.UltReady : Time.time >= nextUseTime;
     public float CooldownRemaining => UsesCharge ? 0f : Mathf.Max(0f, nextUseTime - Time.time);
@@ -120,7 +131,9 @@ public class EzekielAbility : NetworkBehaviour
             return;
         }
 
-        if (fpc.CannotAct)
+        // behem kazani ho nic neprerusi (jen smrt nebo konec zapasu); pri sestupu uz ano
+        bool stop = casting.Value ? fpc.IsDead || fpc.MatchOver || fpc.InLobby || fpc.Joining : fpc.CannotAct;
+        if (stop)
         {
             Cancel();
             return;
@@ -148,6 +161,7 @@ public class EzekielAbility : NetworkBehaviour
         float seconds = CastDuration();
         castEnd = Time.time + seconds;
         targetY = transform.position.y + hoverHeight;
+        aimFloorY = LowestFloorAt(transform.position.x, transform.position.z, transform.position.y + 2f, out float startFloor) ? startFloor : transform.position.y;
         phase = Phase.Rising;
 
         castSeconds.Value = seconds;
@@ -200,33 +214,53 @@ public class EzekielAbility : NetworkBehaviour
 
     void UpdateAim()
     {
-        // Z kamery (krizek uprostred obrazovky ukazuje, kam kruh dopadne).
+        // Z kamery (krizek uprostred obrazovky ukazuje, kam kruh dopadne). Zdi, strechy ani hraci paprsek nezastavi:
+        // hleda se misto, kde protne nejspodnejsi podlahu (par kroku - podlaha pod novym mistem muze byt jinde vysoko).
         Vector3 origin = playerCamera.transform.position;
         Vector3 direction = playerCamera.transform.forward;
-        var hits = Physics.RaycastAll(origin, direction, ability.range, ~0, QueryTriggerInteraction.Ignore);
-        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-        foreach (var hit in hits)
+        bool found = false;
+        Vector3 point = Vector3.zero;
+        if (direction.y < -0.02f)
         {
-            var owner = hit.collider.GetComponentInParent<NetworkObject>();
-            if (owner != null && owner == NetworkObject) continue;
-            if (hit.collider.GetComponentInParent<PlayerHero>() != null)
+            float floorY = aimFloorY;
+            for (int i = 0; i < 5; i++)
             {
-                // Miri na hrace: kruh pod nim.
-                if (Physics.Raycast(hit.point, Vector3.down, out var below, 30f, ~0, QueryTriggerInteraction.Ignore))
-                    SetAim(below.point, true);
-                return;
+                float distance = (floorY - origin.y) / direction.y;
+                if (distance <= 0f) { found = false; break; }
+                point = origin + direction * distance;
+                if (!LowestFloorAt(point.x, point.z, origin.y + 5f, out float y)) { found = false; break; }
+                found = true;
+                bool settled = Mathf.Abs(y - floorY) < 0.05f;
+                floorY = y;
+                if (settled) break;
             }
-            if (hit.normal.y >= 0.3f)
+            if (found)
             {
-                SetAim(hit.point, true);
-                return;
+                float distance = (floorY - origin.y) / direction.y;
+                point = origin + direction * Mathf.Max(0f, distance);
+                point.y = floorY;
+                aimFloorY = floorY;
+                Vector3 flat = point - transform.position;
+                flat.y = 0f;
+                found = flat.magnitude <= ability.range;
             }
-            // zed: kruh k jejimu patu
-            if (Physics.Raycast(hit.point + hit.normal * 0.5f, Vector3.down, out var foot, 30f, ~0, QueryTriggerInteraction.Ignore))
-                SetAim(foot.point, true);
-            return;
         }
-        if (aimValid.Value) aimValid.Value = false;
+        if (found) SetAim(point, true);
+        else if (aimValid.Value) aimValid.Value = false;
+    }
+
+    // Vyska nejnizsi vodorovne plochy v miste x, z (prizemi / zem pod patry a strechami), hledano shora od 'top'.
+    static bool LowestFloorAt(float x, float z, float top, out float floorY)
+    {
+        floorY = 0f;
+        bool found = false;
+        foreach (var hit in Physics.RaycastAll(new Vector3(x, top, z), Vector3.down, FloorSearchDepth, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.normal.y < 0.3f || hit.collider.GetComponentInParent<PlayerHero>() != null) continue;
+            if (!found || hit.point.y < floorY) floorY = hit.point.y;
+            found = true;
+        }
+        return found;
     }
 
     void SetAim(Vector3 point, bool valid)
@@ -239,6 +273,7 @@ public class EzekielAbility : NetworkBehaviour
     {
         if (aimValid.Value)
             StrikeServerRpc(aim.Value);
+        CastOverServerRpc();
         casting.Value = false;
         phase = Phase.Descending;
         phaseTimer = 4f;
@@ -276,18 +311,25 @@ public class EzekielAbility : NetworkBehaviour
 
     // ---------------- server ----------------
 
-    // Behem kazani (vylet, cela hlaska, sestup) je Sindel nezranitelny.
+    // Behem kazani ma Sindel velky stit (da se ale zabit); po uderu stit zmizi.
     [ServerRpc]
     void BeginServerRpc(float seconds)
     {
-        GetComponent<Health>().ServerInvulnerable(riseTime + Mathf.Clamp(seconds, 0f, 25f) + 4f);
+        GetComponent<Health>().ServerHoldShield(CastShield, riseTime + Mathf.Clamp(seconds, 0f, 25f) + 0.5f);
         BeginClientRpc();
+    }
+
+    [ServerRpc]
+    void CastOverServerRpc()
+    {
+        GetComponent<Health>().ServerClearShield();
     }
 
     [ServerRpc]
     void EndServerRpc()
     {
-        GetComponent<Health>().ServerClearInvulnerable();
+        var health = GetComponent<Health>();
+        if (health.shield.Value > 1000f) health.ServerClearShield();   // (preruseno pred uderem)
     }
 
     [ServerRpc]
@@ -295,7 +337,9 @@ public class EzekielAbility : NetworkBehaviour
     {
         var match = MatchManager.Instance;
         if (ability == null || (match != null && (match.IsOver || match.IsLobby))) return;
-        if (Vector3.Distance(point, transform.position) > ability.range + 10f) return;
+        Vector3 flat = point - transform.position;
+        flat.y = 0f;
+        if (flat.magnitude > ability.range + 10f) return;
 
         var recorder = GetComponent<PotgRecorder>();
         if (recorder != null)
@@ -376,7 +420,7 @@ public class EzekielAbility : NetworkBehaviour
 
         if (circle == null) BuildVisual();
 
-        // Kruh vidi jen Sindel a spoluhraci.
+        // Kruh vidi jen Sindel sam.
         bool show = aimValid.Value && SeenByLocalPlayer();
         circle.SetActive(show);
         if (show)
@@ -397,18 +441,12 @@ public class EzekielAbility : NetworkBehaviour
             haloLight.intensity = 2.5f + Mathf.Sin(Time.time * 6f) * 0.7f;
     }
 
-    bool SeenByLocalPlayer()
-    {
-        if (IsOwner) return true;
-        var network = NetworkManager.Singleton;
-        var local = network != null && network.LocalClient != null ? network.LocalClient.PlayerObject : null;
-        return local != null && Combat.SameTeam(local.gameObject, gameObject);
-    }
+    bool SeenByLocalPlayer() => IsOwner && !BotBrain.IsBot(gameObject);
 
     void BuildVisual()
     {
         circle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        circle.name = "EzekielCircle";   // (bez FX_: zaznam pro POTG ho zachyti)
+        circle.name = "FX_EzekielCircle";   // (zaznam ho kresli sam podle mireni - EzekielCircleVisual - at je i u ostatnich)
         DestroyImmediate(circle.GetComponent<Collider>());
         Fx.Paint(circle, HolyColor);
         circleMaterial = circle.GetComponent<Renderer>().material;
@@ -419,6 +457,8 @@ public class EzekielAbility : NetworkBehaviour
         core.transform.SetParent(circle.transform, false);
         core.transform.localPosition = Vector3.up * 0.5f;
         Fx.Paint(core, Color.white);
+
+        EzekielCircleVisual.AddDashedOutline(circle.transform);
 
         var lightObject = new GameObject("Light");
         lightObject.transform.SetParent(circle.transform, false);
@@ -454,6 +494,99 @@ public class EzekielAbility : NetworkBehaviour
         halo = null;
         if (haloLight != null) Destroy(haloLight.gameObject);
         haloLight = null;
+    }
+}
+
+// Kruh dopadu Sindelovy ultimatky pro killcam a POTG (ze zaznamu mireni).
+public static class EzekielCircleVisual
+{
+    public static GameObject Create(Transform parent)
+    {
+        var circle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        circle.name = "HolyCircle";
+        Object.DestroyImmediate(circle.GetComponent<Collider>());
+        circle.transform.SetParent(parent, false);
+        Fx.Paint(circle, EzekielAbility.HolyColor);
+        AddDashedOutline(circle.transform);
+        var lightObject = new GameObject("Light");
+        lightObject.transform.SetParent(circle.transform, false);
+        lightObject.transform.localPosition = Vector3.up * 80f;
+        var light = lightObject.AddComponent<Light>();
+        light.type = LightType.Point;
+        light.color = EzekielAbility.HolyColor;
+        light.shadows = LightShadows.None;
+        light.intensity = 4f;
+        return circle;
+    }
+
+    static Mesh dashedMesh;
+    static Material overlayMaterial;
+
+    // Cerchovany prstenec (v meritku kruhu - polomer 0,5) kresleny pres zdi a strechy.
+    public static void AddDashedOutline(Transform circle)
+    {
+        if (dashedMesh == null) dashedMesh = BuildDashedRing(0.5f, 0.035f, 28, 0.6f);
+        if (overlayMaterial == null)
+        {
+            var shader = Shader.Find("BrosOverwatch/Overlay Color");
+            overlayMaterial = new Material(shader != null ? shader : Shader.Find("Sprites/Default"));
+            var color = new Color(1f, 0.85f, 0.4f, 0.9f);
+            if (overlayMaterial.HasProperty("_BaseColor")) overlayMaterial.SetColor("_BaseColor", color);
+            overlayMaterial.color = color;
+            overlayMaterial.renderQueue = 4000;
+        }
+        var ring = new GameObject("DashedOutline");
+        ring.transform.SetParent(circle, false);
+        ring.transform.localPosition = Vector3.up * 1.2f;
+        ring.AddComponent<MeshFilter>().sharedMesh = dashedMesh;
+        var renderer = ring.AddComponent<MeshRenderer>();
+        renderer.sharedMaterial = overlayMaterial;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+    }
+
+    // 'dashes' oblouku po obvodu, kazdy zabira 'fill' sveho dilku; plochy v rovine XZ.
+    static Mesh BuildDashedRing(float radius, float width, int dashes, float fill)
+    {
+        const int steps = 4;
+        var vertices = new System.Collections.Generic.List<Vector3>();
+        var triangles = new System.Collections.Generic.List<int>();
+        float inner = radius - width * 0.5f, outer = radius + width * 0.5f;
+        for (int d = 0; d < dashes; d++)
+        {
+            float a0 = d / (float)dashes * Mathf.PI * 2f;
+            float a1 = a0 + fill / dashes * Mathf.PI * 2f;
+            int start = vertices.Count;
+            for (int s = 0; s <= steps; s++)
+            {
+                float a = Mathf.Lerp(a0, a1, s / (float)steps);
+                vertices.Add(new Vector3(Mathf.Cos(a) * inner, 0f, Mathf.Sin(a) * inner));
+                vertices.Add(new Vector3(Mathf.Cos(a) * outer, 0f, Mathf.Sin(a) * outer));
+            }
+            for (int s = 0; s < steps; s++)
+            {
+                int i = start + s * 2;
+                triangles.AddRange(new[] { i, i + 1, i + 2, i + 1, i + 3, i + 2 });
+            }
+        }
+        var mesh = new Mesh { name = "DashedRing" };
+        mesh.SetVertices(vertices);
+        mesh.SetTriangles(triangles, 0);
+        mesh.RecalculateBounds();
+        mesh.bounds = new Bounds(Vector3.zero, new Vector3(2f, 2f, 2f));
+        return mesh;
+    }
+
+    public static void Place(GameObject circle, Vector3 point, float radius, float progress)
+    {
+        circle.transform.position = point + Vector3.up * 0.04f;
+        circle.transform.rotation = Quaternion.identity;
+        Vector3 parentScale = circle.transform.parent != null ? circle.transform.parent.lossyScale : Vector3.one;
+        circle.transform.localScale = new Vector3(radius * 2f / Mathf.Max(0.01f, parentScale.x), 0.02f / Mathf.Max(0.01f, parentScale.y), radius * 2f / Mathf.Max(0.01f, parentScale.z));
+        var color = Color.Lerp(new Color(1f, 0.9f, 0.6f), new Color(1f, 0.6f, 0.15f), progress);
+        var renderer = circle.GetComponent<Renderer>();
+        if (renderer.material.HasProperty("_BaseColor")) renderer.material.SetColor("_BaseColor", color);
+        else renderer.material.color = color;
     }
 }
 

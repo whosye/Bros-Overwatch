@@ -30,7 +30,7 @@ public class BuffUI
         var rect = (RectTransform)holder.transform;
         rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0f);
         rect.pivot = new Vector2(0.5f, 0f);
-        rect.anchoredPosition = new Vector2(0f, 30f);
+        rect.anchoredPosition = new Vector2(0f, 222f);   // nad ultimatkou (ta je dole uprostred)
         rect.sizeDelta = new Vector2(600f, Size + 30f);
         panel = holder.transform;
 

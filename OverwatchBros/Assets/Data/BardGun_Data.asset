@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: BardGun_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Zvukomet
-  damage: 16
-  fireRate: 4.5
+  damage: 14
+  fireRate: 1.15
   maxAmmo: 20
+  burstCount: 4
+  burstInterval: 0.07
   reloadTime: 1.5
   reloadAnimation: 0
   range: 100

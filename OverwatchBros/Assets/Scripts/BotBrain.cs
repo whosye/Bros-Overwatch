@@ -604,7 +604,18 @@ public class BotBrain : MonoBehaviour
         float minR = 0f, maxR = 0f;
         if (role == Role.Ranged) RangedBand(weapon, out minR, out maxR);
 
-        if (wantsHealth)
+        // malo zivotu, lekarnicka nikde a nepritel na dohled: couvnout od nej (a strilet dal), ne bojovat do posledniho
+        bool retreating = !wantsHealth && combat && target != null && health != null
+            && health.currentHealth.Value < health.maxHealth * 0.3f && !(weapon != null && weapon.IsMelee && aggression > 0.85f);
+        if (retreating)
+        {
+            Vector3 away = transform.position - target.transform.position;
+            away.y = 0f;
+            chase = false;
+            chasing = false;
+            goal = AroundPoint(transform.position + away.normalized * 9f, 2f);
+        }
+        else if (wantsHealth)
             goal = healthPos;
         else if (supporting)
             goal = SupportSpot(match, role == Role.Support && weapon.allyHeal <= 0f);
@@ -627,8 +638,11 @@ public class BotBrain : MonoBehaviour
 
         if (Time.time >= nextStrafeSwitch)
         {
-            nextStrafeSwitch = Time.time + Random.Range(0.8f, 2f);
-            strafeSign = Random.value < 0.5f ? -1f : 1f;
+            // nepravidelne ADAD: v boji kratke uskoky, mimo boj delsi
+            nextStrafeSwitch = Time.time + (combat ? Random.Range(0.3f, 1.1f) : Random.Range(0.8f, 2f));
+            strafeSign = combat && Random.value < 0.7f ? -strafeSign : (Random.value < 0.5f ? -1f : 1f);
+            // obcas v boji vyskoci (hlavne dravci) - tezsi cil
+            if (combat && Random.value < 0.08f + aggression * 0.12f) jumpRequest = true;
         }
 
         // zaseknuty: chvili objizdka
@@ -724,7 +738,18 @@ public class BotBrain : MonoBehaviour
                 lookAt = eye + Quaternion.Euler(0f, Mathf.Sin(Time.time * 0.7f + aggression * 5f) * 28f, 0f) * toFocus;
             }
             else
+            {
                 lookAt = moveDir.sqrMagnitude > 0.01f ? eye + moveDir * 10f : eye + transform.forward * 10f;
+                // obcas se pri chuzi podiva do strany (kontrola rohu, oken)
+                if (Time.time >= nextGlance)
+                {
+                    nextGlance = Time.time + Random.Range(3f, 7f);
+                    glanceUntil = Time.time + Random.Range(0.5f, 1f);
+                    glanceTarget = Random.Range(35f, 75f) * (Random.value < 0.5f ? -1f : 1f);
+                }
+            }
+            glanceYaw = !combat && Time.time < glanceUntil ? Mathf.MoveTowards(glanceYaw, glanceTarget, 240f * Time.deltaTime)
+                : Mathf.MoveTowards(glanceYaw, 0f, 240f * Time.deltaTime);
             TurnTowards(lookAt - eye, combat);
         }
 
@@ -734,6 +759,10 @@ public class BotBrain : MonoBehaviour
         Run = !combat && moveDir.sqrMagnitude > 0.25f;
 
         CheckStuck(moveDir);
+        // po boji prebit (jako hrac), kdyz zbyva min nez 60 % naboju
+        if (!combat && shooting != null && shooting.MaxAmmo > 0 && !shooting.IsReloading
+            && shooting.CurrentAmmo < shooting.MaxAmmo * 0.6f && Time.time - lastSeenTime > 1.5f)
+            reloadRequest = true;
         CheckLoiter(combat || holdPoint || wantsHealth || supporting);
         if (aimAlly != null) SetFire(false);
         else if (healing) HealShoot(eye);
@@ -768,7 +797,11 @@ public class BotBrain : MonoBehaviour
             if (visible && !hurt && Vector3.Angle(Quaternion.Euler(0f, Yaw, 0f) * Vector3.forward, toOther) > 70f && distance > 6f)
                 visible = false;
             if (!visible && other != target) continue;
-            float score = distance + (visible ? 0f : 1000f);
+            // jako hrac: radeji dorazit zraneneho, odpovedet tomu, kdo po mne strili, a nepreskakovat zbytecne
+            float score = distance * Mathf.Lerp(0.6f, 1f, otherHealth.currentHealth.Value / Mathf.Max(1f, otherHealth.maxHealth))
+                + (visible ? 0f : 1000f);
+            if (hero != null && hero.ServerSecondsSinceHitBy(other.gameObject) < 3f) score -= 12f;
+            if (other == target) score -= 6f;
             if (score < bestScore)
             {
                 bestScore = score;
@@ -848,18 +881,41 @@ public class BotBrain : MonoBehaviour
         if (direction.sqrMagnitude < 0.0001f) return;
         if (combat && Time.time >= nextAimJitter)
         {
-            nextAimJitter = Time.time + 0.5f;
-            aimOffset = Random.insideUnitCircle * aimError * (scoping ? 0.3f : 1f);
+            // presnost jako u cloveka: cim dele cil sleduje, tim lip miri; rychle se pohybujici cil a vlastni beh
+            // ji zhorsuji
+            nextAimJitter = Time.time + Random.Range(0.3f, 0.6f);
+            float tracking = seenSince >= 0f ? Time.time - seenSince : 0f;
+            float settle = Mathf.Lerp(1.7f, 0.65f, Mathf.Clamp01(tracking / 1.6f));
+            float lateral = target != null ? new Vector3(targetVelocity.x, 0f, targetVelocity.z).magnitude : 0f;
+            float self = Move.sqrMagnitude > 0.25f ? 1.25f : 1f;
+            aimOffset = Random.insideUnitCircle * aimError * settle * (1f + lateral * 0.08f) * self * (scoping ? 0.3f : 1f);
         }
         Vector2 jitter = combat && !precise ? aimOffset : Vector2.zero;
-        float wantYaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + jitter.x;
+        float wantYaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + jitter.x + glanceYaw;
         float flat = new Vector2(direction.x, direction.z).magnitude;
         float wantPitch = combat ? -Mathf.Atan2(direction.y, flat) * Mathf.Rad2Deg + jitter.y : 0f;
-        Yaw = Mathf.MoveTowardsAngle(Yaw, wantYaw, turnSpeed * Time.deltaTime);
-        Pitch = Mathf.Clamp(Mathf.MoveTowardsAngle(Pitch, wantPitch, turnSpeed * Time.deltaTime), -80f, 80f);
+        // svihnuti mysi: rychle k cili, tesne pred nim zpomali (ne stale stejnou rychlosti jako robot)
+        float yawGap = Mathf.Abs(Mathf.DeltaAngle(Yaw, wantYaw));
+        float pitchGap = Mathf.Abs(Mathf.DeltaAngle(Pitch, wantPitch));
+        float yawSpeed = Mathf.Clamp(yawGap * 7f, turnSpeed * 0.25f, turnSpeed * 2.2f);
+        float pitchSpeed = Mathf.Clamp(pitchGap * 7f, turnSpeed * 0.25f, turnSpeed * 2.2f);
+        Yaw = Mathf.MoveTowardsAngle(Yaw, wantYaw, yawSpeed * Time.deltaTime);
+        Pitch = Mathf.Clamp(Mathf.MoveTowardsAngle(Pitch, wantPitch, pitchSpeed * Time.deltaTime), -80f, 80f);
     }
 
     bool scoping;
+
+    // rozhlizeni pri chuzi
+    float nextGlance, glanceUntil, glanceTarget, glanceYaw;
+
+    // prebijeni (cte WeaponShooting jako klavesu R)
+    bool reloadRequest;
+    public bool ConsumeReload()
+    {
+        bool r = reloadRequest;
+        reloadRequest = false;
+        return r;
+    }
 
     void Shoot(WeaponDefinition weapon, Vector3 eye, bool combat)
     {
@@ -1090,14 +1146,21 @@ public class BotBrain : MonoBehaviour
         {
             var huntWeapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
             bool rangedHunter = huntWeapon != null && CurrentRole(huntWeapon) == Role.Ranged;
-            nextHotspotSwitch = Time.time + (rangedHunter ? Random.Range(5f, 8f) : Mathf.Lerp(16f, 8f, aggression) * Random.Range(0.8f, 1.2f));
+            nextHotspotSwitch = Time.time + (rangedHunter ? Random.Range(5f, 8f) : Random.Range(4f, 8f));
             hotspot = HuntSpot();
+            nextWander = 0f;
+        }
+        // lovene obeti se drzi: kdyz se presune o kus, jde za ni (tam, kde zrovna je)
+        if (huntTarget != null && huntTarget.IsSpawned && Vector3.Distance(huntTarget.transform.position, hotspot) > 6f)
+        {
+            hotspot = huntTarget.transform.position;
             nextWander = 0f;
         }
         if (Time.time >= nextWander || arrived)
         {
             nextWander = Time.time + Random.Range(4f, 7f);
-            wanderGoal = AroundPoint(hotspot, 6f);
+            // za lovenym hracem primo (ne "nekam do okoli" - to casto skonci pred chatou)
+            wanderGoal = huntTarget != null ? hotspot : AroundPoint(hotspot, 6f);
         }
         // strelec na dalku: v blizkosti oblasti nepritele si najde misto s vyhledem na ni
         var weapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
@@ -1112,6 +1175,7 @@ public class BotBrain : MonoBehaviour
 
     Vector3 hotspot;
     float nextHotspotSwitch;
+    PlayerHero huntTarget;   // koho prave lovi (deathmatch, kdyz ho nevidi)
 
     // Deathmatch: oblast nahodneho nepritele (s nepresnosti), kdyz zadny neni, klicove misto mapy.
     Vector3 HuntSpot()
@@ -1124,16 +1188,20 @@ public class BotBrain : MonoBehaviour
             if (otherHealth != null && otherHealth.currentHealth.Value > 0f) enemies.Add(other);
         }
         // kdyz o nikom nevi nebo obcas (at prochazi i chaty): nahodne misto pod strechou
-        if (enemies.Count == 0 || Random.value < 0.3f)
+        huntTarget = null;
+        if (enemies.Count == 0 || Random.value < 0.15f)
         {
             var indoor = BotNavigation.RandomIndoorSpot();
             if (indoor.HasValue) return indoor.Value;
         }
         if (enemies.Count == 0) return RandomHotspot();
+        // lovi konkretniho hrace (nejradeji nejblizsiho) - jde primo za nim, kdyz cesta nevede, po jeho stope
+        enemies.Sort((x, y) => Vector3.Distance(transform.position, x.transform.position).CompareTo(Vector3.Distance(transform.position, y.transform.position)));
+        huntTarget = enemies[Random.value < 0.7f ? 0 : Random.Range(0, enemies.Count)];
         var weapon = hero != null && hero.Hero != null ? hero.Hero.weapon : null;
-        float spread = weapon != null && CurrentRole(weapon) == Role.Ranged ? 5f : Mathf.Lerp(14f, 6f, aggression);
+        float spread = weapon != null && CurrentRole(weapon) == Role.Ranged ? 5f : 3f;
         Vector2 jitter = Random.insideUnitCircle * spread;
-        return enemies[Random.Range(0, enemies.Count)].transform.position + new Vector3(jitter.x, 0f, jitter.y);
+        return huntTarget.transform.position + new Vector3(jitter.x, 0f, jitter.y);
     }
 
     // Klicova mista mapy = mista bodu A, B, C (CapturePoint_1..3 ve scene).
@@ -1189,8 +1257,9 @@ public class BotBrain : MonoBehaviour
         }
 
         // navigace k pronasledovanemu nevede (dvere, prah, je v chate): po jeho stope
-        if (pathIncomplete && chaseTarget != null && (corner >= path.Count || Vector3.Distance(feet, path[path.Count - 1]) < 2.5f)
-            && TrailDirection(chaseTarget, out Vector3 trailDir))
+        var trailOf = chaseTarget != null ? chaseTarget : huntTarget;
+        if (pathIncomplete && trailOf != null && (corner >= path.Count || Vector3.Distance(feet, path[path.Count - 1]) < 2.5f)
+            && TrailDirection(trailOf, out Vector3 trailDir))
             return trailDir;
 
         if (corner >= path.Count)
@@ -1250,7 +1319,8 @@ public class BotBrain : MonoBehaviour
         // cil musi byt opravdu na konci cesty (SamplePosition muze cil "pritahnout" ven z chaty)
         pathIncomplete = navPath.status != NavMeshPathStatus.PathComplete || Vector3.Distance(end.position, to) > 1.5f;
         // cil, kam nevede cela cesta (nedosazitelne misto, napr. strecha): vybrat jiny
-        if (navPath.status != NavMeshPathStatus.PathComplete)
+        // (za pronasledovanym / lovenym hracem se nevzdava - dojde na konec cesty a pak po jeho stope)
+        if (navPath.status != NavMeshPathStatus.PathComplete && chaseTarget == null && huntTarget == null)
             ForgetGoal();
     }
 
@@ -1389,8 +1459,13 @@ public class BotBrain : MonoBehaviour
 // Mapa se tak muze libovolne upravovat - sit je vzdy aktualni.
 public static class BotNavigation
 {
-    static NavMeshSurface surface;
-    public static bool Ready => surface != null && surface.navMeshData != null;
+    static NavMeshData navData;
+    static NavMeshDataInstance navInstance;
+    public static bool Ready => navData != null && navInstance.valid;
+
+    // Jen mapa: podstavec lobby a scena uvodu POTG lezi kilometry pod mapou - kdyby se zapocitaly, sit by mela
+    // tisice metru na vysku a nepostavila by se (boti pak nemaji kudy chodit).
+    static readonly Bounds MapBounds = new Bounds(new Vector3(0f, 20f, 30f), new Vector3(600f, 200f, 600f));
 
     // Vlastni typ agenta: jako postava hrace (polomer 0,4 m - projde dvermi, vyska 1,85 m, schod jen 0,3 m, svah 42 st.).
     // Vychozi "Humanoid" pocita se schodem 0,75 m - sit pak vedla i pres hrany, ktere postava nevyjde.
@@ -1400,7 +1475,9 @@ public static class BotNavigation
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics()
     {
-        surface = null;
+        if (navInstance.valid) navInstance.Remove();
+        navInstance = default;
+        navData = null;
         agentType = -1;
         indoorSpots.Clear();
     }
@@ -1418,35 +1495,127 @@ public static class BotNavigation
             controllers[i].enabled = false;
         }
 
-        var settings = NavMesh.CreateSettings();
-        settings.agentRadius = 0.4f;    // (0,6 m zavrelo dvere chaty - boti nemeli kudy dovnitr)
-        settings.agentHeight = 1.85f;   // (zarubne a prostor pod schody)
-        settings.agentClimb = 0.45f;   // prahy a vyssi schody - bot je preskoci
-        settings.agentSlope = 42f;
-        agentType = settings.agentTypeID;
-
-        var go = new GameObject("BotNavigace");
-        surface = go.AddComponent<NavMeshSurface>();
-        surface.agentTypeID = agentType;
-        surface.collectObjects = CollectObjects.All;
-        surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-        surface.overrideVoxelSize = true;
-        surface.voxelSize = 0.15f;   // jemnejsi mrizka - uzke pruchody (dvere) v siti zustanou
         float started = Time.realtimeSinceStartup;
-        surface.BuildNavMesh();
+
+        // zdroje: koliznni tvary jen v rozsahu mapy (bez triggeru)
+        var sources = new List<NavMeshBuildSource>();
+        NavMeshBuilder.CollectSources(MapBounds, ~0, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>(), sources);
+        sources.RemoveAll(src => src.component is Collider c && c.isTrigger);
+        Bounds bounds = new Bounds();
+        bool any = false;
+        foreach (var src in sources)
+        {
+            if (!(src.component is Collider c)) continue;
+            if (!any) { bounds = c.bounds; any = true; }
+            else bounds.Encapsulate(c.bounds);
+        }
+        if (!any) bounds = MapBounds;
+        bounds.Expand(2f);
+
+        // Nekolik nastaveni po sobe - vezme se prvni, ve kterem je na siti aspon jeden spawn
+        // (vlastni typ agenta pri nekterych hrach nepokryl zem vubec, boti pak stali na spawnu).
+        var custom = NavMesh.CreateSettings();
+        Tune(ref custom);
+        var tuned = NavMesh.GetSettingsByID(0);
+        Tune(ref tuned);
+        var humanoid = NavMesh.GetSettingsByID(0);
+        var attempts = new[] { (custom, "vlastni agent"), (tuned, "Humanoid upraveny"), (humanoid, "Humanoid vychozi") };
+        foreach (var (settings, label) in attempts)
+        {
+            if (settings.agentTypeID < 0) continue;
+            if (navInstance.valid) navInstance.Remove();
+            navData = NavMeshBuilder.BuildNavMeshData(settings, sources, bounds, Vector3.zero, Quaternion.identity);
+            navInstance = navData != null ? NavMesh.AddNavMeshData(navData) : default;
+            agentType = settings.agentTypeID;
+            int onSpawn = SpawnsOnMesh();
+            var report = settings.ValidationReport(bounds);
+            Debug.Log($"[Boti] Pokus '{label}' (agent {settings.agentTypeID}): {(navData == null ? "sit se nepostavila" : $"spawnu na siti {onSpawn}/2")}"
+                + $"{(report != null && report.Length > 0 ? ", hlaseni: " + string.Join("; ", report) : "")}.");
+            if (navData != null && onSpawn > 0) break;
+        }
 
         for (int i = 0; i < controllers.Length; i++)
             if (controllers[i] != null) controllers[i].enabled = states[i];
 
         FindIndoorSpots();
+        // diagnostika: kolik zdroju, jak velka sit, kde je nejblizsi sit od spawnu
+        var tri = NavMesh.CalculateTriangulation();
+        float minY = float.MaxValue, maxY = float.MinValue;
+        if (tri.vertices != null)
+            foreach (var v in tri.vertices) { minY = Mathf.Min(minY, v.y); maxY = Mathf.Max(maxY, v.y); }
+        Debug.Log($"[Boti] Zdroju: {sources.Count}, rozsah {bounds.min:0} - {bounds.max:0}, vrcholu site: {(tri.vertices != null ? tri.vertices.Length : 0)}"
+            + $"{(minY <= maxY ? $", vyska site {minY:0.0} az {maxY:0.0} m" : "")}.");
+        foreach (var spawnName in new[] { "SpawnPoint_Team0", "SpawnPoint_Team1" })
+        {
+            var spawnMarker = GameObject.Find(spawnName);
+            if (spawnMarker == null) continue;
+            // co je v prostoru nad spawnem (tam, kde by mel stat bot) - to muze zakryvat zem
+            Vector3 sp = spawnMarker.transform.position;
+            var blockers = new List<string>();
+            foreach (var src in sources)
+            {
+                if (!(src.component is Collider c)) continue;
+                var cb = c.bounds;
+                if (sp.x < cb.min.x || sp.x > cb.max.x || sp.z < cb.min.z || sp.z > cb.max.z) continue;
+                blockers.Add($"{c.name} ({c.GetType().Name}, y {cb.min.y:0.0}-{cb.max.y:0.0}{(c is MeshCollider mc && mc.convex ? ", konvexni" : "")})");
+            }
+            Debug.Log($"[Boti] {spawnName} {sp:0.0}: kolize ve sloupci nad nim: {(blockers.Count == 0 ? "ZADNA" : string.Join("; ", blockers))}");
+            bool near = NavMesh.SamplePosition(spawnMarker.transform.position, out var nearHit, 60f, Filter);
+            // nejblizsi vrchol site bez ohledu na typ agenta (rozlisi "sit tu neni" od "dotaz na sit selhava")
+            float nearestVertex = float.MaxValue;
+            Vector3 nearestPoint = Vector3.zero;
+            if (tri.vertices != null)
+                foreach (var v in tri.vertices)
+                {
+                    float d = (v - sp).sqrMagnitude;
+                    if (d < nearestVertex) { nearestVertex = d; nearestPoint = v; }
+                }
+            Debug.Log($"[Boti] {spawnName}: nejblizsi sit {(near ? $"{Vector3.Distance(nearHit.position, spawnMarker.transform.position):0.0} m ({nearHit.position:0.0})" : "NENI do 60 m")}"
+                + $", nejblizsi vrchol {(nearestVertex < float.MaxValue ? $"{Mathf.Sqrt(nearestVertex):0.0} m ({nearestPoint:0.0})" : "zadny")}.");
+        }
         for (int i = 1; i <= MatchManager.CapturePointCount; i++)
         {
             var marker = GameObject.Find($"CapturePoint_{i}");
             if (marker == null) continue;
-            bool on = NavMesh.SamplePosition(marker.transform.position, out var hit, 2.5f, Filter);
-            Debug.Log($"[Boti] Bod {MatchManager.PointNames[i - 1]}: navigacni sit {(on ? $"dosahuje ({Vector3.Distance(hit.position, marker.transform.position):0.0} m)" : "NEDOSAHUJE")}.");
+            // znacka bodu je nad podlahou: najit podlahu pod ni, na ni sit a cestu z nektereho spawnu
+            Vector3 floor = marker.transform.position;
+            if (Physics.Raycast(floor + Vector3.up * 0.5f, Vector3.down, out var ground, 15f, ~0, QueryTriggerInteraction.Ignore))
+                floor = ground.point;
+            bool on = NavMesh.SamplePosition(floor, out var hit, 1.5f, Filter);
+            string path = "bez spawnu";
+            var spawn = GameObject.Find("SpawnPoint_Team0") ?? GameObject.Find("SpawnPoint_Team1");
+            if (on && spawn != null && NavMesh.SamplePosition(spawn.transform.position, out var from, 4f, Filter))
+            {
+                var navPath = new NavMeshPath();
+                NavMesh.CalculatePath(from.position, hit.position, Filter, navPath);
+                path = navPath.status == NavMeshPathStatus.PathComplete ? "cesta ze spawnu VEDE" : "cesta ze spawnu NEVEDE";
+            }
+            Debug.Log($"[Boti] Bod {MatchManager.PointNames[i - 1]}: sit na podlaze {(on ? "ANO" : "NE")}, {path}.");
         }
         Debug.Log($"[Boti] Navigacni sit postavena za {Time.realtimeSinceStartup - started:0.0} s, mist pod strechou: {indoorSpots.Count}.");
+        if (navData == null) Debug.LogWarning("[Boti] Navigacni sit se NEPOSTAVILA.");
+    }
+
+    static void Tune(ref NavMeshBuildSettings settings)
+    {
+        settings.agentRadius = 0.4f;    // (0,6 m zavrelo dvere chaty - boti nemeli kudy dovnitr)
+        settings.agentHeight = 1.85f;   // (zarubne a prostor pod schody)
+        settings.agentClimb = 0.45f;    // prahy a vyssi schody - bot je preskoci
+        settings.agentSlope = 42f;
+        settings.overrideVoxelSize = true;
+        settings.voxelSize = 0.15f;     // jemnejsi mrizka - uzke pruchody (dvere) v siti zustanou
+    }
+
+    // Kolik spawnu (0-2) stoji na prave postavene siti.
+    static int SpawnsOnMesh()
+    {
+        int count = 0;
+        foreach (var spawnName in new[] { "SpawnPoint_Team0", "SpawnPoint_Team1" })
+        {
+            var spawnMarker = GameObject.Find(spawnName);
+            if (spawnMarker != null && NavMesh.SamplePosition(spawnMarker.transform.position, out _, 2.5f, Filter)) count++;
+        }
+        return count;
     }
 
     // Mista uvnitr budov (chaty, kulna...): body navigacni site, nad kterymi je do 6 m strop.

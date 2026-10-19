@@ -5,6 +5,8 @@ using UnityEngine.Playables;
 // 3D model postavy hrdiny (HeroDefinition.characterPrefab) a jeho animace (chuze, beh, skok, smrt, utok).
 // Ostatni hraci ho vidi na tele hrace; majitel jen kdyz je kamera ve 3. osobe (Ohnivy dopad). Animace bezi pres Playables
 // (bez Animator Controlleru) a vychazi z rychlosti pohybu, takze funguje stejne pro majitele i pro ostatni po siti.
+// (pred HeldWeapons: sevreni prstu prepocita celou pozu - pak teprve leva ruka na predpazbi, jinak by ji stahlo)
+[DefaultExecutionOrder(-50)]
 public class CharacterVisual : MonoBehaviour
 {
     PlayerHero hero;
@@ -14,6 +16,7 @@ public class CharacterVisual : MonoBehaviour
 
     // Duch pro prehravani "play of the game" (bez site): stav nastavuje ReplayPlayer.
     public bool IsGhost;
+    public float SleepUntil;   // uspani: do te doby lezi na zemi
     public bool GhostHidden, GhostDead, GhostFrenzy, GhostBlocking;
 
     public void SetFeetOffset(float y)
@@ -76,6 +79,7 @@ public class CharacterVisual : MonoBehaviour
     void OnDestroy()
     {
         DestroyGraph();
+        gripHandler?.Dispose();
     }
 
     public void SetModel(GameObject prefab, Color tint)
@@ -165,6 +169,8 @@ public class CharacterVisual : MonoBehaviour
     public void ClearModel()
     {
         DestroyGraph();
+        gripHandler?.Dispose();   // (sevreni prstu se navaze na novy model)
+        gripHandler = null;
 
         if (ModelRoot != null)
             Destroy(ModelRoot.gameObject);
@@ -361,7 +367,53 @@ public class CharacterVisual : MonoBehaviour
         kickTime = 0f;
     }
 
+    // ---------------- sevreni prstu kolem zbrane (po animaci) ----------------
+
+    // Ktera ruka drzi zbran (nastavuje HeldWeapons): prsty se po animaci sevrou v pest kolem rukojeti.
+    public bool GripRight, GripLeft;
+    HumanPoseHandler gripHandler;
+    HumanPose gripPose;
+    int[] gripRightMuscles, gripLeftMuscles;
+    float[] gripRightValues, gripLeftValues;
+
+    void ApplyGrip()
+    {
+        if ((!GripRight && !GripLeft) || animator == null || !animator.isHuman || ModelRoot == null) return;
+        if (gripHandler == null)
+        {
+            gripHandler = new HumanPoseHandler(animator.avatar, ModelRoot);
+            CollectGripMuscles("Right", out gripRightMuscles, out gripRightValues);
+            CollectGripMuscles("Left", out gripLeftMuscles, out gripLeftValues);
+        }
+        gripHandler.GetHumanPose(ref gripPose);
+        if (GripRight) for (int i = 0; i < gripRightMuscles.Length; i++) gripPose.muscles[gripRightMuscles[i]] = gripRightValues[i];
+        if (GripLeft) for (int i = 0; i < gripLeftMuscles.Length; i++) gripPose.muscles[gripLeftMuscles[i]] = gripLeftValues[i];
+        gripHandler.SetHumanPose(ref gripPose);
+    }
+
+    // Svaly prstu dane ruky: prsty sevrene (Stretched -0,85), palec pritisknuty (-0,35).
+    static void CollectGripMuscles(string side, out int[] indices, out float[] values)
+    {
+        var list = new System.Collections.Generic.List<int>();
+        var vals = new System.Collections.Generic.List<float>();
+        for (int i = 0; i < HumanTrait.MuscleCount; i++)
+        {
+            string name = HumanTrait.MuscleName[i];
+            if (!name.StartsWith(side) || !name.Contains("Stretched")) continue;
+            if (name.Contains("Thumb")) { list.Add(i); vals.Add(-0.35f); }
+            else if (name.Contains("Index") || name.Contains("Middle") || name.Contains("Ring") || name.Contains("Little")) { list.Add(i); vals.Add(-0.85f); }
+        }
+        indices = list.ToArray();
+        values = vals.ToArray();
+    }
+
     void LateUpdate()
+    {
+        LateKick();
+        ApplyGrip();
+    }
+
+    void LateKick()
     {
         if (kickTime < 0f || animator == null || ModelRoot == null) return;
 
@@ -424,9 +476,11 @@ public class CharacterVisual : MonoBehaviour
         UpdateSpeed(dt);
 
         bool dead = IsGhost ? GhostDead : health != null && health.currentHealth.Value <= 0f;
-        if (dead && !wasDead)
+        // uspany (Davidova sipka): spadne na zem jako mrtvy, po probuzeni vstane
+        bool down = dead || Time.time < SleepUntil;
+        if (down && !wasDead)
             stateTimes[Death] = 0f;
-        wasDead = dead;
+        wasDead = down;
 
         bool grounded = IsGrounded();
 
@@ -439,7 +493,7 @@ public class CharacterVisual : MonoBehaviour
             rate[i] = 1f;
         }
 
-        if (dead)
+        if (down)
         {
             target[Death] = 1f;
         }

@@ -160,7 +160,8 @@ public class ReplayCapture : MonoBehaviour
             if (p.IsBoosted) flags |= ReplayPlayerSnap.Boosted;
             if (p.revealed.Value) flags |= ReplayPlayerSnap.Revealed;
             var ezekiel = p.GetComponent<EzekielAbility>();
-            if (ezekiel != null && ezekiel.IsSpawned && ezekiel.IsCasting) flags |= ReplayPlayerSnap.Preaching;
+            bool preaching = ezekiel != null && ezekiel.IsSpawned && ezekiel.IsCasting;
+            if (preaching) flags |= ReplayPlayerSnap.Preaching;
 
             list.Add(new ReplayPlayerSnap
             {
@@ -172,6 +173,10 @@ public class ReplayCapture : MonoBehaviour
                 flags = flags,
                 health = h != null ? h.currentHealth.Value : 0f,
                 maxHealth = h != null ? h.maxHealth : 100f,
+                holyAim = preaching && ezekiel.AimValid,
+                holyPoint = preaching ? ezekiel.Aim : Vector3.zero,
+                holyRadius = preaching ? ezekiel.Radius : 0f,
+                holyProgress = preaching ? ezekiel.CastProgress : 0f,
             });
         }
         frame.players = list.ToArray();

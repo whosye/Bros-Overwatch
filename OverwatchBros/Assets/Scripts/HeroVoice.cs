@@ -34,6 +34,17 @@ public class HeroVoice : MonoBehaviour
 
     bool IsSpeaking => source != null && source.isPlaying;
 
+    // Zacatek "play of the game": vsechny hlasky ze hry (i ultimatky a hudba z toboganu) hned utichnou.
+    public static void SilenceAll()
+    {
+        foreach (var voice in all)
+        {
+            if (voice.source != null) voice.source.Stop();
+            voice.playingUlt = false;
+            voice.playingRide = false;
+        }
+    }
+
     // Kolik jinych hrdinu prave mluvi tak, ze je tento hrac slysi (ultimatky pres celou mapu, ostatni do dosahu hlasu).
     int OthersAudible()
     {
@@ -144,6 +155,7 @@ public class HeroVoice : MonoBehaviour
     // 'pick' je nahodne cislo od serveru, aby vsichni hraci slyseli stejnou nahravku.
     public void Play(HeroDefinition hero, VoiceKind kind, int slot, int pick)
     {
+        if (PotgUI.IsShowing) return;   // behem POTG mluvi jen zaznam
         ReplayLog.Voice(this, kind, slot, pick);
         var lines = Lines(hero, kind, slot);
         if (lines == null || lines.Length == 0) return;
@@ -183,7 +195,7 @@ public class HeroVoice : MonoBehaviour
     // Konkretni nahravka (veta z rozhovoru hrdinu): prerusi jen mene dulezitou hlasku, ultimatku nikdy.
     public void PlayLine(AudioClip clip, int priority)
     {
-        if (clip == null) return;
+        if (clip == null || PotgUI.IsShowing) return;
         bool busy = source != null && source.isPlaying;
         if (busy && (playingUlt || priority < playingPriority)) return;
         EnsureSource();
@@ -222,7 +234,7 @@ public class HeroVoice : MonoBehaviour
     // Hudba jizdy z toboganu (stejny "hlas" hrace - mezitim nemluvi, jen ultimatka ji prerusi).
     public void PlayRide(AudioClip clip)
     {
-        if (clip == null) return;
+        if (clip == null || PotgUI.IsShowing) return;
         if (source != null && source.isPlaying && playingUlt) return;
         EnsureSource();
         source.Stop();

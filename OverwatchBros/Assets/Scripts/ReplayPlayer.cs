@@ -133,6 +133,7 @@ public class ReplayPlayer : MonoBehaviour
         public ParticleSystem holyAura;
         public bool boosted;
         public Light holyLight;
+        public GameObject holyCircle;
     }
 
     readonly Dictionary<int, Ghost> ghosts = new Dictionary<int, Ghost>();
@@ -352,6 +353,16 @@ public class ReplayPlayer : MonoBehaviour
                 if (!preaching && g.holyAura.isPlaying) g.holyAura.Stop(true, ParticleSystemStopBehavior.StopEmitting);
                 g.holyLight.enabled = preaching;
                 if (preaching) g.holyLight.intensity = 2.5f + Mathf.Sin(Time.time * 6f) * 0.7f;
+            }
+
+            // kruh dopadu (ve hre ho videl jen Sindel; v killcamu a POTG ho vidi vsichni)
+            bool aiming = preaching && p.holyAim;
+            if (aiming && g.holyCircle == null)
+                g.holyCircle = EzekielCircleVisual.Create(g.go.transform);
+            if (g.holyCircle != null)
+            {
+                if (g.holyCircle.activeSelf != aiming) g.holyCircle.SetActive(aiming);
+                if (aiming) EzekielCircleVisual.Place(g.holyCircle, p.holyPoint, p.holyRadius, p.holyProgress);
             }
 
             bool rushing = g.visual.GhostFrenzy && alive;

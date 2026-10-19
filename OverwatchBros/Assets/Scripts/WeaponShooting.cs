@@ -108,6 +108,7 @@ public class WeaponShooting : NetworkBehaviour
         charging = false;
         scopedCharge = 0f;
         weapon = newWeapon;
+        burstLeft = 0;
         ammoOverride = 0;
         currentAmmo = newWeapon.maxAmmo;
         ammoInitialized = true;
@@ -144,6 +145,7 @@ public class WeaponShooting : NetworkBehaviour
         if ((fpc != null && (fpc.ShootBlocked || fpc.RushActive || fpc.BlockActive)) || (Bot == null && !GameSettings.CursorLocked))
         {
             charging = false;
+            burstLeft = 0;
             return;
         }
 
@@ -155,7 +157,7 @@ public class WeaponShooting : NetworkBehaviour
         }
 
         // u packy kotle je R "zatopit" (Boiler), ne nabijeni
-        if (Bot == null && Keyboard.current.rKey.wasPressedThisFrame && !Boiler.LocalCanUse)
+        if (Bot == null ? Keyboard.current.rKey.wasPressedThisFrame && !Boiler.LocalCanUse : Bot.ConsumeReload())
         {
             Reload();
             return;
@@ -174,9 +176,26 @@ public class WeaponShooting : NetworkBehaviour
             scopedCharge = 0f;
         }
 
+        // zbytek davky dobehne i po pusteni tlacitka
+        if (burstLeft > 0)
+        {
+            if (Time.time >= nextBurstShot)
+            {
+                burstLeft--;
+                nextBurstShot = Time.time + weapon.burstInterval;
+                Fire(true);
+            }
+            return;
+        }
+
         if (FireHeld && Time.time >= nextFireTime)
             Fire();
     }
+
+    // Davka (Bard): po prvni strele dobehnou dalsi; vsechny strely davky jsou (ne)do taktu podle prvni.
+    int burstLeft;
+    float nextBurstShot;
+    bool burstOnBeat;
 
     // ---------------- odstrel s pribliseni ----------------
 
@@ -341,21 +360,32 @@ public class WeaponShooting : NetworkBehaviour
         held.Swing();
 
         Vector3 direction = playerCamera.transform.forward;
-        FireProjectileServerRpc(playerCamera.transform.position + direction * 0.6f, direction, charge, rapidShot);
+        FireProjectileServerRpc(playerCamera.transform.position + direction * 0.6f, direction, charge, rapidShot, false);
     }
 
-    void Fire()
+    void Fire(bool burstShot = false)
     {
         bool melee = weapon.IsMelee;
 
         if (weapon.HasAmmo && currentAmmo <= 0)
         {
+            burstLeft = 0;
+            if (burstShot) return;
             nextFireTime = Time.time + 0.35f;
             ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.6f);
             return;
         }
 
-        nextFireTime = Time.time + 1f / weapon.fireRate;
+        if (!burstShot)
+        {
+            nextFireTime = Time.time + 1f / weapon.fireRate;
+            burstLeft = Mathf.Max(0, weapon.burstCount - 1);
+            nextBurstShot = Time.time + weapon.burstInterval;
+            // Bard: vystrel do taktu (rytmus) - vetsi poskozeni a lecivy puls spoluhracum
+            burstOnBeat = BardAbility.ShotOnBeat(gameObject);
+            if (burstOnBeat && Bot == null)
+                BardAbility.NoteLocalBeatShot(transform.position);
+        }
         if (weapon.HasAmmo)
             currentAmmo--;
 
@@ -368,7 +398,7 @@ public class WeaponShooting : NetworkBehaviour
         {
             // Projektil: server ho spusti a simuluje, klienti dostanou vizual.
             Vector3 direction = playerCamera.transform.forward;
-            FireProjectileServerRpc(playerCamera.transform.position + direction * 0.6f, direction, 1f, false);
+            FireProjectileServerRpc(playerCamera.transform.position + direction * 0.6f, direction, 1f, false, burstOnBeat);
             return;
         }
 
@@ -692,7 +722,7 @@ public class WeaponShooting : NetworkBehaviour
     static int projectileCounter;
 
     [ServerRpc]
-    void FireProjectileServerRpc(Vector3 origin, Vector3 direction, float charge, bool rapidShot)
+    void FireProjectileServerRpc(Vector3 origin, Vector3 direction, float charge, bool rapidShot, bool onBeat)
     {
         var match = MatchManager.Instance;
         if (match != null && (match.IsOver || match.IsLobby)) return;
@@ -716,6 +746,16 @@ public class WeaponShooting : NetworkBehaviour
 
             speed = rapidOk ? serverWeapon.projectileSpeed : Mathf.Lerp(serverWeapon.minChargeSpeed, serverWeapon.projectileSpeed, charge);
             damage = rapidOk ? hero.rmbAbility.power : Mathf.Lerp(serverWeapon.minChargeDamage, serverWeapon.damage, charge);
+        }
+
+        if (onBeat)
+        {
+            var bard = GetComponent<BardAbility>();
+            if (bard != null && bard.isActiveAndEnabled)
+            {
+                damage *= BardAbility.BeatDamageScale;
+                bard.ServerBeatShot();
+            }
         }
 
         Vector3 velocity = direction * speed;

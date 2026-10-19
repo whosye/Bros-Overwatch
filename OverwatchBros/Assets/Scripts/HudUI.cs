@@ -34,6 +34,18 @@ public class HudUI
     readonly List<GameObject> separators = new List<GameObject>();
     float separatorsFor = -1f;
     readonly Slot[] slots = new Slot[MaxSlots];
+
+    // Portret hrdiny vlevo vedle zivotu: Resources/Portraits/<hero asset>.png, jinak zastupny ctverec s inicialami.
+    RawImage portrait;
+    Image portraitFrame;
+    TextMeshProUGUI portraitInitials;
+    HeroDefinition portraitFor;
+
+    // Ultimatka dole uprostred (kulata); nabita na 100 % - modra zare kolem.
+    Slot ultSlot;
+    Image ultGlow;
+    static readonly Color UltGlowColor = new Color(0.3f, 0.6f, 1f, 1f);
+    static Sprite circleSprite, glowSprite;
     readonly List<PlayerHero.AbilitySlot> abilities = new List<PlayerHero.AbilitySlot>();
 
     // Potvrzeni zasahu: krizek kolem zamerovace, pri zabiti cerveny a k nemu lebka.
@@ -91,6 +103,7 @@ public class HudUI
     GameObject chargeBar;
 
     // Rychlopalba: zbyvajici sipy jako modre kosoctverce pod zamerovacem (po kazdem vystrelu jeden zmizi).
+    Image beatRing, beatTarget;   // Bard: kruh se stahuje k zamerovaci, na uderu ho trefi
     const int MaxRapidPips = 10;
     readonly Image[] rapidPips = new Image[MaxRapidPips];
     TextMeshProUGUI testLabel;
@@ -126,6 +139,7 @@ public class HudUI
         public Vector3 lockPoint;
         public Camera camera;
         public int rapidShots = -1;   // zbyvajici sipy rychlopalby (-1 = neni aktivni)
+        public bool beat;             // Bard: ukazat takt
     }
 
     readonly HudData liveData = new HudData();
@@ -184,14 +198,26 @@ public class HudUI
         vignette.color = new Color(0.85f, 0.05f, 0.05f, 0f);
         UiKit.Stretch(vignette.rectTransform);
 
-        // Zivoty vlevo dole.
+        // Portret hrdiny vlevo dole, zivoty vedle nej.
         var bottomLeft = new Vector2(0f, 0f);
-        nameText = UiKit.MakeText(root.transform, "HeroName", "", 26, TextAlignmentOptions.BottomLeft, bottomLeft,
-            new Vector2(64f, 150f), new Vector2(700f, 36f), UiKit.Muted);
-        healthText = UiKit.MakeText(root.transform, "Health", "", 64, TextAlignmentOptions.BottomLeft, bottomLeft,
-            new Vector2(62f, 84f), new Vector2(500f, 76f));
+        portraitFrame = UiKit.MakeImage(root.transform, "Portrait", Dark, bottomLeft, new Vector2(44f, 50f), new Vector2(124f, 124f));
+        var portraitObject = new GameObject("Picture", typeof(RectTransform), typeof(RawImage));
+        portraitObject.transform.SetParent(portraitFrame.transform, false);
+        portrait = portraitObject.GetComponent<RawImage>();
+        portrait.raycastTarget = false;
+        var portraitRect = portrait.rectTransform;
+        portraitRect.anchorMin = portraitRect.anchorMax = portraitRect.pivot = center;
+        portraitRect.sizeDelta = new Vector2(112f, 112f);
+        portraitInitials = UiKit.MakeText(portraitFrame.transform, "Initials", "", 48, TextAlignmentOptions.Center, center, Vector2.zero, new Vector2(112f, 112f));
+        portraitInitials.fontStyle = FontStyles.Bold;
 
-        var barBackground = UiKit.MakeImage(root.transform, "HealthBar", Dark, bottomLeft, new Vector2(62f, 52f), new Vector2(HealthBarWidth + 6f, 30f));
+        const float hx = 188f;   // zivoty a jmeno vpravo od portretu
+        nameText = UiKit.MakeText(root.transform, "HeroName", "", 26, TextAlignmentOptions.BottomLeft, bottomLeft,
+            new Vector2(hx + 2f, 150f), new Vector2(700f, 36f), UiKit.Muted);
+        healthText = UiKit.MakeText(root.transform, "Health", "", 64, TextAlignmentOptions.BottomLeft, bottomLeft,
+            new Vector2(hx, 84f), new Vector2(500f, 76f));
+
+        var barBackground = UiKit.MakeImage(root.transform, "HealthBar", Dark, bottomLeft, new Vector2(hx, 52f), new Vector2(HealthBarWidth + 6f, 30f));
         healthBar = barBackground.rectTransform;
         healthFill = UiKit.MakeImage(healthBar, "Fill", HealthColor, bottomLeft, new Vector2(3f, 3f), new Vector2(HealthBarWidth, 24f));
         healthFill.rectTransform.pivot = new Vector2(0f, 0f);
@@ -207,6 +233,17 @@ public class HudUI
 
         ammoText = UiKit.MakeText(root.transform, "Ammo", "", 56, TextAlignmentOptions.BottomRight, bottomRight,
             new Vector2(-64f, 206f), new Vector2(600f, 70f));
+
+        // Ultimatka dole uprostred: kulata, vetsi; pod ni zare (pri plnem nabiti pulzuje modre).
+        var bottomCenter = new Vector2(0.5f, 0f);
+        ultGlow = UiKit.MakeImage(root.transform, "UltGlow", new Color(UltGlowColor.r, UltGlowColor.g, UltGlowColor.b, 0f), bottomCenter,
+            new Vector2(0f, 40f), new Vector2(190f, 190f));
+        ultGlow.sprite = GlowSprite;
+        ultSlot = BuildSlot(root.transform, bottomCenter, new Vector2(0f, 75f));
+        ultSlot.root.transform.localScale = Vector3.one * 1.2f;
+        ultSlot.background.sprite = CircleSprite;
+        ultSlot.cooldown.sprite = CircleSprite;
+        ultSlot.readyBar.gameObject.SetActive(false);
 
         // Krizek zasahu: ctyri sikme carky kolem zamerovace.
         var hitObject = new GameObject("HitMarker", typeof(RectTransform));
@@ -257,6 +294,15 @@ public class HudUI
         chargeBar = chargeBackground.gameObject;
         chargeFill = UiKit.MakeImage(chargeBar.transform, "Fill", Color.white, new Vector2(0f, 0.5f), new Vector2(2f, 0f), new Vector2(0f, 6f));
         chargeBar.SetActive(false);
+
+        beatTarget = UiKit.MakeImage(root.transform, "BeatTarget", new Color(1f, 1f, 1f, 0.35f), center, Vector2.zero, new Vector2(34f, 34f));
+        beatTarget.sprite = RingSprite;
+        beatTarget.raycastTarget = false;
+        beatRing = UiKit.MakeImage(root.transform, "BeatRing", new Color(1f, 1f, 1f, 0.5f), center, Vector2.zero, new Vector2(110f, 110f));
+        beatRing.sprite = RingSprite;
+        beatRing.raycastTarget = false;
+        beatTarget.gameObject.SetActive(false);
+        beatRing.gameObject.SetActive(false);
 
         for (int i = 0; i < MaxRapidPips; i++)
         {
@@ -401,6 +447,8 @@ public class HudUI
         d.lockPoint = LockPoint;
         var rapid = hero.GetComponent<RapidFireAbility>();
         d.rapidShots = rapid != null && rapid.enabled && rapid.IsActive ? rapid.ShotsLeft : -1;
+        var bardHud = hero.GetComponent<BardAbility>();
+        d.beat = bardHud != null && bardHud.isActiveAndEnabled && bardHud.crossfade != null;
         Render(d);
     }
 
@@ -455,10 +503,28 @@ public class HudUI
         }
     }
 
+    void UpdateBeat(HudData d)
+    {
+        if (beatRing.gameObject.activeSelf != d.beat) beatRing.gameObject.SetActive(d.beat);
+        if (beatTarget.gameObject.activeSelf != d.beat) beatTarget.gameObject.SetActive(d.beat);
+        if (!d.beat) return;
+        // kruh se stahuje k zamerovaci a na uderu ho dosahne; v okne taktu zezlutne
+        float toBeat = 1f - BardAbility.BeatPhase;
+        bool on = BardAbility.OnBeat;
+        var gold = new Color(1f, 0.85f, 0.3f);
+        beatRing.rectTransform.sizeDelta = Vector2.one * (34f + 76f * toBeat);
+        beatRing.color = on ? new Color(gold.r, gold.g, gold.b, 0.9f) : new Color(1f, 1f, 1f, 0.15f + 0.35f * (1f - toBeat));
+        // trefa do taktu: cilovy kruh blikne a zvetsi se
+        float hit = Mathf.Clamp01(1f - (Time.time - BardAbility.LastLocalBeatShot) / 0.35f);
+        beatTarget.rectTransform.sizeDelta = Vector2.one * (34f + 18f * hit);
+        beatTarget.color = Color.Lerp(new Color(1f, 1f, 1f, 0.35f), gold, hit);
+    }
+
     void Render(HudData d)
     {
         UpdateHealth(d);
         UpdateRapidPips(d);
+        UpdateBeat(d);
         UpdateVignette(d);
         UpdateAbilities(d);
         UpdateHitMarker();
@@ -559,8 +625,25 @@ public class HudUI
 
     void UpdateAbilities(HudData d)
     {
+        UpdatePortrait(d);
+
+        // ultimatka (Q) ma vlastni slot uprostred, ostatni schopnosti zustavaji vpravo
         abilities.Clear();
-        abilities.AddRange(d.slots);
+        PlayerHero.AbilitySlot? ult = null;
+        foreach (var s in d.slots)
+        {
+            if (s.key == "Q" && ult == null) ult = s;
+            else abilities.Add(s);
+        }
+
+        bool hasUlt = ult.HasValue;
+        if (ultSlot.root.activeSelf != hasUlt)
+            ultSlot.root.SetActive(hasUlt);
+        bool ultReady = hasUlt && RenderSlot(ultSlot, ult.Value);
+        float glow = ultReady ? 0.55f + 0.3f * Mathf.Sin(Time.unscaledTime * 4f) : 0f;
+        ultGlow.color = new Color(UltGlowColor.r, UltGlowColor.g, UltGlowColor.b, Mathf.MoveTowards(ultGlow.color.a, glow, Time.unscaledDeltaTime * 3f));
+        ultGlow.gameObject.SetActive(hasUlt);
+        if (hasUlt) ultSlot.background.color = ultReady ? new Color(0.08f, 0.16f, 0.32f, 0.9f) : ultSlot.background.color;
 
         for (int i = 0; i < MaxSlots; i++)
         {
@@ -569,8 +652,14 @@ public class HudUI
             if (slot.root.activeSelf != used)
                 slot.root.SetActive(used);
             if (!used) continue;
+            RenderSlot(slot, abilities[i]);
+        }
+    }
 
-            var info = abilities[i];
+    // Vykresli jeden slot schopnosti; vraci, jestli je schopnost pripravena.
+    bool RenderSlot(Slot slot, PlayerHero.AbilitySlot info)
+    {
+        {
             var icon = info.ability != null ? info.ability.icon : null;
             slot.icon.texture = icon;
             slot.icon.enabled = icon != null;
@@ -594,7 +683,67 @@ public class HudUI
             slot.background.color = info.active ? new Color(UiKit.Accent.r, UiKit.Accent.g, UiKit.Accent.b, 0.85f) : Dark;
             slot.icon.color = info.active ? Color.white : (ready ? Color.white : new Color(1f, 1f, 1f, 0.35f));
             slot.readyBar.enabled = ready;
+            return ready;
         }
+    }
+
+    void UpdatePortrait(HudData d)
+    {
+        if (d.hero == portraitFor) return;
+        portraitFor = d.hero;
+        var picture = d.hero != null ? Resources.Load<Texture2D>("Portraits/" + d.hero.name) : null;
+        portrait.texture = picture;
+        portrait.enabled = picture != null;
+        // zastupny portret: barva hrdiny a inicialy (dokud neni obrazek)
+        string heroName = d.hero != null ? d.hero.heroName : "";
+        portraitInitials.text = picture == null && heroName.Length > 0 ? heroName.Substring(0, Mathf.Min(2, heroName.Length)).ToUpperInvariant() : "";
+        Color heroColor = d.hero != null ? d.hero.color : Color.gray;
+        portraitFrame.color = picture == null ? new Color(heroColor.r * 0.7f, heroColor.g * 0.7f, heroColor.b * 0.7f, 0.9f) : Dark;
+    }
+
+    // Kruh (pro kulaty slot ultimatky) a mekka zare kolem nej - generovane, bez textur v projektu.
+    static Sprite CircleSprite => circleSprite != null ? circleSprite : (circleSprite = RadialSprite(128, 0.98f, 1f));
+    static Sprite GlowSprite => glowSprite != null ? glowSprite : (glowSprite = RadialSprite(128, 0.35f, 1f));
+    static Sprite ringSprite;
+
+    // Tenky prstenec (takt Barda).
+    static Sprite RingSprite
+    {
+        get
+        {
+            if (ringSprite != null) return ringSprite;
+            const int size = 128;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+            var pixels = new Color[size * size];
+            float half = (size - 1) * 0.5f;
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float d = Mathf.Sqrt((x - half) * (x - half) + (y - half) * (y - half)) / half;
+                    float a = Mathf.Clamp01(1f - Mathf.Abs(d - 0.92f) / 0.06f);
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, a);
+                }
+            texture.SetPixels(pixels);
+            texture.Apply();
+            return ringSprite = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f));
+        }
+    }
+
+    static Sprite RadialSprite(int size, float solidTo, float fadeTo)
+    {
+        var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+        var pixels = new Color[size * size];
+        float half = (size - 1) * 0.5f;
+        for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                float d = Mathf.Sqrt((x - half) * (x - half) + (y - half) * (y - half)) / half;
+                float a = d <= solidTo ? 1f : 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(solidTo, fadeTo, d));
+                pixels[y * size + x] = new Color(1f, 1f, 1f, a);
+            }
+        texture.SetPixels(pixels);
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f));
     }
 
     static Texture2D VignetteTexture()

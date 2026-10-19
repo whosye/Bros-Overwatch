@@ -24,6 +24,10 @@ public class WeaponDefinition : ScriptableObject
     public float damage = 10f;
     public float fireRate = 8f;
     public int maxAmmo = 12;
+    [Tooltip("Davka: kolik strel vyleti na jedno stisknuti (1 = jednotlive). fireRate je pak pocet davek za sekundu.")]
+    public int burstCount = 1;
+    [Tooltip("Rozestup strel v davce (s).")]
+    public float burstInterval = 0.07f;
 
     [Header("Přebíjení (R, nebo samo při prázdném zásobníku)")]
     [Tooltip("Jak dlouho trva prebiti (s). Behem prebijeni nejde strilet.")]

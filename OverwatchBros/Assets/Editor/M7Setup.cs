@@ -211,7 +211,7 @@ public static class M7Setup
         { "Assets/Data/Flash_Data.asset", "Assets/Resources/Icons/viktor_flash.png" },
         { "Assets/Data/SleepDart_Data.asset", "Assets/Resources/Icons/anna_sleep.png" },
         { "Assets/Data/BioticGrenade_Data.asset", "Assets/Resources/Icons/anna_grenade.png" },
-        { "Assets/Data/NanoBoost_Data.asset", "Assets/Resources/Icons/anna_nano.png" },
+        { "Assets/Data/NanoBoost_Data.asset", "Assets/Resources/Icons/david_monster.png" },
         { "Assets/Data/Grapple_Data.asset", "Assets/Resources/Icons/sniper_grapple.png" },
         { "Assets/Data/Kick_Data.asset", "Assets/Resources/Icons/sniper_kick.png" },
         { "Assets/Data/Infra_Data.asset", "Assets/Resources/Icons/sniper_infra.png" },
@@ -638,7 +638,7 @@ public static class M7Setup
             a.abilityName = "Uspávací šipka";
             a.cooldown = 12f;
             a.power = 5f;        // drobne poskozeni pri zasahu
-            a.duration = 3f;     // jak dlouho cil spi (zasah ho probudi)
+            a.duration = 3f;     // jak dlouho cil spi (nic ho neprobudi)
             a.range = 50f;
             a.speed = 90f;
         });
@@ -660,13 +660,13 @@ public static class M7Setup
             a.cooldown = 30f;
             a.ultCost = 400f;
             a.power = 50f;       // okamzite vyleceni posileneho
-            a.duration = 8f;
+            a.duration = 12f;
             a.range = 45f;
         });
 
         LoadOrCreate<HeroDefinition>("Assets/Resources/Heroes/Anna.asset", h =>
         {
-            h.heroName = "Anna";
+            h.heroName = "David";
             h.color = new Color(0.35f, 0.75f, 0.85f);
             h.maxHealth = 100f;
             h.weapon = rifle;
@@ -838,9 +838,11 @@ public static class M7Setup
             w.weaponName = "Zvukomet";
             w.fireMode = FireMode.Projectile;
             w.heldModel = HeldModel.Gun;
-            w.damage = 16f;
-            w.fireRate = 4.5f;
+            w.damage = 14f;
+            w.fireRate = 1.15f;     // davek za sekundu
             w.maxAmmo = 20;
+            w.burstCount = 4;       // davka 4 zvukovych strel (jako Lucio)
+            w.burstInterval = 0.07f;
             w.reloadTime = 1.5f;
             w.range = 100f;
             w.projectileSpeed = 50f;
@@ -869,7 +871,7 @@ public static class M7Setup
 
         var concert = LoadOrCreate<AbilityDefinition>("Assets/Data/Concert_Data.asset", a =>
         {
-            a.abilityName = "Koncert";
+            a.abilityName = "Drop the Beat";
             a.cooldown = 30f;
             a.ultCost = 450f;
             a.power = 120f;      // stit kazdemu spoluhraci

@@ -18,6 +18,9 @@ public struct ReplayPlayerSnap
     public float yaw;
     public byte flags;        // ReplayPlayerFlags
     public float health, maxHealth;
+    public bool holyAim;          // Sindel pri kazani: kam miri (kruh dopadu)
+    public Vector3 holyPoint;
+    public float holyRadius, holyProgress;
 
     public const byte Alive = 1, Rushing = 2, Blocking = 4, Boosted = 8, Hidden = 16, Revealed = 32, Preaching = 64;
 }
@@ -130,7 +133,7 @@ public class ReplayEvent
 
 public class ReplayClip
 {
-    public const int Version = 3;
+    public const int Version = 4;
 
     public int povId;
     public float duration;
@@ -286,6 +289,13 @@ public class ReplayClip
             w.Write(p.flags);
             w.Write(p.health);
             w.Write(p.maxHealth);
+            w.Write(p.holyAim);
+            if (p.holyAim)
+            {
+                WriteV(w, p.holyPoint);
+                w.Write(p.holyRadius);
+                w.Write(p.holyProgress);
+            }
         }
 
         WriteV(w, f.cameraPosition);
@@ -361,11 +371,19 @@ public class ReplayClip
 
         f.players = new ReplayPlayerSnap[r.ReadByte()];
         for (int i = 0; i < f.players.Length; i++)
+        {
             f.players[i] = new ReplayPlayerSnap
             {
                 id = r.ReadInt32(), hero = r.ReadInt16(), team = r.ReadByte(), position = ReadV(r), yaw = r.ReadSingle(), flags = r.ReadByte(),
-                health = r.ReadSingle(), maxHealth = r.ReadSingle(),
+                health = r.ReadSingle(), maxHealth = r.ReadSingle(), holyAim = r.ReadBoolean(),
             };
+            if (f.players[i].holyAim)
+            {
+                f.players[i].holyPoint = ReadV(r);
+                f.players[i].holyRadius = r.ReadSingle();
+                f.players[i].holyProgress = r.ReadSingle();
+            }
+        }
 
         f.cameraPosition = ReadV(r);
         f.cameraRotation = ReadQ(r);

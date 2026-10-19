@@ -39,6 +39,8 @@ public class SleepDartAbility : NetworkBehaviour
         var eye = fpc.playerCamera.transform;
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.45f);
         GetComponent<PlayerHero>().SayAbility(ability);
+        var held = GetComponent<HeldWeapons>();
+        if (held != null) held.ShowDartPistol();
         FireServerRpc(eye.position, eye.forward);
     }
 
