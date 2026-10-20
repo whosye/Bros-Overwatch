@@ -17,6 +17,7 @@ public class MatchUI : MonoBehaviour
     TextMeshProUGUI infoText;
     TextMeshProUGUI abilityText;
     TextMeshProUGUI connectingText;
+    TextMeshProUGUI respawnText;
     TextMeshProUGUI endTitle;
     TextMeshProUGUI endHint;
     GameObject endPanel;
@@ -88,6 +89,11 @@ public class MatchUI : MonoBehaviour
         canvasObject.AddComponent<GraphicRaycaster>();
 
         var root = canvasObject.transform;
+
+        // odpocet do oziveni (po smrti)
+        respawnText = UiKit.MakeText(root, "Respawn", "", 44, TextAlignmentOptions.Center, new Vector2(0.5f, 0.5f),
+            new Vector2(0f, -250f), new Vector2(900f, 70f));
+        respawnText.gameObject.SetActive(false);
         var center = new Vector2(0.5f, 0.5f);
 
         // Below the HUD and all menus: the optic never covers health, charge or hit feedback.
@@ -284,6 +290,7 @@ public class MatchUI : MonoBehaviour
             localHero = network.LocalClient.PlayerObject.GetComponent<PlayerHero>();
 
         bool hasPlayer = localHero != null && match != null && match.IsSpawned;
+        UpdateRespawnCountdown(localHero, match);
         // Lobby vidi vsichni pred zapasem a taky hrac, ktery se pripojil do rozehraneho zapasu a jeste si vybira.
         bool joining = hasPlayer && !match.IsLobby && localHero.IsJoining;
         bool inLobby = hasPlayer && (match.IsLobby || joining);
@@ -357,6 +364,17 @@ public class MatchUI : MonoBehaviour
             headBobSlider.interactable = GameSettings.HeadBobEnabled;
             headBobText.text = $"Intenzita pohupování: {Mathf.RoundToInt(GameSettings.HeadBobIntensity * 100f)} %";
         }
+    }
+
+    void UpdateRespawnCountdown(PlayerHero localHero, MatchManager match)
+    {
+        if (respawnText == null) return;
+        var health = localHero != null ? localHero.GetComponent<Health>() : null;
+        float left = PlayerRespawn.LocalRespawnAt - Time.time;
+        bool show = health != null && health.currentHealth.Value <= 0f && left > 0f
+            && match != null && !match.IsLobby && !match.IsOver && !PotgUI.IsShowing;
+        if (respawnText.gameObject.activeSelf != show) respawnText.gameObject.SetActive(show);
+        if (show) respawnText.text = $"OŽIVENÍ ZA <color=#F28C1A>{Mathf.CeilToInt(left)}</color> s";
     }
 
     void UpdateScope(PlayerHero localHero, bool allowed)

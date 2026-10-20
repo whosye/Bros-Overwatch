@@ -384,7 +384,7 @@ public static class M7Setup
         {
             a.abilityName = "Balvan";
             a.cooldown = 30f;
-            a.power = 150f;
+            a.power = 200f;
             a.radius = 7f;
             a.knockback = 14f;
             a.duration = 10f;

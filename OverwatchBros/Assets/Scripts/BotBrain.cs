@@ -1175,6 +1175,33 @@ public class BotBrain : MonoBehaviour
 
     Vector3 hotspot;
     float nextHotspotSwitch;
+
+    // Po prepnuti mapy (MatchManager.ApplyMap): vsechna mista z predchozi mapy zapomenout.
+    public static void ForgetMap()
+    {
+        trails.Clear();
+        foreach (var bot in All)
+        {
+            if (bot == null) continue;
+            bot.path.Clear();
+            bot.corner = 0;
+            bot.pathIncomplete = true;
+            bot.nextRepath = 0f;
+            bot.hotspot = Vector3.zero;
+            bot.nextHotspotSwitch = 0f;
+            bot.wanderGoal = bot.transform.position;
+            bot.nextWander = 0f;
+            bot.objectiveSpot = Vector3.zero;
+            bot.nextObjectiveSpot = 0f;
+            bot.supportSpot = Vector3.zero;
+            bot.nextSupportSpot = 0f;
+            bot.combatSpot.valid = false;
+            bot.watchSpot.valid = false;
+            bot.detourUntil = 0f;
+            bot.huntTarget = null;
+            bot.reportedOffMesh = false;
+        }
+    }
     PlayerHero huntTarget;   // koho prave lovi (deathmatch, kdyz ho nevidi)
 
     // Deathmatch: oblast nahodneho nepritele (s nepresnosti), kdyz zadny neni, klicove misto mapy.
@@ -1297,6 +1324,7 @@ public class BotBrain : MonoBehaviour
         path.Clear();
         corner = 0;
         pathIncomplete = true;
+        if (!BotNavigation.Ready) BotNavigation.EnsureBuilt();
         if (!BotNavigation.Ready) return;
         if (!NavMesh.SamplePosition(from, out var start, 3f, BotNavigation.Filter))
         {
@@ -1465,7 +1493,17 @@ public static class BotNavigation
 
     // Jen mapa: podstavec lobby a scena uvodu POTG lezi kilometry pod mapou - kdyby se zapocitaly, sit by mela
     // tisice metru na vysku a nepostavila by se (boti pak nemaji kudy chodit).
-    static readonly Bounds MapBounds = new Bounds(new Vector3(0f, 20f, 30f), new Vector3(600f, 200f, 600f));
+    static Bounds MapBounds => MatchManager.ActiveMapBounds;
+
+    // Po prepnuti mapy: sit se postavi znovu (pri dalsim pouziti).
+    public static void Invalidate()
+    {
+        nextBuildAttempt = 0f;
+        if (navInstance.valid) navInstance.Remove();
+        navInstance = default;
+        navData = null;
+        indoorSpots.Clear();
+    }
 
     // Vlastni typ agenta: jako postava hrace (polomer 0,4 m - projde dvermi, vyska 1,85 m, schod jen 0,3 m, svah 42 st.).
     // Vychozi "Humanoid" pocita se schodem 0,75 m - sit pak vedla i pres hrany, ktere postava nevyjde.
@@ -1482,9 +1520,12 @@ public static class BotNavigation
         indoorSpots.Clear();
     }
 
+    static float nextBuildAttempt;
+
     public static void EnsureBuilt()
     {
-        if (Ready) return;
+        if (Ready || Time.realtimeSinceStartup < nextBuildAttempt) return;
+        nextBuildAttempt = Time.realtimeSinceStartup + 5f;   // (kdyz se nepovede, nezkouset kazdy snimek)
 
         // postavy hracu do site nepatri (byly by v ni diry)
         var controllers = Object.FindObjectsByType<CharacterController>();
@@ -1519,7 +1560,7 @@ public static class BotNavigation
         var tuned = NavMesh.GetSettingsByID(0);
         Tune(ref tuned);
         var humanoid = NavMesh.GetSettingsByID(0);
-        var attempts = new[] { (custom, "vlastni agent"), (tuned, "Humanoid upraveny"), (humanoid, "Humanoid vychozi") };
+        var attempts = new[] { (tuned, "Humanoid upraveny"), (custom, "vlastni agent"), (humanoid, "Humanoid vychozi") };
         foreach (var (settings, label) in attempts)
         {
             if (settings.agentTypeID < 0) continue;

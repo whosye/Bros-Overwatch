@@ -142,7 +142,7 @@ public partial class MatchManager
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void ResetKillHeight()
+    public static void ResetKillHeight()
     {
         killHeight = float.NaN;
     }

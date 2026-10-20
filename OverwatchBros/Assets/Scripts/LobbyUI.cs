@@ -22,6 +22,7 @@ public class LobbyUI
     Button startButton;
     Button enterButton;
     Button modeButton;
+    Button mapButton;
     Button testButton;
     Button musicButton;
     TextMeshProUGUI waitText;
@@ -106,7 +107,10 @@ public class LobbyUI
         botRemoveButton = UiKit.MakeButton(Root.transform, "ODEBRAT BOTY", topLeft, new Vector2(16f, -118f), new Vector2(300f, 46f),
             () => MatchManager.Instance?.ServerRemoveBots(), new Color(0.45f, 0.18f, 0.18f, 1f), 22f);
 
-        modeButton = UiKit.MakeButton(Root.transform, "REŽIM", center, new Vector2(-40f, -352f), new Vector2(760f, 56f),
+        // Mapa (vlevo) a rezim (vpravo) - voli host
+        mapButton = UiKit.MakeButton(Root.transform, "MAPA", center, new Vector2(-470f, -352f), new Vector2(600f, 56f),
+            NextMap, UiKit.ButtonBase, 28f);
+        modeButton = UiKit.MakeButton(Root.transform, "REŽIM", center, new Vector2(250f, -352f), new Vector2(780f, 56f),
             ToggleMode, UiKit.ButtonBase, 28f);
 
         UiKit.MakeButton(Root.transform, "OPUSTIT HRU", center, new Vector2(-640f, -430f), new Vector2(380f, 80f),
@@ -166,6 +170,12 @@ public class LobbyUI
             : "REŽIM:  <color=#F28C1A>TEAM DEATHMATCH</color>");
         modeButton.interactable = isHost && !joining;
 
+        int map = match != null ? match.MapIndex : MatchManager.MapChaty;
+        bool mapReady = MatchManager.MapReady(map);
+        UiKit.SetButtonLabel(mapButton, $"MAPA:  <color=#F28C1A>{MatchManager.MapNames[map].ToUpperInvariant()}</color>"
+            + (mapReady ? "" : "  <size=70%><color=#B0B4C0>(ve výstavbě)</color></size>"));
+        mapButton.interactable = isHost && !joining;
+
         bool testOn = match != null && match.testCooldowns.Value;
         UiKit.SetButtonLabel(testButton, testOn ? "TESTOVACÍ COOLDOWNY 1 s: <color=#7CFC9A>ZAP</color>" : "TESTOVACÍ COOLDOWNY 1 s: VYP");
         UiKit.SetButtonColor(testButton, testOn ? new Color(0.20f, 0.42f, 0.26f, 1f) : UiKit.ButtonBase);
@@ -178,6 +188,8 @@ public class LobbyUI
         scoreMinus.gameObject.SetActive(isHost && !joining);
         scorePlus.gameObject.SetActive(isHost && !joining);
         startButton.gameObject.SetActive(isHost && !joining);
+        startButton.interactable = mapReady;
+        UiKit.SetButtonLabel(startButton, mapReady ? "START ZÁPASU" : "MAPA NENÍ HOTOVÁ");
         enterButton.gameObject.SetActive(joining);
         waitText.gameObject.SetActive(!isHost && !joining);
 
@@ -319,6 +331,13 @@ public class LobbyUI
         var match = MatchManager.Instance;
         if (match != null)
             match.SetTestCooldowns(!match.testCooldowns.Value);
+    }
+
+    void NextMap()
+    {
+        var match = MatchManager.Instance;
+        if (match != null)
+            match.SetMap((match.MapIndex + 1) % MatchManager.MapNames.Length);
     }
 
     void ToggleMode()

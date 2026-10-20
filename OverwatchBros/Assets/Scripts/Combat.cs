@@ -17,12 +17,20 @@ public static class Combat
     {
         Vector3 to = target.bounds.center;
         if (Vector3.Distance(from, to) < 1.5f) return true;
-        if (!Physics.Linecast(from, to, out RaycastHit hit, ~0, QueryTriggerInteraction.Ignore)) return true;
 
-        if (hit.collider == target) return true;
-
+        // Kryje jen zed nebo predmet - jiny hrac v ceste neni stit (vybuch i odhozeni dostane i ten za nim).
+        Vector3 delta = to - from;
+        var hits = Physics.RaycastAll(from, delta.normalized, delta.magnitude, ~0, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         var targetOwner = target.GetComponentInParent<NetworkObject>();
-        return targetOwner != null && hit.collider.GetComponentInParent<NetworkObject>() == targetOwner;
+        foreach (var hit in hits)
+        {
+            if (hit.collider == target) return true;
+            if (targetOwner != null && hit.collider.GetComponentInParent<NetworkObject>() == targetOwner) return true;
+            if (hit.collider.GetComponentInParent<PlayerHero>() != null) continue;
+            return false;
+        }
+        return true;
     }
 
     // Prime poskozeni hrace (jen server). Vlastni tym se neraní. Kdyz zasah zabije, pripise se kill utocnikovi.

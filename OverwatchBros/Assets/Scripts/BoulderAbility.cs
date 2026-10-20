@@ -10,6 +10,7 @@ public class BoulderAbility : NetworkBehaviour
     public AbilityDefinition ability;
     public float boulderHealth = 100f;
     public float boulderRadius = 0.6f;
+    const float EdgeDamage = 0.5f;   // na okraji vybuchu polovina poskozeni (drive 0,3)
     public float jumpSpeed = 7f;
     public float gravity = 20f;
     public float cameraDistance = 5f;
@@ -313,7 +314,7 @@ public class BoulderAbility : NetworkBehaviour
             recorder.ServerNoteUltimate();
 
         Vector3 center = point + Vector3.up * boulderRadius;
-        Combat.Explode(gameObject, center, ability.radius, ability.power, 0.3f, null, Combat.AbilitySource(ability));
+        Combat.Explode(gameObject, center, ability.radius, ability.power, EdgeDamage, null, Combat.AbilitySource(ability));
         Combat.Knockback(gameObject, center, ability.radius, ability.knockback, 1f);
         ExplodeFxClientRpc(center);
     }

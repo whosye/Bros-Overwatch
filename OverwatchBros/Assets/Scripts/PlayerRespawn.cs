@@ -36,10 +36,21 @@ public class PlayerRespawn : NetworkBehaviour
         health.OnDeath -= HandleDeath;
     }
 
+    // Doba oziveni po smrti (jako v Overwatchi); killcam se prehraje behem ni.
+    public const float RespawnSeconds = 10f;
+
+    // Kdy se ozivi mistni hrac (odpocet na obrazovce); -1 = nezije se na nic.
+    public static float LocalRespawnAt = -1f;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatics() => LocalRespawnAt = -1f;
+
     void HandleDeath()
     {
-        // oziveni az po killcamu (Killcam.RespawnDelay)
-        Invoke(nameof(Respawn), Mathf.Max(respawnDelay, Killcam.RespawnDelay));
+        float delay = Mathf.Max(RespawnSeconds, respawnDelay, Killcam.RespawnDelay);
+        Invoke(nameof(Respawn), delay);
+        if (IsOwner && !BotBrain.IsBot(gameObject))
+            LocalRespawnAt = Time.time + delay;
     }
 
     void Respawn()
@@ -48,6 +59,8 @@ public class PlayerRespawn : NetworkBehaviour
 
         Teleport();
         health.ResetHealth();
+        if (IsOwner && !BotBrain.IsBot(gameObject))
+            LocalRespawnAt = -1f;
         Debug.Log("Respawn.");
 
         var hero = GetComponent<PlayerHero>();

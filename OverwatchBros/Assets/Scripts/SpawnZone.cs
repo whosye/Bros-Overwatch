@@ -10,6 +10,12 @@ public static class SpawnZone
     static readonly GameObject[] rings = new GameObject[PlayerTeam.TeamCount];
     static readonly Transform[] sceneSpawns = new Transform[PlayerTeam.TeamCount];
 
+    // Po prepnuti mapy: zapomenout spawny predchozi mapy.
+    public static void ResetCache()
+    {
+        for (int i = 0; i < sceneSpawns.Length; i++) sceneSpawns[i] = null;
+    }
+
     // Stred zakladny tymu (misto oziveni).
     public static bool TryGetCenter(int team, out Vector3 center)
     {

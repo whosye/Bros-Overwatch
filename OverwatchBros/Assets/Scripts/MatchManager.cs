@@ -47,6 +47,7 @@ public partial class MatchManager : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
+        ApplyMap(MapChaty);   // po odpojeni zpet puvodni mapa (menu, dalsi hra)
         testCooldowns.OnValueChanged -= OnTestCooldownsChanged;
         AbilityDefinition.TestCooldowns = false;
     }
@@ -63,6 +64,10 @@ public partial class MatchManager : NetworkBehaviour
     {
         testCooldowns.OnValueChanged += OnTestCooldownsChanged;
         AbilityDefinition.TestCooldowns = testCooldowns.Value;
+
+        // Klient pripojeny do rozehraneho zapasu: hned na mapu, na ktere se hraje.
+        if (!IsServer && !IsLobby)
+            ApplyMap(MapIndex);
 
         // Klient pripojeny do rozehraneho zapasu si vyzada mista oziveni (rezim utok a obrana).
         if (!IsServer)
@@ -298,6 +303,12 @@ public partial class MatchManager : NetworkBehaviour
     public void StartMatch()
     {
         if (!IsServer) return;
+        if (!SelectedMapReady)
+        {
+            Debug.LogWarning($"[Mapa] {MapName} jeste neni postavena - zapas nejde spustit.");
+            return;
+        }
+        ServerApplyMap();
 
         phase.Value = PhasePlaying;
         ResetRound();
