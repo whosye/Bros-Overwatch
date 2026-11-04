@@ -210,6 +210,24 @@ public class FirstPersonArms
         SolveArm(arm, grip, holder, cameraRoot.TransformDirection(new Vector3(0.7f * arm.side, -1f, -0.3f)), underhand, underhand || stretch);
     }
 
+    // Leva pest s natazenym ukazovackem (Mosinovo gesto pri zesileni), nebo zpet sevrena pest.
+    public void PointLeftIndex(bool on)
+    {
+        var animator = rig != null ? rig.GetComponent<Animator>() : null;
+        if (animator == null || animator.avatar == null) return;
+        var handler = new HumanPoseHandler(animator.avatar, rig.transform);
+        var pose = new HumanPose();
+        handler.GetHumanPose(ref pose);
+        for (int i = 0; i < HumanTrait.MuscleCount && i < pose.muscles.Length; i++)
+        {
+            string name = HumanTrait.MuscleName[i];
+            if (name.StartsWith("LeftHand.Index") && name.Contains("Stretched"))
+                pose.muscles[i] = on ? 0.7f : -0.85f;
+        }
+        handler.SetHumanPose(ref pose);
+        handler.Dispose();
+    }
+
     // Vrati paze do vychozi pozy (mimo obraz) - napr. prava ruka luku, kdyz se zrovna nenatahuje.
     public void ResetArm(bool right)
     {

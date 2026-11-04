@@ -230,10 +230,22 @@ public class ProjectileSim : MonoBehaviour
             trapHit.Damage(shooter.gameObject, hitDamage);
 
         var health = collider.GetComponentInParent<Health>();
+        var shooterHero = shooter.GetComponent<PlayerHero>();
         if (health != null && weapon.allyHeal > 0f && Combat.SameTeam(shooter.gameObject, health.gameObject))
-            Combat.HealPlayer(shooter.gameObject, health, weapon.allyHeal);
+        {
+            // obcas hlaska k leceni (David)
+            if (Combat.HealPlayer(shooter.gameObject, health, weapon.allyHeal) > 0f && shooterHero != null)
+                shooterHero.SayOccasionally(VoiceKind.Heal, 0.5f, 10f, 18f);
+        }
         else if (health != null && hitDamage > 0f)
+        {
+            float before = health.Effective;
             Combat.DamagePlayer(shooter.gameObject, health, hitDamage, weapon.IsCharged ? "weapon:bow" : "weapon:gun");
+            // zasah do hlavy (horni cast kapsle): jen hlaska, poskozeni se nemeni; pri zabiti mluvi hlaska k zabiti
+            bool hurt = health.Effective < before;
+            if (hurt && health.currentHealth.Value > 0f && shooterHero != null && point.y >= collider.bounds.max.y - WeaponShooting.HeadHeight)
+                shooterHero.SayOccasionally(VoiceKind.Headshot, 0.7f, 6f, 12f);
+        }
 
         bool embedArrow = weapon.IsCharged && BulletHoleDecals.CanMark(collider);
         Finish(point, KindHit, normal, velocity.normalized, embedArrow);

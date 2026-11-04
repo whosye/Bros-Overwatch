@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8a39f21388b7624d84e663cff5b4ed3, type: 3}
   m_Name: Sniper
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
-  heroName: Sniper
+  heroName: "Konduli\u010D"
   color: {r: 0.75, g: 0.3, b: 0.35, a: 1}
   maxHealth: 90
   weapon: {fileID: 11400000, guid: 0e445e55f8bb1334a8b95911d17091c9, type: 2}
@@ -27,16 +27,47 @@ MonoBehaviour:
   rmbAbility: {fileID: 0}
   doubleJump: 0
   ledgeClimb: 0
+  moveSpeed: 1
+  lifesteal: 0
+  takedownCooldownCut: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 5910829736394420469, guid: 7de1140a1a4f4a3499ad84de0507cfe4, type: 3}
   tintCharacter: 1
+  animations: {fileID: 0}
   sleeveColor: {r: 0.2, g: 0.18, b: 0.22, a: 1}
   skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
-  spawnLines: []
-  killLines: []
-  deathLines: []
-  hurtLines: []
-  idleLines: []
-  snareLines: []
+  spawnLines:
+  - {fileID: 8300000, guid: d0c8c5f107246604cbfee8d4b4ccc255, type: 3}
+  - {fileID: 8300000, guid: 7a67efd2de264af499f24de20df4a229, type: 3}
+  - {fileID: 8300000, guid: 65e188d2ca99e144f89431d80bf400f8, type: 3}
+  killLines:
+  - {fileID: 8300000, guid: 9f93fcd1911a18d40b8043ded3c58b67, type: 3}
+  - {fileID: 8300000, guid: 7260746fab9f0cb4997f1234d61936dc, type: 3}
+  - {fileID: 8300000, guid: 48a85bd5ed1806544a73b1bcdf8c01f6, type: 3}
+  - {fileID: 8300000, guid: 957448809ba0f9d4aac81fd6544d9321, type: 3}
+  deathLines:
+  - {fileID: 8300000, guid: fff5cbcfa3ba38a4b8f4969ed85ba61f, type: 3}
+  - {fileID: 8300000, guid: 13fbb8d7b3682b2408be56c61c8a53db, type: 3}
+  hurtLines:
+  - {fileID: 8300000, guid: 1ac891dbb0ed3de49a2ee6ff4a534358, type: 3}
+  - {fileID: 8300000, guid: 0ca224b4b11d3fd45a11ed62fc01cc75, type: 3}
+  - {fileID: 8300000, guid: 7f4dc00b2355ff341b32bb6cd9c84ac3, type: 3}
+  idleLines:
+  - {fileID: 8300000, guid: f009aee2c68cc46499a767f0305bfd0f, type: 3}
+  - {fileID: 8300000, guid: 9998703b67e6f3744944235133e7771a, type: 3}
+  - {fileID: 8300000, guid: 16a74e85c60fb65409cf24b0c746ccf2, type: 3}
+  - {fileID: 8300000, guid: b9173683605cec24180b8b2a94f32eb6, type: 3}
+  - {fileID: 8300000, guid: eacf8f82511e4064bbf7855d4c139452, type: 3}
+  snareLines:
+  - {fileID: 8300000, guid: db9bcfad6dc70ba49907042bc72f046d, type: 3}
+  - {fileID: 8300000, guid: 8fe7d031e1d888d4595bfaf92520c611, type: 3}
+  attackLines:
+  - {fileID: 8300000, guid: 7823507d295fd4244bc03278200c6413, type: 3}
+  - {fileID: 8300000, guid: a09dcc2d57e87a3459b828beff5d3582, type: 3}
+  - {fileID: 8300000, guid: 0704775b9f55f004ab3718cc1ebff01c, type: 3}
+  healLines: []
+  headshotLines: []
+  missLines: []
+  scopeLines: []

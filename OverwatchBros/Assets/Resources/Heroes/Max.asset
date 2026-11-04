@@ -33,10 +33,11 @@ MonoBehaviour:
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
-  characterPrefab: {fileID: 2650966028610993166, guid: 4800a86dc5fbf4e44bed13ccf85fa714, type: 3}
-  tintCharacter: 1
-  sleeveColor: {r: 0.16, g: 0.1, b: 0.22, a: 1}
-  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
+  characterPrefab: {fileID: 6356481806310631466, guid: b8ceb05c85416664d8ede2cd801e9037, type: 3}
+  tintCharacter: 0
+  animations: {fileID: 0}
+  sleeveColor: {r: 0.17, g: 0.16, b: 0.16, a: 1}
+  skinColor: {r: 0.85, g: 0.65, b: 0.55, a: 1}
   spawnLines:
   - {fileID: 8300000, guid: eeab4db782a13a642b214b30141d19dd, type: 3}
   killLines:
@@ -63,3 +64,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 815deb9529f48b34f9968439976fc66a, type: 3}
   attackLines:
   - {fileID: 8300000, guid: 4e05ea0fe82cc4149adb529473ee854d, type: 3}
+  healLines: []
+  headshotLines: []
+  missLines: []
+  scopeLines: []

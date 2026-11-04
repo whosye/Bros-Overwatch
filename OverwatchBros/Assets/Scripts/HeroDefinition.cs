@@ -87,6 +87,8 @@ public class HeroDefinition : ScriptableObject
     public GameObject characterPrefab;
     [Tooltip("Zabarvit telo postavy barvou hrdiny. Vypnout u postav s vlastnimi texturami (napr. podle fotky).")]
     public bool tintCharacter = true;
+    [Tooltip("Vlastni animace hrdiny (napr. strelba z luku). Prazdna policka = spolecna sada Resources/Characters/CharacterAnimations.")]
+    public CharacterAnimSet animations;
 
     [Header("Ruce v pohledu z první osoby")]
     public Color sleeveColor = new Color(0.25f, 0.27f, 0.32f);
@@ -107,4 +109,12 @@ public class HeroDefinition : ScriptableObject
     public AudioClip[] snareLines;
     [Tooltip("Kdyz strili po nepriteli a trefuje ho (obcas, nejvys jednou za nekolik sekund).")]
     public AudioClip[] attackLines;
+    [Tooltip("Kdyz zbrani vyleci spoluhrace (obcas, nejvys jednou za nekolik sekund).")]
+    public AudioClip[] healLines;
+    [Tooltip("Kdyz zbrani trefi nepritele do hlavy (obcas).")]
+    public AudioClip[] headshotLines;
+    [Tooltip("Kdyz schopnost mine (David: uspavaci sipka nikoho netrefi).")]
+    public AudioClip[] missLines;
+    [Tooltip("Kdyz priblizi zamerovacem - prave tlacitko (obcas).")]
+    public AudioClip[] scopeLines;
 }

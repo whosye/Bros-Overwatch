@@ -38,7 +38,7 @@ public class SleepDartAbility : NetworkBehaviour
 
         var eye = fpc.playerCamera.transform;
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.45f);
-        GetComponent<PlayerHero>().SayAbility(ability);
+        // (hlaska az podle vysledku: uspani = hlaska schopnosti, minuti = hlaska k minuti - viz Arrive)
         var held = GetComponent<HeldWeapons>();
         if (held != null) held.ShowDartPistol();
         FireServerRpc(eye.position, eye.forward);
@@ -82,6 +82,7 @@ public class SleepDartAbility : NetworkBehaviour
         var match = MatchManager.Instance;
         if (match != null && (match.IsOver || match.IsLobby)) yield break;
 
+        var hero = GetComponent<PlayerHero>();
         if (victim != null && victim.currentHealth.Value > 0f)
         {
             Combat.DamagePlayer(gameObject, victim, ability.power, Combat.AbilitySource(ability));
@@ -90,11 +91,18 @@ public class SleepDartAbility : NetworkBehaviour
             if (controller != null && victim.currentHealth.Value > 0f)
             {
                 controller.ServerSleep(ability.duration, gameObject);
+                // uspal ho: hlaska schopnosti (kdyz sipka zabije, mluvi hlaska k zabiti)
+                if (hero != null) hero.SayAbility(ability);
 
                 var recorder = GetComponent<PotgRecorder>();
                 if (recorder != null)
                     recorder.ServerAddStun();
             }
+        }
+        else if (hero != null)
+        {
+            // sipka nikoho netrefila: hlaska k minuti (David)
+            hero.SayOccasionally(VoiceKind.Miss, 1f, 0f, 0f);
         }
 
         HitClientRpc(point);

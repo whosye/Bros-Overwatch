@@ -874,8 +874,8 @@ public static class M7Setup
             a.abilityName = "Drop the Beat";
             a.cooldown = 30f;
             a.ultCost = 450f;
-            a.power = 120f;      // stit kazdemu spoluhraci
-            a.duration = 6f;     // za jak dlouho stit vyprcha
+            a.power = 300f;      // stit kazdemu spoluhraci, dokud Mosino tancuje
+            a.duration = 6f;     // jak dlouho Mosino tancuje (stit a dvojnasobne poskozeni spoluhracu)
             a.radius = 15f;
         });
 
@@ -885,7 +885,7 @@ public static class M7Setup
             a.cooldown = 5f;
             a.power = 15f;       // poskozeni nepratel
             a.range = 7f;        // dosah vlny
-            a.knockback = 12f;   // odhozeni nepratel (zhruba 6 m)
+            a.knockback = 21f;   // odhozeni nepratel (zhruba 22 m)
             a.radius = 3.5f;     // jak blizko musi byt zem / zed pro odraz
             a.speed = 12f;       // sila vlastniho odrazu
         });

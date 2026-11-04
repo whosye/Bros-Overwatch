@@ -21,6 +21,8 @@ public class ScopeZoom : MonoBehaviour
             ? Mathf.Clamp01((normalFov - fov) / (normalFov - scopeFov)) : 0f;
     }
 
+    bool wasZoomed;
+
     void Awake()
     {
         fpc = GetComponent<FirstPersonController>();
@@ -59,6 +61,11 @@ public class ScopeZoom : MonoBehaviour
         Zoomed = scopeFov > 0f && GameSettings.CursorLocked && !fpc.ShootBlocked && !fpc.ThirdPerson
             && !ReplayPlayer.Active && !PotgIntro.Active
             && Mouse.current != null && Mouse.current.rightButton.isPressed;
+
+        // pri priblizeni obcas hlaska (David)
+        if (Zoomed && !wasZoomed)
+            hero.SayOccasionally(VoiceKind.Scope, 0.35f, 15f, 30f);
+        wasZoomed = Zoomed;
 
         // Sniper pri nabijeni rany chodi pomaleji.
         fpc.ScopeSpeedScale = Zoomed && definition.weapon.HasScopedShot ? definition.weapon.scopedMoveSpeed : 1f;

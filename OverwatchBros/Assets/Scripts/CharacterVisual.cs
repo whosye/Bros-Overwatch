@@ -35,6 +35,7 @@ public class CharacterVisual : MonoBehaviour
     Renderer[] renderers = new Renderer[0];
     Animator animator;
     CharacterAnimSet clips;
+    CharacterAnimSet heroClips;   // vlastni animace hrdiny (prepisuji vyplnena policka spolecne sady)
 
     PlayableGraph graph;
     AnimationMixerPlayable locomotion;
@@ -82,7 +83,7 @@ public class CharacterVisual : MonoBehaviour
         gripHandler?.Dispose();
     }
 
-    public void SetModel(GameObject prefab, Color tint)
+    public void SetModel(GameObject prefab, Color tint, CharacterAnimSet animations = null)
     {
         if (prefab == null)
         {
@@ -90,12 +91,13 @@ public class CharacterVisual : MonoBehaviour
             return;
         }
 
-        if (prefab != currentPrefab || ModelRoot == null)
+        if (prefab != currentPrefab || animations != heroClips || ModelRoot == null)
         {
             ClearModel();
 
             if (clips == null)
                 clips = Resources.Load<CharacterAnimSet>("Characters/CharacterAnimations");
+            heroClips = animations;
 
             currentPrefab = prefab;
             if (controller != null)
@@ -111,6 +113,16 @@ public class CharacterVisual : MonoBehaviour
                 DestroyImmediate(collider);
 
             renderers = instance.GetComponentsInChildren<Renderer>();
+            // Modely podle fotky maji po importu male bounds a updateWhenOffscreen (jinak by postava mizela). Ten ale
+            // kazdy snimek prepocitava bounds a skinuje i postavy mimo obraz. Pevne velke bounds (5 m kolem korenove
+            // kosti) pokryji kazdou pozu, takze postava nemizi a mimo obraz je zadarmo.
+            foreach (var skinned in instance.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                if (!skinned.updateWhenOffscreen) continue;
+                skinned.updateWhenOffscreen = false;
+                skinned.localBounds = new Bounds(Vector3.zero, Vector3.one * 5f);
+            }
+            CollectFaceDetail(instance);
             animator = instance.GetComponent<Animator>();
             if (animator != null)
             {
@@ -164,6 +176,44 @@ public class CharacterVisual : MonoBehaviour
                     renderers[i].sharedMaterials = savedMaterials[i];
             savedMaterials = null;
         }
+    }
+
+    // ---------------- detaily obliceje (modely podle fotky) ----------------
+    // Zuby, rasy a oci ve stinu nejsou videt - stin nevrhaji. Zuby a rasy se navic na dalku skryji
+    // (u bezne postavy je to pres 20 % trojuhelniku). Vzdalenost se pocita i s priblizenim zamerovacem.
+    const float FaceDetailDistance = 15f;
+    readonly System.Collections.Generic.List<Renderer> farHiddenDetail = new System.Collections.Generic.List<Renderer>();
+    bool faceDetailHidden;
+
+    void CollectFaceDetail(GameObject instance)
+    {
+        farHiddenDetail.Clear();
+        faceDetailHidden = false;
+        foreach (var skinned in instance.GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            string part = skinned.name;
+            bool hideFar = part == "AvatarTeethUpper" || part == "AvatarTeethLower" || part == "AvatarEyelashes";
+            if (!hideFar && part != "AvatarLeftEyeball" && part != "AvatarRightEyeball") continue;
+
+            skinned.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            if (hideFar) farHiddenDetail.Add(skinned);
+        }
+    }
+
+    void UpdateFaceDetail()
+    {
+        if (farHiddenDetail.Count == 0) return;
+        var cam = Camera.main;
+        if (cam == null) return;
+
+        float distance = Vector3.Distance(cam.transform.position, ModelRoot.position) * cam.fieldOfView / 60f;
+        bool hide = distance > FaceDetailDistance;
+        if (hide == faceDetailHidden) return;
+
+        faceDetailHidden = hide;
+        // (forceRenderingOff: 'enabled' ridi viditelnost cele postavy v Update)
+        foreach (var detail in farHiddenDetail)
+            if (detail != null) detail.forceRenderingOff = hide;
     }
 
     public void ClearModel()
@@ -240,6 +290,24 @@ public class CharacterVisual : MonoBehaviour
         graph.Evaluate(0f);
     }
 
+    // Hrdina ma vlastni animaci strelby (HeroDefinition.animations.shoot), napr. z Mixama.
+    public bool HasHeroShoot => heroClips != null && heroClips.shoot != null;
+
+    // Zbran stale namirena: horni polovina tela drzi prvni snimek animace strelby (mezi vystrely),
+    // vystrel prehraje celou animaci (recoil). Nastavuje HeldWeapons (Viktor - puska obema rukama).
+    public bool HoldShootPose;
+
+    // Poza strelby (prvni snimek), podle ni se usadi zbran do ruky.
+    public void EvaluateShootPose()
+    {
+        if (!graph.IsValid()) return;
+
+        EvaluateIdlePose();
+        shootPlayable.SetTime(0f);
+        layers.SetInputWeight(2, 1f);
+        graph.Evaluate(0f);
+    }
+
     // Poza bloku (ruce vpredu), podle ni se pocita, kde sekyry v bloku v rukou drzi.
     public void EvaluateBlockPose()
     {
@@ -252,19 +320,28 @@ public class CharacterVisual : MonoBehaviour
 
     // ---------------- animace ----------------
 
+    // Klip z vlastni sady hrdiny, jinak ze spolecne, jinak klid.
+    AnimationClip Pick(System.Func<CharacterAnimSet, AnimationClip> field)
+    {
+        var clip = heroClips != null ? field(heroClips) : null;
+        if (clip == null && clips != null) clip = field(clips);
+        return clip != null ? clip : null;   // (smazany asset -> opravdovy null, at funguje ??)
+    }
+
     void BuildGraph()
     {
-        if (animator == null || clips == null || clips.idle == null) return;
+        var idle = Pick(s => s.idle);
+        if (animator == null || idle == null) return;
 
         graph = PlayableGraph.Create("CharacterGraph");
         graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
         var output = AnimationPlayableOutput.Create(graph, "Animation", animator);
 
         locomotion = AnimationMixerPlayable.Create(graph, StateCount);
-        var stateClips = new[] { clips.idle, clips.walk, clips.jog, clips.sprint, clips.jump, clips.death };
+        var stateClips = new[] { idle, Pick(s => s.walk), Pick(s => s.jog), Pick(s => s.sprint), Pick(s => s.jump), Pick(s => s.death) };
         for (int i = 0; i < StateCount; i++)
         {
-            var clip = stateClips[i] != null ? stateClips[i] : clips.idle;
+            var clip = stateClips[i] != null ? stateClips[i] : idle;
             states[i] = AnimationClipPlayable.Create(graph, clip);
             states[i].SetSpeed(0);
             graph.Connect(states[i], 0, locomotion, i);
@@ -283,12 +360,12 @@ public class CharacterVisual : MonoBehaviour
             upperBody.SetHumanoidBodyPartActive(part, active);
         }
 
-        layers = AnimationLayerMixerPlayable.Create(graph, 6);
+        layers = AnimationLayerMixerPlayable.Create(graph, 7);
         graph.Connect(locomotion, 0, layers, 0);
         layers.SetInputWeight(0, 1f);
 
-        meleePlayable = AnimationClipPlayable.Create(graph, clips.meleeAttack != null ? clips.meleeAttack : clips.idle);
-        shootPlayable = AnimationClipPlayable.Create(graph, clips.shoot != null ? clips.shoot : clips.idle);
+        meleePlayable = AnimationClipPlayable.Create(graph, Pick(s => s.meleeAttack) ?? idle);
+        shootPlayable = AnimationClipPlayable.Create(graph, Pick(s => s.shoot) ?? idle);
         meleePlayable.SetSpeed(0);
         shootPlayable.SetSpeed(0);
         graph.Connect(meleePlayable, 0, layers, 1);
@@ -299,7 +376,7 @@ public class CharacterVisual : MonoBehaviour
         layers.SetLayerMaskFromAvatarMask(2, upperBody);
 
         // Poza bloku: ruce vpredu (drzeny na posledni snimek kratke animace), sekyry se v nich zkrizi.
-        var blockClip = clips.blockPose != null ? clips.blockPose : clips.idle;
+        var blockClip = Pick(s => s.blockPose) ?? idle;
         blockPlayable = AnimationClipPlayable.Create(graph, blockClip);
         blockPlayable.SetSpeed(0);
         blockPlayable.SetTime(Mathf.Max(0f, blockClip.length - 0.02f));
@@ -309,7 +386,7 @@ public class CharacterVisual : MonoBehaviour
         blockWeight = 0f;
 
         // Poza vypadu (Modry plamen): cele telo, zmrazeny snimek uderu - prava ruka vpredu, leva u tela.
-        var dashClip = clips.dashPose != null ? clips.dashPose : clips.idle;
+        var dashClip = Pick(s => s.dashPose) ?? idle;
         dashPlayable = AnimationClipPlayable.Create(graph, dashClip);
         dashPlayable.SetSpeed(0);
         graph.Connect(dashPlayable, 0, layers, 4);
@@ -317,13 +394,22 @@ public class CharacterVisual : MonoBehaviour
         dashWeight = 0f;
 
         // Prebijeni: horni polovina tela.
-        var reloadClip = clips.reload != null ? clips.reload : clips.idle;
+        var reloadClip = Pick(s => s.reload) ?? idle;
         reloadPlayable = AnimationClipPlayable.Create(graph, reloadClip);
         reloadPlayable.SetSpeed(0);
         graph.Connect(reloadPlayable, 0, layers, 5);
         layers.SetInputWeight(5, 0f);
         layers.SetLayerMaskFromAvatarMask(5, upperBody);
         reloadTime = -1f;
+
+        // Ultimatka pres cele telo (Mosino: tanec), ve smycce; bez klipu se nepouziva.
+        ultimateClip = Pick(s => s.ultimate);
+        ultimatePlayable = AnimationClipPlayable.Create(graph, ultimateClip ?? idle);
+        ultimatePlayable.SetSpeed(0);
+        graph.Connect(ultimatePlayable, 0, layers, 6);
+        layers.SetInputWeight(6, 0f);
+        ultimateWeight = 0f;
+        ultimateUntil = -1f;
 
         output.SetSourcePlayable(layers);
         graph.Play();
@@ -344,6 +430,44 @@ public class CharacterVisual : MonoBehaviour
     public void StopReload()
     {
         reloadTime = -1f;
+    }
+
+    // ---------------- ultimatka pres cele telo (Mosinuv tanec) ----------------
+
+    AnimationClip ultimateClip;
+    AnimationClipPlayable ultimatePlayable;
+    float ultimateWeight, ultimateTime, ultimateUntil = -1f;
+
+    public bool HasUltimateAnimation => ultimateClip != null;
+    public bool UltimateActive => ultimateUntil > Time.time;
+
+    // Prehraje animaci ultimatky (ve smycce) na 'seconds' sekund; StopUltimate ji ukonci driv.
+    public void PlayUltimate(float seconds)
+    {
+        if (!IsGhost)
+            ReplayLog.Ultimate(this, seconds);
+        if (!graph.IsValid() || ultimateClip == null) return;
+        ultimateUntil = Time.time + seconds;
+        ultimateTime = 0f;
+    }
+
+    public void StopUltimate()
+    {
+        if (!IsGhost && ultimateUntil > Time.time)
+            ReplayLog.Ultimate(this, 0f);
+        ultimateUntil = -1f;
+    }
+
+    void UpdateUltimate(float dt, bool dead)
+    {
+        bool on = !dead && ultimateUntil > Time.time;
+        ultimateWeight = Mathf.MoveTowards(ultimateWeight, on ? 1f : 0f, dt * 6f);
+        if (ultimateWeight > 0f && ultimateClip != null)
+        {
+            ultimateTime = Mathf.Repeat(ultimateTime + dt, Mathf.Max(0.05f, ultimateClip.length));
+            ultimatePlayable.SetTime(ultimateTime);
+        }
+        layers.SetInputWeight(6, ultimateWeight);
     }
 
     public void PlayReload(float duration)
@@ -376,9 +500,18 @@ public class CharacterVisual : MonoBehaviour
     int[] gripRightMuscles, gripLeftMuscles;
     float[] gripRightValues, gripLeftValues;
 
+    bool AnyRendererVisible()
+    {
+        foreach (var r in renderers)
+            if (r != null && r.enabled && r.isVisible) return true;
+        return false;
+    }
+
     void ApplyGrip()
     {
         if ((!GripRight && !GripLeft) || animator == null || !animator.isHuman || ModelRoot == null) return;
+        // (cela poza se prepocitava pres svaly - drahe; prsty postavy mimo obraz nikdo nevidi)
+        if (!AnyRendererVisible()) return;
         if (gripHandler == null)
         {
             gripHandler = new HumanPoseHandler(animator.avatar, ModelRoot);
@@ -466,6 +599,7 @@ public class CharacterVisual : MonoBehaviour
         foreach (var r in renderers)
             if (r != null && r.enabled != visible)
                 r.enabled = visible;
+        UpdateFaceDetail();
 
         if (bodyCapsule != null && bodyCapsule.enabled)
             bodyCapsule.enabled = false;
@@ -591,6 +725,7 @@ public class CharacterVisual : MonoBehaviour
         }
 
         layers.SetInputWeight(5, reloadWeight);
+        UpdateUltimate(dt, dead);
     }
 
     // Ktery okamzik animace uderu se pouzije jako poza vypadu (0-1) a naklon tela ve stupnich.
@@ -599,9 +734,18 @@ public class CharacterVisual : MonoBehaviour
 
     public float BlockBlend => blockWeight;
 
+    // Namirena zbran (HoldShootPose): ve stoji a chvili po vystrelu; pri behu bez strelby se pusti (bezi cele telo).
+    const float AimAfterShot = 1f;
+    float aimWeight, lastShotAt = -100f;
+    public float AimHoldWeight => aimWeight;
+
     void UpdateAttack(float dt, bool dead, bool frenzy)
     {
         float melee = 0f, shoot = 0f;
+        bool hold = HoldShootPose && !dead && !frenzy;
+        if (attackTime >= 0f && !attackMelee) lastShotAt = Time.time;
+        bool aiming = hold && (smoothedSpeed < 0.4f || Time.time - lastShotAt < AimAfterShot);
+        aimWeight = Mathf.MoveTowards(aimWeight, aiming ? 1f : 0f, dt * (aiming ? 8f : 3f));
 
         if (frenzy)
             attackTime = -1f;
@@ -621,8 +765,15 @@ public class CharacterVisual : MonoBehaviour
                 playable.SetTime(t * attackClipLength);
 
                 if (attackMelee) melee = envelope;
-                else shoot = envelope;
+                else shoot = hold ? Mathf.Max(envelope, aimWeight) : envelope;
             }
+        }
+
+        // mezi vystrely zbran namirena (prvni snimek animace strelby)
+        if (hold && attackTime < 0f)
+        {
+            shootPlayable.SetTime(0f);
+            shoot = aimWeight;
         }
 
         layers.SetInputWeight(1, melee);

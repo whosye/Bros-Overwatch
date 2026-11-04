@@ -152,6 +152,7 @@ public class ReplayCapture : MonoBehaviour
             var team = p.GetComponent<PlayerTeam>();
             var rush = p.GetComponent<RushAbility>();
             var block = p.GetComponent<BlockAbility>();
+            var bow = p.GetComponent<WeaponShooting>();
 
             byte flags = 0;
             if (h != null && h.currentHealth.Value > 0f) flags |= ReplayPlayerSnap.Alive;
@@ -173,6 +174,7 @@ public class ReplayCapture : MonoBehaviour
                 flags = flags,
                 health = h != null ? h.currentHealth.Value : 0f,
                 maxHealth = h != null ? h.maxHealth : 100f,
+                charge = (byte)Mathf.RoundToInt(Mathf.Clamp01(bow != null ? bow.ChargeFraction : 0f) * 255f),
                 holyAim = preaching && ezekiel.AimValid,
                 holyPoint = preaching ? ezekiel.Aim : Vector3.zero,
                 holyRadius = preaching ? ezekiel.Radius : 0f,
@@ -582,6 +584,8 @@ public static class ReplayLog
     public static void StopReload(Component player) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.StopReload, player = PlayerOf(player) }); }
     public static void Kick(Component player, float duration) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Kick, player = PlayerOf(player), f0 = duration }); }
     public static void FirstPersonKick() { if (Recording) Add(new ReplayEvent { type = ReplayEventType.FirstPersonKick }); }
+    // animace ultimatky pres cele telo (Mosinuv tanec); 0 = konec
+    public static void Ultimate(Component player, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Ultimate, player = PlayerOf(player), f0 = seconds }); }
 
     public static void HudHit(bool kill) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudHit, flag = kill }); }
     public static void HudFlash(float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudFlash, f0 = seconds }); }
@@ -595,5 +599,6 @@ public static class ReplayLog
 
     public static void NanoAura(Transform player, bool on) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.NanoAura, player = PlayerOf(player), flag = on }); }
     public static void SleepShow(Transform player, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.SleepShow, player = PlayerOf(player), f0 = seconds }); }
+    public static void StunShow(Transform player, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.StunShow, player = PlayerOf(player), f0 = seconds }); }
     public static void SleepHide(Transform player) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.SleepHide, player = PlayerOf(player) }); }
 }

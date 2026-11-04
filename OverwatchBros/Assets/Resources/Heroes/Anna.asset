@@ -27,16 +27,37 @@ MonoBehaviour:
   rmbAbility: {fileID: 0}
   doubleJump: 0
   ledgeClimb: 0
+  moveSpeed: 1
+  lifesteal: 0
+  takedownCooldownCut: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 693659113271320055, guid: de5aa578852683048bc2a888bc218a13, type: 3}
   tintCharacter: 1
+  animations: {fileID: 0}
   sleeveColor: {r: 0.25, g: 0.33, b: 0.4, a: 1}
   skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
-  spawnLines: []
-  killLines: []
-  deathLines: []
-  hurtLines: []
-  idleLines: []
-  snareLines: []
+  spawnLines:
+  - {fileID: 8300000, guid: 0463c7f3cf7a69f4880f6357fb08a234, type: 3}
+  killLines:
+  - {fileID: 8300000, guid: abc306c5ec08e4d4cac9a8292b5183ec, type: 3}
+  deathLines:
+  - {fileID: 8300000, guid: 36aa2acfc73c1384a97cfcdd9f559870, type: 3}
+  hurtLines:
+  - {fileID: 8300000, guid: 5c5c7c1b91d5b8d47a4b6d5b0dfb48c0, type: 3}
+  idleLines:
+  - {fileID: 8300000, guid: dff0d38d3f339194e93149c7cd7916fe, type: 3}
+  - {fileID: 8300000, guid: d90c657999b9cbf49a96a9bb78030101, type: 3}
+  snareLines:
+  - {fileID: 8300000, guid: 6da499fcd1fff4b41bc2344e80c0c46b, type: 3}
+  attackLines: []
+  healLines:
+  - {fileID: 8300000, guid: 1b0b6e079a37fd5499adeec67d4de460, type: 3}
+  - {fileID: 8300000, guid: 37edbf1cdabc5b346bbd9f4a74e47f57, type: 3}
+  headshotLines:
+  - {fileID: 8300000, guid: 78627cdf5d49a504bb1c27f7c856bed0, type: 3}
+  missLines:
+  - {fileID: 8300000, guid: 474d7e55f1abafb418706d042ccd672f, type: 3}
+  scopeLines:
+  - {fileID: 8300000, guid: 5ffb361e977b20240870961284bae431, type: 3}

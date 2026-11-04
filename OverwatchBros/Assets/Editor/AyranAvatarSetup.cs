@@ -28,6 +28,10 @@ public static class AyranAvatarSetup
         new Entry { hero = "Viktor", sleeve = new Color(0.10f, 0.10f, 0.12f, 1f), skin = new Color(0.80f, 0.62f, 0.50f) },
         // Cerny oblek (Jules z Pulp Fiction).
         new Entry { hero = "Sindel", sleeve = new Color(0.07f, 0.07f, 0.08f, 1f), skin = new Color(0.88f, 0.72f, 0.60f) },
+        // Cerne tricko s potiskem (kratky rukav), kratasy, sandaly.
+        new Entry { hero = "Max", sleeve = new Color(0.17f, 0.16f, 0.16f, 1f), skin = new Color(0.85f, 0.65f, 0.55f) },
+        // Mosino (Bard): tmave tricko, ksiltovka, svetle dhoti, tenisky.
+        new Entry { hero = "Bard", sleeve = new Color(0.16f, 0.15f, 0.15f, 1f), skin = new Color(0.74f, 0.55f, 0.48f) },
     };
 
     public static bool IsReady()

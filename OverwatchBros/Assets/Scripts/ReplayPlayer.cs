@@ -317,6 +317,9 @@ public class ReplayPlayer : MonoBehaviour
             g.held.GhostDead = !alive;
             g.held.GhostThirdPerson = pov && povThird;
             g.held.GhostBlocking = g.visual.GhostBlocking;
+            // natazeni luku: kazda postava ze sveho zaznamu (killcam z pohledu vraha, ostatni ve 3. osobe);
+            // POTG z pohledu nahravajiciho hrace ma presnejsi hodnotu z jeho snimku
+            g.held.GhostCharge = p.charge / 255f;
             if (pov && killcamVictim < 0)
             {
                 g.held.GhostUltCasting = a.ultCasting;
@@ -401,7 +404,7 @@ public class ReplayPlayer : MonoBehaviour
             // (i zmena hrdiny behem klipu)
             g.hero = heroIndex;
             g.visual.SetFeetOffset(feetOffset);
-            g.visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white);
+            g.visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white, definition.animations);
             g.held.SetGhost(definition, id == clip.povId, view != null ? view.transform : null);
         }
         return g;
@@ -633,6 +636,7 @@ public class ReplayPlayer : MonoBehaviour
             case ReplayEventType.Reload: if (g != null) g.held.PlayReload(e.f0); break;
             case ReplayEventType.StopReload: if (g != null) g.held.StopReload(); break;
             case ReplayEventType.Kick: if (g != null) g.visual.PlayKick(e.f0); break;
+            case ReplayEventType.Ultimate: if (g != null) { if (e.f0 > 0f) g.visual.PlayUltimate(e.f0); else g.visual.StopUltimate(); } break;
             case ReplayEventType.FirstPersonKick: if (view != null) FirstPersonKick.Play(view); break;
             case ReplayEventType.HudHit: HudUI.NotifyHit(e.flag); break;
             case ReplayEventType.HudFlash: HudUI.NotifyFlash(e.f0); break;
@@ -645,6 +649,7 @@ public class ReplayPlayer : MonoBehaviour
                 break;
             case ReplayEventType.NanoAura: if (g != null) NanoAura.Set(g.go.transform, e.flag); break;
             case ReplayEventType.SleepShow: if (g != null) SleepMarker.Show(g.go.transform, e.f0); break;
+            case ReplayEventType.StunShow: if (g != null) StunMarker.Show(g.go.transform, e.f0); break;
             case ReplayEventType.SleepHide: if (g != null) SleepMarker.Hide(g.go.transform); break;
         }
     }

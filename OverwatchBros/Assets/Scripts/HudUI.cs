@@ -102,6 +102,13 @@ public class HudUI
     RectTransform lockMarker;
     GameObject chargeBar;
 
+    // Mosinuv tanec (ultimatka): zbyvajici podil 0-1 a celkova delka v s (nastavuje BardAbility u vlastnika; 0 = netancuje).
+    public static float DanceRemaining;
+    public static float DanceSeconds = 6f;
+    GameObject danceBar;
+    Image danceFill;
+    TextMeshProUGUI danceLabel;
+
     // Rychlopalba: zbyvajici sipy jako modre kosoctverce pod zamerovacem (po kazdem vystrelu jeden zmizi).
     Image beatRing, beatTarget;   // Bard: kruh se stahuje k zamerovaci, na uderu ho trefi
     const int MaxRapidPips = 10;
@@ -294,6 +301,14 @@ public class HudUI
         chargeBar = chargeBackground.gameObject;
         chargeFill = UiKit.MakeImage(chargeBar.transform, "Fill", Color.white, new Vector2(0f, 0.5f), new Vector2(2f, 0f), new Vector2(0f, 6f));
         chargeBar.SetActive(false);
+
+        // Mosinuv tanec (ultimatka): kolik tance zbyva.
+        var danceBackground = UiKit.MakeImage(root.transform, "DanceBar", new Color(0f, 0f, 0f, 0.6f), center, new Vector2(0f, -120f), new Vector2(320f, 16f));
+        danceBar = danceBackground.gameObject;
+        danceFill = UiKit.MakeImage(danceBar.transform, "Fill", BardAbility.SpeedColor, new Vector2(0f, 0.5f), new Vector2(3f, 0f), new Vector2(314f, 10f));
+        danceLabel = UiKit.MakeText(danceBar.transform, "Label", "TANEC", 24, TextAlignmentOptions.Bottom,
+            new Vector2(0.5f, 1f), new Vector2(0f, 20f), new Vector2(760f, 30f), Color.white);
+        danceBar.SetActive(false);
 
         beatTarget = UiKit.MakeImage(root.transform, "BeatTarget", new Color(1f, 1f, 1f, 0.35f), center, Vector2.zero, new Vector2(34f, 34f));
         beatTarget.sprite = RingSprite;
@@ -542,6 +557,20 @@ public class HudUI
         {
             chargeFill.rectTransform.sizeDelta = new Vector2(156f * charge, 6f);
             chargeFill.color = charge >= 0.999f ? UiKit.Accent : Color.white;
+        }
+
+        // Mosinuv tanec: pruh se vyprazdnuje; posledni 1,5 s blika
+        float dance = DanceRemaining;
+        bool showDance = dance > 0f;
+        if (danceBar.activeSelf != showDance)
+            danceBar.SetActive(showDance);
+        if (showDance)
+        {
+            danceFill.rectTransform.sizeDelta = new Vector2(314f * dance, 10f);
+            bool ending = dance * DanceSeconds < 1.5f;
+            float blink = ending ? 0.55f + 0.45f * Mathf.Sin(Time.time * 18f) : 1f;
+            danceFill.color = Color.Lerp(new Color(1f, 0.35f, 0.25f), BardAbility.SpeedColor, ending ? 0f : 1f) * new Color(1f, 1f, 1f, blink);
+            danceLabel.text = $"TANEC  {dance * DanceSeconds:0.0} s  <size=70%>(pohyb nebo schopnost ho ukončí)</size>";
         }
 
         if (d.weapon != null)

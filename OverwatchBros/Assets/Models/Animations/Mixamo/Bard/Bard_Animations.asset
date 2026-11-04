@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce56b11b14db7ad40835bae89995055d, type: 3}
+  m_Name: Bard_Animations
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimSet
+  idle: {fileID: 0}
+  walk: {fileID: 0}
+  jog: {fileID: 0}
+  sprint: {fileID: 0}
+  jump: {fileID: 0}
+  death: {fileID: 0}
+  meleeAttack: {fileID: 0}
+  shoot: {fileID: 0}
+  reload: {fileID: 0}
+  blockPose: {fileID: 0}
+  dashPose: {fileID: 0}
+  ultimate: {fileID: -203655887218126122, guid: fb59c06de2601e342b3d4a144096405e, type: 3}
+  sitIdle: {fileID: 0}
+  hitChest: {fileID: 0}

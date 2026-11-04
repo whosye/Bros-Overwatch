@@ -199,6 +199,16 @@ public class FirstPersonController : NetworkBehaviour
         if (Bot == null) HudUI.NotifyTint(new Color(0.55f, 0.1f, 0.65f, 0.35f), seconds);
     }
 
+    // Kapsle vysoka jako v drepu (Mosinuv tanec): vola se u vsech hracu (ClientRpc), aby byl zasahovy objem
+    // stejny u kazdeho strelce. Vlastnikovi ji behem schopnosti (AbilityActive) pohyb neprepise.
+    public void SetCrouchedHitbox(bool on)
+    {
+        if (controller == null) return;
+        float height = on ? crouchHeight : standHeight;
+        controller.height = height;
+        controller.center = new Vector3(0f, height * 0.5f, 0f);
+    }
+
     // Priprava ultimatky (viz UltWindup): hrac chodi, ale nestrili a nepouziva schopnosti; UltWindup = postup 0-1.
     public bool UltCasting { get; set; }
     public float UltWindup { get; set; }
@@ -222,6 +232,13 @@ public class FirstPersonController : NetworkBehaviour
             abilityFlight = true;
             verticalVelocity = Mathf.Min(launchSpeed + impulse.y, 13f) * Mathf.Sqrt(abilityRiseScale);
         }
+    }
+
+    // Prudky pad dolu (Mosinova ultimatka: dlouho ve vzduchu - musi dopadnout). Vola vlastnik.
+    public void ForceFall(float speed)
+    {
+        abilityFlight = false;
+        verticalVelocity = Mathf.Min(verticalVelocity, -Mathf.Abs(speed));
     }
 
     // Vyskok se vznasenim (Sindeluv Shift): hned nahoru, po vrcholu pomaly pad, dokud nevyprsi 'seconds'.
@@ -352,6 +369,9 @@ public class FirstPersonController : NetworkBehaviour
     [ClientRpc]
     void StunClientRpc(float seconds, ulong attackerClientId, bool blind)
     {
+        // Hvezdicky kolem hlavy vidi vsichni (jako "Zzz" u uspani).
+        if (!IsDead) StunMarker.Show(transform, seconds);
+
         // Zvuk omraceni slysi vsichni v okoli; ten, kdo trefil, dostane navic potvrzeni (i kdyz je daleko).
         if (blind)
             ProceduralSfx.PlayForActor(this, ProceduralSfx.Stun, transform.position + Vector3.up * 1.5f, 1f);

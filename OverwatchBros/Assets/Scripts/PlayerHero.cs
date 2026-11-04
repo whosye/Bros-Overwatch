@@ -506,7 +506,7 @@ public class PlayerHero : NetworkBehaviour
         var visual = GetComponent<CharacterVisual>();
         if (visual == null)
             visual = gameObject.AddComponent<CharacterVisual>();
-        visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white);
+        visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white, definition.animations);
 
         if (shooting != null)
             shooting.SetWeapon(definition.weapon);
@@ -932,6 +932,19 @@ public class PlayerHero : NetworkBehaviour
             Say(VoiceKind.Attack);
     }
 
+    // Obcasna hlaska (leceni, headshot, minuti, scope): s pravdepodobnosti 'chance' a nejvys jednou za minGap-maxGap s.
+    // Volat na serveru (leceni, headshot, minuti) nebo na vlastnikovi (scope).
+    readonly System.Collections.Generic.Dictionary<VoiceKind, float> nextOccasionalLine = new System.Collections.Generic.Dictionary<VoiceKind, float>();
+
+    public void SayOccasionally(VoiceKind kind, float chance, float minGap, float maxGap)
+    {
+        if (!HeroVoice.HasLines(Hero, kind, 0)) return;
+        if (nextOccasionalLine.TryGetValue(kind, out float next) && Time.time < next) return;
+        nextOccasionalLine[kind] = Time.time + Random.Range(minGap, maxGap);
+        if (Random.value < chance)
+            Say(kind);
+    }
+
     // Hlaska ke schopnosti (vola schopnost na vlastnikovi, kdyz se spusti). Viceprazova schopnost posila cislo faze.
     public void SayAbility(AbilityDefinition ability, int phase = 0)
     {
@@ -962,7 +975,8 @@ public class PlayerHero : NetworkBehaviour
     [ServerRpc]
     void SayServerRpc(int kind, int slot, int phase)
     {
-        if (kind < 0 || kind > (int)VoiceKind.Snare) return;
+        // (vlastnik posila jen schopnosti, oziveni, chuzi... a scope; zasahy a leceni hlasi server sam)
+        if (kind < 0 || (kind > (int)VoiceKind.Snare && kind != (int)VoiceKind.Scope)) return;
         SayClientRpc(kind, slot, PickFor((VoiceKind)kind, slot, Mathf.Clamp(phase, 0, 9)));
     }
 

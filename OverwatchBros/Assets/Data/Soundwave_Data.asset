@@ -20,10 +20,11 @@ MonoBehaviour:
   duration: 0.2
   radius: 3.5
   range: 7
-  knockback: 12
+  knockback: 21
   charges: 1
   sound: {fileID: 0}
-  voiceLines: []
+  voiceLines:
+  - {fileID: 8300000, guid: 2757990773529484a9cf9bd6dc8a6bdd, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

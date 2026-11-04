@@ -18,6 +18,7 @@ public struct ReplayPlayerSnap
     public float yaw;
     public byte flags;        // ReplayPlayerFlags
     public float health, maxHealth;
+    public byte charge;           // natazeni luku 0-255 (killcam z pohledu vraha, natahovani u postav)
     public bool holyAim;          // Sindel pri kazani: kam miri (kruh dopadu)
     public Vector3 holyPoint;
     public float holyRadius, holyProgress;
@@ -112,7 +113,7 @@ public enum ReplayEventType : byte
 {
     Explosion, Sparks, Impact, Tracer, SpatialSound, GlobalSound, Sfx, ProjectileSpawn, ProjectileEnd,
     Voice, Swing, Reload, StopReload, Kick, FirstPersonKick, HudHit, HudFlash, HudSleep, HudTint, HudEnd,
-    NanoAura, SleepShow, SleepHide, KillFeed, SurfaceMark, Taunt, SayWhatWave, FearShow, SniperTracer
+    NanoAura, SleepShow, SleepHide, KillFeed, SurfaceMark, Taunt, SayWhatWave, FearShow, SniperTracer, Ultimate, StunShow
 }
 
 public class ReplayEvent
@@ -133,7 +134,7 @@ public class ReplayEvent
 
 public class ReplayClip
 {
-    public const int Version = 4;
+    public const int Version = 5;   // 5: natazeni luku u kazdeho hrace
 
     public int povId;
     public float duration;
@@ -289,6 +290,7 @@ public class ReplayClip
             w.Write(p.flags);
             w.Write(p.health);
             w.Write(p.maxHealth);
+            w.Write(p.charge);
             w.Write(p.holyAim);
             if (p.holyAim)
             {
@@ -375,7 +377,7 @@ public class ReplayClip
             f.players[i] = new ReplayPlayerSnap
             {
                 id = r.ReadInt32(), hero = r.ReadInt16(), team = r.ReadByte(), position = ReadV(r), yaw = r.ReadSingle(), flags = r.ReadByte(),
-                health = r.ReadSingle(), maxHealth = r.ReadSingle(), holyAim = r.ReadBoolean(),
+                health = r.ReadSingle(), maxHealth = r.ReadSingle(), charge = r.ReadByte(), holyAim = r.ReadBoolean(),
             };
             if (f.players[i].holyAim)
             {

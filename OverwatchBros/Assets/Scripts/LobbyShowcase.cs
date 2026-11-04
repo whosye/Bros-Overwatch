@@ -120,7 +120,7 @@ public class LobbyShowcase : MonoBehaviour
         visual = go.AddComponent<CharacterVisual>();
         visual.IsGhost = true;
         visual.SetFeetOffset(0f);
-        visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white);
+        visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white, definition.animations);
         held = go.AddComponent<HeldWeapons>();
         held.SetGhost(definition, false, null);
         go.AddComponent<ReplayIgnore>();

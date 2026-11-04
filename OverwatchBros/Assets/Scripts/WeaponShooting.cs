@@ -144,6 +144,7 @@ public class WeaponShooting : NetworkBehaviour
 
         if ((fpc != null && (fpc.ShootBlocked || fpc.RushActive || fpc.BlockActive)) || (Bot == null && !GameSettings.CursorLocked))
         {
+            if (charging) DrawServerRpc(false);   // (ostatni: luk zase povolit)
             charging = false;
             burstLeft = 0;
             return;
@@ -203,7 +204,7 @@ public class WeaponShooting : NetworkBehaviour
     float scopedCharge;
 
     // Jak hlava vysoko: horni cast kapsle hrace.
-    const float HeadHeight = 0.38f;
+    public const float HeadHeight = 0.38f;
 
     void UpdateScoped()
     {
@@ -293,9 +294,24 @@ public class WeaponShooting : NetworkBehaviour
     RapidFireAbility rapid;
 
     // Jak moc je luk natazeny (0-1), pro HUD a model zbrane.
-    public float ChargeFraction => Mathf.Max(Mathf.Max(Mathf.Max(ForcedCharge, scopedCharge), RapidDraw), charging && weapon != null && weapon.chargeTime > 0f
+    public float ChargeFraction => Mathf.Max(Mathf.Max(Mathf.Max(ForcedCharge, scopedCharge), Mathf.Max(RapidDraw, RemoteDraw)), charging && weapon != null && weapon.chargeTime > 0f
         ? Mathf.Clamp01((Time.time - chargeStart) / weapon.chargeTime)
         : 0f);
+
+    // Natahovani luku u ostatnich hracu (posila majitel): postava ve 3. osobe natahuje tetivu.
+    float remoteDrawStart = -1f;
+    float RemoteDraw => remoteDrawStart >= 0f && weapon != null && weapon.chargeTime > 0f
+        ? Mathf.Clamp01((Time.time - remoteDrawStart) / weapon.chargeTime) : 0f;
+
+    [ServerRpc]
+    void DrawServerRpc(bool on) => DrawClientRpc(on);
+
+    [ClientRpc]
+    void DrawClientRpc(bool on)
+    {
+        if (IsOwner) return;
+        remoteDrawStart = on ? Time.time : -1f;
+    }
 
     // Rychlopalba: kazdy sip se rychle natahne (za 'interval') a hned vyleti - jen pro vzhled natahovani.
     float rapidDrawStart = -1f;
@@ -341,6 +357,7 @@ public class WeaponShooting : NetworkBehaviour
             {
                 charging = true;
                 chargeStart = Time.time;
+                DrawServerRpc(true);
             }
         }
         else if (charging)
@@ -671,6 +688,7 @@ public class WeaponShooting : NetworkBehaviour
     void ShotFxClientRpc(bool melee, bool scoped)
     {
         if (IsOwner) return;
+        remoteDrawStart = -1f;   // (sip vyletel - tetiva povolena)
         held.Swing();
         if (melee && weapon != null && weapon.IsCharged)
             ProceduralSfx.PlayForActor(this, ProceduralSfx.BowRelease, transform.position, 0.6f);

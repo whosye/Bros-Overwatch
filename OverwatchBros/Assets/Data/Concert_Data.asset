@@ -16,14 +16,15 @@ MonoBehaviour:
   icon: {fileID: 2800000, guid: ae630322a77c65a4b85391d3c30d4648, type: 3}
   cooldown: 30
   ultCost: 450
-  power: 120
+  power: 300
   duration: 6
   radius: 15
   range: 25
   knockback: 0
   charges: 1
   sound: {fileID: 0}
-  voiceLines: []
+  voiceLines:
+  - {fileID: 8300000, guid: a7913fde718f13640b22b96d2d68af8e, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

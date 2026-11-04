@@ -320,7 +320,7 @@ public class PotgIntro : MonoBehaviour
         visual = go.AddComponent<CharacterVisual>();
         visual.IsGhost = true;
         visual.SetFeetOffset(feetOffset);
-        visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white);
+        visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white, definition.animations);
         held = go.AddComponent<HeldWeapons>();
         held.SetGhost(definition, false, null);
         voice = go.AddComponent<HeroVoice>();

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8a39f21388b7624d84e663cff5b4ed3, type: 3}
   m_Name: Bard
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
-  heroName: Bard
+  heroName: "Mo\u0161ino"
   color: {r: 0.6, g: 0.4, b: 0.95, a: 1}
   maxHealth: 100
   weapon: {fileID: 11400000, guid: 15fd4509f6cd1664f8c05af2a5996b58, type: 2}
@@ -27,16 +27,36 @@ MonoBehaviour:
   rmbAbility: {fileID: 11400000, guid: 4c58a255641a8154c9427086c532ae9e, type: 2}
   doubleJump: 1
   ledgeClimb: 0
+  moveSpeed: 1
+  lifesteal: 0
+  takedownCooldownCut: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
-  characterPrefab: {fileID: 5189575695565657238, guid: e58ed34424fb4eb47a4fd20fd903c7cb, type: 3}
-  tintCharacter: 1
-  sleeveColor: {r: 0.3, g: 0.22, b: 0.45, a: 1}
-  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
-  spawnLines: []
-  killLines: []
-  deathLines: []
-  hurtLines: []
+  characterPrefab: {fileID: 626302847209386685, guid: a586cb138d44a57439ed6528228bf4fb, type: 3}
+  tintCharacter: 0
+  animations: {fileID: 11400000, guid: 2c86a227d5a9265409699e2f35290f00, type: 2}
+  sleeveColor: {r: 0.16, g: 0.15, b: 0.15, a: 1}
+  skinColor: {r: 0.74, g: 0.55, b: 0.48, a: 1}
+  spawnLines:
+  - {fileID: 8300000, guid: 70d708b98451b934bb8e7efd0a404ba3, type: 3}
+  killLines:
+  - {fileID: 8300000, guid: 5cefb1d2c740e5046ad036bf5d62ed7b, type: 3}
+  - {fileID: 8300000, guid: 215453c4127455148871985bfbed30d3, type: 3}
+  - {fileID: 8300000, guid: f7f33774ea190ac48ad754e634e91b86, type: 3}
+  deathLines:
+  - {fileID: 8300000, guid: d99f18b4a0de2484599f7e0d8699e923, type: 3}
+  - {fileID: 8300000, guid: ff06ca11aa84925479933974143b55c1, type: 3}
+  hurtLines:
+  - {fileID: 8300000, guid: 39dd6cc8bb88a374e9d5c895e1be545e, type: 3}
+  - {fileID: 8300000, guid: e2233ed6d8dab4244885a5017e7870a3, type: 3}
   idleLines: []
-  snareLines: []
+  snareLines:
+  - {fileID: 8300000, guid: 9e3aeb5fb5a0ac446bcc9ff18d625887, type: 3}
+  - {fileID: 8300000, guid: 2f67a812f2ba0624392d5b51e10e9685, type: 3}
+  attackLines:
+  - {fileID: 8300000, guid: 95b7a9dd293385b418f0ac5c66367f28, type: 3}
+  healLines: []
+  headshotLines: []
+  missLines: []
+  scopeLines: []

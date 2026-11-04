@@ -7,11 +7,14 @@ using UnityEngine.InputSystem;
 //   pasivne: aura v okruhu 'radius' (z Shift schopnosti) - bud leci spoluhrace (a slabeji sebe), nebo je zrychluje;
 //   Shift (Prepnuti rytmu): prepina leceni / zrychleni;
 //   E (Zesileni): na 'duration' s zesili auru (leceni x 'power', zrychleni vic);
-//   Q (Drop the Beat): vyskok a pri dopadu uder - spoluhraci v okruhu dostanou docasny stit 'power' HP (behem 'duration' s
-//     vyprcha), nepratele do SlamRadius m odleti a jsou na SlamStun s omraceni;
+//   Q (Drop the Beat): vyskok a pri dopadu uder - nepratele do SlamRadius m odleti, jsou na SlamStun s omraceni
+//     a pak SlamSlowSeconds s zpomaleni; potom Mosino na miste tancuje (animace ultimatky) az 'duration' s - spoluhraci
+//     v okruhu 'radius' dostanou stit 'power' HP a dokud tancuje, davaji v jeho okruhu DanceDamageScale x poskozeni;
+//     tanec (i stit a bonus) skonci driv, kdyz Mosino zemre;
 //   rytmus: hra ma takt BeatBpm; davka vystrelena do taktu dava BeatDamageScale x poskozeni a leci spoluhrace v aure;
 //   jizda po zdech: ve vzduchu u zdi s drzenym mezernikem (FirstPersonController.WallRide);
 //   prave tlacitko (Basovy uder): zvukova vlna pred sebe odhodi nepratele ('knockback', 'power' dmg, dosah 'range');
+//     kdo pritom narazi do zdi, je WallSlamStun s omraceny;
 //     kdyz je pred nim do 'radius' m zem nebo zed (mireni pod sebe / do zdi), vlna ho odrazi opacnym smerem ('speed').
 // Leceni a stit pocita server, zrychleni si kazdy hrac aplikuje sam (pohyb ridi vlastnik).
 public class BardAbility : NetworkBehaviour
@@ -25,6 +28,9 @@ public class BardAbility : NetworkBehaviour
     const float SlamRadius = 7f;       // Drop the Beat: dosah uderu na nepratele
     const float SlamStun = 1f;
     const float SlamKnockback = 13f;
+    const float SlamSlowSeconds = 3f;
+    const float SlamSlowFactor = 0.5f;
+    public const float DanceDamageScale = 2f;   // +100 % poskozeni spoluhracu behem tance
     public const float AmpedSpeedBonus = 1.6f;
     const float SelfHealScale = 0.5f;
     const float TickInterval = 0.25f;
@@ -48,6 +54,7 @@ public class BardAbility : NetworkBehaviour
     Light glow;
 
     float Radius => crossfade != null ? crossfade.radius : 12f;
+    public float AuraRadius => Radius;
     bool UltUsesCharge => hero != null && hero.UsesUltCharge;
 
     public float ToggleRemaining => Mathf.Max(0f, nextToggle - Time.time);
@@ -82,6 +89,12 @@ public class BardAbility : NetworkBehaviour
     void OnDisable()
     {
         bards.Remove(this);
+        if (landingMarker != null) Destroy(landingMarker);   // (preruseny vyskok)
+        landingMarker = null;
+        dropping = false;
+        if (dancingLocal && fpc != null) fpc.AbilityActive = false;   // (preruseny tanec)
+        if (dancingLocal && ProceduralSfx.IsLocalPlayer(this)) HudUI.DanceRemaining = 0f;
+        dancingLocal = false;
         if (notes != null) Destroy(notes.gameObject);
         notes = null;
         glow = null;
@@ -112,7 +125,17 @@ public class BardAbility : NetworkBehaviour
         UpdateVisual();
 
         if (IsServer)
+        {
+            ServerDanceTick();
             ServerTick();
+        }
+
+        // tanec preruseny pohybem nebo schopnosti: ovladani hned zpet, at se schopnost pouzije jeste v tomto snimku
+        if (dancingLocal && IsOwner && fpc.Bot == null && HeroInput.Locked(this) && DanceInterrupted())
+        {
+            danceInterrupted = true;
+            fpc.AbilityActive = false;
+        }
 
         if (!IsOwner || crossfade == null || !HeroInput.Locked(this) || fpc.InputBlocked) return;
         bool alive = health.currentHealth.Value > 0f;
@@ -150,8 +173,15 @@ public class BardAbility : NetworkBehaviour
         }
     }
 
-    // Drop the Beat (vlastnik): vyskok, pri dopadu (nejpozdeji po 1,6 s) uder.
+    // Drop the Beat (vlastnik): vyskok, uder az pri dopadu na zem (tanec nikdy ve vzduchu). Za letu je na zemi
+    // videt znacka dopadu (kruh dosahu uderu). Kdyz je ve vzduchu dlouho (seskok z vysky), prudce spadne dolu;
+    // kdyz ani pak nedopadne (voda, propast), ultimatka se zrusi bez uderu.
     bool dropping;
+    GameObject landingMarker;
+    bool dancingLocal;   // vlastnik prave tancuje (ma zamceny pohyb)
+    const float FallAfter = 1.2f;      // s ve vzduchu, pak prudky pad
+    const float FallSpeed = 30f;
+    const float GiveUpAfter = 6f;
 
     System.Collections.IEnumerator DropTheBeat()
     {
@@ -160,12 +190,134 @@ public class BardAbility : NetworkBehaviour
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.8f);
         float start = Time.time;
         var body = GetComponent<CharacterController>();
-        yield return new WaitForSeconds(0.25f);
-        while (Time.time - start < 1.6f && body != null && !body.isGrounded)
+        var marker = landingMarker = ProceduralSfx.IsLocalPlayer(this) ? CreateLandingMarker() : null;
+        bool landed = false;
+        while (health.currentHealth.Value > 0f && Time.time - start < GiveUpAfter)
+        {
+            UpdateLandingMarker(marker);
+            if (Time.time - start >= 0.25f && body != null && body.isGrounded) { landed = true; break; }
+            if (Time.time - start >= FallAfter) fpc.ForceFall(FallSpeed);
             yield return null;
+        }
+        if (marker != null) Destroy(marker);
+        landingMarker = null;
         dropping = false;
-        if (health.currentHealth.Value > 0f)
-            ConcertServerRpc();
+        if (!landed || health.currentHealth.Value <= 0f) yield break;
+        ConcertServerRpc();
+
+        // tanec: na miste, bez strelby, kamera ve 3. osobe, nejdyl 'duration' s; ukonci ho driv pohyb, skok,
+        // jina schopnost (DanceInterrupted v Update - schopnost se hned pouzije) nebo smrt
+        fpc.AbilityActive = dancingLocal = true;
+        danceInterrupted = false;
+        danceMoveArmed = false;
+        bool local = ProceduralSfx.IsLocalPlayer(this);
+        float danceEnd = Time.time + concert.duration;
+        while (Time.time < danceEnd && health.currentHealth.Value > 0f && !danceInterrupted)
+        {
+            if (local)
+            {
+                HudUI.DanceSeconds = concert.duration;
+                HudUI.DanceRemaining = Mathf.Clamp01((danceEnd - Time.time) / concert.duration);
+            }
+            yield return null;
+        }
+        if (local) HudUI.DanceRemaining = 0f;
+        if (Time.time < danceEnd && health.currentHealth.Value > 0f)
+            EndDanceServerRpc();   // preruseny tanec - stit a bonus spoluhracu konci driv
+        fpc.AbilityActive = dancingLocal = false;
+    }
+
+    // Znacka dopadu (jen vlastnik): cerchovany kruh dosahu uderu na zemi pod Mosinem (kresli se i pres prekazky)
+    // a maly terc uprostred.
+    GameObject CreateLandingMarker()
+    {
+        var marker = new GameObject("BardLandingMarker");
+        marker.transform.localScale = new Vector3(SlamRadius * 2f, 0.02f, SlamRadius * 2f);
+        EzekielCircleVisual.AddDashedOutline(marker.transform);
+        var center = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        DestroyImmediate(center.GetComponent<Collider>());
+        center.transform.SetParent(marker.transform, false);
+        center.transform.localScale = new Vector3(0.08f, 1f, 0.08f);
+        Fx.Paint(center, SpeedColor);
+        marker.SetActive(false);
+        return marker;
+    }
+
+    void UpdateLandingMarker(GameObject marker)
+    {
+        if (marker == null) return;
+        // zem pod Mosinem (bez vlastni kapsle a ostatnich hracu)
+        var hits = Physics.RaycastAll(transform.position + Vector3.up * 0.5f, Vector3.down, 80f, ~0, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (var hit in hits)
+        {
+            if (hit.collider.GetComponentInParent<PlayerHero>() != null) continue;
+            marker.transform.position = hit.point + Vector3.up * 0.03f;
+            marker.SetActive(true);
+            return;
+        }
+        marker.SetActive(false);
+    }
+
+    // ---------------- tanec (server) ----------------
+
+    float danceUntil;   // server: do kdy Mosino tancuje (0 = netancuje)
+    readonly List<Health> danceShielded = new List<Health>();
+
+    bool Dancing => danceUntil > Time.time && health != null && health.currentHealth.Value > 0f;
+
+    // Nasobek poskozeni utocnika od tancicich Mosinu (spoluhrac v okruhu tance). Vola server (Combat.DamagePlayer).
+    public static float DamageScaleFor(GameObject attacker)
+    {
+        if (attacker == null) return 1f;
+        foreach (var bard in bards)
+        {
+            if (bard == null || !bard.Dancing || bard.concert == null) continue;
+            if (!Combat.SameTeam(bard.gameObject, attacker)) continue;
+            if ((bard.transform.position - attacker.transform.position).sqrMagnitude > bard.concert.radius * bard.concert.radius) continue;
+            return DanceDamageScale;
+        }
+        return 1f;
+    }
+
+    void ServerDanceTick()
+    {
+        if (danceUntil <= 0f || Dancing) return;
+
+        // konec tance (cas nebo smrt): stit spoluhracu rychle vyprcha
+        danceUntil = 0f;
+        foreach (var target in danceShielded)
+            if (target != null && target.currentHealth.Value > 0f)
+                target.ServerHoldShield(0f, 0f);
+        danceShielded.Clear();
+        EndDanceClientRpc();
+    }
+
+    // Preruseni tance hracem (bot tancuje celou dobu): pohyb (az po prvnim pusteni pohybovych klaves - kdo pri
+    // dopadu jeste drzi W, tanec hned nezrusi), skok nebo jina schopnost.
+    bool danceInterrupted, danceMoveArmed;
+
+    bool DanceInterrupted()
+    {
+        Vector2 move = HeroInput.Move(this);
+        if (move.sqrMagnitude < 0.01f) danceMoveArmed = true;
+        if (danceMoveArmed && move.sqrMagnitude > 0.09f) return true;
+        return HeroInput.Pressed(this, HeroInput.Key.Space) || HeroInput.Pressed(this, HeroInput.Key.Shift)
+            || HeroInput.Pressed(this, HeroInput.Key.E) || HeroInput.Pressed(this, HeroInput.Key.RightMouse);
+    }
+
+    [ServerRpc]
+    void EndDanceServerRpc()
+    {
+        if (danceUntil > Time.time) danceUntil = Time.time;   // ServerDanceTick tanec ukonci
+    }
+
+    [ClientRpc]
+    void EndDanceClientRpc()
+    {
+        var visual = GetComponent<CharacterVisual>();
+        if (visual != null) visual.StopUltimate();
+        fpc.SetCrouchedHitbox(false);
     }
 
     // ---------------- rytmus ----------------
@@ -188,6 +340,110 @@ public class BardAbility : NetworkBehaviour
 
     // 0 = prave uder, roste k 1 = dalsi uder
     public static float BeatPhase => (float)(BeatClock * BeatBpm / 60.0 % 1.0);
+
+    // ---------------- gesto pri zesileni (E) ----------------
+    // Jako Lucio: na zacatku zesileni leva ruka nahoru, pest s natazenym ukazovackem dvakrat pumpne nahoru-dolu
+    // a ruka zase dolu (cele ~1,3 s). Kazdy klient ho spusti sam, kdyz se zesileni zapne (NetworkVariable amped).
+    // Ve 3. osobe po animaci (svaly Humanoid avatara, nize), v 1. osobe HeldWeapons.UpdateAmpGesture.
+    const float GestureRaise = 0.18f;
+    const int GesturePumps = 2;
+    const float GesturePumpSeconds = 0.42f;
+    const float GestureLower = 0.25f;
+    float gestureStart = -100f;
+    bool wasAmped;
+
+    float GestureTime => Time.time - gestureStart;
+    static float GestureLength => GestureRaise + GesturePumps * GesturePumpSeconds + GestureLower;
+
+    // 0 = ruka dole, 1 = zdvizena
+    public float AmpGestureWeight
+    {
+        get
+        {
+            float t = GestureTime;
+            if (t < 0f || t > GestureLength) return 0f;
+            if (t < GestureRaise) return Mathf.SmoothStep(0f, 1f, t / GestureRaise);
+            if (t > GestureLength - GestureLower) return Mathf.SmoothStep(0f, 1f, (GestureLength - t) / GestureLower);
+            return 1f;
+        }
+    }
+
+    // 1 = pest nahore, 0 = dole (dvakrat dolu a zpet nahoru)
+    public float AmpGesturePump
+    {
+        get
+        {
+            float cycles = Mathf.Clamp((GestureTime - GestureRaise) / GesturePumpSeconds, 0f, GesturePumps);
+            return 0.5f + 0.5f * Mathf.Cos(cycles * Mathf.PI * 2f);
+        }
+    }
+
+    CharacterVisual gestureVisual;
+    Animator gestureAnimator;
+    HumanPoseHandler gestureHandler;
+    HumanPose gesturePose;
+    float gestureWeight;
+    static System.Collections.Generic.Dictionary<string, int> muscleIndex;
+
+    void LateUpdate()
+    {
+        // zesileni se prave zaplo: gesto od zacatku
+        bool isAmped = amped.Value;
+        if (isAmped && !wasAmped) gestureStart = Time.time;
+        wasAmped = isAmped;
+
+        bool alive = health != null && health.currentHealth.Value > 0f;
+        gestureWeight = alive ? AmpGestureWeight : 0f;
+        if (gestureWeight <= 0f) return;
+
+        if (gestureVisual == null) gestureVisual = GetComponent<CharacterVisual>();
+        var animator = gestureVisual != null ? gestureVisual.BodyAnimator : null;
+        if (animator == null || gestureVisual.UltimateActive) return;
+        if (gestureHandler == null || gestureAnimator != animator)
+        {
+            gestureHandler?.Dispose();
+            gestureHandler = new HumanPoseHandler(animator.avatar, gestureVisual.ModelRoot);
+            gestureAnimator = animator;
+        }
+        if (muscleIndex == null)
+        {
+            muscleIndex = new System.Collections.Generic.Dictionary<string, int>();
+            for (int i = 0; i < HumanTrait.MuscleCount; i++) muscleIndex[HumanTrait.MuscleName[i]] = i;
+        }
+
+        gestureHandler.GetHumanPose(ref gesturePose);
+        float pump = AmpGesturePump;
+        SetMuscle("Left Shoulder Down-Up", 0.6f);
+        SetMuscle("Left Arm Down-Up", Mathf.Lerp(0.7f, 1f, pump));          // paze vzhuru
+        SetMuscle("Left Arm Front-Back", 0.4f);                             // lehce dopredu
+        SetMuscle("Left Arm Twist In-Out", 0f);
+        SetMuscle("Left Forearm Stretch", Mathf.Lerp(-0.45f, 0.35f, pump)); // loket: na uder vystreli nahoru
+        SetMuscle("Left Forearm Twist In-Out", 0f);
+        SetMuscle("Left Hand Down-Up", 0f);
+        SetMuscle("Left Hand In-Out", 0f);
+        // pest s natazenym ukazovackem
+        for (int i = 0; i < HumanTrait.MuscleCount && i < gesturePose.muscles.Length; i++)
+        {
+            string name = HumanTrait.MuscleName[i];
+            if (!name.StartsWith("LeftHand.") || !name.Contains("Stretched")) continue;
+            float target = name.Contains("Index") ? 0.7f : name.Contains("Thumb") ? -0.4f : -0.9f;
+            gesturePose.muscles[i] = Mathf.Lerp(gesturePose.muscles[i], target, gestureWeight);
+        }
+        gestureHandler.SetHumanPose(ref gesturePose);
+    }
+
+    void SetMuscle(string name, float value)
+    {
+        if (muscleIndex.TryGetValue(name, out int i) && i < gesturePose.muscles.Length)
+            gesturePose.muscles[i] = Mathf.Lerp(gesturePose.muscles[i], value, gestureWeight);
+    }
+
+    public override void OnDestroy()
+    {
+        gestureHandler?.Dispose();
+        gestureHandler = null;
+        base.OnDestroy();
+    }
 
     public static bool OnBeat
     {
@@ -286,7 +542,12 @@ public class BardAbility : NetworkBehaviour
             if (flat.sqrMagnitude < 0.01f) flat = Vector3.ProjectOnPlane(forward, Vector3.up);
             var controller = victim.GetComponent<FirstPersonController>();
             if (controller != null)
+            {
                 controller.ServerKnockback((flat.normalized + Vector3.up * 0.35f).normalized * wave.knockback);
+                // narazi do zdi: omraceni ve chvili narazu
+                if (WallBehind(victim, flat.normalized, out float distance, out Vector3 point))
+                    StartCoroutine(WallSlam(victim, controller, point, distance / Mathf.Max(1f, wave.knockback)));
+            }
 
             var victimHero = victim.GetComponent<PlayerHero>();
             if (victimHero != null)
@@ -294,6 +555,51 @@ public class BardAbility : NetworkBehaviour
         }
 
         WaveClientRpc(origin, forward, wave.range);
+    }
+
+    // Basova vlna do zdi: odhozeny nepritel, kteremu v draze odhozeni (do WallSlamDistance m) stoji zed, je po narazu
+    // WallSlamStun s omraceny. Pohyb odhozeneho pocita jeho klient, proto server zed hleda dopredu tvarem jeho kapsle.
+    const float WallSlamDistance = 10f;
+    const float WallSlamStun = 1f;
+
+    static bool WallBehind(Health victim, Vector3 direction, out float distance, out Vector3 point)
+    {
+        distance = 0f;
+        point = Vector3.zero;
+        var body = victim.GetComponent<CharacterController>();
+        if (body == null || direction.sqrMagnitude < 0.01f) return false;
+
+        Vector3 center = body.transform.TransformPoint(body.center);
+        float half = Mathf.Max(0f, body.height * 0.5f - body.radius);
+        Vector3 top = center + Vector3.up * half;
+        Vector3 bottom = center - Vector3.up * half + Vector3.up * 0.3f;   // (nad schody a nerovnosti zeme)
+        var hits = Physics.CapsuleCastAll(top, bottom, body.radius * 0.9f, direction, WallSlamDistance, ~0, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (var hit in hits)
+        {
+            if (hit.collider.GetComponentInParent<PlayerHero>() != null || hit.distance <= 0f) continue;
+            if (Mathf.Abs(hit.normal.y) > 0.5f) continue;   // podlaha / strop, ne zed
+            distance = hit.distance;
+            point = hit.point;
+            return true;
+        }
+        return false;
+    }
+
+    System.Collections.IEnumerator WallSlam(Health victim, FirstPersonController controller, Vector3 point, float delay)
+    {
+        yield return new WaitForSeconds(Mathf.Clamp(delay, 0f, 1f));
+        if (victim == null || controller == null || victim.currentHealth.Value <= 0f) yield break;
+        controller.ServerStun(WallSlamStun, gameObject, false);
+        WallSlamClientRpc(point);
+    }
+
+    [ClientRpc]
+    void WallSlamClientRpc(Vector3 point)
+    {
+        Fx.Sparks(point, Color.white);
+        Fx.Sparks(point + Vector3.up * 0.3f, new Color(0.75f, 0.5f, 1f));
+        ProceduralSfx.Play(ProceduralSfx.StunConfirm, point, 0.8f);
     }
 
     void ServerTick()
@@ -361,12 +667,17 @@ public class BardAbility : NetworkBehaviour
     {
         if (concert == null || !CanAct()) return;
 
+        // tanec: spoluhraci v okruhu (i Mosino) maji stit, dokud tancuje
+        danceUntil = Time.time + concert.duration;
+        danceShielded.Clear();
         foreach (var col in Physics.OverlapSphere(transform.position + Vector3.up, concert.radius, ~0, QueryTriggerInteraction.Ignore))
         {
             var target = col.GetComponentInParent<Health>();
             if (target == null || target.currentHealth.Value <= 0f || target.GetComponent<PlayerHero>() == null) continue;
             if (target.gameObject != gameObject && !Combat.SameTeam(gameObject, target.gameObject)) continue;
-            target.ServerAddShield(concert.power, concert.duration);
+            if (danceShielded.Contains(target)) continue;
+            target.ServerHoldShield(concert.power, concert.duration);
+            danceShielded.Add(target);
         }
 
         // Uder: nepratele v okoli odleti a jsou chvili omraceni.
@@ -384,6 +695,7 @@ public class BardAbility : NetworkBehaviour
             if (away.sqrMagnitude < 0.01f) away = transform.forward;
             controller.ServerStun(SlamStun, gameObject, false);   // (omraceni pred odhozenim - jinak by ho zrusilo)
             controller.ServerKnockback((away.normalized + Vector3.up * 0.5f).normalized * SlamKnockback);
+            controller.ServerSlow(SlamStun + SlamSlowSeconds, SlamSlowFactor);   // (po omraceni jeste zpomaleny)
             var victimHero = victim.GetComponent<PlayerHero>();
             if (victimHero != null) victimHero.ServerNoteAttacker(gameObject);
         }
@@ -392,7 +704,7 @@ public class BardAbility : NetworkBehaviour
         if (recorder != null)
             recorder.ServerNoteUltimate();
 
-        ConcertClientRpc(transform.position, concert.radius);
+        ConcertClientRpc(transform.position, concert.radius, concert.duration);
     }
 
     // ---------------- vizual ----------------
@@ -425,8 +737,13 @@ public class BardAbility : NetworkBehaviour
     }
 
     [ClientRpc]
-    void ConcertClientRpc(Vector3 position, float radius)
+    void ConcertClientRpc(Vector3 position, float radius, float danceSeconds)
     {
+        // Mosino tancuje (animace ultimatky pres cele telo, vidi ji vsichni)
+        var visual = GetComponent<CharacterVisual>();
+        if (visual != null) visual.PlayUltimate(danceSeconds);
+        fpc.SetCrouchedHitbox(true);   // pri tanci je u zeme - zasahova kapsle jako v drepu (u vsech hracu)
+
         Fx.Explosion(position + Vector3.up * 0.2f, SlamRadius * 0.4f);
         // Ultimatka je slyset pres celou mapu.
         Fx.PlayGlobal(ProceduralSfx.CaptureWon, 0.6f);
@@ -494,8 +811,8 @@ public class BardAbility : NetworkBehaviour
 }
 
 // Hudba z Barda podle zapnute aury: lecivy rytmus (Resources/Audio/bard_heal) a zrychlujici (Resources/Audio/bard_speed).
-// Ostatni ji slysi prostorove z nej, on sam vystredene. Pri prepnuti se skladby plynule prolnou; po smrti, mimo zapas
-// a v POTG se ztisi (a pak kazda pokracuje, kde skoncila).
+// On sam ji slysi vystredene; ostatni (spoluhraci i nepratele) jen v dosahu jeho aury (prostorove, k okraji zeslabne).
+// Pri prepnuti se skladby plynule prolnou; po smrti, mimo zapas a v POTG se ztisi (a pak kazda pokracuje, kde skoncila).
 public class BardAuraMusic : MonoBehaviour
 {
     BardAbility bard;
@@ -520,8 +837,9 @@ public class BardAuraMusic : MonoBehaviour
 
         if (healClip == null) healClip = Resources.Load<AudioClip>("Audio/bard_heal");
         if (speedClip == null) speedClip = Resources.Load<AudioClip>("Audio/bard_speed");
-        Fade(ref heal, healClip, healOn, 0.15f);
-        Fade(ref speed, speedClip, speedOn, 0.11f);   // (nahravka je o 2,6 dB hlasitejsi nez leciva)
+        // (ostatni ji slysi jen v dosahu aury - hlida rolloff do jejiho okraje)
+        Fade(ref heal, healClip, healOn, 0.08f);
+        Fade(ref speed, speedClip, speedOn, 0.06f);   // (nahravka je o 2,6 dB hlasitejsi nez leciva)
     }
 
     void Fade(ref AudioSource source, AudioClip clip, bool on, float volume)
@@ -537,11 +855,13 @@ public class BardAuraMusic : MonoBehaviour
             source.playOnAwake = false;
             source.volume = 0f;
             source.rolloffMode = AudioRolloffMode.Linear;
-            source.minDistance = 4f;
-            source.maxDistance = 35f;
             source.dopplerLevel = 0f;
         }
         if (source == null) return;
+
+        // slyset jen v dosahu aury (od poloviny dosahu slabne k nule na okraji)
+        source.maxDistance = Mathf.Max(2f, bard.AuraRadius);
+        source.minDistance = source.maxDistance * 0.5f;
 
         source.spatialBlend = ProceduralSfx.IsLocalPlayer(bard) ? 0f : 1f;
         if (on && !source.isPlaying) source.Play();

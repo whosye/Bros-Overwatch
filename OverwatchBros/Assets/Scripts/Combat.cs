@@ -51,6 +51,8 @@ public static class Combat
         var boostedAttacker = attacker != null ? attacker.GetComponent<PlayerHero>() : null;
         if (boostedAttacker != null && boostedAttacker.IsBoosted)
             amount *= NanoBoostAbility.DamageMultiplier;
+        // Mosinuv tanec (ultimatka): spoluhraci v jeho okruhu davaji dvojnasobne poskozeni
+        amount *= BardAbility.DamageScaleFor(attacker);
         var boostedTarget = target.GetComponent<PlayerHero>();
         if (boostedTarget != null && boostedTarget.IsBoosted)
             amount *= NanoBoostAbility.DamageTakenMultiplier;

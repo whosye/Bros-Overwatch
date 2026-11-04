@@ -10,7 +10,11 @@ public enum VoiceKind
     Idle,      // nahodna hlaska pri chozeni
     Ability,   // pouzil schopnost (kazda schopnost ma vlastni hlasky)
     Snare,     // nekdo ho znehybnil nebo zpomalil (past apod.)
-    Attack     // strili po nepriteli a trefuje ho (obcas, ne pri kazde rane)
+    Attack,    // strili po nepriteli a trefuje ho (obcas, ne pri kazde rane)
+    Heal,      // vylecil spoluhrace zbrani (obcas)
+    Headshot,  // trefil nepritele zbrani do hlavy (obcas)
+    Miss,      // schopnost minula (David: uspavaci sipka nikoho netrefila)
+    Scope      // priblizil zamerovacem (obcas)
 }
 
 // Hlasove hlasky hrdiny. Nahravky se berou z HeroDefinition (spawn / kill / death / hurt / idle) a z AbilityDefinition
@@ -30,7 +34,55 @@ public class HeroVoice : MonoBehaviour
     static AudioListener listener;
 
     void OnEnable() => all.Add(this);
-    void OnDisable() => all.Remove(this);
+
+    void OnDisable()
+    {
+        all.Remove(this);
+        if (all.Count == 0 && duck < 1f)
+        {
+            duck = 1f;
+            GameSettings.Duck = 1f;
+            GameSettings.ApplyVolume();
+        }
+    }
+
+    // ---------------- ztlumeni pri ultimatce (ducking) ----------------
+    // Dokud nekdo rika hlasku k ultimatce, vsechny ostatni zvuky se plynule ztlumi (celkova hlasitost dolu)
+    // a hlas ultimatky se o tolik zesili zpet (VoiceGain) - zni stejne nahlas, jen vsechno kolem utichne.
+    // Lehci ztlumeni: mluvi vlastni postava hrace (jen u nej - at ji dobre slysi; ostatnim se nic nemeni).
+    const float DuckLevel = 0.45f;      // ultimatka (kohokoli), ~ -7 dB
+    const float OwnDuckLevel = 0.72f;   // vlastni postava, ~ -3 dB
+    static float duck = 1f;
+    static int duckFrame = -1;
+    VoiceGain gain;
+    bool playingOwn;   // hraje hlas postavy, za kterou tento hrac hraje (v zaznamu: postava, z jejiz pohledu se prehrava)
+
+    void Update()
+    {
+        if (duckFrame == Time.frameCount) return;   // (jednou za snimek pro vsechny hlasy)
+        duckFrame = Time.frameCount;
+
+        bool ultSpeaking = false, ownSpeaking = false;
+        foreach (var voice in all)
+        {
+            if (!voice.IsSpeaking) continue;
+            ultSpeaking |= voice.playingUlt;
+            ownSpeaking |= voice.playingOwn && !voice.playingRide;
+        }
+
+        float target = ultSpeaking ? DuckLevel : ownSpeaking ? OwnDuckLevel : 1f;
+        float next = Mathf.MoveTowards(duck, target, Time.unscaledDeltaTime * (target < duck ? 4f : 1.5f));
+        if (next != duck)
+        {
+            duck = next;
+            GameSettings.Duck = duck;
+            GameSettings.ApplyVolume();
+        }
+
+        foreach (var voice in all)
+            if (voice.gain != null)
+                voice.gain.gain = (voice.playingUlt || voice.playingOwn) && !voice.playingRide && voice.IsSpeaking ? 1f / duck : 1f;
+    }
 
     bool IsSpeaking => source != null && source.isPlaying;
 
@@ -42,6 +94,7 @@ public class HeroVoice : MonoBehaviour
             if (voice.source != null) voice.source.Stop();
             voice.playingUlt = false;
             voice.playingRide = false;
+            voice.playingOwn = false;
         }
     }
 
@@ -71,9 +124,13 @@ public class HeroVoice : MonoBehaviour
             case VoiceKind.Death: return 6;
             case VoiceKind.Kill: return 5;
             case VoiceKind.Ability: return 4;
+            case VoiceKind.Miss: return 4;   // (prerusi hlasku k vystrelu sipky)
             case VoiceKind.Snare: return 3;
+            case VoiceKind.Headshot: return 3;
             case VoiceKind.Spawn: return 2;
             case VoiceKind.Attack: return 2;
+            case VoiceKind.Heal: return 2;
+            case VoiceKind.Scope: return 1;
             case VoiceKind.Hurt: return 1;
             default: return 0;
         }
@@ -93,6 +150,10 @@ public class HeroVoice : MonoBehaviour
             case VoiceKind.Idle: return hero.idleLines;
             case VoiceKind.Snare: return hero.snareLines;
             case VoiceKind.Attack: return hero.attackLines;
+            case VoiceKind.Heal: return hero.healLines;
+            case VoiceKind.Headshot: return hero.headshotLines;
+            case VoiceKind.Miss: return hero.missLines;
+            case VoiceKind.Scope: return hero.scopeLines;
             case VoiceKind.Ability:
                 var ability = AbilityInSlot(hero, slot);
                 return ability != null ? ability.voiceLines : null;
@@ -190,6 +251,7 @@ public class HeroVoice : MonoBehaviour
         playingPriority = priority;
         playingUlt = ult;
         playingRide = false;
+        playingOwn = ProceduralSfx.IsLocalPlayer(this);
     }
 
     // Konkretni nahravka (veta z rozhovoru hrdinu): prerusi jen mene dulezitou hlasku, ultimatku nikdy.
@@ -207,6 +269,7 @@ public class HeroVoice : MonoBehaviour
         playingPriority = priority;
         playingUlt = false;
         playingRide = false;
+        playingOwn = ProceduralSfx.IsLocalPlayer(this);
     }
 
     // Prehrani v zaznamu (POTG, killcam): hlaska presne jak zaznela, bez pravidel proti zvukovemu chaosu.
@@ -229,6 +292,7 @@ public class HeroVoice : MonoBehaviour
         playingPriority = Priority(kind);
         playingUlt = ult;
         playingRide = false;
+        playingOwn = pov;
     }
 
     // Hudba jizdy z toboganu (stejny "hlas" hrace - mezitim nemluvi, jen ultimatka ji prerusi).
@@ -245,6 +309,7 @@ public class HeroVoice : MonoBehaviour
         playingPriority = 99;
         playingUlt = false;
         playingRide = true;
+        playingOwn = false;   // (hudba, ne rec)
     }
 
     public void StopRide()
@@ -270,6 +335,7 @@ public class HeroVoice : MonoBehaviour
             source.minDistance = 4f;
             source.maxDistance = 30f;
             source.playOnAwake = false;
+            gain = go.AddComponent<VoiceGain>();   // (ultimatka nad ztlumenym zbytkem)
         }
     }
 }

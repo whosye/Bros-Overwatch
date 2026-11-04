@@ -67,8 +67,11 @@ public static class GameSettings
         }
     }
 
+    // Docasne ztlumeni vseho (1 = bez ztlumeni): behem hlasky k ultimatce, viz HeroVoice.
+    public static float Duck = 1f;
+
     public static void ApplyVolume()
     {
-        AudioListener.volume = Volume;
+        AudioListener.volume = Volume * Duck;
     }
 }

@@ -38,6 +38,8 @@ public class HeldWeapons : MonoBehaviour
         // konec sipu u tetivy (mistni v drzaku) - tam pri natahovani drzi prava ruka
         public Vector3 nockLocal;
         public bool hasNock;
+        // luk v leve ruce postavy (ostatni hraci): leva paze drzi madlo, prava tahne tetivu (IK po animaci)
+        public bool bowBody;
     }
 
     // Jak daleko se sip pri plnem natazeni posune dozadu (m) a jak dlouho po vystrelu chybi.
@@ -124,6 +126,94 @@ public class HeldWeapons : MonoBehaviour
         return true;
     }
 
+    // Luk u postavy: pripevneny k hrudi (hybe se s telem). Natahovani: leva paze napnuta dopredu ve vysce ramen,
+    // luk skoro svisle; klid: luk spusteny v leve ruce u boku, sip sikmo dolu dopredu.
+    void AttachBowAtChest(Hand hand)
+    {
+        var chest = visual.GetBone(HumanBodyBones.Chest);
+        var shoulder = visual.GetBone(HumanBodyBones.LeftUpperArm);
+        var elbow = visual.GetBone(HumanBodyBones.LeftLowerArm);
+        var wrist = visual.GetBone(HumanBodyBones.LeftHand);
+        var hips = visual.GetBone(HumanBodyBones.Hips);
+        var body = visual.ModelRoot;
+        Vector3 shoulderLocal = shoulder != null ? body.InverseTransformPoint(shoulder.position) : new Vector3(-0.18f, 1.45f, 0f);
+        float hipY = hips != null ? body.InverseTransformPoint(hips.position).y : shoulderLocal.y - 0.5f;
+        float reach = shoulder != null && elbow != null && wrist != null
+            ? Vector3.Distance(shoulder.position, elbow.position) + Vector3.Distance(elbow.position, wrist.position) : 0.5f;
+
+        // natahovani: madlo pred levym ramenem (paze skoro napnuta), luk lehce naklopeny hornim ramenem doprava
+        Quaternion aim = body.rotation * Quaternion.Euler(-2f, 0f, -12f);
+        hand.holder.rotation = aim;
+        hand.holder.position = body.TransformPoint(new Vector3(shoulderLocal.x * 0.5f, shoulderLocal.y - 0.03f, shoulderLocal.z + reach * 0.95f))
+            - aim * hand.grip;
+        hand.holder.SetParent(chest, true);
+        hand.aimPosition = hand.holder.localPosition;
+        hand.aimRotation = hand.holder.localRotation;
+        hand.holder.SetParent(null, true);
+
+        // klid: luk spusteny v leve ruce u boku, sip miri sikmo dolu dopredu
+        Quaternion rest = body.rotation * Quaternion.Euler(40f, -12f, -8f);
+        hand.holder.rotation = rest;
+        hand.holder.position = body.TransformPoint(new Vector3(shoulderLocal.x - 0.06f, hipY + 0.02f, 0.16f)) - rest * hand.grip;
+        hand.holder.SetParent(chest, true);
+        hand.idlePosition = hand.holder.localPosition;
+        hand.idleRotation = hand.holder.localRotation;
+        hand.hasAimPose = true;
+    }
+
+    // Luk u postavy: po vystrelu chvili v poze natahovani, pak zpet do klidu.
+    const float BowAimHoldSeconds = 0.5f;
+
+    void SolveBodyBow(Hand hand, float aimK)
+    {
+        var body = visual.ModelRoot;
+        hand.holder.localPosition = Vector3.Lerp(hand.idlePosition, hand.aimPosition, aimK);
+        hand.holder.localRotation = Quaternion.Slerp(hand.idleRotation, hand.aimRotation, aimK);
+
+        // leva paze drzi madlo (loket dolu a ven)
+        FirstPersonArms.SolveArm(bodySupportArm, hand.holder.TransformPoint(hand.grip), hand.holder,
+            body.TransformDirection(new Vector3(-0.6f, -1f, -0.2f)), false, true);
+
+        // prava ruka drzi tetivu za konec sipu a tahne ji s nim dozadu (loket vysoko za telem, jako lukostrelec)
+        float charge = ghost ? GhostCharge : shooting != null ? shooting.ChargeFraction : 0f;
+        bool arrowShown = hand.arrow == null || hand.arrow.gameObject.activeSelf;
+        if (bodyMainArm != null && hand.hasNock && charge > 0.01f && arrowShown)
+        {
+            Vector3 nock = hand.holder.TransformPoint(hand.nockLocal + Vector3.back * (DrawLength * Mathf.SmoothStep(0f, 1f, charge)));
+            FirstPersonArms.SolveArm(bodyMainArm, nock, hand.holder, body.TransformDirection(new Vector3(0.7f, -0.2f, -1f)), false);
+        }
+    }
+
+#if UNITY_EDITOR
+    // Scene okno (za behu, zapnute Gizmos): kde zbran drzi ruce - zelena = Grip (rukojet), modra = Foregrip
+    // (predpazbi, druha ruka), zluta = konec sipu na tetive (tam tahne prava ruka).
+    void OnDrawGizmos()
+    {
+        foreach (var list in new[] { hands, bodyHands })
+            foreach (var hand in list)
+            {
+                if (hand == null || hand.holder == null || !hand.holder.gameObject.activeInHierarchy) continue;
+                DrawPoint(hand.holder.TransformPoint(hand.grip), Color.green, "Grip");
+                if (hand.twoHanded) DrawPoint(hand.holder.TransformPoint(hand.foregrip), new Color(0.2f, 0.5f, 1f), "Foregrip");
+                if (hand.hasNock) DrawPoint(hand.holder.TransformPoint(hand.nockLocal), Color.yellow, "Nock");
+                // osy drzaku: kam zbran miri (modra Z) a kde je "nahoru" (zelena Y)
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawRay(hand.holder.position, hand.holder.forward * 0.25f);
+                Gizmos.color = Color.green;
+                Gizmos.DrawRay(hand.holder.position, hand.holder.up * 0.12f);
+            }
+    }
+
+    static void DrawPoint(Vector3 point, Color color, string label)
+    {
+        Gizmos.color = color;
+        Gizmos.DrawSphere(point, 0.015f);
+        Gizmos.DrawWireSphere(point, 0.04f);
+        UnityEditor.Handles.color = color;
+        UnityEditor.Handles.Label(point + Vector3.up * 0.05f, label);
+    }
+#endif
+
     // Puska obema rukama: po vystrelu chvili v poze strelby, pak zpet do klidu (plynule).
     float lastShotTime = -100f;
     float aimBlend;
@@ -183,10 +273,65 @@ public class HeldWeapons : MonoBehaviour
     }
 
     // Po animaci: leva ruka postavy podpira zbran zespodu (pro ostatni hrace, POTG, killcam).
+    // ---------------- Mosinovo gesto pri zesileni (E) v prvni osobe ----------------
+    // Leva pest s natazenym ukazovackem se zvedne do obrazu vlevo nahore, dvakrat pumpne a zmizi (jako Lucio).
+    Transform ampHand;
+    float ampBlend;
+    bool ampPointing;
+    BardAbility bardAbility;
+
+    void UpdateAmpGesture()
+    {
+        if (root == null || fpArms == null || ghost) return;
+        if (bardAbility == null) bardAbility = GetComponent<BardAbility>();
+        // (krátke gesto na zacatku zesileni: nahoru, dvakrat pumpne, dolu - casovani v BardAbility)
+        ampBlend = bardAbility != null && root.activeSelf ? bardAbility.AmpGestureWeight : 0f;
+        if (ampBlend <= 0.001f)
+        {
+            if (ampPointing)
+            {
+                fpArms.PointLeftIndex(false);
+                fpArms.ResetArm(false);
+                ampPointing = false;
+            }
+            return;
+        }
+
+        if (ampHand == null)
+        {
+            ampHand = new GameObject("AmpHand").transform;
+            ampHand.SetParent(root.transform, false);
+        }
+        float pump = bardAbility.AmpGesturePump;
+        Vector3 hidden = new Vector3(-0.45f, -0.6f, 0.4f);
+        Vector3 raised = new Vector3(-0.3f, -0.02f + 0.07f * pump, 0.55f);
+        float k = Mathf.SmoothStep(0f, 1f, ampBlend);
+        ampHand.localPosition = Vector3.Lerp(hidden, raised, k);
+        // prsty (a ukazovacek) miri vzhuru, dlan ke stredu obrazu; na uder se pest lehce naklopi dopredu
+        ampHand.localRotation = Quaternion.Euler(-80f + 12f * pump, 8f, 0f);
+        fpArms.Solve(false, ampHand.position, ampHand, root.transform, false, true);
+        if (!ampPointing)
+        {
+            fpArms.PointLeftIndex(true);
+            ampPointing = true;
+        }
+    }
+
     void LateUpdate()
     {
         UpdateDartPistol();
+        UpdateAmpGesture();
         if (bodySupportArm == null || visual == null || visual.ModelRoot == null) return;
+        if (builtModel == HeldModel.Bow)
+        {
+            float charge = ghost ? GhostCharge : shooting != null ? shooting.ChargeFraction : 0f;
+            bool drawing = charge > 0.01f || Time.time - lastShotTime < BowAimHoldSeconds;
+            aimBlend = Mathf.MoveTowards(aimBlend, drawing ? 1f : 0f, Time.deltaTime * (drawing ? 7f : 2.5f));
+            foreach (var hand in bodyHands)
+                if (hand.holder != null && hand.bowBody && hand.holder.gameObject.activeInHierarchy)
+                    SolveBodyBow(hand, Mathf.SmoothStep(0f, 1f, aimBlend));
+            return;
+        }
         bool aiming = Time.time - lastShotTime < AimHoldSeconds;
         aimBlend = Mathf.MoveTowards(aimBlend, aiming ? 1f : 0f, Time.deltaTime * (aiming ? 8f : 2.5f));
         float k = Mathf.SmoothStep(0f, 1f, aimBlend);
@@ -202,8 +347,21 @@ public class HeldWeapons : MonoBehaviour
             if (bodyMainArm != null)
                 FirstPersonArms.SolveArm(bodyMainArm, hand.holder.TransformPoint(hand.grip), hand.holder,
                     body.TransformDirection(new Vector3(0.15f, -1f, -0.35f)), false);   // lokty u tela (dolu a lehce dozadu)
-            FirstPersonArms.SolveArm(bodySupportArm, hand.holder.TransformPoint(hand.foregrip), hand.holder,
+
+            // puska v prave ruce podle animace strelby (Viktor): leva ruka na predpazbi jen pri mireni,
+            // pri behu bez strelby se plynule pusti a bezi podle animace
+            float support = !hand.hasAimPose && bodyMainArm == null ? visual.AimHoldWeight : 1f;
+            if (support <= 0.001f) continue;
+            var arm = bodySupportArm;
+            Quaternion upper = arm.upper.localRotation, lower = arm.lower.localRotation, wrist = arm.hand.localRotation;
+            FirstPersonArms.SolveArm(arm, hand.holder.TransformPoint(hand.foregrip), hand.holder,
                 body.TransformDirection(new Vector3(-0.15f, -1f, -0.35f)), true);
+            if (support < 0.999f)
+            {
+                arm.upper.localRotation = Quaternion.Slerp(upper, arm.upper.localRotation, support);
+                arm.lower.localRotation = Quaternion.Slerp(lower, arm.lower.localRotation, support);
+                arm.hand.localRotation = Quaternion.Slerp(wrist, arm.hand.localRotation, support);
+            }
         }
     }
     HeldModel builtModel;
@@ -326,7 +484,10 @@ public class HeldWeapons : MonoBehaviour
     void PlayBodyAttack(WeaponDefinition weapon)
     {
         // zbran obema rukama (strelba od pasu): postava pri vystrelu nezveda ruce, zbran zustava u boku
-        if (weapon != null && weapon.twoHanded && !weapon.IsMelee) return;
+        // (s vlastni animaci strelby hrdiny se prehraje ta - recoil)
+        if (weapon != null && weapon.twoHanded && !weapon.IsMelee && !(visual != null && visual.HoldShootPose)) return;
+        // luk: ruce vede IK (natahovani tetivy), animace strelby z pistole by je jen strhla
+        if (builtModel == HeldModel.Bow && bodySupportArm != null) return;
         if (visual != null && visual.HasModel)
             visual.PlayAttack(weapon != null && weapon.IsMelee, weapon != null ? Mathf.Clamp(1.25f / Mathf.Max(0.5f, weapon.fireRate), 0.25f, 0.7f) : 0.4f);
     }
@@ -381,7 +542,8 @@ public class HeldWeapons : MonoBehaviour
         if (root != null && root.activeSelf != cameraHandsVisible)
             root.SetActive(cameraHandsVisible);
 
-        bool bodyVisible = !dead && (!owner || thirdPerson) && !hiddenByReplay;
+        // (behem tance ultimatky - Mosino - ma ruce volne)
+        bool bodyVisible = !dead && (!owner || thirdPerson) && !hiddenByReplay && !(visual != null && visual.UltimateActive);
         float bodyBlock = visual != null ? visual.BlockBlend : 0f;
         foreach (var hand in bodyHands)
         {
@@ -577,7 +739,7 @@ public class HeldWeapons : MonoBehaviour
     const float ArrowRestAbove = 0.06f;   // operka nad stredem rukojeti (m)
     const float BraceHeight = 0.17f;      // tetiva za madlem (m) - tam lezi konec sipu
 
-    static void SnapArrowToRest(Transform holder, Vector3 grip)
+    public static void SnapArrowToRest(Transform holder, Vector3 grip)
     {
         Transform arrow = null;
         foreach (var child in holder.GetComponentsInChildren<Transform>(true))
@@ -775,12 +937,13 @@ public class HeldWeapons : MonoBehaviour
 
         root = null;
         fpArms = null;
+        ampPointing = false;   // (nove ruce maji sevrenou pest)
         hands = new Hand[0];
         bodyHands = new Hand[0];
         if (dartPistol != null) { Destroy(dartPistol.gameObject); dartPistol = null; }
         bodySupportArm = null;
         bodyMainArm = null;
-        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; }
+        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; }
         stormMaterials = null;
         stormShown = false;
         built = true;
@@ -879,20 +1042,50 @@ public class HeldWeapons : MonoBehaviour
             bodyHands = new Hand[count];
             for (int i = 0; i < count; i++)
             {
-                float side = count == 1 ? 1f : (i == 0 ? 1f : -1f);
+                // luk jako u kamery: v leve ruce (jako Hanzo), prava ruka tahne tetivu
+                bool bowBody = count == 1 && model == HeldModel.Bow && visual.BodyAnimator != null
+                    && visual.GetBone(HumanBodyBones.Chest) != null;
+                float side = count == 1 ? (bowBody ? -1f : 1f) : (i == 0 ? 1f : -1f);
                 var hand = new Hand { side = side };
                 var holder = new GameObject(i == 0 ? "BodyRightHand" : "BodyLeftHand").transform;
                 hand.holder = holder;
                 BuildModel(holder, weapon, model, side);
+                if (bowBody) SnapArrowToRest(holder, GripInWeapon(weapon, model));
                 FindArrow(hand);
                 bodyHands[i] = hand;
                 // prsty postavy sevrene kolem zbrane (prava, u dvou zbrani i leva)
                 if (side > 0f) visual.GripRight = true;
                 else visual.GripLeft = true;
 
+                if (bowBody)
+                {
+                    hand.bowBody = true;
+                    hand.grip = GripInWeapon(weapon, model);
+                    AttachBowAtChest(hand);
+                    bodySupportArm = FirstPersonArms.BuildArm(visual.BodyAnimator, false);   // madlo
+                    bodyMainArm = FirstPersonArms.BuildArm(visual.BodyAnimator, true);       // tetiva
+                    visual.GripRight = true;
+                    continue;
+                }
+
+                // zbran obema rukama s vlastni animaci strelby hrdiny (napr. z Mixama): postava drzi zbran stale namirenou
+                // (prvni snimek animace), vystrel prehraje celou animaci; puska v prave ruce srovnana podle pozy strelby,
+                // leva ruka na predpazbi (IK po animaci, viz LateUpdate)
+                if (weapon.twoHanded && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && visual.HasHeroShoot)
+                {
+                    hand.twoHanded = true;
+                    hand.grip = GripInWeapon(weapon, model);
+                    hand.foregrip = ForegripInWeapon(holder, hand.grip, 0.42f, 0.38f);
+                    visual.HoldShootPose = true;
+                    visual.EvaluateShootPose();
+                    AttachToBone(hand, weapon, model, true);
+                    visual.EvaluateIdlePose();
+                    bodySupportArm = FirstPersonArms.BuildArm(visual.BodyAnimator, false);
+                    visual.GripLeft = true;
+                }
                 // zbran obema rukama: puska v pohotovosti pred pravym bokem (pripevnena k trupu), obe ruce na ni
                 // (prava na rukojeti, leva zespodu na predpazbi - IK po animaci, viz LateUpdate)
-                if (weapon.twoHanded && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && AttachAtHip(hand))
+                else if (weapon.twoHanded && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && AttachAtHip(hand))
                 {
                     hand.twoHanded = true;
                     hand.grip = GripInWeapon(weapon, model);
@@ -940,7 +1133,7 @@ public class HeldWeapons : MonoBehaviour
     }
 
     // Predpazbi: kus pred rukojeti smerem k hlavni (podle delky modelu), kousek pod osou zbrane.
-    static Vector3 ForegripInWeapon(Transform holder, Vector3 grip, float fraction = 0.45f, float maxForward = 0.32f)
+    public static Vector3 ForegripInWeapon(Transform holder, Vector3 grip, float fraction = 0.45f, float maxForward = 0.32f)
     {
         float front = grip.z + 0.25f;
         bool any = false;
@@ -971,7 +1164,7 @@ public class HeldWeapons : MonoBehaviour
         return go.transform;
     }
 
-    static Vector3 GripInWeapon(WeaponDefinition weapon, HeldModel model)
+    public static Vector3 GripInWeapon(WeaponDefinition weapon, HeldModel model)
     {
         if (model == HeldModel.Bow) return new Vector3(0f, 0f, 0.10f);
 
@@ -998,7 +1191,8 @@ public class HeldWeapons : MonoBehaviour
     }
 
     // Ostatni hraci maji zbran v ruce postavy: pripevni se ke kosti ruky v klidove poze, dal ji ruka nese pri kazde animaci.
-    void AttachToBone(Hand hand, WeaponDefinition weapon, HeldModel model)
+    // level: zbran vodorovne dopredu (puska v poze strelby), jinak lehce sklopena podle typu zbrane.
+    void AttachToBone(Hand hand, WeaponDefinition weapon, HeldModel model, bool level = false)
     {
         bool right = hand.side > 0f;
         var bone = visual.GetHand(right);
@@ -1006,10 +1200,9 @@ public class HeldWeapons : MonoBehaviour
 
         var grip = visual.GetGrip(right);
         Vector3 gripWorld = grip != null ? grip.position : bone.position;
+        hand.grip = GripInWeapon(weapon, model);   // (jen pro zobrazeni v Scene okne)
 
-        Vector3 euler = model == HeldModel.Scythe ? new Vector3(20f, 0f, -10f * hand.side)
-            : model == HeldModel.Axe ? new Vector3(35f, 0f, -10f * hand.side) : new Vector3(10f, 0f, 0f);
-        Quaternion rotation = visual.ModelRoot.rotation * Quaternion.Euler(euler);
+        Quaternion rotation = visual.ModelRoot.rotation * (level ? Quaternion.identity : BoneAttachRotation(model, hand.side));
         hand.holder.position = gripWorld - rotation * GripInWeapon(weapon, model);
         hand.holder.rotation = rotation;
         hand.holder.SetParent(bone, true);
@@ -1018,7 +1211,14 @@ public class HeldWeapons : MonoBehaviour
         hand.idleRotation = hand.holder.localRotation;
     }
 
-    static void BuildModel(Transform holder, WeaponDefinition weapon, HeldModel model, float side)
+    // Natoceni zbrane v ruce postavy vuci telu (v klidove poze), pak ji nese kost ruky. Pouziva i editor (Ukazka animaci se zbrani).
+    public static Quaternion BoneAttachRotation(HeldModel model, float side)
+    {
+        return Quaternion.Euler(model == HeldModel.Scythe ? new Vector3(20f, 0f, -10f * side)
+            : model == HeldModel.Axe ? new Vector3(35f, 0f, -10f * side) : new Vector3(10f, 0f, 0f));
+    }
+
+    public static void BuildModel(Transform holder, WeaponDefinition weapon, HeldModel model, float side)
     {
         if (weapon.heldPrefab != null)
         {

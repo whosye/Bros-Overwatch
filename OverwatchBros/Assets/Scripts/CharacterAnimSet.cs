@@ -1,6 +1,8 @@
 using UnityEngine;
 
 // Sada animaci postavy (z Universal Animation Library). Vytvari ji Editor/CharacterSetup a nacita CharacterVisual z Resources.
+// Hrdina muze mit i vlastni sadu (HeroDefinition.animations): jeji vyplnena policka prepisi spolecnou sadu, prazdna se vezmou ze spolecne.
+[CreateAssetMenu(menuName = "Overwatch Bros/Character Anim Set", fileName = "HeroAnimations")]
 public class CharacterAnimSet : ScriptableObject
 {
     public AnimationClip idle;
@@ -14,6 +16,8 @@ public class CharacterAnimSet : ScriptableObject
     public AnimationClip reload;
     public AnimationClip blockPose;
     public AnimationClip dashPose;
+    // Ultimatka pres cele telo (Mosino: tanec Flair), prehrava se ve smycce po dobu ultimatky.
+    public AnimationClip ultimate;
 
     // Pro uvodni scenky pred "play of the game".
     public AnimationClip sitIdle;
