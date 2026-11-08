@@ -94,6 +94,9 @@ public partial class MatchManager
             return;
         }
 
+        // utok a obrana: rolba se da pouzit az od bodu B
+        if (IsAttackMode && pointIndex.Value == 0) return;
+
         var tractor = Tractor.Instance;
         var health = player.GetComponent<Health>();
         if (tractor == null || health == null || health.currentHealth.Value <= 0f) return;

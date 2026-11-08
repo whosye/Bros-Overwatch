@@ -154,8 +154,8 @@ public class CaptureUI
         if (match.round.Value == 2 && match.firstPoints.Value >= 0)
         {
             int points = match.firstPoints.Value;
-            string taken = points switch { 1 => "bod A a ", 2 => "body A, B a ", _ => "" };
-            target.text = points >= MatchManager.CapturePointCount
+            string taken = points switch { 1 => "bod A a ", 2 => "body A, B a ", 3 => "body A, B, C a ", _ => "" };
+            target.text = points >= match.CapturePointCount
                 ? $"Cíl: všechny body rychleji než za {Clock(Mathf.CeilToInt(match.firstTime.Value))}"
                 : $"Cíl: {taken}na bodě {MatchManager.PointNames[points]} víc než {Mathf.FloorToInt(match.firstProgress.Value * 100f)} %";
         }

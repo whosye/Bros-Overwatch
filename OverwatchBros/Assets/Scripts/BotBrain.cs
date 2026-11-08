@@ -1235,7 +1235,7 @@ public class BotBrain : MonoBehaviour
     Vector3 RandomHotspot()
     {
         var spots = new List<Vector3>();
-        for (int i = 1; i <= MatchManager.CapturePointCount; i++)
+        for (int i = 1; i <= MatchManager.MaxCapturePoints; i++)
         {
             var marker = GameObject.Find($"CapturePoint_{i}");
             if (marker != null) spots.Add(marker.transform.position);
@@ -1542,6 +1542,7 @@ public static class BotNavigation
         var sources = new List<NavMeshBuildSource>();
         NavMeshBuilder.CollectSources(MapBounds, ~0, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>(), sources);
         sources.RemoveAll(src => src.component is Collider c && c.isTrigger);
+        sources.RemoveAll(src => src.component is Collider c && c.GetComponentInParent<ZoneGate>() is ZoneGate gate && gate.defendersPass);
         Bounds bounds = new Bounds();
         bool any = false;
         foreach (var src in sources)
@@ -1614,7 +1615,7 @@ public static class BotNavigation
             Debug.Log($"[Boti] {spawnName}: nejblizsi sit {(near ? $"{Vector3.Distance(nearHit.position, spawnMarker.transform.position):0.0} m ({nearHit.position:0.0})" : "NENI do 60 m")}"
                 + $", nejblizsi vrchol {(nearestVertex < float.MaxValue ? $"{Mathf.Sqrt(nearestVertex):0.0} m ({nearestPoint:0.0})" : "zadny")}.");
         }
-        for (int i = 1; i <= MatchManager.CapturePointCount; i++)
+        for (int i = 1; i <= MatchManager.MaxCapturePoints; i++)
         {
             var marker = GameObject.Find($"CapturePoint_{i}");
             if (marker == null) continue;

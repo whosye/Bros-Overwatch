@@ -507,6 +507,8 @@ public class FirstPersonController : NetworkBehaviour
     bool corpseState;
     bool corpseInit;
 
+    public static System.Collections.Generic.IReadOnlyList<FirstPersonController> All => allControllers;
+
     void OnEnable() { if (!allControllers.Contains(this)) allControllers.Add(this); corpseInit = false; }
     void OnDisable() => allControllers.Remove(this);
 

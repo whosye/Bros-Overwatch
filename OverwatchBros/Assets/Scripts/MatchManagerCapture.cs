@@ -23,14 +23,20 @@ public partial class MatchManager
     // faze kola
     public const int RoundSetup = 0, RoundAttack = 1, RoundOvertime = 2, RoundIntermission = 3, RoundDone = 4;
 
-    public const int CapturePointCount = 3;
-    public static readonly string[] PointNames = { "A", "B", "C" };
+    // Pocet bodu podle mapy (CapturePoint_1..N ve scene, nejvic MaxCapturePoints): chaty 4, Hanamura 3.
+    public const int MaxCapturePoints = 4;
+    public static readonly string[] PointNames = { "A", "B", "C", "D" };
+    public NetworkVariable<int> pointCount = new NetworkVariable<int>(3);
+    public int CapturePointCount => Mathf.Clamp(pointCount.Value, 1, MaxCapturePoints);
+    // Kdy se pustilo auto (po dobyti bodu A) - u bodu A stoji zaparkovane (YarisTraffic).
+    public NetworkVariable<double> trafficReleaseTime = new NetworkVariable<double>(0);
     public static readonly Vector2 CaptureSize = new Vector2(10f, 7f);
 
     const float SetupSeconds = 20f;
     const float UnlockNextSeconds = 10f;
     const float AttackSeconds = 180f;
     const float BonusSeconds = 120f;
+    const float LateBonusSeconds = 90f;
     const float IntermissionSeconds = 8f;
     const float DecayDelay = 2f;
     const float OvertimeGrace = 1.2f;
@@ -63,11 +69,11 @@ public partial class MatchManager
     readonly Vector3[] customSpawn = new Vector3[2];
 
     // server
-    readonly Vector3[] points = new Vector3[CapturePointCount];
-    readonly float[] pointYaws = new float[CapturePointCount];
-    readonly Vector2[] pointSizes = new Vector2[CapturePointCount];
-    readonly Vector3[] attackSpawns = new Vector3[CapturePointCount];
-    readonly Vector3[] defendSpawns = new Vector3[CapturePointCount];
+    readonly Vector3[] points = new Vector3[MaxCapturePoints];
+    readonly float[] pointYaws = new float[MaxCapturePoints];
+    readonly Vector2[] pointSizes = new Vector2[MaxCapturePoints];
+    readonly Vector3[] attackSpawns = new Vector3[MaxCapturePoints];
+    readonly Vector3[] defendSpawns = new Vector3[MaxCapturePoints];
     float timer;          // cas utoku
     float lockTimer;      // priprava / odemykani bodu
     float phaseTimer;     // mezihra
@@ -202,6 +208,9 @@ public partial class MatchManager
     void ServerApplyPoint(int index, float lockSeconds)
     {
         pointIndex.Value = index;
+        // auto se pusti po dobyti prvniho bodu (u bodu A stoji)
+        if (index == 1 && NetworkManager != null)
+            trafficReleaseTime.Value = NetworkManager.ServerTime.Time;
         pointPosition.Value = points[index];
         pointYaw.Value = pointYaws[index];
         pointSize.Value = pointSizes[index];
@@ -325,6 +334,8 @@ public partial class MatchManager
             var hero = player.GetComponent<PlayerHero>();
             var team = player.GetComponent<PlayerTeam>();
             if (health == null || team == null || health.currentHealth.Value <= 0f || (hero != null && hero.IsJoining)) continue;
+            // kdo sedi ve snezne rolbe, bod nezabira ani neblokuje
+            if (IsDriving(player.NetworkObjectId) || IsRiding(player.NetworkObjectId)) continue;
 
             Vector3 local = toLocal * (player.transform.position - pointPosition.Value);
             if (Mathf.Abs(local.x) > pointSize.Value.x * 0.5f || Mathf.Abs(local.z) > pointSize.Value.y * 0.5f) continue;
@@ -362,8 +373,8 @@ public partial class MatchManager
             return;
         }
 
-        // Dalsi bod: cas navic, oba tymy se presunou, bod se chvili odemyka.
-        timer += BonusSeconds;
+        // Dalsi bod: cas navic (za A a B plny, za dalsi mensi), oba tymy se presunou, bod se chvili odemyka.
+        timer += pointIndex.Value < 2 ? BonusSeconds : LateBonusSeconds;
         if (roundPhase.Value == RoundOvertime) roundPhase.Value = RoundAttack;
         overtimeEmpty = 0f;
         ServerApplyPoint(next, UnlockNextSeconds);
@@ -474,6 +485,11 @@ public partial class MatchManager
         var base1 = GameObject.Find("SpawnPoint_Team1");
         Vector3 a = base0 != null ? base0.transform.position : Vector3.zero;
         Vector3 b = base1 != null ? base1.transform.position : new Vector3(40f, 0f, 0f);
+
+        // kolik bodu mapa ma (CapturePoint_1, _2... po sobe); zadny = 3 body mezi zakladnami
+        int count = 0;
+        while (count < MaxCapturePoints && GameObject.Find($"CapturePoint_{count + 1}") != null) count++;
+        pointCount.Value = count > 0 ? count : 3;
 
         for (int i = 0; i < CapturePointCount; i++)
         {
