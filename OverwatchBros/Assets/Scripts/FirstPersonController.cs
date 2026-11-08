@@ -499,11 +499,32 @@ public class FirstPersonController : NetworkBehaviour
         playerCamera.nearClipPlane = 0.03f;
     }
 
+    // Vsechny postavy na tomto pocitaci - kvuli kolizim mrtvych tel.
+    static readonly System.Collections.Generic.List<FirstPersonController> allControllers = new System.Collections.Generic.List<FirstPersonController>();
+    bool corpseState;
+    bool corpseInit;
+
+    void OnEnable() { if (!allControllers.Contains(this)) allControllers.Add(this); corpseInit = false; }
+    void OnDisable() => allControllers.Remove(this);
+
+    void UpdateCorpseCollisions()
+    {
+        if (controller == null) return;
+        bool dead = IsDead;
+        if (corpseInit && dead == corpseState) return;
+        corpseInit = true;
+        corpseState = dead;
+        foreach (var other in allControllers)
+        {
+            if (other == null || other == this || other.controller == null) continue;
+            Physics.IgnoreCollision(controller, other.controller, dead || other.IsDead);
+        }
+    }
+
     void Update()
     {
-        // mrtve telo nebrani zivym v ceste (ostatni kapsle jim projdou)
-        if (controller != null && controller.detectCollisions == IsDead)
-            controller.detectCollisions = !IsDead;
+        // mrtve telo nebrani zivym v ceste (kolize mezi kapslemi se vypne, dokud je jeden z dvojice mrtvy)
+        UpdateCorpseCollisions();
 
         if (!IsOwner) return;
 
