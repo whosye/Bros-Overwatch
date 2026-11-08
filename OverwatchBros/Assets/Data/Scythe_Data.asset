@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Kosa
   damage: 30
-  fireRate: 2.5
+  fireRate: 2
   maxAmmo: 0
   reloadTime: 1.5
   reloadAnimation: 0
@@ -51,9 +51,9 @@ MonoBehaviour:
   projectileTrail: 1
   projectilePrefab: {fileID: 0}
   meleeRadius: 0.7
-  meleeArc: 40
+  meleeArc: 90
   comboFinisherDamage: 50
-  comboFinisherArc: 60
+  comboFinisherArc: 90
   comboFinisherKnockback: 6
   heldModel: 5
   dualWield: 0

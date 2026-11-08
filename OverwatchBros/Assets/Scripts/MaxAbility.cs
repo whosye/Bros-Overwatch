@@ -5,13 +5,13 @@ using UnityEngine.InputSystem;
 
 // Max - Shift, E a prave tlacitko v jedne komponente:
 //   Shift (Rozpolceni): vypad 'range' metru ve smeru pohledu a na konci otocka kosou - 'power' vsem v okruhu
-//     'radius'. Za kazdeho zasazeneho nepritele se cooldown zkrati o 1 s.
+//     'radius' a omraceni na 1 s. Za kazdeho zasazeneho nepritele se cooldown zkrati o 1 s. Ma-li Max animaci skoku s uderem
+//     (animations.shiftAbility), misto rychleho vypadu skoci (LeapTime) a kosou udere shora do zeme pri dopadu.
 //   E (Stinova forma): az 'duration' s je Max stin - neviditelny (jen fialovy kour), nezranitelny, bez kolize
 //     a chodi skrz zdi. Forma skonci utokem (LMB, PTM, Shift, Q), dalsim E nebo vyprsenim casu; kdyz konci ve zdi,
 //     vystrci ho to na nejblizsi volne misto. Cooldown bezi az od konce formy.
-//   PTM (Dlouhy rez, jako Kaynovo W): drzenim se nabiji (kosa v napraahu, Max jde pomalu): vlna dosahne od 4 m
-//     az po 'range' m. Pustenim mohutny sek dopredu a vyjede vlna rezu v pruhu dosah x 2,4 m: 'power' poskozeni, vsechny v ceste vyhodi do vzduchu
-//     a zpomali. Nejde pres zdi, nezrani vlastni tym.
+//   PTM (Otocka kosou): Max se s kosou roztoci o 360 st. - 'power' poskozeni vsem nepratelum v okruhu 'radius'
+//     kolem sebe (ne pres zdi). Behem otocky jde pomaleji.
 public class MaxAbility : NetworkBehaviour
 {
     public AbilityDefinition reap;    // Shift
@@ -21,11 +21,12 @@ public class MaxAbility : NetworkBehaviour
     public static readonly Color ShadowColor = new Color(0.55f, 0.18f, 0.85f, 1f);
 
     const float DashTime = 0.18f;
-    const float SlashWidth = 2.4f;       // sirka pruhu Dlouheho rezu
-    const float KnockupSpeed = 9f;       // zasazene vyhodi do vzduchu (asi 4 m vysoko)
-    const float KnockupPush = 2.5f;
-    const float SlowFactor = 0.6f;       // zpomaleni o 40 %
-    const float SlowSeconds = 1.5f;
+    const float ReapStun = 1f;           // zasazene Rozpolcenim omraci
+    // Skok s uderem: usek animace od odrazu (0,73 s) po podrep po uderu; uder do zeme (1,67 s) prijde pri dopadu.
+    const float LeapTime = 0.5f;
+    const float LeapHeight = 2.2f;   // vrchol skoku nad mistem odrazu
+    const float LeapClipFrom = 0.73f, LeapClipImpact = 1.67f, LeapClipTo = 2.19f;
+    static float LeapAnimSeconds => LeapTime * (LeapClipTo - LeapClipFrom) / (LeapClipImpact - LeapClipFrom);
 
     FirstPersonController fpc;
     PlayerHero hero;
@@ -91,19 +92,47 @@ public class MaxAbility : NetworkBehaviour
         // smer pohledu; pri pohledu nahoru i kousek do vyse
         Vector3 look = fpc.playerCamera.transform.forward;
         Vector3 direction = LookFlat() + Vector3.up * Mathf.Clamp(look.y, 0f, 0.5f);
-        float speed = (reap.range > 0f ? reap.range : 6f) / DashTime;
+        var visual = GetComponent<CharacterVisual>();
+        bool leap = visual != null && visual.HasAbilityAnimation(CharacterVisual.AbilityAnim.Shift);
+        float time = leap ? LeapTime : DashTime;
+        if (leap)
+        {
+            PlayLeap(visual);
+            LeapServerRpc();
+            if (held != null) held.PlayReach(LeapTime);   // v prvni osobe napraah kosou nad hlavu, sek pri dopadu
+        }
+
+        float speed = (reap.range > 0f ? reap.range : 6f) / time;
         var controller = GetComponent<CharacterController>();
         float elapsed = 0f;
-        while (elapsed < DashTime && !fpc.CannotAct)
+        while (elapsed < time && !fpc.CannotAct)
         {
-            controller.Move(direction * speed * Time.deltaTime);
+            float before = elapsed / time;
             elapsed += Time.deltaTime;
+            float after = Mathf.Min(1f, elapsed / time);
+            // skok: oblouk nahoru a dolu (parabola), dopad presne na konci
+            float rise = leap ? LeapHeight * 4f * (after * (1f - after) - before * (1f - before)) : 0f;
+            controller.Move(direction * speed * (after - before) * time + Vector3.up * rise);
             yield return null;
         }
         fpc.ResetVertical();
-        if (held != null) held.Swing();
+        if (!leap && held != null) held.Swing();
         ReapServerRpc(transform.position);
         busy = false;
+    }
+
+    static void PlayLeap(CharacterVisual visual) =>
+        visual.PlayAbility(CharacterVisual.AbilityAnim.Shift, LeapClipFrom, LeapClipTo, LeapAnimSeconds);
+
+    [ServerRpc]
+    void LeapServerRpc() => LeapClientRpc();
+
+    [ClientRpc]
+    void LeapClientRpc()
+    {
+        if (IsOwner) return;   // majitel uz prehral sam
+        var visual = GetComponent<CharacterVisual>();
+        if (visual != null) PlayLeap(visual);
     }
 
     [ServerRpc]
@@ -122,6 +151,8 @@ public class MaxAbility : NetworkBehaviour
                 if (victim == null || victim.gameObject == gameObject || !done.Add(victim) || victim.currentHealth.Value <= 0f) continue;
                 if (Combat.SameTeam(gameObject, victim.gameObject) || !Combat.HasLineOfSight(center, col)) continue;
                 Combat.DamagePlayer(gameObject, victim, reap.power, Combat.AbilitySource(reap));
+                if (victim.currentHealth.Value > 0f && victim.TryGetComponent<FirstPersonController>(out var stunned))
+                    stunned.ServerStun(ReapStun, gameObject, false);
                 hits++;
             }
         }
@@ -346,207 +377,137 @@ public class MaxAbility : NetworkBehaviour
         health.ServerClearInvulnerable();
     }
 
-    // ---------------- PTM: Dlouhy rez ----------------
+    // ---------------- PTM: Otocka kosou ----------------
 
-    // Nabijeni: cim dele drzi PTM, tim dal vlna dosahne (MinReach -> 'range' za ChargeTime s). Behem nabijeni
-    // drzi kosu v napraahu, jde jen pomalu a na zemi vidi, kam vlna dosahne. Pustenim (nebo po MaxHold s) sekne.
-    const float MinReach = 4f;
-    const float ChargeTime = 1f;
-    const float MaxHold = 2.5f;
-    const float MinWindup = 0.2f;        // aspon kratky napraah, i pri rychlem kliknuti
-    const float ChargeMoveScale = 0.4f;
+    // Usek animace otocky (Mixamo, 30 fps): od rozmachu po dotoceni; kosa projede kolem Maxe zhruba v SpinHitAt.
+    const float SpinClipFrom = 0.1f, SpinClipTo = 1.9f;
+    const float SpinTime = 0.65f;
+    const float SpinHitAt = 0.25f;
+    const float SpinMoveScale = 0.6f;
+    const float SpinFallbackRadius = 3.6f;
+    // Behem otocky je kamera za Maxem, at hrac vidi svoji animaci (jako u Modreho plamene).
+    static readonly Vector3 SpinCameraOffset = new Vector3(0f, 2.0f, -4.5f);
+    Vector3 spinCameraLocal;
+    bool spinCamera;
+
+    float SpinRadius => slash.radius > 0.5f ? slash.radius : SpinFallbackRadius;
 
     IEnumerator Slash()
     {
         busy = true;
+        nextSlash = Time.time + slash.Cooldown;
         hero.SayAbility(slash);
-        if (held != null) held.BeginReachHold();
-        SlashWindupServerRpc();
-        float maxReach = slash.range > MinReach ? slash.range : 10f;
-        float start = Time.time;
-        var preview = CreateReachPreview();
-        fpc.AbilitySpeedScale = ChargeMoveScale;
-
-        float reach = MinReach;
-        while (true)
+        PlaySpin();
+        SpinServerRpc();
+        fpc.AbilitySpeedScale = SpinMoveScale;
+        var visual = GetComponent<CharacterVisual>();
+        if (fpc.Bot == null && visual != null && visual.HasAbilityAnimation(CharacterVisual.AbilityAnim.RightMouse))
         {
-            float held01 = Mathf.Clamp01((Time.time - start) / ChargeTime);
-            reach = Mathf.Lerp(MinReach, maxReach, held01);
-            UpdateReachPreview(preview, reach);
-            bool released = !HeroInput.Held(this, HeroInput.Key.RightMouse) && Time.time - start >= MinWindup;
-            if (released || Time.time - start >= MaxHold || fpc.CannotAct) break;
+            spinCameraLocal = fpc.playerCamera.transform.localPosition;
+            spinCamera = fpc.ThirdPersonView = true;
+        }
+
+        float start = Time.time;
+        bool struck = false;
+        while (Time.time - start < SpinTime && !fpc.CannotAct)
+        {
+            if (!struck && Time.time - start >= SpinHitAt)
+            {
+                struck = true;
+                if (held != null) held.Swing();
+                SlashServerRpc(transform.position);
+            }
+            if (spinCamera)
+                ThirdPersonCamera.Place(transform, NetworkObject, fpc.playerCamera, spinCameraLocal, SpinCameraOffset);
             yield return null;
         }
 
+        EndSpinCamera();
         fpc.AbilitySpeedScale = 1f;
-        if (preview != null) Destroy(preview.gameObject);
-        nextSlash = Time.time + slash.Cooldown;
-        if (fpc.CannotAct)
-        {
-            busy = false;
-            yield break;
-        }
-        if (held != null) held.ReleaseReach();
-        var cam = fpc.playerCamera.transform;
-        SlashServerRpc(cam.position, LookFlat(), reach);
         busy = false;
     }
 
-    // Nahled dosahu (jen vlastnik): fialovy pruh na zemi pred Maxem.
-    LineRenderer CreateReachPreview()
+    void EndSpinCamera()
     {
-        var go = new GameObject("NahledDosahu");
-        var line = go.AddComponent<LineRenderer>();
-        line.positionCount = 2;
-        line.material = Fx.ParticleMaterial;
-        line.alignment = LineAlignment.TransformZ;
-        go.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-        line.widthMultiplier = SlashWidth;
-        line.startColor = new Color(0.55f, 0.18f, 0.85f, 0.15f);
-        line.endColor = new Color(0.75f, 0.4f, 1f, 0.45f);
-        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        return line;
+        if (!spinCamera) return;
+        spinCamera = false;
+        fpc.ThirdPersonView = false;
+        if (fpc.playerCamera != null) fpc.playerCamera.transform.localPosition = spinCameraLocal;
     }
 
-    void UpdateReachPreview(LineRenderer line, float reach)
+    void OnDisable()
     {
-        if (line == null) return;
-        Vector3 direction = LookFlat();
-        Vector3 feet = transform.position + Vector3.up * 0.06f;
-        line.SetPosition(0, feet + direction * 0.6f);
-        line.SetPosition(1, feet + direction * reach);
+        if (fpc != null) EndSpinCamera();
+    }
+
+    void PlaySpin()
+    {
+        var visual = GetComponent<CharacterVisual>();
+        if (visual != null) visual.PlayAbility(CharacterVisual.AbilityAnim.RightMouse, SpinClipFrom, SpinClipTo, SpinTime);
     }
 
     [ServerRpc]
-    void SlashWindupServerRpc() => SlashWindupClientRpc();
+    void SpinServerRpc() => SpinClientRpc();
 
     [ClientRpc]
-    void SlashWindupClientRpc()
+    void SpinClientRpc()
     {
-        // napraah: slysitelne a videt (fialova jiskra u Maxe), at se da utect
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
-        Fx.Sparks(transform.position + Vector3.up * 1.8f, ShadowColor);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.8f);
+        if (!IsOwner) PlaySpin();   // majitel uz prehral sam
     }
 
     [ServerRpc]
-    void SlashServerRpc(Vector3 origin, Vector3 direction, float reach)
+    void SlashServerRpc(Vector3 position)
     {
         if (slash == null) return;
-        if ((origin - transform.position).sqrMagnitude > 9f) origin = transform.position + Vector3.up * 1.6f;
-        direction.y = 0f;
-        direction = direction.sqrMagnitude > 0.001f ? direction.normalized : transform.forward;
-        float length = Mathf.Clamp(reach, MinReach, slash.range > MinReach ? slash.range : 10f);
+        if ((position - transform.position).sqrMagnitude > 9f) position = transform.position;
 
         var match = MatchManager.Instance;
         if (match == null || (!match.IsOver && !match.IsLobby))
         {
             var done = new System.Collections.Generic.HashSet<Health>();
-            // dlouhy pruh pred Maxem (jako Kaynovo W): 'range' m dopredu, 'SlashWidth' m siroky
-            Vector3 center = origin + direction * (length * 0.5f) - Vector3.up * 0.6f;
-            var rotation = Quaternion.LookRotation(direction, Vector3.up);
-            foreach (var col in Physics.OverlapBox(center, new Vector3(SlashWidth * 0.5f, 1.4f, length * 0.5f), rotation, ~0, QueryTriggerInteraction.Ignore))
+            Vector3 center = position + Vector3.up * 1f;
+            foreach (var col in Physics.OverlapSphere(center, SpinRadius, ~0, QueryTriggerInteraction.Ignore))
             {
                 var victim = col.GetComponentInParent<Health>();
-                if (victim == null || victim.gameObject == gameObject || done.Contains(victim) || victim.currentHealth.Value <= 0f) continue;
-                Vector3 to = col.ClosestPoint(origin) - origin;
-                Vector3 flat = new Vector3(to.x, 0f, to.z);
-                done.Add(victim);
-                if (Combat.SameTeam(gameObject, victim.gameObject) || !Combat.HasLineOfSight(origin, col)) continue;
+                if (victim == null || victim.gameObject == gameObject || !done.Add(victim) || victim.currentHealth.Value <= 0f) continue;
+                if (Combat.SameTeam(gameObject, victim.gameObject) || !Combat.HasLineOfSight(center, col)) continue;
                 Combat.DamagePlayer(gameObject, victim, slash.power, Combat.AbilitySource(slash));
-                var movement = victim.GetComponent<FirstPersonController>();
-                if (movement != null && victim.currentHealth.Value > 0f)
-                {
-                    // vyhozeni do vzduchu (knockup), kousek od Maxe, a po dopadu zpomaleni
-                    Vector3 away = flat.sqrMagnitude > 0.01f ? flat.normalized : direction;
-                    movement.ServerKnockback(away * KnockupPush + Vector3.up * KnockupSpeed);
-                    movement.ServerSlow(SlowSeconds, SlowFactor);
-                }
             }
         }
-        SlashClientRpc(origin, direction, length);
+        SlashClientRpc(position);
     }
 
     [ClientRpc]
-    void SlashClientRpc(Vector3 origin, Vector3 direction, float length)
+    void SlashClientRpc(Vector3 position)
     {
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, origin, 1f);
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, origin, 0.4f);
-        var wave = new GameObject("FX_DlouhyRez").AddComponent<ReachWave>();
-        wave.Init(origin - Vector3.up * 1.55f, direction, length, SlashWidth);   // (origin = oci, vlna jede po zemi)
-    }
-}
-
-// Vlna Dlouheho rezu: od Maxe dopredu vyjede rada fialovych srpovitych seku (napric pruhem), po zemi tmava stopa
-// a jiskry; vse behem chvilky vybledne.
-public class ReachWave : MonoBehaviour
-{
-    const float Travel = 0.22f;      // jak rychle vlna dojede na konec pruhu
-    const int Arcs = 7;
-    Vector3 origin, direction;
-    float length, width, age;
-    int spawned;
-
-    public void Init(Vector3 groundOrigin, Vector3 forward, float reach, float stripWidth)
-    {
-        origin = groundOrigin;
-        direction = forward;
-        length = reach;
-        width = stripWidth;
-
-        // tmava stopa po zemi pres cely pruh
-        var streak = NewLine("Stopa", 2);
-        streak.SetPosition(0, origin + direction * 0.8f + Vector3.up * 0.05f);
-        streak.SetPosition(1, origin + direction * length + Vector3.up * 0.05f);
-        streak.alignment = LineAlignment.TransformZ;
-        streak.transform.rotation = Quaternion.LookRotation(Vector3.down, direction);
-        streak.widthCurve = new AnimationCurve(new Keyframe(0f, width * 0.5f), new Keyframe(1f, width * 0.9f));
-        streak.startColor = new Color(0.12f, 0.02f, 0.2f, 0.75f);
-        streak.endColor = new Color(0.45f, 0.12f, 0.8f, 0.5f);
-        streak.gameObject.AddComponent<FadeLine>().Init(streak, 0.6f);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, position, 0.8f);
+        SpinRing(position + Vector3.up * 1f, SpinRadius * 0.85f);
     }
 
-    LineRenderer NewLine(string name, int points)
+    // Fialovy kruh rezu kolem Maxe (vybledne) a jiskry po obvodu.
+    static void SpinRing(Vector3 center, float radius)
     {
-        var go = new GameObject(name);
-        go.transform.SetParent(transform, false);
-        var line = go.AddComponent<LineRenderer>();
-        line.positionCount = points;
+        const int Points = 33;
+        var line = new GameObject("FX_OtockaKosou").AddComponent<LineRenderer>();
+        line.positionCount = Points;
         line.material = Fx.ParticleMaterial;
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        return line;
-    }
-
-    void Update()
-    {
-        age += Time.deltaTime;
-        int due = Mathf.Min(Arcs, Mathf.FloorToInt(age / Travel * Arcs) + 1);
-        while (spawned < due)
+        line.alignment = LineAlignment.View;
+        line.widthMultiplier = 0.22f;
+        for (int i = 0; i < Points; i++)
         {
-            float along = Mathf.Lerp(1.2f, length, spawned / (Arcs - 1f));
-            SpawnArc(origin + direction * along);
-            spawned++;
+            float a = i * Mathf.PI * 2f / (Points - 1);
+            line.SetPosition(i, center + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * radius);
         }
-        if (age > Travel + 0.8f) Destroy(gameObject);
-    }
-
-    // Srpovity sek napric pruhem: oblouk ze zeme nahoru a zpet, sviti fialove.
-    void SpawnArc(Vector3 center)
-    {
-        Vector3 side = Vector3.Cross(Vector3.up, direction);
-        var arc = NewLine("Sek", 14);
-        for (int i = 0; i < 14; i++)
+        line.startColor = new Color(0.75f, 0.35f, 1f, 0.9f);
+        line.endColor = new Color(0.35f, 0.05f, 0.6f, 0.8f);
+        line.gameObject.AddComponent<FadeLine>().Init(line, 0.35f);
+        for (int i = 0; i < 6; i++)
         {
-            float u = i / 13f;
-            float height = Mathf.Sin(u * Mathf.PI) * 1.6f;
-            Vector3 p = center + side * (u - 0.5f) * width + Vector3.up * (0.1f + height) + direction * Mathf.Sin(u * Mathf.PI) * 0.35f;
-            arc.SetPosition(i, p);
+            float a = i * Mathf.PI / 3f;
+            Fx.Sparks(center + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * radius, ShadowColor);
         }
-        arc.alignment = LineAlignment.View;
-        arc.widthCurve = new AnimationCurve(new Keyframe(0f, 0.02f), new Keyframe(0.5f, 0.28f), new Keyframe(1f, 0.02f));
-        arc.startColor = new Color(0.75f, 0.35f, 1f, 0.95f);
-        arc.endColor = new Color(0.35f, 0.05f, 0.6f, 0.8f);
-        arc.gameObject.AddComponent<FadeLine>().Init(arc, 0.35f);
-        Fx.Sparks(center + Vector3.up * 0.6f, MaxAbility.ShadowColor);
     }
 }
 

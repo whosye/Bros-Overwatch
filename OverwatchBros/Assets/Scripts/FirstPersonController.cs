@@ -51,6 +51,9 @@ public class FirstPersonController : NetworkBehaviour
     // Schopnost, u ktere se dá normalne ovladat pohyb (Modry plamen): kamera ve 3. osobe, zrychleni, Shift neni sprint.
     public bool RushActive { get; set; }
 
+    // Kamera ve 3. osobe jen na ukazku animace schopnosti (Maxova otocka): pohyb i rozhlizeni zustavaji normalni.
+    public bool ThirdPersonView { get; set; }
+
     // Blok (zkrizene sekery): pomalejsi pohyb, nejde utocit.
     public bool BlockActive { get; set; }
     public float SpeedMultiplier { get; set; } = 1f;
@@ -58,7 +61,7 @@ public class FirstPersonController : NetworkBehaviour
     public float HeroSpeedScale { get; set; } = 1f;
     // Zpomaleni pri pribliseni (sniper) a docasne zpomaleni od schopnosti (odkopnuti).
     public float ScopeSpeedScale { get; set; } = 1f;
-    // Zpomaleni od vlastni schopnosti (napr. nabijeni Maxova Dlouheho rezu).
+    // Zpomaleni od vlastni schopnosti (napr. Maxova otocka kosou).
     public float AbilitySpeedScale { get; set; } = 1f;
     float slowUntil;
     float slowFactor = 1f;
@@ -169,7 +172,7 @@ public class FirstPersonController : NetworkBehaviour
     float mantleTimeLeft;
     Vector3[] grappleMantlePath;
     int grappleMantleWaypoint;
-    public bool ThirdPerson => AbilityActive || RushActive;
+    public bool ThirdPerson => AbilityActive || RushActive || ThirdPersonView;
     public bool IsDead => health != null && health.currentHealth.Value <= 0f;
     public bool MatchOver => MatchManager.Instance != null && MatchManager.Instance.IsOver;
     public bool InLobby => MatchManager.Instance != null && MatchManager.Instance.IsLobby;

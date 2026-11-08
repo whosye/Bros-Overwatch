@@ -766,13 +766,13 @@ public static class M7Setup
             w.fireMode = FireMode.Melee;
             w.heldModel = HeldModel.Scythe;
             w.damage = 30f;
-            w.fireRate = 2.5f;
+            w.fireRate = 2f;
             w.maxAmmo = 0;
             w.range = 3.6f;
             w.meleeRadius = 0.7f;
-            w.meleeArc = 40f;
+            w.meleeArc = 90f;   // 180 st. pred sebou
             w.comboFinisherDamage = 50f;
-            w.comboFinisherArc = 60f;
+            w.comboFinisherArc = 90f;
             w.comboFinisherKnockback = 6f;
             w.projectileColor = new Color(0.55f, 0.18f, 0.85f, 1f);
         });
@@ -793,11 +793,11 @@ public static class M7Setup
         });
         var slash = LoadOrCreate<AbilityDefinition>("Assets/Data/MaxSlash_Data.asset", a =>
         {
-            a.abilityName = "Dlouhý řez";
+            a.abilityName = "Otočka kosou";
             a.cooldown = 7f;
             a.power = 50f;
-            a.range = 10f;       // nejdelsi dosah vlny (pri plnem nabiti; nejkratsi 4 m)
-            a.duration = 0.4f;   // napraah
+            a.radius = 3.6f;     // okruh kolem Maxe (jako dosah kosy)
+            a.range = 3.6f;      // (boti otocku pouziji, az je nepritel takhle blizko)
         });
         var trespass = LoadOrCreate<AbilityDefinition>("Assets/Data/Trespass_Data.asset", a =>
         {

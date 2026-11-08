@@ -34,7 +34,7 @@ public enum AbilityKind
     Ezekiel,       // Sindel: Ezechiel 25:17 - kazani ve vzduchu a uder svetla (Q)
     MaxReap,       // Max: Rozpolceni - vypad a otocka kosou (Shift)
     ShadowStep,    // Max: Stinovy krok - pruchod zdi (E)
-    MaxSlash,      // Max: Dlouhy rez - pruh pred sebou se zpomalenim (prave tlacitko)
+    MaxSlash,      // Max: Otocka kosou - 360 st. kolem sebe (prave tlacitko)
     Trespass,      // Max: Vpad do stinu - zmizi v nepriteli a vyrazi ven (Q)
     SayWhat        // Sindel: "Say what again?!" - vykrik do kuzele, nepratele zpomali a umlci (prave tlacitko)
 }
@@ -117,4 +117,6 @@ public class HeroDefinition : ScriptableObject
     public AudioClip[] missLines;
     [Tooltip("Kdyz priblizi zamerovacem - prave tlacitko (obcas).")]
     public AudioClip[] scopeLines;
+    [Tooltip("Hlaska k ultimatce (Q) dostane ozvenu. Vypnout, kdyz ji uz ma nahravka sama (Mirek, Sindel).")]
+    public bool ultVoiceEcho = true;
 }

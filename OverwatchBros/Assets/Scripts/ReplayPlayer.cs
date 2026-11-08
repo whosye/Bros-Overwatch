@@ -637,6 +637,7 @@ public class ReplayPlayer : MonoBehaviour
             case ReplayEventType.StopReload: if (g != null) g.held.StopReload(); break;
             case ReplayEventType.Kick: if (g != null) g.visual.PlayKick(e.f0); break;
             case ReplayEventType.Ultimate: if (g != null) { if (e.f0 > 0f) g.visual.PlayUltimate(e.f0); else g.visual.StopUltimate(); } break;
+            case ReplayEventType.Ability: if (g != null) g.visual.PlayAbility((CharacterVisual.AbilityAnim)e.a, e.f0, e.f1, e.f2); break;
             case ReplayEventType.FirstPersonKick: if (view != null) FirstPersonKick.Play(view); break;
             case ReplayEventType.HudHit: HudUI.NotifyHit(e.flag); break;
             case ReplayEventType.HudFlash: HudUI.NotifyFlash(e.f0); break;

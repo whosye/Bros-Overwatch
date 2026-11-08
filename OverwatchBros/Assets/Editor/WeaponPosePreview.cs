@@ -14,13 +14,13 @@ public class WeaponPosePreview : EditorWindow
     {
         "Klid (idle)", "Chůze (walk)", "Klus (jog)", "Sprint", "Skok (jump)", "Smrt (death)",
         "Útok zblízka (meleeAttack)", "Střelba (shoot)", "Přebíjení (reload)", "Blok (blockPose)", "Výpad (dashPose)",
-        "Ultimátka (ultimate)",
+        "Ultimátka (ultimate)", "Shift (shiftAbility)", "PTM (rmbAbility)",
     };
     static readonly System.Func<CharacterAnimSet, AnimationClip>[] SlotFields =
     {
         s => s.idle, s => s.walk, s => s.jog, s => s.sprint, s => s.jump, s => s.death,
         s => s.meleeAttack, s => s.shoot, s => s.reload, s => s.blockPose, s => s.dashPose,
-        s => s.ultimate,
+        s => s.ultimate, s => s.shiftAbility, s => s.rmbAbility,
     };
     const int ShootSlot = 7;
     static readonly Vector3 Spot = new Vector3(0f, 300f, 0f);   // stranou nad mapou

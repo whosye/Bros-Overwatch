@@ -55,6 +55,7 @@ public class HeroVoice : MonoBehaviour
     static float duck = 1f;
     static int duckFrame = -1;
     VoiceGain gain;
+    AudioEchoFilter echo;
     bool playingOwn;   // hraje hlas postavy, za kterou tento hrac hraje (v zaznamu: postava, z jejiz pohledu se prehrava)
 
     void Update()
@@ -247,6 +248,7 @@ public class HeroVoice : MonoBehaviour
         source.volume = volume;
         // Vlastni hlas je vystredeny; cizi hlasy jsou prostorove, ultimatky globalni.
         source.spatialBlend = ult || ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        SetEcho(ult && hero.ultVoiceEcho);
         source.Play();
         playingPriority = priority;
         playingUlt = ult;
@@ -265,6 +267,7 @@ public class HeroVoice : MonoBehaviour
         source.clip = clip;
         source.volume = volume;
         source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        SetEcho(false);
         source.Play();
         playingPriority = priority;
         playingUlt = false;
@@ -287,6 +290,7 @@ public class HeroVoice : MonoBehaviour
         source.clip = clip;
         source.volume = volume;
         source.spatialBlend = ult || pov ? 0f : 1f;
+        SetEcho(ult && hero.ultVoiceEcho);
         source.time = offset;
         source.Play();
         playingPriority = Priority(kind);
@@ -305,6 +309,7 @@ public class HeroVoice : MonoBehaviour
         source.clip = clip;
         source.volume = 1f;
         source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        SetEcho(false);
         source.Play();
         playingPriority = 99;
         playingUlt = false;
@@ -317,6 +322,12 @@ public class HeroVoice : MonoBehaviour
         if (playingRide && source != null && source.isPlaying)
             source.Stop();
         playingRide = false;
+    }
+
+    // Ozvena hlasky k ultimatce (zni "vic epicky"); ostatni hlasky bez ni.
+    void SetEcho(bool on)
+    {
+        if (echo != null) echo.enabled = on;
     }
 
     void EnsureSource()
@@ -336,6 +347,12 @@ public class HeroVoice : MonoBehaviour
             source.maxDistance = 30f;
             source.playOnAwake = false;
             gain = go.AddComponent<VoiceGain>();   // (ultimatka nad ztlumenym zbytkem)
+            echo = go.AddComponent<AudioEchoFilter>();
+            echo.delay = 230f;
+            echo.decayRatio = 0.35f;
+            echo.wetMix = 0.35f;
+            echo.dryMix = 1f;
+            echo.enabled = false;
         }
     }
 }

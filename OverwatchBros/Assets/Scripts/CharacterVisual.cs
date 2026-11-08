@@ -287,6 +287,8 @@ public class CharacterVisual : MonoBehaviour
         layers.SetInputWeight(2, 0f);
         layers.SetInputWeight(3, 0f);
         layers.SetInputWeight(4, 0f);
+        for (int i = 0; i < AbilityAnimCount; i++)
+            layers.SetInputWeight(AbilityLayer + i, 0f);
         graph.Evaluate(0f);
     }
 
@@ -360,7 +362,7 @@ public class CharacterVisual : MonoBehaviour
             upperBody.SetHumanoidBodyPartActive(part, active);
         }
 
-        layers = AnimationLayerMixerPlayable.Create(graph, 7);
+        layers = AnimationLayerMixerPlayable.Create(graph, AbilityLayer + AbilityAnimCount);
         graph.Connect(locomotion, 0, layers, 0);
         layers.SetInputWeight(0, 1f);
 
@@ -410,6 +412,18 @@ public class CharacterVisual : MonoBehaviour
         layers.SetInputWeight(6, 0f);
         ultimateWeight = 0f;
         ultimateUntil = -1f;
+
+        // Schopnosti pres cele telo (Maxuv skok s uderem, otocka): jednorazove, jen usek klipu; bez klipu se nepouziva.
+        for (int i = 0; i < AbilityAnimCount; i++)
+        {
+            var anim = abilityAnims[i];
+            anim.clip = Pick(i == (int)AbilityAnim.Shift ? s => s.shiftAbility : s => s.rmbAbility);
+            anim.playable = AnimationClipPlayable.Create(graph, anim.clip ?? idle);
+            anim.playable.SetSpeed(0);
+            graph.Connect(anim.playable, 0, layers, AbilityLayer + i);
+            layers.SetInputWeight(AbilityLayer + i, 0f);
+            anim.time = -1f;
+        }
 
         output.SetSourcePlayable(layers);
         graph.Play();
@@ -468,6 +482,58 @@ public class CharacterVisual : MonoBehaviour
             ultimatePlayable.SetTime(ultimateTime);
         }
         layers.SetInputWeight(6, ultimateWeight);
+    }
+
+    // ---------------- schopnosti pres cele telo (Maxuv skok s uderem na Shift, otocka na PTM) ----------------
+
+    public enum AbilityAnim { Shift, RightMouse }
+    const int AbilityLayer = 7, AbilityAnimCount = 2;
+
+    class OneShot
+    {
+        public AnimationClip clip;
+        public AnimationClipPlayable playable;
+        public float time = -1f, from, to, duration = 1f;
+    }
+    readonly OneShot[] abilityAnims = { new OneShot(), new OneShot() };
+
+    public bool HasAbilityAnimation(AbilityAnim which) => abilityAnims[(int)which].clip != null;
+
+    // Prehraje usek klipu od 'from' do 'to' (sekundy klipu) za 'duration' sekund.
+    public void PlayAbility(AbilityAnim which, float from, float to, float duration)
+    {
+        if (!IsGhost)
+            ReplayLog.Ability(this, (int)which, from, to, duration);
+        var anim = abilityAnims[(int)which];
+        if (!graph.IsValid() || anim.clip == null) return;
+        anim.from = from;
+        anim.to = Mathf.Min(to, anim.clip.length);
+        anim.duration = Mathf.Max(0.05f, duration);
+        anim.time = 0f;
+    }
+
+    void UpdateAbilities(float dt, bool dead)
+    {
+        for (int i = 0; i < AbilityAnimCount; i++)
+        {
+            var anim = abilityAnims[i];
+            float weight = 0f;
+            if (anim.time >= 0f && !dead)
+            {
+                anim.time += dt;
+                float t = anim.time / anim.duration;
+                if (t >= 1f)
+                    anim.time = -1f;
+                else
+                {
+                    weight = Mathf.Clamp01(t / 0.08f) * Mathf.Clamp01((1f - t) / 0.2f);
+                    anim.playable.SetTime(Mathf.Lerp(anim.from, anim.to, t));
+                }
+            }
+            else
+                anim.time = -1f;
+            layers.SetInputWeight(AbilityLayer + i, weight);
+        }
     }
 
     public void PlayReload(float duration)
@@ -726,6 +792,7 @@ public class CharacterVisual : MonoBehaviour
 
         layers.SetInputWeight(5, reloadWeight);
         UpdateUltimate(dt, dead);
+        UpdateAbilities(dt, dead);
     }
 
     // Ktery okamzik animace uderu se pouzije jako poza vypadu (0-1) a naklon tela ve stupnich.

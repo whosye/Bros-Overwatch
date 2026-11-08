@@ -533,9 +533,9 @@ public class BotBrain : MonoBehaviour
         if (def.altAbility != null && def.altAbilityKind != AbilityKind.HealField && distance < Reach(def.altAbility, 18f) && Random.value < 0.45f)
             Press(HeroInput.Key.E);
 
-        // PTM (u Maxova rezu drzet, at se vlna nabije podle vzdalenosti)
+        // PTM
         if (def.rmbAbility != null && distance < Reach(def.rmbAbility, 15f) && Random.value < 0.4f)
-            Press(HeroInput.Key.RightMouse, def.rmbAbilityKind == AbilityKind.MaxSlash ? Mathf.Clamp(distance / 10f, 0.25f, 1f) : 0.15f);
+            Press(HeroInput.Key.RightMouse, 0.15f);
 
         // Shift: priblizit se k nepriteli (vypady, skoky)
         if (def.secondaryAbility != null && chase && distance > PreferredRange(weapon) + 4f && Random.value < 0.45f)

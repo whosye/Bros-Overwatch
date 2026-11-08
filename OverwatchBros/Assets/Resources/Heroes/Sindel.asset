@@ -55,3 +55,4 @@ MonoBehaviour:
   snareLines:
   - {fileID: 8300000, guid: 97386fd59f9840749949630399594e56, type: 3}
   - {fileID: 8300000, guid: 7803c5aa0e6670342b3fa327746b554b, type: 3}
+  ultVoiceEcho: 0

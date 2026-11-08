@@ -586,6 +586,7 @@ public static class ReplayLog
     public static void FirstPersonKick() { if (Recording) Add(new ReplayEvent { type = ReplayEventType.FirstPersonKick }); }
     // animace ultimatky pres cele telo (Mosinuv tanec); 0 = konec
     public static void Ultimate(Component player, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Ultimate, player = PlayerOf(player), f0 = seconds }); }
+    public static void Ability(Component player, int which, float from, float to, float duration) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Ability, player = PlayerOf(player), a = which, f0 = from, f1 = to, f2 = duration }); }
 
     public static void HudHit(bool kill) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudHit, flag = kill }); }
     public static void HudFlash(float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudFlash, f0 = seconds }); }
