@@ -39,6 +39,9 @@ public class FirstPersonController : NetworkBehaviour
     float abilityRiseScale = 1f;
     float JumpGravity => gravity * Mathf.Max(1f, movementGravityScale);
     float cameraPitch;
+
+    // Zpetny raz (Sindeluv posileny vystrel): kamera poskoci nahoru o dany pocet stupnu.
+    public void AddRecoil(float degrees) => cameraPitch = Mathf.Clamp(cameraPitch - degrees, -80f, 80f);
     float stepAccumulator;
     float gaitSpeed;
     float baseEyeHeight;

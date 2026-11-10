@@ -70,6 +70,38 @@ public class HeldWeapons : MonoBehaviour
     System.Collections.Generic.List<Material> stormMaterials;
     bool stormShown;
 
+    // Posileny vystrel (Sindel): zbran v ruce rudne, kdyz je dalsi vystrel posileny (majitel), nebo kratce
+    // pri posilenem vystrelu (ostatni hraci).
+    System.Collections.Generic.List<Material> powerMaterials;
+    bool powerShown;
+
+    void UpdatePowerGlow()
+    {
+        var weapon = CurrentWeapon;
+        if (weapon == null || weapon.powerShotEvery <= 0 || ghost) { powerShown = false; return; }
+        bool on = Time.time < powerFlashUntil || (shooting != null && shooting.IsOwner && shooting.Bot == null && shooting.PowerShotReady);
+        if (!on && !powerShown) return;
+        if (powerMaterials == null)
+        {
+            powerMaterials = new System.Collections.Generic.List<Material>();
+            foreach (var group in new[] { hands, bodyHands })
+                foreach (var hand in group)
+                    if (hand.holder != null)
+                        foreach (var renderer in hand.holder.GetComponentsInChildren<Renderer>(true))
+                            if (!(renderer is ParticleSystemRenderer))
+                                foreach (var material in renderer.materials)
+                                {
+                                    material.EnableKeyword("_EMISSION");
+                                    powerMaterials.Add(material);
+                                }
+        }
+        float pulse = 0.75f + 0.25f * Mathf.Sin(Time.time * 18f);
+        Color emission = on ? weapon.powerShotColor * (1.6f * pulse) : Color.black;
+        foreach (var material in powerMaterials)
+            if (material != null) material.SetColor("_EmissionColor", emission);
+        powerShown = on;
+    }
+
     void UpdateStorm()
     {
         if (builtModel != HeldModel.Bow || hands.Length == 0 || hands[0].holder == null) return;
@@ -418,8 +450,17 @@ public class HeldWeapons : MonoBehaviour
         }
     }
 
-    public void Swing()
+    float swingStrength = 1f;
+
+    // Posileny vystrel: ostatni hraci vidi rude zablesknuti zbrane (majitel ji vidi rudou uz pred vystrelem).
+    float powerFlashUntil;
+    public void FlashPower() => powerFlashUntil = Time.time + 0.25f;
+
+    public void Swing() => Swing(1f);
+
+    public void Swing(float strength)
     {
+        swingStrength = strength;
         lastShotTime = Time.time;   // (puska obema rukama: poza strelby)
         if (!ghost)
             ReplayLog.Swing(this);
@@ -517,6 +558,7 @@ public class HeldWeapons : MonoBehaviour
             UpdateArrows();
             UpdateStorm();
         }
+        UpdatePowerGlow();
 
         // Zbrane u kamery (majitel v 1. osobe) a zbrane v rukou postavy (ostatni, majitel ve 3. osobe).
         // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
@@ -891,7 +933,7 @@ public class HeldWeapons : MonoBehaviour
         }
         else
         {
-            float kick = Mathf.Sin(t * Mathf.PI);
+            float kick = Mathf.Sin(t * Mathf.PI) * swingStrength;
             position += new Vector3(0f, 0.01f, -0.1f) * kick;
             euler.x -= 9f * kick;
         }
@@ -944,6 +986,8 @@ public class HeldWeapons : MonoBehaviour
         if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; }
         stormMaterials = null;
         stormShown = false;
+        powerMaterials = null;
+        powerShown = false;
         built = true;
         builtVersion = visual != null ? visual.Version : 0;
         builtWeapon = CurrentWeapon;

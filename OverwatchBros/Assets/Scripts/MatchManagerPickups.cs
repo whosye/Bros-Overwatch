@@ -99,6 +99,21 @@ public partial class MatchManager
             case PickupKind.Carburetor:
                 ServerGiveCarburetor(hero);
                 return true;
+            case PickupKind.Coffee:
+                // cooldowny zkracuje vlastnik (ClientRpc nize), rychlost pres FirstPersonController
+                var coffeeMovement = hero.GetComponent<FirstPersonController>();
+                if (coffeeMovement != null) coffeeMovement.ServerSpeedBoost(PickupBuffs.CoffeeSeconds, PickupBuffs.CoffeeSpeed);
+                return true;
+            case PickupKind.Beer:
+                hero.ServerDamageBuff(PickupBuffs.BeerDamage, PickupBuffs.BeerSeconds);
+                return true;
+            case PickupKind.WhitePowder:
+                hero.ServerDamageBuff(PickupBuffs.PowderDamage, PickupBuffs.PowderSeconds);
+                return true;
+            case PickupKind.Lasagne:
+                if (!health.HealBlocked) health.Heal(health.maxHealth);
+                health.ServerHoldShield(PickupBuffs.LasagneShield, PickupBuffs.LasagneSeconds);
+                return true;
             default:
                 health.ServerAddShield(60f, 10f);
                 return true;
@@ -123,10 +138,30 @@ public partial class MatchManager
             PickupBuffs.TramalUntil = Time.time + PickupBuffs.TramalSeconds;
             CaptureUI.Announce("Užil jsi Tramal", PickupSpot.KindColor(kind), 3f);
         }
+        if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Coffee)
+        {
+            PickupBuffs.CoffeeUntil = Time.time + PickupBuffs.CoffeeSeconds;
+            CaptureUI.Announce("Dal sis kafe - rychlejší schopnosti i nohy", PickupSpot.KindColor(kind), 3f);
+        }
+        if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Beer)
+        {
+            PickupBuffs.BeerUntil = Time.time + PickupBuffs.BeerSeconds;
+            CaptureUI.Announce("Natočil sis pivo - +15 % poškození", PickupSpot.KindColor(kind), 3f);
+        }
+        if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.WhitePowder)
+        {
+            PickupBuffs.PowderUntil = Time.time + PickupBuffs.PowderSeconds;
+            CaptureUI.Announce("Zkonzumoval jsi bílou látku, nos plesá blažeností", PickupSpot.KindColor(kind), 3.5f);
+        }
+        if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Lasagne)
+        {
+            PickupBuffs.LasagneUntil = Time.time + PickupBuffs.LasagneSeconds;
+            CaptureUI.Announce("Snědl jsi lasagne - plné zdraví a štít", PickupSpot.KindColor(kind), 3f);
+        }
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Carburetor)
             CaptureUI.Announce($"Máš Honzův karburátor - nastartuj rolbu u chaty [R] ({CarburetorSeconds:0} s)", PickupSpot.KindColor(kind), 4f);
         Fx.Sparks(position + Vector3.up * 0.8f, PickupSpot.KindColor(kind));
-        bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth || kind == PickupKind.Tramal;
+        bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth || kind == PickupKind.Tramal || kind == PickupKind.Lasagne;
         ProceduralSfx.Play(heal ? ProceduralSfx.Spawn : ProceduralSfx.CaptureUnlock, position, 0.8f);
     }
 }

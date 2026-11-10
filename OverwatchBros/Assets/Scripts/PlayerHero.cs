@@ -198,6 +198,18 @@ public class PlayerHero : NetworkBehaviour
     public bool IsBoosted => boosted.Value;
     float boostUntil;
 
+    // Docasne vetsi poskozeni (pivo z vycepu) - jen server, nasobi se v Combat.DamagePlayer.
+    float damageBuffUntil, damageBuffScale = 1f;
+    public float ServerDamageScale => Time.time < damageBuffUntil ? damageBuffScale : 1f;
+
+    public void ServerDamageBuff(float scale, float seconds)
+    {
+        if (!IsServer) return;
+        // (pivo a bila latka se neprebiji: plati silnejsi, do konce delsiho)
+        damageBuffScale = Time.time < damageBuffUntil ? Mathf.Max(damageBuffScale, scale) : scale;
+        damageBuffUntil = Mathf.Max(damageBuffUntil, Time.time + seconds);
+    }
+
     public void ServerBoost(float seconds)
     {
         if (!IsServer) return;

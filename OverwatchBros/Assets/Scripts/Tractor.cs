@@ -98,6 +98,22 @@ public class Tractor : MonoBehaviour
         return local.x > HullMin.x && local.x < HullMax.x && local.y > HullMin.y && local.y < HullMax.y && local.z > HullMin.z && local.z < HullMax.z;
     }
 
+    // Dotyka se obrys rolby (predek s radlici, zadek s frezou) daneho kvadru? Body na prednim a zadnim celu.
+    public bool HullTouches(Bounds bounds)
+    {
+        for (int face = 0; face < 2; face++)
+        {
+            float x = face == 0 ? HullMax.x : HullMin.x;
+            for (int i = 0; i <= 4; i++)
+                for (int j = 0; j <= 3; j++)
+                {
+                    var local = new Vector3(x, Mathf.Lerp(0.2f, 1.8f, j / 3f), Mathf.Lerp(HullMin.z, HullMax.z, i / 4f));
+                    if (bounds.Contains(transform.TransformPoint(local))) return true;
+                }
+        }
+        return false;
+    }
+
     // Poloha traktoru, kdyz ridic stoji (chodidla) na 'feet' a diva se natocenim 'yaw' (traktor jede ve smeru pohledu).
     public static void PoseFor(Vector3 feet, float yaw, out Vector3 position, out Quaternion rotation)
     {

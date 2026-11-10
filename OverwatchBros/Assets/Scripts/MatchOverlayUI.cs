@@ -56,6 +56,7 @@ public class MatchOverlayUI
         public RectTransform root;
         public TextMeshProUGUI name;
         public Image fill;
+        public Image shield;   // overhealth (stit) - zeleny pruh navazujici na zdravi
     }
 
     class FeedRow
@@ -207,6 +208,10 @@ public class MatchOverlayUI
                 plate.fill.color = color;
                 float fraction = Mathf.Clamp01(health.currentHealth.Value / Mathf.Max(1f, health.maxHealth));
                 plate.fill.rectTransform.sizeDelta = new Vector2(BarWidth * fraction, 8f);
+                float over = Mathf.Clamp01(health.shield.Value / Mathf.Max(1f, health.maxHealth));
+                plate.shield.enabled = over > 0.001f;
+                plate.shield.rectTransform.anchoredPosition = new Vector2(2f + BarWidth * fraction, 0f);
+                plate.shield.rectTransform.sizeDelta = new Vector2(BarWidth * over, 8f);
             }
         }
 
@@ -249,6 +254,7 @@ public class MatchOverlayUI
                 plate.name.color = color;
                 plate.fill.color = color;
                 plate.fill.rectTransform.sizeDelta = new Vector2(BarWidth * p.health01, 8f);
+                plate.shield.enabled = false;
             }
 
         for (int i = 0; i < plates.Count; i++)
@@ -311,6 +317,8 @@ public class MatchOverlayUI
 
             var background = UiKit.MakeImage(plate.root, "Bar", new Color(0f, 0f, 0f, 0.65f), bottom, new Vector2(0f, 0f), new Vector2(BarWidth + 4f, 12f));
             plate.fill = UiKit.MakeImage(background.transform, "Fill", Color.white, new Vector2(0f, 0.5f), new Vector2(2f, 0f), new Vector2(BarWidth, 8f));
+            plate.shield = UiKit.MakeImage(background.transform, "Overhealth", new Color(0.3f, 0.95f, 0.35f), new Vector2(0f, 0.5f), new Vector2(2f, 0f), new Vector2(0f, 8f));
+            plate.shield.enabled = false;
             plates.Add(plate);
         }
 

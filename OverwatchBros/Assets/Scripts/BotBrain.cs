@@ -992,7 +992,8 @@ public class BotBrain : MonoBehaviour
         {
             var spot = spots[i];
             if (spot == null || !match.PickupAvailable(i)) continue;
-            if (spot.kind != PickupKind.Health && spot.kind != PickupKind.BigHealth && spot.kind != PickupKind.Tramal) continue;
+            if (spot.kind != PickupKind.Health && spot.kind != PickupKind.BigHealth && spot.kind != PickupKind.Tramal
+                && spot.kind != PickupKind.Lasagne) continue;
             float d = Vector3.Distance(transform.position, spot.transform.position);
             if (d < best)
             {

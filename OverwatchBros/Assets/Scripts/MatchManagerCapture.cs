@@ -228,6 +228,7 @@ public partial class MatchManager
     void ServerAttackTick()
     {
         if (!IsAttackMode || IsLobby || IsOver) return;
+        ServerCutsceneTick();
 
         if (roundPhase.Value == RoundIntermission)
         {
@@ -352,6 +353,38 @@ public partial class MatchManager
         if (variable.Value != shown) variable.Value = shown;
     }
 
+    // Filmova scena po dobyti bodu (sklopna podlaha s visici postavickou, FoldingFloor s unlockAfter = dalsi bod):
+    // vsichni zmrazeni a nesmrtelni, dokud bezi, bod se odemyka o jeji delku dele; po ni vsichni zpet na spawny.
+    float cutsceneTeleportAt = -1f;
+
+    float ServerStartCutscene(int nextPoint)
+    {
+        float film = 0f;
+        foreach (var floor in FindObjectsByType<FoldingFloor>())
+            if (floor.unlockAfter == nextPoint && floor.HasCutscene)
+                film = Mathf.Max(film, floor.CutsceneSeconds);
+        if (film <= 0f) return 0f;
+        float hold = film + 0.4f;
+        foreach (var client in PlayerSlots())
+        {
+            var player = client.PlayerObject;
+            if (player == null) continue;
+            var movement = player.GetComponent<FirstPersonController>();
+            var health = player.GetComponent<Health>();
+            if (movement != null) movement.ServerHold(hold);
+            if (health != null) health.ServerInvulnerable(hold);
+        }
+        cutsceneTeleportAt = Time.time + hold;
+        return hold;
+    }
+
+    void ServerCutsceneTick()
+    {
+        if (cutsceneTeleportAt < 0f || Time.time < cutsceneTeleportAt) return;
+        cutsceneTeleportAt = -1f;
+        ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);   // vsichni na spawny dalsiho bodu
+    }
+
     void ServerPointCaptured()
     {
         int team = attackTeam.Value;
@@ -377,7 +410,8 @@ public partial class MatchManager
         timer += pointIndex.Value < 2 ? BonusSeconds : LateBonusSeconds;
         if (roundPhase.Value == RoundOvertime) roundPhase.Value = RoundAttack;
         overtimeEmpty = 0f;
-        ServerApplyPoint(next, UnlockNextSeconds);
+        float film = ServerStartCutscene(next);
+        ServerApplyPoint(next, UnlockNextSeconds + film);
     }
 
     void ServerEndRound(int pointsTaken, float progressOnNext)
@@ -416,6 +450,7 @@ public partial class MatchManager
     void ServerBeginSecondRound()
     {
         round.Value = 2;
+        cutsceneTeleportAt = -1f;
         attackTeam.Value = 1 - attackTeam.Value;
         ServerResetPickups();
         ServerResetBoiler();

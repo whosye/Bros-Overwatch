@@ -14,7 +14,8 @@ public class AbilityDefinition : ScriptableObject
     // Buff "Respin Joker" (koukani na automat v televizi, JokerTvBuff): mistni hrac ma do tohoto casu cooldowny nejvys 1 s.
     // Plati jen na pocitaci toho hrace (cooldowny schopnosti hlida vlastnik).
     public static float FastCooldownUntil;
-    public float Cooldown => TestCooldowns || Time.time < FastCooldownUntil ? Mathf.Min(cooldown, 1f) : cooldown;
+    public float Cooldown => TestCooldowns || Time.time < FastCooldownUntil ? Mathf.Min(cooldown, 1f)
+        : Time.time < PickupBuffs.CoffeeUntil ? cooldown * PickupBuffs.CoffeeCooldownScale : cooldown;   // kava (mistni hrac)
     [Tooltip("Ultimatni schopnost (Q): kolik bodu nabiti stoji. Nabiji se zpusobenym poskozenim (1 bod za bod poskozeni), "
         + "lecenim spoluhracu a pomalu sama casem. 0 = schopnost se ridi jen cooldownem.")]
     public float ultCost = 0f;

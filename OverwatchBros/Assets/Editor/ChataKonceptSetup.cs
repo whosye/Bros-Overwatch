@@ -50,6 +50,7 @@ public static class ChataKonceptSetup
             EditorSceneManager.MarkSceneDirty(map.scene);
             Snapshot(map.transform);
             ChataNovaCast.Snapshots(map.transform);
+            if (ChataNovaCast.AuditPending) ChataNovaCast.Audit();
             Debug.Log("[Koncept] Mapa chat upravena podle navrhu (body, spawny, hranice zon, tunel, kryty). Uloz scenu (Ctrl+S). Nahledy: Temp/Koncept_*.png");
         }
     }
