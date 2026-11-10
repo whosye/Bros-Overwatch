@@ -29,6 +29,10 @@ public class StormAbility : NetworkBehaviour
 
     // Server: vir prave leti (kvuli nabijeni ultimatky a hodnoceni akci).
     public bool IsStormActive => stormActive;
+    // (server) poloha a smer leticí smrsti a jeji polomer - pro boty (uhnout)
+    public Vector3 StormPosition => stormPosition;
+    public Vector3 StormDirection => stormDirection;
+    public float StormRadius => ability != null ? ability.radius : 0f;
 
     bool UsesCharge => hero != null && hero.UsesUltCharge;
     bool CanUse => UsesCharge ? hero.UltReady : Time.time >= nextUseTime;

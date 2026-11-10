@@ -10,6 +10,14 @@ public partial class MatchManager
     public void ServerAddBot(int heroIndex, int teamIndex)
     {
         if (!IsServer || BotBrain.All.Count >= MaxBots) return;
+        // kazdy hrdina jen jednou v tymu: obsazeneho nahradi volny (kdyz uz zadny neni, bot se neprida)
+        teamIndex = Mathf.Clamp(teamIndex, 0, PlayerTeam.TeamCount - 1);
+        heroIndex = PlayerHero.FreeHero(teamIndex, heroIndex, null);
+        if (heroIndex < 0)
+        {
+            Debug.Log($"[Boti] Tym {teamIndex} uz ma vsechny hrdiny - bot se neprida.");
+            return;
+        }
         var definition = HeroRegistry.Get(heroIndex);
         var prefab = NetworkManager.NetworkConfig.PlayerPrefab;
         if (definition == null || prefab == null) return;

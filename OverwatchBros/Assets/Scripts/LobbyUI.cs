@@ -28,7 +28,7 @@ public class LobbyUI
     TextMeshProUGUI waitText;
 
     // Boti (jen host): hrdina a tym pristiho bota, pridat / odebrat vsechny.
-    Button botHeroButton, botTeamButton, botAddButton, botRemoveButton;
+    Button botHeroButton, botTeamButton, botAddButton, botRemoveButton, botDifficultyButton;
     int botHero;
     int botTeam = 1;
 
@@ -106,6 +106,8 @@ public class LobbyUI
             () => MatchManager.Instance?.ServerAddBot(botHero, botTeam), UiKit.Green, 22f);
         botRemoveButton = UiKit.MakeButton(Root.transform, "ODEBRAT BOTY", topLeft, new Vector2(16f, -118f), new Vector2(300f, 46f),
             () => MatchManager.Instance?.ServerRemoveBots(), new Color(0.45f, 0.18f, 0.18f, 1f), 22f);
+        botDifficultyButton = UiKit.MakeButton(Root.transform, "OBTÍŽNOST", topLeft, new Vector2(16f, -170f), new Vector2(300f, 46f),
+            () => BotBrain.Difficulty = (BotBrain.Difficulty + 1) % BotBrain.DifficultyNames.Length, UiKit.ButtonBase, 22f);
 
         // Mapa (vlevo) a rezim (vpravo) - voli host
         mapButton = UiKit.MakeButton(Root.transform, "MAPA", center, new Vector2(-470f, -352f), new Vector2(600f, 56f),
@@ -194,7 +196,7 @@ public class LobbyUI
         waitText.gameObject.SetActive(!isHost && !joining);
 
         bool botsVisible = isHost && !joining;
-        foreach (var button in new[] { botHeroButton, botTeamButton, botAddButton, botRemoveButton })
+        foreach (var button in new[] { botHeroButton, botTeamButton, botAddButton, botRemoveButton, botDifficultyButton })
             button.gameObject.SetActive(botsVisible);
         if (botsVisible)
         {
@@ -207,6 +209,7 @@ public class LobbyUI
             UiKit.SetButtonLabel(botRemoveButton, count > 0 ? $"ODEBRAT BOTY ({count})" : "ODEBRAT BOTY");
             botRemoveButton.interactable = count > 0;
             botAddButton.interactable = count < MatchManager.MaxBots;
+            UiKit.SetButtonLabel(botDifficultyButton, $"BOTI: <color=#F28C1A>{BotBrain.DifficultyNames[Mathf.Clamp(BotBrain.Difficulty, 0, 2)]}</color>");
         }
     }
 
@@ -252,8 +255,14 @@ public class LobbyUI
         int selected = localHero != null ? localHero.heroId.Value : PlayerHero.PreferredHero;
         var heroes = HeroRegistry.All;
 
+        var localTeam = localHero != null ? localHero.GetComponent<PlayerTeam>() : null;
         for (int i = 0; i < heroButtons.Count; i++)
+        {
+            // hrdina, ktereho uz ma nekdo z meho tymu, nejde vybrat (zasedly)
+            bool taken = localTeam != null && i != selected && PlayerHero.TakenInTeam(i, localTeam.teamId.Value, localHero);
             UiKit.SetButtonColor(heroButtons[i], i == selected ? UiKit.Accent : UiKit.ButtonBase);
+            heroButtons[i].interactable = !taken;
+        }
 
         var hero = HeroRegistry.Get(selected);
         if (hero == null || hero.weapon == null)

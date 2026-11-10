@@ -27,7 +27,26 @@ public class BotBrain : MonoBehaviour
     // Postava, kterou ovlada hrac na tomhle pocitaci (ne bot, ktery na hostu taky "patri" hostovi).
     public static bool IsLocalHuman(NetworkBehaviour behaviour) => behaviour != null && behaviour.IsOwner && !IsBot(behaviour.gameObject);
 
-    // ---------------- obtiznost (1. etapa: jedna stredni) ----------------
+    // ---------------- obtiznost ----------------
+    // Prepina host v lobby (Lehci / Normalni / Tezsi); plati hned pro vsechny boty.
+    public static int Difficulty = 1;
+    public static readonly string[] DifficultyNames = { "Lehčí", "Normální", "Těžší" };
+    static readonly float[] DiffReaction = { 1.6f, 1f, 0.6f };
+    static readonly float[] DiffAim = { 1.9f, 1f, 0.55f };
+    static readonly float[] DiffTurn = { 0.7f, 1f, 1.35f };
+    static readonly float[] DiffView = { 0.8f, 1f, 1.15f };
+    int appliedDifficulty = -1;
+    float baseReaction, baseAim, baseTurn, baseView;
+
+    void ApplyDifficulty()
+    {
+        int d = Mathf.Clamp(Difficulty, 0, 2);
+        appliedDifficulty = d;
+        reactionTime = baseReaction * DiffReaction[d];
+        aimError = baseAim * DiffAim[d];
+        turnSpeed = baseTurn * DiffTurn[d];
+        viewDistance = baseView * DiffView[d];
+    }
 
     public float reactionTime = 0.6f;     // s od spatreni do prvni strely
     public float turnSpeed = 180f;         // stupnu za sekundu
@@ -111,6 +130,8 @@ public class BotBrain : MonoBehaviour
         aggression = Random.Range(0.5f, 1f);
         reactionTime *= Random.Range(0.8f, 1.35f);
         aimError *= Random.Range(0.8f, 1.35f);
+        baseReaction = reactionTime; baseAim = aimError; baseTurn = turnSpeed; baseView = viewDistance;
+        ApplyDifficulty();
         nextHunch = Time.time + Random.Range(8f, 20f);
     }
 
@@ -503,6 +524,9 @@ public class BotBrain : MonoBehaviour
         var def = hero.Hero;
         float hp = health != null && health.maxHealth > 0f ? health.currentHealth.Value / health.maxHealth : 1f;
 
+        // Sindel kaze ve vzduchu: omraceni (flash, hak, sipka, umlceni) ho prerusi
+        if (TryInterrupt(def)) return;
+
         if (CurrentRole(weapon) == Role.Support)
         {
             Vector3 supportEye = fpc.playerCamera != null ? fpc.playerCamera.transform.position : transform.position + Vector3.up * 1.6f;
@@ -522,8 +546,9 @@ public class BotBrain : MonoBehaviour
         bool aligned = Vector3.Angle(forward, toTarget) < 15f;
         if (!aligned || Time.time - seenSince < reactionTime) return;
 
-        // ultimatka: nepritel v dosahu, bot neni skoro mrtvy
-        if (def.ability != null && hero.UltReady && distance < Reach(def.ability, 20f) && hp > 0.25f && Random.value < 0.5f + aggression * 0.3f)
+        // ultimatka: nepritel v dosahu, bot neni skoro mrtvy (Sindel: jen kdyz v kruhu stoji aspon dva, nebo je nepritel jediny)
+        bool ultWorth = def.abilityKind != AbilityKind.Ezekiel || EzekielWorth(def.ability);
+        if (def.ability != null && hero.UltReady && ultWorth && distance < Reach(def.ability, 20f) && hp > 0.25f && Random.value < 0.5f + aggression * 0.3f)
         {
             Press(HeroInput.Key.Q, 0.15f);
             return;
@@ -547,6 +572,7 @@ public class BotBrain : MonoBehaviour
     void Update()
     {
         if (fpc == null || !fpc.IsSpawned || !fpc.IsServer) return;
+        if (appliedDifficulty != Difficulty) ApplyDifficulty();
 
         var match = MatchManager.Instance;
         bool active = match != null && !match.IsLobby && !match.IsOver && !fpc.CannotAct;
@@ -575,6 +601,7 @@ public class BotBrain : MonoBehaviour
         Vector3 goal;
         bool combat = target != null && targetVisible;
         HealthGoal(out bool wantsHealth, out Vector3 healthPos);
+        BuffGoal(out bool wantsBuff, out Vector3 buffPos);
 
         // Utok a obrana: hlavni je bod. Bot strili na kazdeho, koho vidi, ale za nepritelem daleko od bodu
         // nebezi (jen do 'leash' metru od bodu); kdyz je na bodu potreba (zabirani / obrana), drzi se na nem.
@@ -607,7 +634,16 @@ public class BotBrain : MonoBehaviour
         // malo zivotu, lekarnicka nikde a nepritel na dohled: couvnout od nej (a strilet dal), ne bojovat do posledniho
         bool retreating = !wantsHealth && combat && target != null && health != null
             && health.currentHealth.Value < health.maxHealth * 0.3f && !(weapon != null && weapon.IsMelee && aggression > 0.85f);
-        if (retreating)
+        // nebezpeci (Sindeluv kruh, smrst, nalozky, tancici Mosino): uhnout ven
+        Vector3 fleeDir = Vector3.zero;
+        bool fleeing = team != null && InDanger(transform.position, out fleeDir);
+        if (fleeing)
+        {
+            chase = false;
+            chasing = false;
+            goal = transform.position + fleeDir * 7f;
+        }
+        else if (retreating)
         {
             Vector3 away = transform.position - target.transform.position;
             away.y = 0f;
@@ -617,6 +653,8 @@ public class BotBrain : MonoBehaviour
         }
         else if (wantsHealth)
             goal = healthPos;
+        else if (wantsBuff && !combat && !holdPoint)
+            goal = buffPos;
         else if (supporting)
             goal = SupportSpot(match, role == Role.Support && weapon.allyHeal <= 0f);
         else if (chase && role == Role.Ranged)
@@ -643,6 +681,14 @@ public class BotBrain : MonoBehaviour
             strafeSign = combat && Random.value < 0.7f ? -strafeSign : (Random.value < 0.5f ? -1f : 1f);
             // obcas v boji vyskoci (hlavne dravci) - tezsi cil
             if (combat && Random.value < 0.08f + aggression * 0.12f) jumpRequest = true;
+        }
+
+        // do nepratelske spawn stodoly se nedostane (dvere) - nejit tam, pockat venku
+        if (team != null && SpawnBarn.BlockedFor(team.teamId.Value, goal) && !SpawnBarn.BlockedFor(team.teamId.Value, transform.position))
+        {
+            goal = transform.position;
+            chasing = false;
+            chaseTarget = null;
         }
 
         // zaseknuty: chvili objizdka
@@ -809,6 +855,10 @@ public class BotBrain : MonoBehaviour
                 bestVisible = visible;
             }
         }
+
+        // prednost: nepratelsky Sindel kaze ve vzduchu a bot ho muze prerusit
+        var preacher = InterruptTarget(eye);
+        if (preacher != null) { best = preacher; bestVisible = true; }
 
         if (best != target)
         {
@@ -978,13 +1028,49 @@ public class BotBrain : MonoBehaviour
 
     // ---------------- cile cesty ----------------
 
+    // Buffy (kava, pivo, bila latka, slivovice...): mimo boj, kdyz je nektery do 18 m, dojde si pro nej.
+    void BuffGoal(out bool wants, out Vector3 position)
+    {
+        wants = false;
+        position = Vector3.zero;
+        var match = MatchManager.Instance;
+        if (match == null || target != null) return;
+        float best = 18f;
+        var spots = PickupSpot.Sorted;
+        for (int i = 0; i < spots.Count; i++)
+        {
+            var spot = spots[i];
+            if (spot == null || !match.PickupAvailable(i)) continue;
+            if (spot.kind != PickupKind.Coffee && spot.kind != PickupKind.Beer && spot.kind != PickupKind.WhitePowder
+                && spot.kind != PickupKind.Power && spot.kind != PickupKind.Speed && spot.kind != PickupKind.Shield
+                && spot.kind != PickupKind.Invulnerable) continue;
+            float d = Vector3.Distance(transform.position, spot.transform.position);
+            if (d < best)
+            {
+                best = d;
+                position = spot.transform.position;
+                wants = true;
+            }
+        }
+    }
+
     void HealthGoal(out bool wants, out Vector3 position)
     {
         wants = false;
         position = Vector3.zero;
-        if (health == null || health.currentHealth.Value > health.maxHealth * 0.4f) return;
+        if (health == null) return;
         var match = MatchManager.Instance;
         if (match == null) return;
+
+        // ve vlastni spawn stodole (2x rychlejsi regenerace) se doleci, kdyz nikoho nevidi
+        var barn = OwnBarn();
+        if (barn != null && barn.Contains(transform.position) && health.currentHealth.Value < health.maxHealth * 0.85f && !targetVisible)
+        {
+            wants = true;
+            position = transform.position;
+            return;
+        }
+        if (health.currentHealth.Value > health.maxHealth * 0.4f) return;
 
         float best = 45f;
         var spots = PickupSpot.Sorted;
@@ -1002,6 +1088,149 @@ public class BotBrain : MonoBehaviour
                 wants = true;
             }
         }
+            // lekarnicka nikde: dojit se dolecit do vlastni spawn stodoly (do 60 m)
+        if (!wants && barn != null && Vector3.Distance(transform.position, barn.Center) < 60f)
+        {
+            wants = true;
+            position = barn.Center;
+        }
+    }
+
+    SpawnBarn OwnBarn()
+    {
+        if (team == null || !SpawnZone.TryGetCenter(team.teamId.Value, out Vector3 spawn)) return null;
+        return SpawnBarn.AtSpawn(spawn);
+    }
+
+    // ---------------- nebezpeci a Sindelova ultimatka ----------------
+
+    static readonly List<EzekielAbility> preachers = new List<EzekielAbility>();
+    static readonly List<StormAbility> storms = new List<StormAbility>();
+    static readonly List<MineAbility> miners = new List<MineAbility>();
+    static readonly List<BardAbility> dancers = new List<BardAbility>();
+    static readonly List<Vector3> minePositions = new List<Vector3>();
+    static float nextDangerScan;
+
+    static void ScanDangers()
+    {
+        if (Time.time < nextDangerScan) return;
+        nextDangerScan = Time.time + 1f;
+        preachers.Clear(); preachers.AddRange(FindObjectsByType<EzekielAbility>());
+        storms.Clear(); storms.AddRange(FindObjectsByType<StormAbility>());
+        miners.Clear(); miners.AddRange(FindObjectsByType<MineAbility>());
+        dancers.Clear(); dancers.AddRange(FindObjectsByType<BardAbility>());
+    }
+
+    // Stoji 'position' v nebezpeci od nepratel? 'away' = kam utect (vodorovne).
+    bool InDanger(Vector3 position, out Vector3 away)
+    {
+        away = Vector3.zero;
+        ScanDangers();
+        foreach (var e in preachers)
+        {
+            if (e == null || !e.IsCasting || !e.AimValid || Combat.SameTeam(gameObject, e.gameObject)) continue;
+            if (Away(position, e.Aim, e.Radius + 1.5f, ref away)) return true;
+        }
+        foreach (var s in storms)
+        {
+            if (s == null || !s.IsStormActive || Combat.SameTeam(gameObject, s.gameObject)) continue;
+            // smrst leti primo: uhnout do strany, kdyz je v jeji draze pred ni (do 25 m)
+            Vector3 dir = s.StormDirection; dir.y = 0f;
+            if (dir.sqrMagnitude < 0.01f) continue;
+            dir.Normalize();
+            Vector3 to = position - s.StormPosition; to.y = 0f;
+            float ahead = Vector3.Dot(to, dir);
+            Vector3 side = to - dir * ahead;
+            if (ahead > -2f && ahead < 25f && side.magnitude < s.StormRadius + 2f)
+            {
+                away = side.sqrMagnitude > 0.01f ? side.normalized : Vector3.Cross(Vector3.up, dir);
+                return true;
+            }
+        }
+        foreach (var m in miners)
+        {
+            if (m == null || !m.IsActive || Combat.SameTeam(gameObject, m.gameObject)) continue;
+            minePositions.Clear();
+            m.MinePositions(minePositions);
+            foreach (var mine in minePositions)
+                if (Away(position, mine, m.BlastRadius + 1f, ref away)) return true;
+        }
+        foreach (var b in dancers)
+        {
+            if (b == null || !b.IsDancing || Combat.SameTeam(gameObject, b.gameObject)) continue;
+            if (Away(position, b.transform.position, b.DanceRadius * 0.8f, ref away)) return true;
+        }
+        return false;
+    }
+
+    static bool Away(Vector3 position, Vector3 center, float radius, ref Vector3 away)
+    {
+        Vector3 to = position - center; to.y = 0f;
+        if (to.magnitude > radius) return false;
+        away = to.sqrMagnitude > 0.04f ? to.normalized : Random.insideUnitSphere;
+        away.y = 0f;
+        away.Normalize();
+        return true;
+    }
+
+    // Vyplati se Sindelovi ultimatka: v kruhu kolem cile aspon dva nepratele, nebo je nepritel jediny.
+    bool EzekielWorth(AbilityDefinition ult)
+    {
+        if (target == null || ult == null) return false;
+        int near = 0, total = 0;
+        foreach (var other in FindObjectsByType<PlayerHero>())
+        {
+            if (other == hero || !other.IsSpawned || Combat.SameTeam(gameObject, other.gameObject)) continue;
+            var h = other.GetComponent<Health>();
+            if (h == null || h.currentHealth.Value <= 0f) continue;
+            total++;
+            Vector3 d = other.transform.position - target.transform.position; d.y = 0f;
+            if (d.magnitude <= ult.radius * 1.1f) near++;
+        }
+        return near >= 2 || total == 1;
+    }
+
+    // Omraceni, ktere prerusi Sindelovo kazani: klavesa slotu s takovou schopnosti (nebo None).
+    static readonly AbilityKind[] Interrupters = { AbilityKind.Flash, AbilityKind.Hook, AbilityKind.SleepDart, AbilityKind.SayWhat };
+
+    bool HasInterrupt(HeroDefinition def, out HeroInput.Key key, out AbilityDefinition ability)
+    {
+        key = HeroInput.Key.Q; ability = null;
+        if (def == null) return false;
+        if (System.Array.IndexOf(Interrupters, def.rmbAbilityKind) >= 0 && def.rmbAbility != null) { key = HeroInput.Key.RightMouse; ability = def.rmbAbility; return true; }
+        if (System.Array.IndexOf(Interrupters, def.altAbilityKind) >= 0 && def.altAbility != null) { key = HeroInput.Key.E; ability = def.altAbility; return true; }
+        if (System.Array.IndexOf(Interrupters, def.secondaryAbilityKind) >= 0 && def.secondaryAbility != null) { key = HeroInput.Key.Shift; ability = def.secondaryAbility; return true; }
+        return false;
+    }
+
+    PlayerHero InterruptTarget(Vector3 eye)
+    {
+        if (hero == null || !HasInterrupt(hero.Hero, out _, out var ability)) return null;
+        ScanDangers();
+        foreach (var e in preachers)
+        {
+            if (e == null || !e.IsCasting || Combat.SameTeam(gameObject, e.gameObject)) continue;
+            var other = e.GetComponent<PlayerHero>();
+            if (other == null) continue;
+            if (Vector3.Distance(transform.position, other.transform.position) > Reach(ability, 25f) + 5f) continue;
+            if (!CanSee(eye, other)) continue;
+            return other;
+        }
+        return null;
+    }
+
+    bool TryInterrupt(HeroDefinition def)
+    {
+        if (target == null || !HasInterrupt(def, out var key, out var ability)) return false;
+        var e = target.GetComponent<EzekielAbility>();
+        if (e == null || !e.IsCasting) return false;
+        Vector3 eye = fpc.playerCamera != null ? fpc.playerCamera.transform.position : transform.position + Vector3.up * 1.6f;
+        Vector3 to = target.transform.position + Vector3.up * 1.2f - eye;
+        if (to.magnitude > Reach(ability, 25f)) return false;
+        Vector3 forward = Quaternion.Euler(Pitch, Yaw, 0f) * Vector3.forward;
+        if (Vector3.Angle(forward, to) > 10f) return false;
+        Press(key, 0.15f);
+        return true;
     }
 
     // ---------------- utok a obrana ----------------

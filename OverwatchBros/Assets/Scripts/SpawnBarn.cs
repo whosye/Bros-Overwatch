@@ -86,6 +86,17 @@ public class SpawnBarn : MonoBehaviour
         return null;
     }
 
+    // Stred podlahy stodoly (kam si bot dojde lecit).
+    public Vector3 Center => floor.TransformPoint(floorBounds.center + Vector3.up * floorBounds.extents.y) + Vector3.up * 0.1f;
+
+    // Muze se tam hrac tymu 'team' dostat? (bot si nevybira cil v nepratelske spawn stodole)
+    public static bool BlockedFor(int team, Vector3 position)
+    {
+        foreach (var barn in all)
+            if (barn != null && barn.owner >= 0 && barn.owner != team && barn.Contains(position)) return true;
+        return false;
+    }
+
     // Nasobek regenerace zdravi pro hrace na danem miste (Health, server).
     public static float RegenScale(Vector3 position)
     {
@@ -104,34 +115,120 @@ public class SpawnBarn : MonoBehaviour
         doorMaterial.mainTexture = null;
         doorMaterial.color = new Color(1f, 0.82f, 0.1f, 0.3f);
 
-        foreach (Transform child in transform)
-        {
-            if (!child.name.StartsWith("Preklad")) continue;
-            var filter = child.GetComponent<MeshFilter>();
-            if (filter == null || filter.sharedMesh == null) continue;
-            Bounds b = filter.sharedMesh.bounds;
-            float bottom = child.TransformPoint(b.center - Vector3.up * b.extents.y).y;
-            float height = bottom - floorTop;
-            if (height < 1f) continue;
+        // Otvory se hledaji ve skutecnych zdech (i kdyz je nekdo posunul / pridal): po obvodu podlahy se kazdych
+        // 25 cm ve vysce 1,2 m zkusi, jestli je ve zdi stena; souvisly usek bez steny (aspon 0,8 m) = otvor -> dvere
+        // od podlahy po preklad (nebo 3,6 m).
+        Physics.SyncTransforms();
+        Vector3 c = floorBounds.center, e = floorBounds.extents;
 
-            var door = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            door.name = "DvereSpawnu";
-            Destroy(door.GetComponent<Collider>());   // strely i hraci (podle pravidel nize) prochazi
-            door.transform.SetParent(child, false);
-            door.transform.localPosition = b.center - Vector3.up * (b.extents.y + height * 0.5f / Mathf.Max(0.01f, child.lossyScale.y));
-            door.transform.localRotation = Quaternion.identity;
-            var scale = child.lossyScale;
-            door.transform.localScale = new Vector3(b.size.x * 0.98f, height / Mathf.Max(0.01f, scale.y), Mathf.Min(b.size.x, b.size.z) * 0.25f);
-            // tenka strana podel tloustky steny
-            if (b.size.x < b.size.z)
-                door.transform.localScale = new Vector3(b.size.x * 0.25f, height / Mathf.Max(0.01f, scale.y), b.size.z * 0.98f);
-            var renderer = door.GetComponent<Renderer>();
-            renderer.sharedMaterial = doorMaterial;
-            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            renderer.receiveShadows = false;
-            renderer.enabled = false;
-            doors.Add(renderer);
+        // 1) pod kazdym prekladem ("Preklad...") dvere pres celou sirku otvoru (puvodni otvory stodoly)
+        foreach (var lintel in GetComponentsInChildren<Transform>())
+        {
+            if (!lintel.name.StartsWith("Preklad") || !lintel.TryGetComponent<Renderer>(out var lr)) continue;
+            Bounds lb = lr.bounds;
+            Vector3 lc = floor.InverseTransformPoint(lb.center);
+            // ktera strana: nejblizsi okraj podlahy
+            float dz = e.z - Mathf.Abs(lc.z - c.z), dx = e.x - Mathf.Abs(lc.x - c.x);
+            bool lAlongX = dz < dx;
+            float lSign = lAlongX ? Mathf.Sign(lc.z - c.z) : Mathf.Sign(lc.x - c.x);
+            // sirka = delsi vodorovny rozmer site prekladu (nezavisle na natoceni stodoly)
+            var lf = lintel.GetComponent<MeshFilter>();
+            Vector3 ls = lf != null && lf.sharedMesh != null ? Vector3.Scale(lf.sharedMesh.bounds.size, lintel.lossyScale) : lb.size;
+            float width = Mathf.Max(Mathf.Abs(ls.x), Mathf.Abs(ls.z));
+            float mid = lAlongX ? (lc.x - c.x) / e.x : (lc.z - c.z) / e.z;
+            float half = width * 0.5f / (lAlongX ? e.x : e.z);
+            AddDoor(lAlongX, lSign, mid - half, mid + half, c, e, floorTop);
         }
+
+        for (int side = 0; side < 4; side++)
+        {
+            // strana: osa podel zdi, smer ven, poloha zdi (lokalne v podlaze)
+            bool alongX = side < 2;
+            float sign = side % 2 == 0 ? -1f : 1f;
+            float length = alongX ? e.x * 2f : e.z * 2f;
+            int steps = Mathf.Max(2, Mathf.RoundToInt(length / 0.25f));
+            float gapStart = -1f;
+            for (int i = 0; i <= steps; i++)
+            {
+                float t = i / (float)steps;
+                bool open = i < steps && IsGap(alongX, sign, Mathf.Lerp(-1f, 1f, t), c, e, floorTop);
+                float at = Mathf.Lerp(-1f, 1f, t);
+                if (open && gapStart < 0f) gapStart = at;
+                if (!open && gapStart >= 0f)
+                {
+                    // 2) mezera ve zdi bez prekladu (posunute / pridane zdi): jen kdyz tam uz dvere nejsou
+                    if (!Covered(alongX, sign, (gapStart + at) * 0.5f, c, e))
+                        AddDoor(alongX, sign, gapStart, at, c, e, floorTop);
+                    gapStart = -1f;
+                }
+            }
+        }
+        var widths = new System.Text.StringBuilder();
+        foreach (var d in doors) widths.Append($" {d.transform.lossyScale.x:0.0}m");
+        Debug.Log($"[Stodola] {name}: dveri {doors.Count} (sirky:{widths})");
+    }
+
+    // Je misto na zdi uz zakryte nekterymi dvermi?
+    bool Covered(bool alongX, float sign, float along, Vector3 c, Vector3 e)
+    {
+        Vector3 p = WallPoint(alongX, sign, along, 0.15f, c, e, 0f);
+        foreach (var d in doors)
+        {
+            Vector3 local = d.transform.InverseTransformPoint(new Vector3(p.x, d.transform.position.y, p.z));
+            if (Mathf.Abs(local.x) <= 0.5f && Mathf.Abs(local.z) <= 8f) return true;
+        }
+        return false;
+    }
+
+    Vector3 WallPoint(bool alongX, float sign, float along, float inward, Vector3 c, Vector3 e, float height)
+    {
+        Vector3 local = alongX
+            ? new Vector3(c.x + along * e.x, 0f, c.z + sign * (e.z - inward))
+            : new Vector3(c.x + sign * (e.x - inward), 0f, c.z + along * e.z);
+        Vector3 world = floor.TransformPoint(local);
+        world.y = height;
+        return world;
+    }
+
+    Vector3 Outward(bool alongX, float sign) => (alongX ? floor.forward : floor.right) * sign;
+
+    bool IsGap(bool alongX, float sign, float along, Vector3 c, Vector3 e, float floorTop)
+    {
+        if (Mathf.Abs(along) > 0.97f) return false;   // rohy
+        // zacatek tesne pred vnitrni stranou zdi (zed ~0,3 m) - seno a bedny kousek od zdi otvor nezakryji
+        Vector3 from = WallPoint(alongX, sign, along, 0.42f, c, e, floorTop + 1.2f);
+        foreach (var hit in Physics.RaycastAll(from, Outward(alongX, sign), 0.8f, ~0, QueryTriggerInteraction.Ignore))
+            if (hit.collider.GetComponentInParent<PlayerHero>() == null) return false;
+        return true;
+    }
+
+    void AddDoor(bool alongX, float sign, float a0, float a1, Vector3 c, Vector3 e, float floorTop)
+    {
+        float halfLength = alongX ? e.x : e.z;
+        float width = (a1 - a0) * halfLength;
+        if (width < 0.8f) return;
+        float mid = (a0 + a1) * 0.5f;
+        // vyska: od podlahy po spodek prekladu nad otvorem (nebo 3,6 m)
+        Vector3 bottom = WallPoint(alongX, sign, mid, 0.15f, c, e, floorTop + 0.3f);
+        float height = 3.6f;
+        if (Physics.Raycast(bottom, Vector3.up, out var top, 6f, ~0, QueryTriggerInteraction.Ignore))
+            height = Mathf.Clamp(top.point.y - floorTop, 1.2f, 6f);
+
+        var door = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        door.name = "DvereSpawnu";
+        Destroy(door.GetComponent<Collider>());   // strely i hraci (podle pravidel nize) prochazi
+        door.transform.SetParent(transform, true);
+        door.transform.position = WallPoint(alongX, sign, mid, 0.15f, c, e, floorTop + height * 0.5f);
+        door.transform.rotation = Quaternion.LookRotation(Outward(alongX, sign), Vector3.up);
+        door.transform.localScale = Vector3.one;
+        var parentScale = transform.lossyScale;
+        door.transform.localScale = new Vector3((width + 0.05f) / Mathf.Max(0.01f, parentScale.x), height / Mathf.Max(0.01f, parentScale.y), 0.06f / Mathf.Max(0.01f, parentScale.z));
+        var renderer = door.GetComponent<Renderer>();
+        renderer.sharedMaterial = doorMaterial;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        renderer.enabled = false;
+        doors.Add(renderer);
     }
 
     // ---------------- prubeh ----------------
@@ -166,8 +263,13 @@ public class SpawnBarn : MonoBehaviour
                 owner = team;
                 break;
             }
-        setupLock = owner >= 0 && match.IsAttackMode && match.roundPhase.Value == MatchManager.RoundSetup
-            && owner == match.attackTeam.Value;   // jen stodola utocniku; obranci se pri priprave rozestavuji
+        int phase = match.roundPhase.Value;
+        // priprava: zavrena jen stodola utocniku (obranci se rozestavuji);
+        // mezi body (po dobyti, nez se dalsi bod odemkne): zavrene obe
+        bool setup = phase == MatchManager.RoundSetup && owner == match.attackTeam.Value;
+        bool betweenPoints = match.pointIndex.Value > 0 && match.lockSecondsLeft.Value > 0
+            && (phase == MatchManager.RoundAttack || phase == MatchManager.RoundOvertime);
+        setupLock = owner >= 0 && match.IsAttackMode && (setup || betweenPoints);
     }
 
     // Po pohybu postav (LateUpdate): nepovoleny prechod hranou stodoly = zpet.

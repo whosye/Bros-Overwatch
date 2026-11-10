@@ -64,6 +64,8 @@ public class ReplayFrame
 
     // balicky na mape (ktere jsou k sebrani) a buffy hrace na HUDu (zbyva sekund)
     public ulong pickupMask = ulong.MaxValue;
+    // o ktery bod se hralo (utok a obrana; -1 = jiny rezim) - sklopna podlaha a zabrany v zaznamu jako tehdy
+    public sbyte matchPoint = -1;
     public float buffFastCooldown, buffInvulnerable, buffTramal;
 
     public List<ReplayObjectState> objects = new List<ReplayObjectState>();
@@ -134,7 +136,7 @@ public class ReplayEvent
 
 public class ReplayClip
 {
-    public const int Version = 5;   // 5: natazeni luku u kazdeho hrace
+    public const int Version = 6;   // 6: bod, o ktery se hralo (podlaha a zabrany v zaznamu)   // 5: natazeni luku u kazdeho hrace
 
     public int povId;
     public float duration;
@@ -316,6 +318,7 @@ public class ReplayClip
         w.Write(f.maxAmmo);
         if (f.locked) WriteV(w, f.lockPoint);
         w.Write(f.pickupMask);
+        w.Write(f.matchPoint);
         w.Write(f.buffFastCooldown);
         w.Write(f.buffInvulnerable);
         w.Write(f.buffTramal);
@@ -407,6 +410,7 @@ public class ReplayClip
         f.maxAmmo = r.ReadInt16();
         if (f.locked) f.lockPoint = ReadV(r);
         f.pickupMask = r.ReadUInt64();
+        f.matchPoint = r.ReadSByte();
         f.buffFastCooldown = r.ReadSingle();
         f.buffInvulnerable = r.ReadSingle();
         f.buffTramal = r.ReadSingle();

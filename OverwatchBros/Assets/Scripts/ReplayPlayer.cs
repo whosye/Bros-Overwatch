@@ -18,6 +18,10 @@ public class ReplayPlayer : MonoBehaviour
     public static bool Finished => instance == null || instance.clip == null || instance.time >= instance.clip.duration;
     public static ReplayFrame Frame => instance != null ? instance.current : null;
 
+    // Bod, o ktery se v zaznamu prave hralo (-1 = jiny rezim); null = neprehrava se.
+    // (jen POTG / zaznam po zapase; killcam je par sekund stary a host by si jim prepinal kolize uprostred hry)
+    public static int? RecordedPoint => Active && !IsKillcam && Frame != null ? Frame.matchPoint : (int?)null;
+
     // Stav ze zaznamu pro mapu a HUD: balicky k sebrani a buffy hrace, z jehoz pohledu se prehrava.
     public static bool PickupAvailable(int index)
     {

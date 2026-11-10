@@ -113,10 +113,12 @@ public class HeroPickerUI
         if (!panel.activeSelf) return;
 
         int current = localHero.heroId.Value;
+        var team = localHero.GetComponent<PlayerTeam>();
         for (int i = 0; i < buttons.Count; i++)
         {
+            bool taken = team != null && i != current && PlayerHero.TakenInTeam(i, team.teamId.Value, localHero);
             UiKit.SetButtonColor(buttons[i], i == current ? UiKit.Accent : UiKit.ButtonBase);
-            buttons[i].interactable = i != current;
+            buttons[i].interactable = i != current && !taken;   // hrdinu uz ma spoluhrac
         }
 
         hint.text = "Zabití a smrti ti zůstávají, nabití ultimátky se vynuluje.\n"

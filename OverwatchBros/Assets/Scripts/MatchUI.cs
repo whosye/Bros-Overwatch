@@ -29,12 +29,14 @@ public class MatchUI : MonoBehaviour
     readonly HudUI hud = new HudUI();
     readonly MatchOverlayUI overlay = new MatchOverlayUI();
     readonly CaptureUI capture = new CaptureUI();
+    readonly TopBarUI topBar = new TopBarUI();
     readonly BuffUI buffs = new BuffUI();
     TextMeshProUGUI boilerPrompt;
     readonly HeroPickerUI heroPicker = new HeroPickerUI();
     GameObject blockBar;
     Image blockFill;
     GameObject settingsPanel;
+    Button graphicsButton;
     TextMeshProUGUI sensText;
     TextMeshProUGUI volumeText;
     Slider sensitivitySlider;
@@ -111,6 +113,7 @@ public class MatchUI : MonoBehaviour
             new Vector2(0f, 30f), new Vector2(1000f, 60f));
 
         overlay.Build(root);
+        topBar.Build(root);
         capture.Build(root);
         buffs.Build(root);
         boilerPrompt = UiKit.MakeText(root, "KotelVyzva", "", 30, TextAlignmentOptions.Center, center,
@@ -220,6 +223,9 @@ public class MatchUI : MonoBehaviour
         headBobSlider = UiKit.MakeSlider(settingsPanel.transform, "HeadBobSlider", center,
             new Vector2(0f, -185f), new Vector2(620f, 44f), 0f, 200f, GameSettings.HeadBobIntensity * 100f,
             value => GameSettings.HeadBobIntensity = value / 100f, wholeNumbers: true);
+
+        graphicsButton = UiKit.MakeButton(settingsPanel.transform, "Grafika", center, new Vector2(0f, -248f), new Vector2(620f, 52f),
+            () => GraphicsQuality.Level = (GraphicsQuality.Level + 1) % GraphicsQuality.Names.Length, fontSize: 28f);
 
         UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -320f), new Vector2(340f, 76f),
             () => Cursor.lockState = CursorLockMode.Locked, UiKit.Green, 32f);
@@ -335,6 +341,7 @@ public class MatchUI : MonoBehaviour
             hud.Tick(localHero);
         // Po konci zapasu (a po dohrani play of the game) je tabulka hracu videt porad, ne jen na Tab.
         overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing && !killcam);
+        topBar.Tick(localHero, playing && !over, match);
         capture.Tick(localHero, playing && !over, match);
         buffs.Tick((playing && !over && !replay) || (replay && !killcam));   // v POTG buffy hrace ze zaznamu
         boilerPrompt.text = playing && !over && !replay ? (Tractor.PromptText != "" ? Tractor.PromptText : Boiler.PromptText) : "";
@@ -360,6 +367,7 @@ public class MatchUI : MonoBehaviour
             sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0#}  <size=65%>(max {GameSettings.MaxSensitivity:0})</size>";
             volumeText.text = $"Hlasitost: {Mathf.RoundToInt(GameSettings.Volume * 100f)} %";
             UiKit.SetButtonLabel(headBobButton, GameSettings.HeadBobEnabled ? "Pohupování kamery: ZAPNUTO" : "Pohupování kamery: VYPNUTO");
+            UiKit.SetButtonLabel(graphicsButton, $"Grafika: <color=#F28C1A>{GraphicsQuality.Names[GraphicsQuality.Level]}</color>  <size=65%>(klikni = další)</size>");
             headBobSlider.SetValueWithoutNotify(GameSettings.HeadBobIntensity * 100f);
             headBobSlider.interactable = GameSettings.HeadBobEnabled;
             headBobText.text = $"Intenzita pohupování: {Mathf.RoundToInt(GameSettings.HeadBobIntensity * 100f)} %";
@@ -443,10 +451,7 @@ public class MatchUI : MonoBehaviour
             return;
         }
 
-        scoreText.text =
-            $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team0)}>TÝM 0  {match.team0Score.Value}</color>" +
-            $"   <size=60%>{(match.IsAttackMode ? "zabrané body" : $"do {match.scoreToWinSynced.Value}")}</size>   " +
-            $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team1)}>{match.team1Score.Value}  TÝM 1</color>";
+        scoreText.text = "";   // skore ukazuje horni lista (TopBarUI)
 
         // Zivoty, schopnosti a munici kresli HudUI.
         infoText.text = "";

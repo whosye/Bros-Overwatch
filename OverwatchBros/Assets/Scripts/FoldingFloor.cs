@@ -28,6 +28,7 @@ public class FoldingFloor : MonoBehaviour
 
     Quaternion closedRotation;
     bool initialized, open, landed = true, cracked = true;
+    bool wasReplay;
     float progress, nextCheck, startAt;
     HangingFigure figure;   // visici postavicka (z Hide When Open): pred zhroucenim udela shyb
 
@@ -56,7 +57,10 @@ public class FoldingFloor : MonoBehaviour
         if (Time.time >= nextCheck)
         {
             nextCheck = Time.time + 0.2f;
+            // zacatek / konec zaznamu: podlaha se jen nastavi (bez shybu, filmu a zvuku)
+            if (ReplayPlayer.RecordedPoint.HasValue != wasReplay) { wasReplay = ReplayPlayer.RecordedPoint.HasValue; initialized = false; }
             bool wanted = testDown || ShouldBeDown(unlockAfter);
+            if (wasReplay && wanted != open) initialized = false;   // v zaznamu bez filmu, jen nastavit
             if (!initialized)
             {
                 initialized = true;
@@ -115,6 +119,10 @@ public class FoldingFloor : MonoBehaviour
     // Dole jen v utoku a obrane po dobyti 'unlockAfter' bodu. V lobby, mimo zapas a v team deathmatchi je nahore.
     static bool ShouldBeDown(int unlockAfter)
     {
+        // v zaznamu (POTG, killcam) podle bodu, o ktery se tehdy hralo
+        var recorded = ReplayPlayer.RecordedPoint;
+        if (recorded.HasValue) return recorded.Value >= 0 && recorded.Value >= unlockAfter;
+
         var match = MatchManager.Instance;
         if (match == null || !match.IsSpawned || match.IsLobby || !match.IsAttackMode) return false;
         return match.pointIndex.Value >= unlockAfter;

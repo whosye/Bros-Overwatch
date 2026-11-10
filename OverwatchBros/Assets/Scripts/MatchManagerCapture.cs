@@ -200,7 +200,9 @@ public partial class MatchManager
             var player = client.PlayerObject;
             var team = player != null ? player.GetComponent<PlayerTeam>() : null;
             var movement = player != null ? player.GetComponent<FirstPersonController>() : null;
-            if (team != null && movement != null && team.teamId.Value == attackTeam.Value)
+            // spawn ve stodole: drzi je zavrene dvere (uvnitr se muzou hybat); bez stodoly stoji na miste
+            if (team != null && movement != null && team.teamId.Value == attackTeam.Value
+                && SpawnBarn.AtSpawn(customSpawn[Mathf.Clamp(team.teamId.Value, 0, 1)]) == null)
                 movement.ServerHold(seconds);
         }
     }
@@ -383,6 +385,7 @@ public partial class MatchManager
         if (cutsceneTeleportAt < 0f || Time.time < cutsceneTeleportAt) return;
         cutsceneTeleportAt = -1f;
         ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);   // vsichni na spawny dalsiho bodu
+        ServerHoldUntilUnlock();
     }
 
     void ServerPointCaptured()
@@ -412,6 +415,29 @@ public partial class MatchManager
         overtimeEmpty = 0f;
         float film = ServerStartCutscene(next);
         ServerApplyPoint(next, UnlockNextSeconds + film);
+        // vsichni hned na spawny dalsiho bodu a cekaji tam, nez se bod odemkne (s filmem az po nem - ServerCutsceneTick)
+        if (film <= 0f)
+        {
+            ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
+            ServerHoldUntilUnlock();
+        }
+    }
+
+    // Do odemceni bodu: hraci se spawnem ve stodole cekaji za zavrenymi dvermi (SpawnBarn), ostatni stoji na spawnu.
+    void ServerHoldUntilUnlock()
+    {
+        float seconds = Mathf.Max(0f, lockTimer);
+        if (seconds <= 0f) return;
+        foreach (var client in PlayerSlots())
+        {
+            var player = client.PlayerObject;
+            if (player == null) continue;
+            var team = player.GetComponent<PlayerTeam>();
+            var movement = player.GetComponent<FirstPersonController>();
+            if (team == null || movement == null) continue;
+            Vector3 spawn = customSpawn[Mathf.Clamp(team.teamId.Value, 0, 1)];
+            if (SpawnBarn.AtSpawn(spawn) == null) movement.ServerHold(seconds);
+        }
     }
 
     void ServerEndRound(int pointsTaken, float progressOnNext)
@@ -477,7 +503,8 @@ public partial class MatchManager
         ProceduralSfx.Play(ProceduralSfx.CaptureWon, listener, 1f);
         Fx.Sparks(position + Vector3.up, UiKit.TeamColor(team));
         Fx.Sparks(position + Vector3.up * 2f, UiKit.TeamColor(team));
-        CaptureUI.Announce($"BOD {PointNames[Mathf.Clamp(index, 0, PointNames.Length - 1)]} ZABRÁN", UiKit.TeamColor(team));
+        CaptureUI.Headline($"BOD {PointNames[Mathf.Clamp(index, 0, PointNames.Length - 1)]} DOBYT",
+            index + 1 < CapturePointCount ? $"další cíl: bod {PointNames[index + 1]}" : "všechny body dobyty", UiKit.TeamColor(team));
     }
 
     [ClientRpc]
@@ -485,13 +512,13 @@ public partial class MatchManager
     {
         var listener = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
         ProceduralSfx.Play(ProceduralSfx.CaptureUnlock, listener, 1f);
-        CaptureUI.Announce($"ÚTOK! · TÝM {attackers} ÚTOČÍ", UiKit.TeamColor(attackers));
+        CaptureUI.Headline("ÚTOK ZAČAL", $"útočí tým {attackers}", UiKit.TeamColor(attackers));
     }
 
     [ClientRpc]
     void RoundOverClientRpc(int attackers, int pointsTaken)
     {
-        CaptureUI.Announce($"KONEC 1. KOLA · TÝM {attackers}: {pointsTaken} {(pointsTaken == 1 ? "BOD" : "BODY")} · VÝMĚNA STRAN", UiKit.TeamColor(attackers));
+        CaptureUI.Headline("KONEC 1. KOLA", $"tým {attackers}: {pointsTaken} {(pointsTaken == 1 ? "bod" : pointsTaken >= 2 && pointsTaken <= 4 ? "body" : "bodů")}  ·  výměna stran", UiKit.TeamColor(attackers), 4.5f);
     }
 
     // Pozde pripojeny hrac si mista oziveni vyzada.

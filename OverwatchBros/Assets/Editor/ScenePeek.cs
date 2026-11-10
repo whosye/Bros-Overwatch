@@ -46,10 +46,43 @@ public static class ScenePeek
         Debug.Log("[Pohled] Okno Scene v perspektive. Priblizovani: kolecko mysi; letani: drz prave tlacitko + W A S D (Q/E dolu/nahoru); F = najet na vybrany objekt.");
     }
 
+    // Jen strechy (vsechny budovy v cele scene): objekty se jmenem obsahujicim "strech" / "roof" nebo "Prism" i s detmi.
+    // Patra, stropy a stromy zustanou. Znovu stejny prikaz = strechy zpet.
+    static bool roofsHidden;
+
+    // "Prism" = sedlova strecha z ProBuilderu (hlavni chata: DRUHEPATRO/Prism)
+    static bool IsRoofName(string lower) => lower.Contains("strech") || lower.Contains("roof") || lower.StartsWith("prism");
+
+    [MenuItem("BrosOverwatch/Pohled/Skryt strechy (znovu = zobrazit)")]
+    static void ToggleRoofs()
+    {
+        var roofs = new List<GameObject>();
+        foreach (var t in Object.FindObjectsByType<Transform>())
+        {
+            string name = t.name.ToLowerInvariant();
+            if (!IsRoofName(name)) continue;
+            // jen nejvyssi "strecha" ve vetvi (deti se skryji s ni)
+            bool parentIsRoof = false;
+            for (var p = t.parent; p != null; p = p.parent)
+            {
+                string pn = p.name.ToLowerInvariant();
+                if (IsRoofName(pn)) { parentIsRoof = true; break; }
+            }
+            if (!parentIsRoof) roofs.Add(t.gameObject);
+        }
+        roofsHidden = !roofsHidden;
+        if (roofsHidden) SceneVisibilityManager.instance.Hide(roofs.ToArray(), true);
+        else SceneVisibilityManager.instance.Show(roofs.ToArray(), true);
+        Debug.Log(roofsHidden
+            ? $"[Pohled] Skryto {roofs.Count} strech. Zpet: stejny prikaz, nebo Pohled > Ukazat vse."
+            : "[Pohled] Strechy zase viditelne.");
+    }
+
     [MenuItem("BrosOverwatch/Pohled/Ukazat vse")]
     static void ShowAll()
     {
         SceneVisibilityManager.instance.ShowAll();
+        roofsHidden = false;
         Debug.Log("[Pohled] Vse zase viditelne.");
     }
 

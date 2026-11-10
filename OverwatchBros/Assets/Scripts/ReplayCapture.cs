@@ -219,6 +219,7 @@ public class ReplayCapture : MonoBehaviour
 
         var match = MatchManager.Instance;
         frame.pickupMask = match != null ? match.pickupMask.Value : ulong.MaxValue;
+        frame.matchPoint = match != null && match.IsSpawned && match.IsAttackMode && !match.IsLobby ? (sbyte)match.pointIndex.Value : (sbyte)-1;
         frame.buffFastCooldown = Mathf.Max(0f, AbilityDefinition.FastCooldownUntil - Time.time);
         frame.buffInvulnerable = Mathf.Max(0f, PickupBuffs.InvulnerableUntil - Time.time);
         frame.buffTramal = Mathf.Max(0f, PickupBuffs.TramalUntil - Time.time);
@@ -487,7 +488,7 @@ public class ReplayCapture : MonoBehaviour
             thirdPerson = f.thirdPerson, ultCasting = f.ultCasting, blocking = f.blocking, ultWindup = f.ultWindup, charge = f.charge,
             hudHero = f.hudHero, hudTeam = f.hudTeam, health = f.health, maxHealth = f.maxHealth, slots = f.slots,
             ammo = f.ammo, maxAmmo = f.maxAmmo, reloading = f.reloading, locked = f.locked, lockPoint = f.lockPoint,
-            pickupMask = f.pickupMask, buffFastCooldown = f.buffFastCooldown, buffInvulnerable = f.buffInvulnerable, buffTramal = f.buffTramal,
+            pickupMask = f.pickupMask, matchPoint = f.matchPoint, buffFastCooldown = f.buffFastCooldown, buffInvulnerable = f.buffInvulnerable, buffTramal = f.buffTramal,
             objects = f.objects,
         };
     }

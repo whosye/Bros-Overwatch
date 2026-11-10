@@ -17,6 +17,7 @@ public class ZoneGate : MonoBehaviour
     public bool defendersPass;
 
     bool initialized;
+    bool wasReplay;
     bool open;
     bool removed;
     float nextCheck;
@@ -43,6 +44,10 @@ public class ZoneGate : MonoBehaviour
 
     public static bool ShouldBeOpen(int unlockAfter)
     {
+        // v zaznamu (POTG, killcam) podle bodu, o ktery se tehdy hralo
+        var recorded = ReplayPlayer.RecordedPoint;
+        if (recorded.HasValue) return recorded.Value < 0 || recorded.Value >= unlockAfter;
+
         var match = MatchManager.Instance;
         if (match == null || !match.IsSpawned || match.IsLobby || !match.IsAttackMode) return true;
         return match.pointIndex.Value >= unlockAfter;
@@ -53,6 +58,8 @@ public class ZoneGate : MonoBehaviour
         if (Time.time < nextCheck) return;
         nextCheck = Time.time + 0.2f;
         if (defendersPass) UpdateDefenderPass();
+        // zacatek / konec zaznamu: stav se jen nastavi (bez zvuku)
+        if (ReplayPlayer.RecordedPoint.HasValue != wasReplay) { wasReplay = ReplayPlayer.RecordedPoint.HasValue; initialized = false; }
 
         bool wanted = ShouldBeOpen(unlockAfter);
         bool gone = removeAfter > 0 && ShouldBeOpen(removeAfter);

@@ -265,6 +265,9 @@ public class BardAbility : NetworkBehaviour
     readonly List<Health> danceShielded = new List<Health>();
 
     bool Dancing => danceUntil > Time.time && health != null && health.currentHealth.Value > 0f;
+    // (server) Mosino tanci - spoluhraci v okruhu davaji dvojnasobne poskozeni; pro boty (drzet se dal)
+    public bool IsDancing => Dancing;
+    public float DanceRadius => concert != null ? concert.radius : 0f;
 
     // Nasobek poskozeni utocnika od tancicich Mosinu (spoluhrac v okruhu tance). Vola server (Combat.DamagePlayer).
     public static float DamageScaleFor(GameObject attacker)
