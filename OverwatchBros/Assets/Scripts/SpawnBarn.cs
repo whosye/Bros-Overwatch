@@ -78,6 +78,14 @@ public class SpawnBarn : MonoBehaviour
             && p.y >= top - below && p.y <= top + InsideHeight;
     }
 
+    // Stodola, ve ktere (nebo tesne pred kterou) je dane misto oziveni; null = spawn neni u stodoly.
+    public static SpawnBarn AtSpawn(Vector3 spawn)
+    {
+        foreach (var barn in all)
+            if (barn != null && barn.Contains(spawn, SpawnMargin, 2f)) return barn;
+        return null;
+    }
+
     // Nasobek regenerace zdravi pro hrace na danem miste (Health, server).
     public static float RegenScale(Vector3 position)
     {

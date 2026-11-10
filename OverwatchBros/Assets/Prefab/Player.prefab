@@ -1008,8 +1008,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EzekielAbility
   ShowTopMostFoldoutHeaderGroup: 1
   ability: {fileID: 0}
-  hoverHeight: 7
-  riseTime: 0.8
+  hoverHeight: 6
+  riseTime: 0.4
   cameraDistance: 6.5
   cameraLift: 1.2
 --- !u!114 &8013583674131917789

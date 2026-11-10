@@ -2,30 +2,33 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Sindelova ultimatka (Q): "Ezechiel 25:17". Vznese se vysoko do vzduchu, pres celou mapu hraje hlaska a na zemi, kam miri,
-// sviti kruh - vidi ho jen Sindel sam (a pak killcam / POTG ze zaznamu); ostatni slysi hlasku a vidi zariciho Sindela na nebi.
+// Sindelova ultimatka (Q): "Ezechiel 25:17" - rychly uder. Vyskoci 'hoverHeight' m (6), pres celou mapu hraje konec hlasky
+// (HeroDefinition.ultVoiceMaxSeconds, ~3 s) a na zemi, kam miri, sviti kruh - Sindel ho vidi hned, ostatni od 40 % mireni
+// jako cervene varovani (muzou uskocit). Po uderu rychle dopadne a hraje dal.
 // Mireni ignoruje zdi a strechy: kruh lezi tam, kde paprsek z kamery protne nejspodnejsi podlahu (ne patro), a krome
 // plneho kruhu je videt i cerchovany obrys pres vse (i kdyz je kruh v dome). Ve vzduchu se da pomalu pohybovat.
 // Na konci hlasky ("...when I lay my vengeance upon thee!") do kruhu uderi sloup svetla: 'power' ve stredu, k okraji
 // mene ('radius'). Sloup zasahne kazdeho ve svislem valci nad i pod kruhem (vsechna patra, sklepy). Doba = delka nahravky
 // ultimatky (Audio/Sindel/ability_Q), bez nahravky 'duration'.
-// Behem kazani nejde Sindel prerusit (omraceni, uspani, hak... - FirstPersonController.Unstoppable), ale ma jen stit
-// CastShield HP navic - da se zabit.
+// Behem kazani ma stit CastShield (500) navic; omraceni, uspani nebo umlceni ultimatku prerusi (uder nepadne).
 public class EzekielAbility : NetworkBehaviour
 {
     enum Phase { Idle, Rising, Preaching, Descending }
 
     public AbilityDefinition ability;
 
-    public float hoverHeight = 25f;
-    public float riseTime = 1.4f;
+    public float hoverHeight = 6f;
+    public float riseTime = 0.4f;
     const float HoverSpeed = 7f;      // rychlost letu ve vysce (WASD)
     public float cameraDistance = 6.5f;
     public float cameraLift = 1.2f;
     const float StrikeEdge = 0.35f;
+    const float WarnFrom = 0.4f;
+    bool castShieldOn;               // server: stit kazani jeste drzi     // od teto casti mireni vidi kruh i ostatni (varovani)
+    const float DescendSpeed = 12f;  // po uderu rychle dolu (bez zraneni padem)
     const float BeamBelow = 300f;    // sloup zasahuje vse pod kruhem
     const float BeamHeight = 300f;   // i nad nim (vsechna patra)
-    const float CastShield = 3000f;  // stit po dobu kazani
+    const float CastShield = 500f;   // stit po dobu kazani
     const float FloorSearchDepth = 120f;
     public static readonly Color HolyColor = new Color(1f, 0.85f, 0.45f, 1f);
 
@@ -131,8 +134,8 @@ public class EzekielAbility : NetworkBehaviour
             return;
         }
 
-        // behem kazani ho nic neprerusi (jen smrt nebo konec zapasu); pri sestupu uz ano
-        bool stop = casting.Value ? fpc.IsDead || fpc.MatchOver || fpc.InLobby || fpc.Joining : fpc.CannotAct;
+        // omraceni, uspani, umlceni (i smrt, konec zapasu) ultimatku prerusi - uder pak nepadne
+        bool stop = fpc.CannotAct || (casting.Value && fpc.Silenced);
         if (stop)
         {
             Cancel();
@@ -282,7 +285,7 @@ public class EzekielAbility : NetworkBehaviour
     void TickDescending()
     {
         phaseTimer -= Time.deltaTime;
-        controller.Move(Vector3.down * 7f * Time.deltaTime);
+        controller.Move(Vector3.down * DescendSpeed * Time.deltaTime);
         if (controller.isGrounded || phaseTimer <= 0f)
             Finish();
     }
@@ -316,12 +319,14 @@ public class EzekielAbility : NetworkBehaviour
     void BeginServerRpc(float seconds)
     {
         GetComponent<Health>().ServerHoldShield(CastShield, riseTime + Mathf.Clamp(seconds, 0f, 25f) + 0.5f);
+        castShieldOn = true;
         BeginClientRpc();
     }
 
     [ServerRpc]
     void CastOverServerRpc()
     {
+        castShieldOn = false;
         GetComponent<Health>().ServerClearShield();
     }
 
@@ -329,7 +334,8 @@ public class EzekielAbility : NetworkBehaviour
     void EndServerRpc()
     {
         var health = GetComponent<Health>();
-        if (health.shield.Value > 1000f) health.ServerClearShield();   // (preruseno pred uderem)
+        if (castShieldOn) health.ServerClearShield();   // (preruseno pred uderem)
+        castShieldOn = false;
     }
 
     [ServerRpc]
@@ -420,8 +426,10 @@ public class EzekielAbility : NetworkBehaviour
 
         if (circle == null) BuildVisual();
 
-        // Kruh vidi jen Sindel sam.
-        bool show = aimValid.Value && SeenByLocalPlayer();
+        // Kruh vidi Sindel; ostatni ho uvidi v druhe pulce mireni jako varovani (a muzou uskocit).
+        bool own = SeenByLocalPlayer();
+        bool warning = !own && progress >= WarnFrom;
+        bool show = aimValid.Value && (own || warning);
         circle.SetActive(show);
         if (show)
         {
@@ -430,7 +438,8 @@ public class EzekielAbility : NetworkBehaviour
             circle.transform.position = aim.Value + Vector3.up * 0.04f;
             circle.transform.localScale = new Vector3(radius * 2f, 0.02f, radius * 2f);
             core.transform.localScale = new Vector3(progress, 1.5f, progress);
-            var color = Color.Lerp(new Color(1f, 0.9f, 0.6f), new Color(1f, 0.6f, 0.15f), progress);
+            var color = own ? Color.Lerp(new Color(1f, 0.9f, 0.6f), new Color(1f, 0.6f, 0.15f), progress)
+                : Color.Lerp(new Color(1f, 0.55f, 0.15f), new Color(1f, 0.15f, 0.08f), (progress - WarnFrom) / (1f - WarnFrom));
             if (circleMaterial.HasProperty("_BaseColor")) circleMaterial.SetColor("_BaseColor", color);
             else circleMaterial.color = color;
             circleLight.intensity = (1.5f + progress * 6f) * pulse;

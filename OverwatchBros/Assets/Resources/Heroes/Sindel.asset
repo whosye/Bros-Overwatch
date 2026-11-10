@@ -44,7 +44,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 344a25cbbab0e0f43b3baca8f46dcc05, type: 3}
   deathLines: []
   hurtLines:
-  - {fileID: 8300000, guid: 2d54e1095f74e5b4a89aae2829c4f42f, type: 3}
   - {fileID: 8300000, guid: 5b1a70576af8a45498f323cb0b94556b, type: 3}
   - {fileID: 8300000, guid: 980eb342a35f0ad47a764b82014da725, type: 3}
   idleLines:
@@ -56,6 +55,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 97386fd59f9840749949630399594e56, type: 3}
   - {fileID: 8300000, guid: 7803c5aa0e6670342b3fa327746b554b, type: 3}
   ultVoiceEcho: 0
-  ultVoiceMaxSeconds: 8
+  ultVoiceMaxSeconds: 3
   ultVoiceSpeed: 1
   ultVoiceNormalTail: 0

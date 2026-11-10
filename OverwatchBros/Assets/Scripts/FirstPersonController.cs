@@ -96,16 +96,8 @@ public class FirstPersonController : NetworkBehaviour
     public NetworkVariable<bool> waterRiding = new NetworkVariable<bool>(false,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-    // Sindel behem kazani (Ezechiel): nejde prerusit ani ovladat - jde jen zabit.
-    EzekielAbility ezekiel;
-    public bool Unstoppable
-    {
-        get
-        {
-            if (ezekiel == null) ezekiel = GetComponent<EzekielAbility>();
-            return ezekiel != null && ezekiel.enabled && ezekiel.IsSpawned && ezekiel.IsCasting;
-        }
-    }
+    // Imunita vuci omraceni, uspani, haku... (drive Sindel behem Ezechiele; ted ji nema nikdo - omraceni ultimatku prerusi).
+    public bool Unstoppable => false;
 
     public void ServerSpeedBoost(float seconds, float factor)
     {
