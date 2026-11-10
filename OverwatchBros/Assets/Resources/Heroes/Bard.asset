@@ -15,6 +15,7 @@ MonoBehaviour:
   heroName: "Mo\u0161ino"
   color: {r: 0.6, g: 0.4, b: 0.95, a: 1}
   maxHealth: 100
+  healingScale: 0.75
   weapon: {fileID: 11400000, guid: 15fd4509f6cd1664f8c05af2a5996b58, type: 2}
   abilityKind: 25
   ability: {fileID: 11400000, guid: 7d1eca5cf580cda41934a7eb573d6f9b, type: 2}

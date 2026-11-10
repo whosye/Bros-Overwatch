@@ -32,6 +32,12 @@ public static class AyranAvatarSetup
         new Entry { hero = "Max", sleeve = new Color(0.17f, 0.16f, 0.16f, 1f), skin = new Color(0.85f, 0.65f, 0.55f) },
         // Mosino (Bard): tmave tricko, ksiltovka, svetle dhoti, tenisky.
         new Entry { hero = "Bard", sleeve = new Color(0.16f, 0.15f, 0.15f, 1f), skin = new Color(0.74f, 0.55f, 0.48f) },
+        // David (hrdina Anna): cerne tricko s potiskem, dziny, bile tenisky, bryle.
+        new Entry { hero = "Anna", sleeve = new Color(0.09f, 0.09f, 0.10f, 1f), skin = new Color(0.83f, 0.63f, 0.52f) },
+        // Kondulic (hrdina Sniper): tmave sede tricko s oranzovym potiskem, cerne kalhoty, tenisky.
+        new Entry { hero = "Sniper", sleeve = new Color(0.15f, 0.15f, 0.16f, 1f), skin = new Color(0.86f, 0.71f, 0.64f) },
+        // Mirek: bila kandura (dlouhy rukav), cerveno-bila ghutra na hlave, bryle.
+        new Entry { hero = "Mirek", sleeve = new Color(0.90f, 0.90f, 0.88f, 1f), skin = new Color(0.82f, 0.62f, 0.52f) },
     };
 
     public static bool IsReady()

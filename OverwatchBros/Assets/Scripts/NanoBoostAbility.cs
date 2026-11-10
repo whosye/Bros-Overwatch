@@ -223,7 +223,7 @@ public class MonsterCan : MonoBehaviour
     }
 
     // Plechovka 500 ml: telo s texturou (Resources/Textures/monster_can), stribrna vicka.
-    static void Build(Transform root)
+    public static void Build(Transform root)
     {
         if (bodyMaterial == null)
         {

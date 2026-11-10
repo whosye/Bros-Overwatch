@@ -12,9 +12,9 @@ using UnityEngine.Rendering.Universal;
 // v modrem plameni. Tomasek se otoci a vykuli oci - Pova se rozmachne a Tomasek odleti jako po odpalu (pivo zvlast).
 // Pova se otoci ke kamere, prudky najezd na oblicej v mihotavem svetle ohne, drsne se zamraci - a daleko za nim
 // zablika hvezdicka, jak Tomasek mizi v dalce.
-// Ostatni hrdinove maji obecnou: prijdou a sebevedome se usklibnou.
+// Ostatni hrdinove maji vlastni scenky v PotgIntroScenes.cs; kdo zadnou nema, prijde a sebevedome se usklibne.
 [DefaultExecutionOrder(1000)]   // az po animaci postavy (vyraz a natoceni hlavy se nastavuji pres ni)
-public class PotgIntro : MonoBehaviour
+public partial class PotgIntro : MonoBehaviour
 {
     static PotgIntro instance;
 
@@ -103,6 +103,7 @@ public class PotgIntro : MonoBehaviour
     static readonly Vector3 PovaFrom = new Vector3(-4.3f, 0f, 4.4f);
     static readonly Vector3 PovaTo = new Vector3(-0.95f, 0f, 2.05f);
     static readonly Vector3 LaunchVelocity = new Vector3(1.3f, 4.2f, 7.5f);
+    Vector3 launchVelocity = LaunchVelocity;   // smer odpalu Tomaska (scenky ho meni)
     const float LaunchGravity = 3.6f;
 
     const float PovaWalkStart = 0.95f, PovaWalkEnd = 2.1f;
@@ -113,7 +114,7 @@ public class PotgIntro : MonoBehaviour
     // obecna scenka
     const float GenericWalkEnd = 1.6f;
 
-    float WhipStart => pova ? 2.68f : 2.45f;
+    float WhipStart => pova ? 2.68f : sceneWhip;
     float WhipEnd => WhipStart + 0.4f;
 
     // ---------------- verejne ----------------
@@ -169,6 +170,8 @@ public class PotgIntro : MonoBehaviour
         pova = heroDefinition.name == "Ayran";
         time = 0f;
         spoke = launched = twinkled = beerFlying = swungDone = false;
+        launchVelocity = LaunchVelocity;
+        ResetScene();
         starTime = -1f;
         shake = Vector3.zero;
         clips = Resources.Load<CharacterAnimSet>("Characters/CharacterAnimations");
@@ -192,7 +195,9 @@ public class PotgIntro : MonoBehaviour
             return false;
         }
         if (pova)
-            BuildTomasek();
+            BuildTomasek(TomasekSeat, Quaternion.Euler(0f, 180f, 0f), false);
+        else
+            BuildScene();
         BuildCamera();
 
         running = true;
@@ -203,6 +208,7 @@ public class PotgIntro : MonoBehaviour
     void End()
     {
         running = false;
+        EndScene();
         if (tomasek != null) tomasek.Destroy();
         tomasek = null;
         if (root != null) Destroy(root);
@@ -336,19 +342,19 @@ public class PotgIntro : MonoBehaviour
         }
     }
 
-    // Tomasek (model Honzy) sedi na bedne s pivem.
-    void BuildTomasek()
+    // Tomasek (model Honzy, nebo jineho hrdiny 'model') sedi na bedne (nebo na gauci) s pivem.
+    void BuildTomasek(Vector3 seatOffset, Quaternion rotation, bool couch, string model = "Honza")
     {
         HeroDefinition honza = null;
         foreach (var h in HeroRegistry.All)
-            if (h != null && h.name == "Honza") honza = h;
+            if (h != null && h.name == model) honza = h;
         if (honza == null || honza.characterPrefab == null || clips == null || clips.sitIdle == null) return;
 
         var go = Instantiate(honza.characterPrefab, root.transform);
         go.name = "Tomasek";
         foreach (var c in go.GetComponentsInChildren<Collider>()) DestroyImmediate(c);
-        seat = Stage + TomasekSeat;
-        seatRotation = Quaternion.Euler(0f, 180f, 0f);
+        seat = Stage + seatOffset;
+        seatRotation = rotation;
         go.transform.SetPositionAndRotation(seat, seatRotation);
 
         var animator = go.GetComponentInChildren<Animator>();
@@ -366,12 +372,16 @@ public class PotgIntro : MonoBehaviour
         var hips = animator.GetBoneTransform(HumanBodyBones.Hips);
         Vector3 hipsAt = hips != null ? hips.position : seat + new Vector3(0f, 0.55f, 0.1f);
         float top = Mathf.Max(0.25f, hipsAt.y - Stage.y - 0.1f);
+        if (couch) BuildCouch(hipsAt, top);
+        else
+        {
         var crate = Prim(PrimitiveType.Cube, root.transform, new Vector3(hipsAt.x, Stage.y + top * 0.5f, hipsAt.z + 0.05f),
             new Vector3(0.62f, top, 0.52f), new Color(0.45f, 0.3f, 0.16f));
         crate.name = "Bedna";
         foreach (float y in new[] { 0.25f, -0.25f })
             Prim(PrimitiveType.Cube, crate.transform, crate.transform.position + new Vector3(0f, top * y, -0.262f),
                 new Vector3(0.64f, 0.05f, 0.01f), new Color(0.3f, 0.2f, 0.1f)).transform.SetParent(crate.transform, true);
+        }
 
         // Pivo v prave ruce: sklenice se zlatym pivem a penou.
         var hand = animator.GetBoneTransform(HumanBodyBones.RightHand);
@@ -470,7 +480,7 @@ public class PotgIntro : MonoBehaviour
         float wideFov;
         if (pova)
             AnimatePovaScene(t, out widePos, out wideRot, out wideFov);
-        else
+        else if (!AnimateScene(t, out widePos, out wideRot, out wideFov))
             AnimateGeneric(t, out widePos, out wideRot, out wideFov);
 
         // Prudky najezd na oblicej (s naklonem) a pomale dotlaceni.
@@ -479,7 +489,7 @@ public class PotgIntro : MonoBehaviour
         Vector3 face = head != null ? head.position + Vector3.up * 0.06f : chest + Vector3.up * 0.55f;
         float push = Mathf.Clamp01((t - WhipEnd) / 2.2f);
         Vector3 closePos = face + hero.forward * Mathf.Lerp(0.72f, 0.56f, push) + hero.right * 0.12f + Vector3.up * 0.02f;
-        Quaternion closeRot = Quaternion.LookRotation(face - closePos) * Quaternion.Euler(0f, 0f, pova ? Mathf.Lerp(9f, 5f, push) : -4f);
+        Quaternion closeRot = Quaternion.LookRotation(face - closePos) * Quaternion.Euler(0f, 0f, pova ? Mathf.Lerp(9f, 5f, push) : -4f + cameraRoll);
         float closeFov = pova ? 30f : 32f;
 
         float whip = EaseOutCubic(Mathf.Clamp01((t - WhipStart) / (WhipEnd - WhipStart)));
@@ -495,7 +505,7 @@ public class PotgIntro : MonoBehaviour
         }
 
         // Hlaska v detailu (Pova drsna hlaska po zabiti, ostatni po oziveni).
-        if (!spoke && t >= WhipEnd + 0.15f)
+        if (!spoke && !silentCloseup && t >= WhipEnd + 0.15f)
         {
             spoke = true;
             var kind = pova ? VoiceKind.Kill : VoiceKind.Spawn;
@@ -540,7 +550,27 @@ public class PotgIntro : MonoBehaviour
         if (!launched && t >= ImpactAt)
             Launch(t);
 
-        // Tomasek: sedi, pak let s rotaci, pak hvezdicka v dalce.
+        UpdateTomasekFlight(t);
+
+        // Svetla pri uderu vzplanou a pak se vrati.
+        float flare = launched ? 1f + 1.1f * Mathf.Exp(-(t - launchTime) * 4f) : 1f;
+        for (int i = 0; i < stageLights.Count; i++)
+            stageLights[i].intensity = baseIntensity[i] * flare;
+
+        // Kamera: detail na sediciho Tomaska, ktery se odjezdem rozsiri na celou scenu.
+        Vector3 tomasekHeadPos = tomasekHead != null && !launched ? tomasekHead.position : Stage + TomasekSeat + Vector3.up * 1.25f;
+        Vector3 closeOnTomasek = tomasekHeadPos + new Vector3(0.18f, -0.02f, -1.05f);
+        Vector3 wide = Stage + new Vector3(0.9f, 1.35f, -3.1f);
+        Vector3 middle = Stage + new Vector3(-0.45f, 1.0f, 1.9f);
+        float pull = Smooth(Mathf.Clamp01((t - 0.75f) / 1.25f));
+        widePos = Vector3.Lerp(closeOnTomasek, wide, pull);
+        wideRot = Quaternion.Slerp(Quaternion.LookRotation(tomasekHeadPos - closeOnTomasek), Quaternion.LookRotation(middle - widePos), pull);
+        wideFov = Mathf.Lerp(34f, 52f, pull);
+    }
+
+    // Tomasek: sedi, po odpalu leti s rotaci a zmizi s hvezdickou v dalce; pivo leti zvlast.
+    void UpdateTomasekFlight(float t)
+    {
         if (tomasek != null && tomasek.go != null)
         {
             if (!launched)
@@ -551,7 +581,7 @@ public class PotgIntro : MonoBehaviour
             {
                 float dt = t - launchTime;
                 tomasek.Pose(clips.hitChest != null ? clips.hitChest : clips.sitIdle, dt * 1.2f);
-                Vector3 p = seat + LaunchVelocity * dt + Vector3.down * (0.5f * LaunchGravity * dt * dt);
+                Vector3 p = seat + launchVelocity * dt + Vector3.down * (0.5f * LaunchGravity * dt * dt);
                 tomasek.go.transform.position = p;
                 tomasek.go.transform.rotation = Quaternion.AngleAxis(dt * 760f, new Vector3(1f, 0.35f, 0.2f).normalized) * seatRotation;
                 tomasek.go.transform.localScale = Vector3.one * Mathf.Lerp(1f, 0.4f, Mathf.Clamp01(dt / FlightSeconds));
@@ -592,20 +622,6 @@ public class PotgIntro : MonoBehaviour
             if (s >= 1f) star.gameObject.SetActive(false);
         }
 
-        // Svetla pri uderu vzplanou a pak se vrati.
-        float flare = launched ? 1f + 1.1f * Mathf.Exp(-(t - launchTime) * 4f) : 1f;
-        for (int i = 0; i < stageLights.Count; i++)
-            stageLights[i].intensity = baseIntensity[i] * flare;
-
-        // Kamera: detail na sediciho Tomaska, ktery se odjezdem rozsiri na celou scenu.
-        Vector3 tomasekHeadPos = tomasekHead != null && !launched ? tomasekHead.position : Stage + TomasekSeat + Vector3.up * 1.25f;
-        Vector3 closeOnTomasek = tomasekHeadPos + new Vector3(0.18f, -0.02f, -1.05f);
-        Vector3 wide = Stage + new Vector3(0.9f, 1.35f, -3.1f);
-        Vector3 middle = Stage + new Vector3(-0.45f, 1.0f, 1.9f);
-        float pull = Smooth(Mathf.Clamp01((t - 0.75f) / 1.25f));
-        widePos = Vector3.Lerp(closeOnTomasek, wide, pull);
-        wideRot = Quaternion.Slerp(Quaternion.LookRotation(tomasekHeadPos - closeOnTomasek), Quaternion.LookRotation(middle - widePos), pull);
-        wideFov = Mathf.Lerp(34f, 52f, pull);
     }
 
     bool swungDone;
@@ -618,7 +634,7 @@ public class PotgIntro : MonoBehaviour
         Vector3 hit = tomasekHead != null ? tomasekHead.position + Vector3.down * 0.45f : Stage + TomasekSeat + Vector3.up;
         Fx.Sparks(hit, new Color(1f, 0.55f, 0.15f));
         Fx.BulletImpact(hit, new Color(1f, 0.5f, 0.1f), 3f);
-        Fx.Explosion(Stage + TomasekSeat + Vector3.up * 0.3f, 1.6f);
+        Fx.Explosion(seat + Vector3.up * 0.3f, 1.6f);
         ProceduralSfx.Play(ProceduralSfx.Hit, hit, 1f);
         ProceduralSfx.Play(ProceduralSfx.Explosion, hit, 0.8f);
         shake = new Vector3(0.09f, 0.07f, 0f);
@@ -678,8 +694,10 @@ public class PotgIntro : MonoBehaviour
             head.rotation = Quaternion.AngleAxis(tilt, hero.right) * head.rotation;
         }
 
+        LateScene();
+
         // Tomasek: vsimne si Povy - otoci hlavu a vykuli oci; pri odpalu bolestiva grimasa.
-        if (tomasek != null && tomasek.go != null && tomasek.go.activeSelf)
+        if (tomasek != null && tomasek.go != null && tomasek.go.activeSelf && TomasekNotices)
         {
             float notice = Smooth(Mathf.Clamp01((time - 1.55f) / 0.25f));
             if (!launched)

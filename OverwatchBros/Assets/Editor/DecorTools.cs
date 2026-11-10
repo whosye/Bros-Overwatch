@@ -280,6 +280,9 @@ public static class DecorTools
     [MenuItem("BrosOverwatch/Dekorace/Lasagne (mir na stul nebo linku)")]
     static void Lasagne() => PlaceBuff(PickupKind.Lasagne, "Lasagne");
 
+    [MenuItem("BrosOverwatch/Dekorace/Buff Klokani kuze - +100 stitu (mir na stul, linku nebo zem)")]
+    static void KangarooSkin() => PlaceBuff(PickupKind.KangarooSkin, "KlokaniKuze");
+
     [MenuItem("BrosOverwatch/Dekorace/Buff Kava (mir na stul nebo linku)")]
     static void Coffee() => PlaceBuff(PickupKind.Coffee, "Kava");
 
@@ -1346,6 +1349,159 @@ public static class DecorTools
             int a = s + i, b = s + (i + 1) % 3, c = a + 3, d = b + 3;
             tri.AddRange(new[] { a, c, b, b, c, d });
         }
+    }
+
+    // ---------------- gril na drevo ----------------
+
+    // Gril na drevo s horicim ohnem. Vybrany kvadr (zidany podstavec) = gril se postavi na jeho vrch; nic vybraneho =
+    // stred okna Scene na zem a postavi se i kamenny podstavec. Ocelova vana, polena, zhave uhliky, plameny, rost
+    // na nozkach nad ohnem a svetlo. Animaci (vlneni plamenu, blikani, jiskry, kour) dela za hry GrillFire.
+    [MenuItem("BrosOverwatch/Dekorace/Gril na drevo (vyber podstavec, nebo mir na zem)")]
+    static void WoodGrill()
+    {
+        Transform root;
+        float length, width, baseY = 0f;
+        var target = Selection.activeGameObject;
+        var filter = target != null ? target.GetComponent<MeshFilter>() : null;
+        var targetRenderer = target != null ? target.GetComponent<Renderer>() : null;
+        if (filter != null && filter.sharedMesh != null && targetRenderer != null)
+        {
+            var t = target.transform;
+            Bounds b = filter.sharedMesh.bounds;
+            Vector3 size = Vector3.Scale(b.size, t.lossyScale);
+            size = new Vector3(Mathf.Abs(size.x), Mathf.Abs(size.y), Mathf.Abs(size.z));
+            Vector3 center = t.TransformPoint(b.center);
+            Vector3 axis = size.x >= size.z ? t.right : t.forward;
+            axis.y = 0f;
+            axis.Normalize();
+            length = Mathf.Max(size.x, size.z);
+            width = Mathf.Min(size.x, size.z);
+            var rotation = Quaternion.LookRotation(Vector3.Cross(axis, Vector3.up), Vector3.up);   // lokalni +x = delka
+            root = NewRoot("GrilNaDrevo", new Vector3(center.x, targetRenderer.bounds.max.y, center.z), rotation);
+        }
+        else
+        {
+            if (!Aim(out var hit, out var cam)) return;
+            if (hit.normal.y < 0.7f)
+            {
+                Debug.LogWarning("[Dekorace] Bez vyberu se gril stavi na zem - zamir stred okna Scene na zem (nebo vyber podstavec).");
+                return;
+            }
+            Vector3 toCam = cam.position - hit.point;
+            toCam.y = 0f;
+            if (toCam.sqrMagnitude < 0.01f) toCam = Vector3.back;
+            root = NewRoot("GrilNaDrevo", hit.point, Quaternion.LookRotation(-toCam.normalized, Vector3.up));
+            length = 1.3f;
+            width = 0.85f;
+            baseY = 0.8f;
+            var stone = MapBuildKit.Mat(DecorFolder + "GrilKamen.mat", "Assets/Materials/Stone/StoneWall.png", new Color(0.85f, 0.82f, 0.76f), new Vector2(1.5f, 1f), 0.15f);
+            Part(root, "Podstavec", new Vector3(0f, baseY * 0.5f, 0f), new Vector3(length, baseY, width), stone, true);
+        }
+
+        var steel = MapBuildKit.Mat(DecorFolder + "GrilOcel.mat", null, new Color(0.13f, 0.13f, 0.14f), Vector2.one, 0.45f);
+        var rust = MapBuildKit.Mat(DecorFolder + "GrilVana.mat", null, new Color(0.24f, 0.16f, 0.12f), Vector2.one, 0.2f);
+        var ash = MapBuildKit.Mat(DecorFolder + "GrilPopel.mat", null, new Color(0.22f, 0.21f, 0.2f), Vector2.one, 0.05f);
+        var log = MapBuildKit.Mat(DecorFolder + "GrilPoleno.mat", "Assets/Materials/Wood/WoodBeam.png", new Color(0.42f, 0.3f, 0.2f), Vector2.one, 0.1f);
+        var charred = MapBuildKit.Mat(DecorFolder + "GrilOhorele.mat", null, new Color(0.07f, 0.06f, 0.05f), Vector2.one, 0.05f,
+            emission: new Color(0.9f, 0.18f, 0.02f) * 0.35f);
+        var ember = MapBuildKit.Mat(DecorFolder + "GrilUhlik.mat", null, new Color(0.15f, 0.05f, 0.02f), Vector2.one, 0.1f,
+            emission: new Color(1f, 0.3f, 0.04f) * 1.6f);
+        var flameOuter = MapBuildKit.Mat(DecorFolder + "GrilPlamen.mat", null, new Color(1f, 0.45f, 0.1f), Vector2.one, 0f,
+            emission: new Color(4f, 1.3f, 0.2f));
+        var flameInner = MapBuildKit.Mat(DecorFolder + "GrilPlamenJadro.mat", null, new Color(1f, 0.85f, 0.4f), Vector2.one, 0f,
+            emission: new Color(4.5f, 3.2f, 0.9f));
+
+        // ocelova vana s okrajem
+        float tl = length * 0.82f, tw = width * 0.78f;
+        const float rim = 0.12f, wall = 0.025f;
+        Part(root, "VanaDno", new Vector3(0f, baseY + 0.01f, 0f), new Vector3(tl, 0.02f, tw), rust, false);
+        foreach (float s in new[] { -1f, 1f })
+        {
+            Part(root, "VanaBok", new Vector3(0f, baseY + rim * 0.5f, s * (tw - wall) * 0.5f), new Vector3(tl, rim, wall), rust, false);
+            Part(root, "VanaCelo", new Vector3(s * (tl - wall) * 0.5f, baseY + rim * 0.5f, 0f), new Vector3(wall, rim, tw - wall * 2f), rust, false);
+        }
+        Part(root, "Popel", new Vector3(0f, baseY + 0.03f, 0f), new Vector3(tl - wall * 2f, 0.02f, tw - wall * 2f), ash, false);
+
+        // zhave uhliky (pulzuji)
+        var embers = new GameObject("Uhliky").transform;
+        embers.SetParent(root, false);
+        var random = new System.Random(11);
+        float R() => (float)random.NextDouble();
+        for (int i = 0; i < 22; i++)
+        {
+            var local = new Vector3((R() - 0.5f) * (tl - 0.1f), baseY + 0.045f + R() * 0.02f, (R() - 0.5f) * (tw - 0.1f));
+            float s = 0.04f + R() * 0.05f;
+            var go = MapBuildKit.Box(embers, "Uhlik", root.TransformPoint(local), new Vector3(s, s * 0.6f, s * (0.8f + R() * 0.5f)),
+                root.rotation * Quaternion.Euler(0f, R() * 180f, R() * 20f), i % 3 == 0 ? charred : ember, false);
+            GameObjectUtility.SetStaticEditorFlags(go, 0);
+        }
+
+        // polena: dve dole napric, dve navrch nakoso
+        float logL = Mathf.Min(tl - 0.08f, 0.6f);
+        Vector3 P(float x, float y, float z) => root.TransformPoint(new Vector3(x, baseY + y, z));
+        MapBuildKit.Beam(root, "Poleno", P(-logL * 0.5f, 0.07f, -tw * 0.18f), P(logL * 0.5f, 0.07f, -tw * 0.12f), 0.08f, log);
+        MapBuildKit.Beam(root, "Poleno", P(-logL * 0.5f, 0.07f, tw * 0.14f), P(logL * 0.5f, 0.07f, tw * 0.2f), 0.075f, log);
+        MapBuildKit.Beam(root, "PolenoOhorele", P(-logL * 0.32f, 0.12f, -tw * 0.32f), P(logL * 0.05f, 0.15f, tw * 0.32f), 0.07f, charred);
+        MapBuildKit.Beam(root, "PolenoOhorele", P(logL * 0.32f, 0.12f, -tw * 0.3f), P(-logL * 0.02f, 0.155f, tw * 0.3f), 0.07f, charred);
+
+        // plameny: vnejsi oranzove kuzele, uvnitr nizsi zlute jadro
+        var flames = new GameObject("Plameny").transform;
+        flames.SetParent(root, false);
+        flames.localPosition = new Vector3(0f, baseY + 0.06f, 0f);
+        int count = Mathf.Clamp(Mathf.RoundToInt(tl / 0.12f), 4, 9);
+        for (int i = 0; i < count; i++)
+        {
+            float x = (i + 0.5f) / count - 0.5f;
+            var local = new Vector3(x * (tl - 0.14f), 0f, (R() - 0.5f) * tw * 0.4f);
+            float r = 0.06f + R() * 0.05f, h = 0.22f + R() * 0.2f * (1f - Mathf.Abs(x));
+            var outer = MapBuildKit.MeshObject(flames, "Plamen", MapBuildKit.ConeMesh(), flames.TransformPoint(local),
+                root.rotation * Quaternion.Euler(0f, R() * 360f, 0f), new Vector3(r, h, r), flameOuter, false);
+            GameObjectUtility.SetStaticEditorFlags(outer, 0);
+            var inner = MapBuildKit.MeshObject(flames, "PlamenJadro", MapBuildKit.ConeMesh(), flames.TransformPoint(local + new Vector3(0f, 0.005f, 0f)),
+                root.rotation * Quaternion.Euler(0f, R() * 360f, 0f), new Vector3(r * 0.6f, h * 0.6f, r * 0.6f), flameInner, false);
+            GameObjectUtility.SetStaticEditorFlags(inner, 0);
+        }
+
+        // rost na ctyrech nozkach nad ohnem
+        float gy = 0.34f, gl = tl + 0.02f, gw = tw + 0.02f;
+        foreach (float sx in new[] { -1f, 1f })
+            foreach (float sz in new[] { -1f, 1f })
+                Part(root, "NozkaRostu", new Vector3(sx * (gl * 0.5f - 0.02f), baseY + gy * 0.5f, sz * (gw * 0.5f - 0.02f)), new Vector3(0.025f, gy, 0.025f), steel, false);
+        foreach (float s in new[] { -1f, 1f })
+        {
+            Part(root, "RamRostu", new Vector3(0f, baseY + gy, s * gw * 0.5f), new Vector3(gl, 0.025f, 0.02f), steel, false);
+            Part(root, "RamRostu", new Vector3(s * gl * 0.5f, baseY + gy, 0f), new Vector3(0.02f, 0.025f, gw), steel, false);
+        }
+        int rods = Mathf.RoundToInt(gl / 0.05f);
+        for (int i = 1; i < rods; i++)
+            Part(root, "Pricka", new Vector3(-gl * 0.5f + gl * i / rods, baseY + gy, 0f), new Vector3(0.008f, 0.008f, gw), steel, false);
+        // rukojeti na celech
+        foreach (float s in new[] { -1f, 1f })
+            Part(root, "Rukojet", new Vector3(s * (gl * 0.5f + 0.05f), baseY + gy, 0f), new Vector3(0.1f, 0.02f, 0.14f), steel, false);
+
+        // svetlo ohne
+        var lightGo = new GameObject("SvetloOhne");
+        lightGo.transform.SetParent(root, false);
+        lightGo.transform.localPosition = new Vector3(0f, baseY + 0.5f, 0f);
+        var light = lightGo.AddComponent<Light>();
+        light.type = LightType.Point;
+        light.color = new Color(1f, 0.55f, 0.2f);
+        light.range = 6f;
+        light.intensity = 2.2f;
+        light.shadows = LightShadows.None;
+
+        var fire = root.gameObject.AddComponent<GrillFire>();
+        fire.flames = flames;
+        fire.embers = embers;
+        fire.fireLight = light;
+        fire.baseIntensity = light.intensity;
+        fire.size = Mathf.Max(0.4f, tl);
+
+        // kolize = vana + rost (plameny a jiskry prochazi)
+        var box = root.gameObject.AddComponent<BoxCollider>();
+        box.center = new Vector3(0f, baseY + gy * 0.5f + 0.01f, 0f);
+        box.size = new Vector3(gl, gy + 0.02f, gw);
+        Done(root);
     }
 
     // ---------------- spolecne ----------------

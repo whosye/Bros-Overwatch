@@ -112,7 +112,7 @@ public class EzekielAbility : NetworkBehaviour
         if (ability != null && ability.voiceLines != null)
             foreach (var clip in ability.voiceLines)
                 if (clip != null && !clip.name.ToLowerInvariant().StartsWith("step_"))
-                    longest = Mathf.Max(longest, clip.length);
+                    longest = Mathf.Max(longest, hero != null && hero.Hero != null ? hero.Hero.UltVoiceDuration(clip) : clip.length);
         float seconds = longest > 0.5f ? longest : (ability != null ? ability.duration : 6f);
         return Mathf.Clamp(seconds, 2.5f, 25f);
     }

@@ -24,7 +24,12 @@ public class HangingFigure : MonoBehaviour
     static readonly string[] Arms = { "PravePredlokti", "PravaPaze", "LevaPaze", "LevePredlokti" };
     static readonly HashSet<string> Fixed = new HashSet<string> { "PravaDlan", "Prsty" };
 
-    void Awake() => Setup(true);
+    void Awake()
+    {
+        Setup(true);
+        // popisek pod zamerovacem
+        if (GetComponent<AimLabel>() == null) gameObject.AddComponent<AimLabel>().label = "Maskovaný bojovník";
+    }
 
     // Najde dily postavicky. 'allowCreate' = smi vytvorit fotku obliceje (ne v nahledu v editoru).
     public void Setup(bool allowCreate)

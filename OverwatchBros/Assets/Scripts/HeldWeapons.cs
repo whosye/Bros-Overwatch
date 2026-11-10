@@ -456,6 +456,17 @@ public class HeldWeapons : MonoBehaviour
     float powerFlashUntil;
     public void FlashPower() => powerFlashUntil = Time.time + 0.25f;
 
+    // Zbrane pryc z rukou (uvodni scenka: Viktor odlozi pusku a pije pivo). Ruce pak ridi jen animace.
+    public void HideWeapons()
+    {
+        foreach (var hand in hands) if (hand != null && hand.holder != null) hand.holder.gameObject.SetActive(false);
+        foreach (var hand in bodyHands) if (hand != null && hand.holder != null) hand.holder.gameObject.SetActive(false);
+        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; visual.AimOnScope = false; }
+        bodySupportArm = null;
+        bodyMainArm = null;
+        enabled = false;
+    }
+
     public void Swing() => Swing(1f);
 
     public void Swing(float strength)
@@ -983,7 +994,7 @@ public class HeldWeapons : MonoBehaviour
         if (dartPistol != null) { Destroy(dartPistol.gameObject); dartPistol = null; }
         bodySupportArm = null;
         bodyMainArm = null;
-        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; }
+        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; visual.AimOnScope = false; }
         stormMaterials = null;
         stormShown = false;
         powerMaterials = null;
@@ -1113,8 +1124,10 @@ public class HeldWeapons : MonoBehaviour
                 // zbran obema rukama s vlastni animaci strelby hrdiny (napr. z Mixama): postava drzi zbran stale namirenou
                 // (prvni snimek animace), vystrel prehraje celou animaci; puska v prave ruce srovnana podle pozy strelby,
                 // leva ruka na predpazbi (IK po animaci, viz LateUpdate)
-                if (weapon.twoHanded && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && visual.HasHeroShoot)
+                bool scopeAim = CurrentHero != null && CurrentHero.scopeAimPose;
+                if ((weapon.twoHanded || scopeAim) && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && visual.HasHeroShoot)
                 {
+                    visual.AimOnScope = scopeAim && !weapon.twoHanded;   // namiri jen pri mireni dalekohledem (a chvili po vystrelu)
                     hand.twoHanded = true;
                     hand.grip = GripInWeapon(weapon, model);
                     hand.foregrip = ForegripInWeapon(holder, hand.grip, 0.42f, 0.38f);

@@ -110,6 +110,9 @@ public partial class MatchManager
             case PickupKind.WhitePowder:
                 hero.ServerDamageBuff(PickupBuffs.PowderDamage, PickupBuffs.PowderSeconds);
                 return true;
+            case PickupKind.KangarooSkin:
+                health.ServerGrantShield(PickupBuffs.KangarooShield, PickupBuffs.KangarooShieldMax);
+                return true;
             case PickupKind.Lasagne:
                 if (!health.HealBlocked) health.Heal(health.maxHealth);
                 health.ServerHoldShield(PickupBuffs.LasagneShield, PickupBuffs.LasagneSeconds);
@@ -158,10 +161,12 @@ public partial class MatchManager
             PickupBuffs.LasagneUntil = Time.time + PickupBuffs.LasagneSeconds;
             CaptureUI.Announce("Snědl jsi lasagne - plné zdraví a štít", PickupSpot.KindColor(kind), 3f);
         }
+        if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.KangarooSkin)
+            CaptureUI.Announce("Oblékl sis klokaní kůži - +100 štítu", PickupSpot.KindColor(kind), 3f);
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Carburetor)
             CaptureUI.Announce($"Máš Honzův karburátor - nastartuj rolbu u chaty [R] ({CarburetorSeconds:0} s)", PickupSpot.KindColor(kind), 4f);
         Fx.Sparks(position + Vector3.up * 0.8f, PickupSpot.KindColor(kind));
-        bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth || kind == PickupKind.Tramal || kind == PickupKind.Lasagne;
+        bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth || kind == PickupKind.Tramal || kind == PickupKind.Lasagne || kind == PickupKind.KangarooSkin;
         ProceduralSfx.Play(heal ? ProceduralSfx.Spawn : ProceduralSfx.CaptureUnlock, position, 0.8f);
     }
 }

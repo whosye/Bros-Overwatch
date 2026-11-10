@@ -20,7 +20,7 @@ MonoBehaviour:
   duration: 1.5
   radius: 6
   range: 2.6
-  knockback: 13
+  knockback: 14
   charges: 1
   sound: {fileID: 0}
   voiceLines:

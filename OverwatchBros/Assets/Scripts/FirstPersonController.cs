@@ -84,6 +84,10 @@ public class FirstPersonController : NetworkBehaviour
     bool waterRide;   // hrac sjel z toboganu do vody (WaterCurrent)
     float waterArmedUntil;   // hrac byl na plosine toboganu (start jizdy)
 
+    // Mireni dalekohledem (prave tlacitko, ScopeZoom) - ostatni vidi postavu s namirenou zbrani. Zapisuje vlastnik.
+    public NetworkVariable<bool> scoped = new NetworkVariable<bool>(false,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     // Jede z toboganu po vode - vidi vsichni (splouchani, WaterSplashFx). Zapisuje vlastnik.
     public NetworkVariable<bool> waterSurfing = new NetworkVariable<bool>(false,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);

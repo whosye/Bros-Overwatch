@@ -21,6 +21,8 @@ public class CharacterAnimSet : ScriptableObject
     // Animace schopnosti na Shift a PTM pres cele telo (Max: skok s uderem kosou, otocka kosou), prehrava se jen jejich usek.
     public AnimationClip shiftAbility;
     public AnimationClip rmbAbility;
+    // Schopnost na E pres cele telo (Kondulic: kop), prehrava se cela.
+    public AnimationClip eAbility;
 
     // Pro uvodni scenky pred "play of the game".
     public AnimationClip sitIdle;

@@ -479,7 +479,7 @@ public class BardAbility : NetworkBehaviour
         foreach (var target in Allies())
         {
             if (target.gameObject == gameObject)
-                target.Heal(BeatHeal * SelfHealScale);
+                target.Heal(BeatHeal * SelfHealScale * Combat.HealingScale(gameObject));
             else
                 Combat.HealPlayer(gameObject, target, BeatHeal);
         }
@@ -620,7 +620,7 @@ public class BardAbility : NetworkBehaviour
         foreach (var target in Allies())
         {
             if (target.gameObject == gameObject)
-                target.Heal(amount * SelfHealScale);
+                target.Heal(amount * SelfHealScale * Combat.HealingScale(gameObject));
             else
                 Combat.HealPlayer(gameObject, target, amount);
         }

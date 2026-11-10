@@ -40,6 +40,7 @@ public class ScopeZoom : MonoBehaviour
             Zoomed = canScope && !fpc.ShootBlocked && fpc.Bot.IsHeld(HeroInput.Key.RightMouse);
             fpc.ScopeSpeedScale = Zoomed && botDefinition.weapon.HasScopedShot ? botDefinition.weapon.scopedMoveSpeed : 1f;
             ScopeBlend = 0f;
+            SyncScoped();
             return;
         }
 
@@ -62,6 +63,8 @@ public class ScopeZoom : MonoBehaviour
             && !ReplayPlayer.Active && !PotgIntro.Active
             && Mouse.current != null && Mouse.current.rightButton.isPressed;
 
+        SyncScoped();
+
         // pri priblizeni obcas hlaska (David)
         if (Zoomed && !wasZoomed)
             hero.SayOccasionally(VoiceKind.Scope, 0.35f, 15f, 30f);
@@ -75,6 +78,13 @@ public class ScopeZoom : MonoBehaviour
         fpc.LookScale = cam.fieldOfView / baseFov;
         ScopeBlend = definition != null && definition.weapon != null && definition.weapon.HasScopedShot
             ? BlendForFov(cam.fieldOfView, baseFov, scopeFov) : 0f;
+    }
+
+    // Stav mireni pro ostatni (poza postavy s namirenou zbrani).
+    void SyncScoped()
+    {
+        if (fpc != null && fpc.IsSpawned && fpc.IsOwner && fpc.scoped.Value != Zoomed)
+            fpc.scoped.Value = Zoomed;
     }
 
     void OnDisable()

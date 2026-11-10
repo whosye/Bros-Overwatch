@@ -188,12 +188,23 @@ public class StormAbility : NetworkBehaviour
 
     // ---------------- vizual ----------------
 
+    // Barva smrsti podle tymu toho, kdo ji vypustil: tym 0 modra, tym 1 cervena (jako barvy tymu v UI).
+    Color TeamStormColor()
+    {
+        var team = GetComponent<PlayerTeam>();
+        if (team == null) return StormColor;
+        Color c = UiKit.TeamColor(team.teamId.Value);
+        return Color.Lerp(c, Color.white, 0.15f);   // trochu svetlejsi - jadro sviti
+    }
+
     [ClientRpc]
     void LaunchedClientRpc(Vector3 origin, Vector3 direction, float speed, float seconds, float radius)
     {
         var go = new GameObject("Storm");
         go.transform.position = origin;
-        go.AddComponent<StormVisual>().Init(direction, speed, seconds, radius, StormColor);
+        var hero = GetComponent<PlayerHero>();
+        var model = hero != null && hero.Hero != null ? hero.Hero.characterPrefab : null;
+        go.AddComponent<StormVisual>().Init(direction, speed, seconds, radius, TeamStormColor(), model);
         ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, origin, 1f);
     }
 }
@@ -210,7 +221,7 @@ public class StormVisual : MonoBehaviour
     Light glow;
     float fullScale = 1f;
 
-    public void Init(Vector3 moveDirection, float moveSpeed, float lifetime, float radius, Color color)
+    public void Init(Vector3 moveDirection, float moveSpeed, float lifetime, float radius, Color color, GameObject headModel = null)
     {
         direction = moveDirection;
         speed = moveSpeed;
@@ -298,7 +309,57 @@ public class StormVisual : MonoBehaviour
         lightObject.transform.localPosition = new Vector3(0f, 0f, length * 0.5f);
         glow.intensity = 6f;
 
+        // Celo smrsti: obri hlava hrdiny (Mirek) z jeho modelu, obliceje ve smeru letu.
+        if (headModel != null) AddHead(headModel, radius, length, core.GetComponent<Renderer>().sharedMaterial);
+
         body.localScale = Vector3.zero;
+    }
+
+    // Dily obliceje avataru z fotky (MetaPerson): hlava, oci a bryle (bez zubu, ras a pokryvky hlavy).
+    static readonly string[] HeadParts = { "avatarhead", "avatarlefteyeball", "avatarrighteyeball", "glasses" };
+
+    static bool IsHeadPart(string name) => System.Array.IndexOf(HeadParts, name.ToLowerInvariant()) >= 0;
+
+    // Oblicej z modelu (sit v zakladni poze) ze stejneho materialu jako jadro smrsti, zapusteny do predniho
+    // vrchliku jadra - vystupuje z nej jen lehce (nos, celo, bryle). Oblicej dopredu (+z = smer letu).
+    void AddHead(GameObject model, float radius, float length, Material material)
+    {
+        Transform root = model.transform;
+        var holder = new GameObject("Hlava").transform;
+        holder.SetParent(body, false);
+        bool any = false;
+        Bounds bounds = default;
+        foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+        {
+            if (skin.sharedMesh == null || !IsHeadPart(skin.name)) continue;
+            var part = new GameObject(skin.name).transform;
+            part.SetParent(holder, false);
+            part.localPosition = root.InverseTransformPoint(skin.transform.position);
+            part.localRotation = Quaternion.Inverse(root.rotation) * skin.transform.rotation;
+            Vector3 rs = root.lossyScale, ss = skin.transform.lossyScale;
+            part.localScale = new Vector3(ss.x / Mathf.Max(1e-4f, rs.x), ss.y / Mathf.Max(1e-4f, rs.y), ss.z / Mathf.Max(1e-4f, rs.z));
+            part.gameObject.AddComponent<MeshFilter>().sharedMesh = skin.sharedMesh;
+            var renderer = part.gameObject.AddComponent<MeshRenderer>();
+            var materials = new Material[Mathf.Max(1, skin.sharedMesh.subMeshCount)];
+            for (int m = 0; m < materials.Length; m++) materials[m] = material;
+            renderer.sharedMaterials = materials;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            Bounds b = skin.sharedMesh.bounds;
+            for (int c = 0; c < 8; c++)
+            {
+                Vector3 corner = b.center + Vector3.Scale(b.extents, new Vector3((c & 1) == 0 ? -1 : 1, (c & 2) == 0 ? -1 : 1, (c & 4) == 0 ? -1 : 1));
+                Vector3 p = part.localPosition + part.localRotation * Vector3.Scale(part.localScale, corner);
+                if (!any) { bounds = new Bounds(p, Vector3.zero); any = true; }
+                else bounds.Encapsulate(p);
+            }
+        }
+        if (!any) { DestroyImmediate(holder.gameObject); return; }
+        // hlava zhruba na prumer jadra (0,625 x polomer je polomer jadra); spicka nosu kousek pred vrchlikem
+        float coreRadius = radius * 0.625f;
+        float scale = coreRadius * 1.9f / Mathf.Max(0.05f, bounds.size.y);
+        holder.localScale = Vector3.one * scale;
+        float tip = length * 0.5f + coreRadius * 0.18f;
+        holder.localPosition = new Vector3(-bounds.center.x * scale, -bounds.center.y * scale, tip - bounds.max.z * scale);
     }
 
     static Transform Solid(PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, Color color)
@@ -311,6 +372,16 @@ public class StormVisual : MonoBehaviour
         Fx.Paint(go, color);
         go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         return go.transform;
+    }
+
+    // Nahled v editoru (StormPreview): smrst stoji, plna velikost, prstence se toci.
+    public void PreviewTick(float dt)
+    {
+        age += dt;
+        body.localScale = Vector3.one * fullScale;
+        for (int r = 0; r < rings.Length; r++)
+            rings[r].Rotate(0f, 0f, (r % 2 == 1 ? -300f : 220f) * dt, Space.Self);
+        glow.intensity = 5f + Mathf.Sin(age * 14f) * 1.5f;
     }
 
     void Update()

@@ -298,6 +298,8 @@ public class CharacterVisual : MonoBehaviour
     // Zbran stale namirena: horni polovina tela drzi prvni snimek animace strelby (mezi vystrely),
     // vystrel prehraje celou animaci (recoil). Nastavuje HeldWeapons (Viktor - puska obema rukama).
     public bool HoldShootPose;
+    // Zbran namirena jen pri mireni dalekohledem (FirstPersonController.scoped) a chvili po vystrelu - ne pri staní (Kondulic).
+    public bool AimOnScope;
 
     // Poza strelby (prvni snimek), podle ni se usadi zbran do ruky.
     public void EvaluateShootPose()
@@ -417,7 +419,7 @@ public class CharacterVisual : MonoBehaviour
         for (int i = 0; i < AbilityAnimCount; i++)
         {
             var anim = abilityAnims[i];
-            anim.clip = Pick(i == (int)AbilityAnim.Shift ? s => s.shiftAbility : s => s.rmbAbility);
+            anim.clip = Pick(i == (int)AbilityAnim.Shift ? s => s.shiftAbility : i == (int)AbilityAnim.RightMouse ? s => s.rmbAbility : s => s.eAbility);
             anim.playable = AnimationClipPlayable.Create(graph, anim.clip ?? idle);
             anim.playable.SetSpeed(0);
             graph.Connect(anim.playable, 0, layers, AbilityLayer + i);
@@ -465,6 +467,31 @@ public class CharacterVisual : MonoBehaviour
         ultimateTime = 0f;
     }
 
+    // Libovolna animace pres cele telo ve smycce (vrstva ultimatky) na 'seconds' s - napr. sezeni v uvodni scence.
+    // 'instant' = hned naplno (bez prolnuti).
+    public void PlayFullBody(AnimationClip clip, float seconds, bool instant = false)
+    {
+        if (!graph.IsValid() || clip == null) return;
+        if (clip != ultimateClip)
+        {
+            graph.Disconnect(layers, 6);
+            if (ultimatePlayable.IsValid()) ultimatePlayable.Destroy();
+            ultimatePlayable = AnimationClipPlayable.Create(graph, clip);
+            ultimatePlayable.SetSpeed(0);
+            graph.Connect(ultimatePlayable, 0, layers, 6);
+            ultimateClip = clip;
+        }
+        ultimateUntil = Time.time + seconds;
+        ultimateTime = 0f;
+        if (instant)
+        {
+            ultimateWeight = 1f;
+            ultimatePlayable.SetTime(0f);
+            layers.SetInputWeight(6, 1f);
+            graph.Evaluate(0f);
+        }
+    }
+
     public void StopUltimate()
     {
         if (!IsGhost && ultimateUntil > Time.time)
@@ -486,8 +513,8 @@ public class CharacterVisual : MonoBehaviour
 
     // ---------------- schopnosti pres cele telo (Maxuv skok s uderem na Shift, otocka na PTM) ----------------
 
-    public enum AbilityAnim { Shift, RightMouse }
-    const int AbilityLayer = 7, AbilityAnimCount = 2;
+    public enum AbilityAnim { Shift, RightMouse, E }
+    const int AbilityLayer = 7, AbilityAnimCount = 3;
 
     class OneShot
     {
@@ -495,9 +522,10 @@ public class CharacterVisual : MonoBehaviour
         public AnimationClipPlayable playable;
         public float time = -1f, from, to, duration = 1f;
     }
-    readonly OneShot[] abilityAnims = { new OneShot(), new OneShot() };
+    readonly OneShot[] abilityAnims = { new OneShot(), new OneShot(), new OneShot() };
 
     public bool HasAbilityAnimation(AbilityAnim which) => abilityAnims[(int)which].clip != null;
+    public float AbilityClipLength(AbilityAnim which) => abilityAnims[(int)which].clip != null ? abilityAnims[(int)which].clip.length : 0f;
 
     // Prehraje usek klipu od 'from' do 'to' (sekundy klipu) za 'duration' sekund.
     public void PlayAbility(AbilityAnim which, float from, float to, float duration)
@@ -811,7 +839,10 @@ public class CharacterVisual : MonoBehaviour
         float melee = 0f, shoot = 0f;
         bool hold = HoldShootPose && !dead && !frenzy;
         if (attackTime >= 0f && !attackMelee) lastShotAt = Time.time;
-        bool aiming = hold && (smoothedSpeed < 0.4f || Time.time - lastShotAt < AimAfterShot);
+        bool recentShot = Time.time - lastShotAt < AimAfterShot;
+        bool aiming = hold && (AimOnScope
+            ? recentShot || (fpc != null && fpc.IsSpawned && fpc.scoped.Value)
+            : smoothedSpeed < 0.4f || recentShot);
         aimWeight = Mathf.MoveTowards(aimWeight, aiming ? 1f : 0f, dt * (aiming ? 8f : 3f));
 
         if (frenzy)
