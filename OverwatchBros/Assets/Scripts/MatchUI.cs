@@ -260,6 +260,30 @@ public class MatchUI : MonoBehaviour
         StartCoroutine(LeaveRoutine());
     }
 
+    // Host ukoncil hru: odejit cisty zpusobem sam (jako rucne pres Esc), ne az po pretrzeni spojeni.
+    bool hostLeft;
+    public void LeaveBecauseHostLeft()
+    {
+        hostLeft = true;
+        LeaveGame();
+    }
+
+    // Zavreni okna hostem (Alt+F4...): nejdriv poslat ostatni do menu, pak teprve skoncit.
+    bool quitAfterLeave, quitReady;
+
+    void OnEnable() => Application.wantsToQuit += WantsToQuit;
+    void OnDisable() => Application.wantsToQuit -= WantsToQuit;
+
+    bool WantsToQuit()
+    {
+        var network = NetworkManager.Singleton;
+        if (quitReady || network == null || !network.IsServer || !network.IsListening || network.ConnectedClientsIds.Count <= 1)
+            return true;
+        quitAfterLeave = true;
+        LeaveGame();
+        return false;
+    }
+
     IEnumerator LeaveRoutine()
     {
         leaving = true;
@@ -270,6 +294,17 @@ public class MatchUI : MonoBehaviour
         var network = NetworkManager.Singleton;
         if (network != null)
         {
+            // Host: kdyz vypne server pod rukama ostatnim, hra jim spadne. Proto nejdriv vsem rekne, at odejdou
+            // sami, a pocka, az se odpoji (nejdyl 3 s) - teprve pak server vypne.
+            var match = MatchManager.Instance;
+            if (network.IsServer && network.IsListening && network.ConnectedClientsIds.Count > 1 && match != null && match.IsSpawned)
+            {
+                match.ServerHostLeaving();
+                float until = Time.unscaledTime + 3f;
+                while (Time.unscaledTime < until && network.IsListening && network.ConnectedClientsIds.Count > 1)
+                    yield return null;
+            }
+
             network.Shutdown();
             while (network.ShutdownInProgress)
                 yield return null;
@@ -277,10 +312,17 @@ public class MatchUI : MonoBehaviour
 
         yield return null;
         Cursor.lockState = CursorLockMode.None;
-        menu.ShowStatus("");
+        menu.ShowStatus(hostLeft ? "Hostitel ukončil hru." : "");
+        hostLeft = false;
         leaving = false;
         wasConnected = false;
         everHadPlayer = false;
+
+        if (quitAfterLeave)
+        {
+            quitReady = true;
+            Application.Quit();
+        }
     }
 
     void Update()

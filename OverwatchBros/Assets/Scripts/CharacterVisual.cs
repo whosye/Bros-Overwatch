@@ -638,6 +638,46 @@ public class CharacterVisual : MonoBehaviour
     {
         LateKick();
         ApplyGrip();
+        GroundDeathPose();
+    }
+
+    // Lezici telo na zem: animace smrti (a uspani) drzi boky ve vysce pasu (svisly pohyb korene se z klipu nebere),
+    // takze mrtvy lezel ve vzduchu. Po animaci se model posune dolu, aby nejnizsi kost byla tesne nad zemi.
+    static readonly HumanBodyBones[] GroundBones =
+    {
+        HumanBodyBones.Hips, HumanBodyBones.Spine, HumanBodyBones.Chest, HumanBodyBones.Neck, HumanBodyBones.Head,
+        HumanBodyBones.LeftUpperArm, HumanBodyBones.RightUpperArm, HumanBodyBones.LeftLowerArm, HumanBodyBones.RightLowerArm,
+        HumanBodyBones.LeftHand, HumanBodyBones.RightHand, HumanBodyBones.LeftUpperLeg, HumanBodyBones.RightUpperLeg,
+        HumanBodyBones.LeftLowerLeg, HumanBodyBones.RightLowerLeg, HumanBodyBones.LeftFoot, HumanBodyBones.RightFoot,
+    };
+    Transform[] groundBones;
+    Animator groundBonesFor;
+    float poseDrop;
+
+    void GroundDeathPose()
+    {
+        if (ModelRoot == null || animator == null || !animator.isHuman || !graph.IsValid()) return;
+        float weight = Mathf.Clamp01(stateWeights[Death]);
+        if (weight < 0.01f && poseDrop <= 0f) return;
+
+        if (groundBonesFor != animator)
+        {
+            groundBonesFor = animator;
+            groundBones = new Transform[GroundBones.Length];
+            for (int i = 0; i < GroundBones.Length; i++)
+                groundBones[i] = animator.GetBoneTransform(GroundBones[i]);
+        }
+
+        Vector3 basePosition = transform.TransformPoint(new Vector3(0f, feetLocalY, 0f));
+        float lowest = float.MaxValue;
+        foreach (var bone in groundBones)
+            if (bone != null) lowest = Mathf.Min(lowest, bone.position.y);
+        if (lowest == float.MaxValue) return;
+
+        lowest += poseDrop;   // (kosti uz jsou posunute o minuly posun)
+        poseDrop = Mathf.Max(0f, lowest - basePosition.y - 0.1f) * weight;
+        if (weight < 0.01f) poseDrop = 0f;
+        ModelRoot.position = basePosition + Vector3.down * poseDrop;
     }
 
     void LateKick()

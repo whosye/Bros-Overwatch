@@ -339,6 +339,8 @@ public class FirstPersonController : NetworkBehaviour
         if (!IsOwner || IsDead) return;
 
         stunnedUntil = Time.time + seconds;
+        StunTotal = seconds;
+        StunIsSleep = true;
         externalVelocity = Vector3.zero;
         if (Bot == null) HudUI.NotifySleep(seconds);
     }
@@ -358,6 +360,10 @@ public class FirstPersonController : NetworkBehaviour
     // Omraceni (oslepujici granat): hrac se chvili nemuze hybat, utocit ani pouzivat schopnosti; rozbehle schopnosti se prerusi.
     float stunnedUntil;
     public bool Stunned => Time.time < stunnedUntil;
+    // pro HUD (jen u vlastnika): kolik omraceni zbyva, jak dlouhe bylo a jestli jde o uspani
+    public float StunRemaining => Mathf.Max(0f, stunnedUntil - Time.time);
+    public float StunTotal { get; private set; } = 1f;
+    public bool StunIsSleep { get; private set; }
 
     // blind = oslepujici granat (bila obrazovka a piskani); hak omracuje bez oslepeni.
     public void ServerStun(float seconds, GameObject attacker = null, bool blind = true)
@@ -385,6 +391,8 @@ public class FirstPersonController : NetworkBehaviour
         if (!IsOwner || IsDead) return;
 
         stunnedUntil = Time.time + seconds;
+        StunTotal = seconds;
+        StunIsSleep = false;
         externalVelocity = Vector3.zero;
         if (blind && Bot == null)
             HudUI.NotifyFlash(seconds);
@@ -513,18 +521,47 @@ public class FirstPersonController : NetworkBehaviour
     void OnEnable() { if (!allControllers.Contains(this)) allControllers.Add(this); corpseInit = false; }
     void OnDisable() => allControllers.Remove(this);
 
+    // Mrtve telo nema zadnou kolizi (kapsle postavy je jediny jeji collider): projde jim hrac, strely i projektily
+    // (driv je telo "chytalo" a nedalo se pres nej strilet). Po oziveni se kapsle zase zapne.
     void UpdateCorpseCollisions()
     {
         if (controller == null) return;
-        bool dead = IsDead;
-        if (corpseInit && dead == corpseState) return;
-        corpseInit = true;
-        corpseState = dead;
-        foreach (var other in allControllers)
+        bool dead = IsSpawned && IsDead;
+        if (dead)
         {
-            if (other == null || other == this || other.controller == null) continue;
-            Physics.IgnoreCollision(controller, other.controller, dead || other.IsDead);
+            if (controller.enabled) controller.enabled = false;   // (i kdyz ji neco mezitim zapnulo - teleport...)
+            corpseState = true;
+            corpseInit = true;
+            return;
         }
+        if (corpseInit && !corpseState) return;
+        corpseInit = true;
+        corpseState = false;
+        if (!riding && !controller.enabled) controller.enabled = true;
+    }
+
+    // Mrtvy (jen vlastnik): telo bez kolize spadne na zem - padani podle paprsku dolu.
+    void CorpseFall()
+    {
+        float dt = Time.deltaTime;
+        verticalVelocity = Mathf.Max(verticalVelocity + gravity * 2f * dt, -40f);
+        if (verticalVelocity > 0f) verticalVelocity = 0f;
+        float drop = -verticalVelocity * dt;
+        Vector3 feet = transform.position + Vector3.up * (controller.center.y - controller.height * 0.5f);
+        Vector3 from = feet + Vector3.up * 0.4f;
+        float best = float.MaxValue;
+        foreach (var hit in Physics.RaycastAll(from, Vector3.down, 0.4f + drop + 0.02f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.collider is CharacterController || hit.collider.transform.IsChildOf(transform)) continue;
+            best = Mathf.Min(best, hit.distance);
+        }
+        if (best < float.MaxValue)
+        {
+            transform.position += Vector3.down * (best - 0.4f);   // (i kousek nahoru, kdyz zapadl)
+            verticalVelocity = 0f;
+        }
+        else
+            transform.position += Vector3.down * drop;
     }
 
     void Update()
@@ -960,6 +997,11 @@ public class FirstPersonController : NetworkBehaviour
             return;
         }
         if (TickPull()) return;
+        if (IsDead)
+        {
+            CorpseFall();
+            return;
+        }
         if (AbilityActive || Joining) return;
         if (TickMantle()) return;
 

@@ -147,6 +147,8 @@ public class HudUI
         public Camera camera;
         public int rapidShots = -1;   // zbyvajici sipy rychlopalby (-1 = neni aktivni)
         public bool beat;             // Bard: ukazat takt
+        public float stun, stunTotal = 1f; // omraceni: zbyva / celkem (s); 0 = neni
+        public bool stunSleep;
     }
 
     readonly HudData liveData = new HudData();
@@ -332,6 +334,8 @@ public class HudUI
         UiKit.Stretch(flashImage.rectTransform);
         flashImage.gameObject.SetActive(false);
 
+        BuildStun(center);
+
         root.SetActive(false);
     }
 
@@ -361,6 +365,90 @@ public class HudUI
 
         if (lockMarker.gameObject.activeSelf != locked)
             lockMarker.gameObject.SetActive(locked);
+    }
+
+    // ---------------- omraceni ----------------
+    // Hrac musi poznat, ze je omraceny: fialove ztmavle okraje, napis s odpoctem a pruhem pod zamerovacem
+    // a kolem nej krouzi zlute hvezdicky (jako nad hlavou omracene postavy).
+    const int StunStars = 5;
+    GameObject stunRoot;
+    RawImage stunVignette;
+    TextMeshProUGUI stunLabel;
+    Image stunFill;
+    RectTransform stunOrbit;
+    readonly Image[] stunStars = new Image[StunStars];
+    static readonly Color StunColor = new Color(1f, 0.85f, 0.2f, 1f);
+
+    void BuildStun(Vector2 center)
+    {
+        var holder = new GameObject("Stun", typeof(RectTransform));
+        holder.transform.SetParent(root.transform, false);
+        stunRoot = holder;
+        UiKit.Stretch((RectTransform)holder.transform);
+
+        var vignetteObject = new GameObject("StunVignette", typeof(RectTransform), typeof(RawImage));
+        vignetteObject.transform.SetParent(holder.transform, false);
+        stunVignette = vignetteObject.GetComponent<RawImage>();
+        stunVignette.texture = VignetteTexture();
+        stunVignette.raycastTarget = false;
+        UiKit.Stretch(stunVignette.rectTransform);
+
+        stunLabel = UiKit.MakeText(holder.transform, "StunLabel", "", 34, TextAlignmentOptions.Center, center, new Vector2(0f, -150f), new Vector2(700f, 44f), StunColor);
+        stunLabel.fontStyle = FontStyles.Bold | FontStyles.Italic;
+        stunLabel.outlineWidth = 0.2f;
+        stunLabel.outlineColor = new Color32(20, 10, 40, 230);
+
+        var barBackground = UiKit.MakeImage(holder.transform, "StunBar", new Color(0.05f, 0.03f, 0.1f, 0.75f), center, new Vector2(0f, -182f), new Vector2(266f, 12f));
+        stunFill = UiKit.MakeImage(barBackground.transform, "Fill", StunColor, new Vector2(0f, 0.5f), new Vector2(3f, 0f), new Vector2(260f, 6f));
+        stunFill.rectTransform.pivot = new Vector2(0f, 0.5f);
+
+        var orbitObject = new GameObject("Stars", typeof(RectTransform));
+        orbitObject.transform.SetParent(holder.transform, false);
+        stunOrbit = (RectTransform)orbitObject.transform;
+        stunOrbit.anchorMin = stunOrbit.anchorMax = stunOrbit.pivot = center;
+        stunOrbit.anchoredPosition = Vector2.zero;
+        for (int i = 0; i < StunStars; i++)
+        {
+            // hvezdicka: dva prekrizene kosoctverce
+            var star = UiKit.MakeImage(stunOrbit, "Star", StunColor, center, Vector2.zero, new Vector2(14f, 14f));
+            star.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+            star.raycastTarget = false;
+            var cross = UiKit.MakeImage(star.rectTransform, "Cross", StunColor, center, Vector2.zero, new Vector2(14f, 14f));
+            cross.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+            cross.raycastTarget = false;
+            stunStars[i] = star;
+        }
+        holder.SetActive(false);
+    }
+
+    void UpdateStun(HudData d)
+    {
+        bool on = d.stun > 0.01f;
+        if (stunRoot.activeSelf != on) stunRoot.SetActive(on);
+        if (!on) return;
+
+        float t = Time.unscaledTime;
+        float k = Mathf.Clamp01(d.stun / d.stunTotal);
+        float fadeOut = Mathf.Clamp01(d.stun / 0.25f);
+        stunLabel.text = d.stunSleep ? $"USPÁN  <size=75%>{d.stun:0.0} s</size>" : $"OMRÁČEN  <size=75%>{d.stun:0.0} s</size>";
+        stunLabel.rectTransform.localScale = Vector3.one * (1f + 0.05f * Mathf.Sin(t * 9f));
+        stunFill.rectTransform.sizeDelta = new Vector2(260f * k, 6f);
+        // uspani uz ztmavuje obrazovku samo - fialove okraje jen u omraceni
+        stunVignette.color = new Color(0.25f, 0.05f, 0.45f, d.stunSleep ? 0f : (0.6f + 0.15f * Mathf.Sin(t * 6f)) * fadeOut);
+
+        // hvezdicky krouzi v elipse nad zamerovacem a otaci se
+        for (int i = 0; i < StunStars; i++)
+        {
+            float a = t * 3.2f + i * Mathf.PI * 2f / StunStars;
+            var star = stunStars[i];
+            star.rectTransform.anchoredPosition = new Vector2(Mathf.Cos(a) * 70f, Mathf.Sin(a) * 26f + 46f);
+            star.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f + t * 200f);
+            float depth = 0.65f + 0.35f * Mathf.Sin(a);   // vzadu mensi a tlumenejsi
+            star.rectTransform.localScale = Vector3.one * depth;
+            star.color = new Color(StunColor.r, StunColor.g, StunColor.b, depth * fadeOut);
+        }
+        if (stunRoot.transform.GetSiblingIndex() != root.transform.childCount - 1)
+            stunRoot.transform.SetAsLastSibling();   // nad bilym zableskem oslepeni
     }
 
     void UpdateHitMarker()
@@ -464,6 +552,9 @@ public class HudUI
         d.rapidShots = rapid != null && rapid.enabled && rapid.IsActive ? rapid.ShotsLeft : -1;
         var bardHud = hero.GetComponent<BardAbility>();
         d.beat = bardHud != null && bardHud.isActiveAndEnabled && bardHud.crossfade != null;
+        d.stun = fpc != null && !fpc.IsDead ? fpc.StunRemaining : 0f;
+        d.stunTotal = fpc != null ? Mathf.Max(0.1f, fpc.StunTotal) : 1f;
+        d.stunSleep = fpc != null && fpc.StunIsSleep;
         Render(d);
     }
 
@@ -544,6 +635,7 @@ public class HudUI
         UpdateAbilities(d);
         UpdateHitMarker();
         UpdateFlashAndLock(d);
+        UpdateStun(d);
 
         if (testLabel.gameObject.activeSelf != AbilityDefinition.TestCooldowns)
             testLabel.gameObject.SetActive(AbilityDefinition.TestCooldowns);

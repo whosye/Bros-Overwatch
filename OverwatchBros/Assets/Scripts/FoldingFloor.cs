@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 // Sklopna podlaha (rampa do patra): kus podlahy na kloubu. Dokud utocnici nedobyji 'unlockAfter' bodu, je to
@@ -14,6 +15,8 @@ public class FoldingFloor : MonoBehaviour
     public Vector3 axis = Vector3.forward;
     [Tooltip("O kolik stupnu se sklopi (az na zem).")]
     public float openAngle = 30f;
+    [Tooltip("O kolik stupnu se sklopi navic - volny konec se lehce zabori do zeme, at se na rampu dobre vstupuje (bez schodu).")]
+    public float sinkAngle = 3f;
     [Tooltip("Jak dlouho trva sklopeni (s).")]
     public float duration = 1.1f;
     [Tooltip("Co zmizi, jakmile se podlaha zacne sklapet (napr. lista pod hranou stropu); nahore se zase ukaze.")]
@@ -104,6 +107,9 @@ public class FoldingFloor : MonoBehaviour
         // dolu zrychluje (pada), nahoru stejnomerne
         progress = Mathf.MoveTowards(progress, target, Time.deltaTime / Mathf.Max(0.05f, duration));
         Apply();
+        // padajici strop zabije, koho zavali (jen behem padu a pri dopadu - pak uz ne; v zaznamu nikdy)
+        if (open && !landed && !wasReplay)
+            Crush(Mathf.Approximately(progress, target));
         if (Mathf.Approximately(progress, target) && !landed)
         {
             landed = true;
@@ -137,10 +143,44 @@ public class FoldingFloor : MonoBehaviour
     void Apply()
     {
         float eased = open ? progress * progress : progress;   // pad zrychluje
-        transform.localRotation = closedRotation * Quaternion.AngleAxis(openAngle * eased, axis);
+        transform.localRotation = closedRotation * Quaternion.AngleAxis((openAngle + sinkAngle) * eased, axis);
         bool show = progress <= 0.001f;
         foreach (var go in hideWhenOpen)
             if (go != null && go.activeSelf != show) go.SetActive(show);
+    }
+
+    // Server: kdo je pod padajici deskou, zemre. Behem padu jen tesne pod ni (koho prave zasahne), pri dopadu
+    // cely prostor pod deskou az k zemi. Kdo stal nahore na podlaze, ten se jen sveze.
+    void Crush(bool final)
+    {
+        var network = NetworkManager.Singleton;
+        if (network == null || !network.IsServer) return;
+        Physics.SyncTransforms();
+        foreach (var box in GetComponentsInChildren<BoxCollider>())
+        {
+            if (!box.enabled || box.isTrigger) continue;
+            Transform t = box.transform;
+            Vector3 scale = t.lossyScale;
+            Vector3 half = Vector3.Scale(box.size * 0.5f, new Vector3(Mathf.Abs(scale.x), Mathf.Abs(scale.y), Mathf.Abs(scale.z)));
+            // tloustka desky = nejkratsi osa; 'up' = ta osa otocena od zeme
+            int axis = half.x <= half.y && half.x <= half.z ? 0 : half.y <= half.z ? 1 : 2;
+            Vector3 up = axis == 0 ? t.right : axis == 1 ? t.up : t.forward;
+            if (Vector3.Dot(up, Vector3.up) < 0f) up = -up;
+            Vector3 slab = t.TransformPoint(box.center);
+            float reach = final ? 2.4f : 0.6f;
+            half[axis] += reach * 0.5f;
+            foreach (var hit in Physics.OverlapBox(slab - up * reach * 0.5f, half, t.rotation, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (!(hit is CharacterController)) continue;
+                if (Vector3.Dot(hit.bounds.center - slab, up) > 0f) continue;   // stoji nahore na desce
+                var health = hit.GetComponentInParent<Health>();
+                if (health == null || !health.IsSpawned || health.currentHealth.Value <= 0f) continue;
+                var hero = health.GetComponent<PlayerHero>();
+                if (hero != null && hero.IsJoining) continue;
+                if (hero != null) hero.ServerDeathCause = "env:strop";
+                health.Kill();
+            }
+        }
     }
 
     // Stred volneho okraje (kde rampa dopadne) - pro zvuk a prach.

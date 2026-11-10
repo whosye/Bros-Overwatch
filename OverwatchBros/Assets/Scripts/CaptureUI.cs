@@ -27,6 +27,13 @@ public class CaptureUI
     int lastState = -1;
     int lastPoint = -1;
 
+    // Cekani na odemceni bodu (priprava, mezi body): vyrazny panel s odpoctem a pruhem, at hrac vi, proc stoji.
+    GameObject waitGroup;
+    TextMeshProUGUI waitTitle, waitCount, waitSub;
+    Image waitFill;
+    int waitTotal = 1, waitPoint = -1, waitPhase = -1;
+    const float WaitBarWidth = 600f;
+
     RectTransform canvasRect;
     RectTransform marker;
     Image markerIcon;
@@ -97,6 +104,19 @@ public class CaptureUI
         bannerSub.fontStyle = FontStyles.Bold;
         bannerGroup.SetActive(false);
 
+        var waitBand = UiKit.MakeImage(canvas, "CekaniNaBod", new Color(0.03f, 0.05f, 0.09f, 0.72f), center, new Vector2(0f, 300f), new Vector2(760f, 140f));
+        waitGroup = waitBand.gameObject;
+        waitTitle = UiKit.MakeText(waitBand.transform, "Titulek", "", 28, TextAlignmentOptions.Center, center, new Vector2(0f, 44f), new Vector2(740f, 36f));
+        waitTitle.fontStyle = FontStyles.Bold | FontStyles.Italic;
+        waitCount = UiKit.MakeText(waitBand.transform, "Odpocet", "", 50, TextAlignmentOptions.Center, center, new Vector2(0f, 2f), new Vector2(740f, 56f));
+        waitCount.fontStyle = FontStyles.Bold;
+        var waitBar = UiKit.MakeImage(waitBand.transform, "Pruh", new Color(1f, 1f, 1f, 0.15f), center, new Vector2(0f, -34f), new Vector2(WaitBarWidth, 8f));
+        waitFill = UiKit.MakeImage(waitBar.transform, "Fill", Color.white, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(WaitBarWidth, 8f));
+        waitFill.rectTransform.pivot = new Vector2(0f, 0.5f);
+        waitSub = UiKit.MakeText(waitBand.transform, "Podtitulek", "", 20, TextAlignmentOptions.Center, center, new Vector2(0f, -56f), new Vector2(740f, 26f),
+            new Color(0.85f, 0.87f, 0.92f));
+        waitGroup.SetActive(false);
+
         // Znacka bodu ve svete.
         var markerObject = new GameObject("CaptureMarker", typeof(RectTransform));
         markerObject.transform.SetParent(canvas, false);
@@ -139,6 +159,7 @@ public class CaptureUI
         bool show = playing && match != null && match.IsAttackMode && !match.IsOver;
         if (panel.activeSelf != show)
             panel.SetActive(show);
+        UpdateWait(local, match, show);
 
         if (!show)
         {
@@ -216,6 +237,44 @@ public class CaptureUI
 
         UpdateMarker(local, match, state);
         UpdateSounds(local, match, state);
+    }
+
+    void UpdateWait(PlayerHero local, MatchManager match, bool show)
+    {
+        int phase = match != null ? match.roundPhase.Value : -1;
+        int left = match != null ? match.lockSecondsLeft.Value : 0;
+        bool on = show && !ReplayPlayer.Active && phase != MatchManager.RoundIntermission
+            && match.pointState.Value == MatchManager.StateLocked && left > 0;
+        if (waitGroup.activeSelf != on) waitGroup.SetActive(on);
+        if (!on) return;
+
+        // celkova delka cekani (pro pruh): nejvyssi hodnota od zacatku tohoto cekani
+        int point = match.pointIndex.Value;
+        if (point != waitPoint || phase != waitPhase || left > waitTotal)
+        {
+            waitPoint = point;
+            waitPhase = phase;
+            waitTotal = Mathf.Max(1, left);
+        }
+
+        int attackers = match.attackTeam.Value;
+        int localTeam = TeamOf(local);
+        bool attacking = localTeam == attackers;
+        string pointName = MatchManager.PointNames[Mathf.Clamp(point, 0, MatchManager.PointNames.Length - 1)];
+        Color teamColor = UiKit.TeamColor(attackers);
+
+        bool setup = phase == MatchManager.RoundSetup;
+        waitTitle.text = setup ? $"PŘÍPRAVA  ·  ÚTOK NA BOD {pointName} ZAČNE ZA" : $"ČEKÁ SE NA ODEMČENÍ BODU {pointName}";
+        waitTitle.color = teamColor;
+        waitCount.text = Clock(left);
+        waitCount.color = left <= 3 ? Color.Lerp(Color.white, new Color(1f, 0.82f, 0.15f), Mathf.PingPong(Time.unscaledTime * 4f, 1f)) : Color.white;
+        waitSub.text = localTeam < 0 ? ""
+            : attacking ? (setup ? "Vyber hrdinu a připrav se - dveře spawnu se otevřou se začátkem útoku"
+                                 : $"Čekejte ve spawnu - po odemčení vyrazte na bod {pointName}")
+            : $"Obsaďte bod {pointName} a připravte obranu";
+        float k = Mathf.Clamp01((float)left / waitTotal);
+        waitFill.rectTransform.sizeDelta = new Vector2(WaitBarWidth * k, 8f);
+        waitFill.color = teamColor;
     }
 
     static int TeamOf(PlayerHero local)

@@ -11,7 +11,7 @@ public class ReplayCapture : MonoBehaviour
 {
     public const float RingSeconds = 25.5f;   // (delsi klip, kdyz akce zacala dlouhou hlaskou ultimatky)
     const float FrameInterval = 1f / 30f;
-    const int MaxNodes = 64;
+    const int MaxNodes = 96;   // (Mirkova smrst s hlavou ma 65 uzlu)
     const int MaxObjects = 48;
 
     public static ReplayCapture Local { get; private set; }
