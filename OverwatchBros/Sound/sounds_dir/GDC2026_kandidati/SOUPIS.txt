@@ -1,0 +1,317 @@
+﻿GDC 2026 – 62 kandidátů pro Bros Overwatch
+
+Pro poslech otevři POSLECH.html v prohlížeči, nebo přehrávej jednotlivé WAVy.
+A = začít tady; B = zdroj pro úpravu/vrstvení; C = prostředí a doplňky.
+Kandidáti jsou vybraní podle názvů a metadat, zatím bez poslechového hodnocení.
+Originály zůstaly v původním bundlu. Zkrácené názvy kopií označují navržené použití, nikoli potvrzení zvukové shody.
+Přiřazení a odškrtávání dělej ve Zvukové sbírce; zde nejsou položky označené jako hotové.
+
+01_A_Pova_Sekyrky.wav
+  Použití: Pova / Sekyrky; Max / Kosa
+  Švih dlouhé čepele pro sekerky/kosu.
+  Originál: David Dumais Audio - Melee Weapons Sound Effects Pack 2/METLFric_SWING SCRAPE Swift Melee Weapon Swing With A Long Blade 14_DDUMAIS_MWP2.wav
+
+02_A_Spolecna_knihovna_Sekera_kosa_kov.wav
+  Použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Švih s kovovým kontaktem a dozvukem; pro zásah, ne minutí.
+  Originál: David Dumais Audio - Melee Weapons Sound Effects Pack 2/METLImpt_METAL SWING HIT Weapon Swing To Metallic Body Impact And Resonant Tail 01_DDUMAIS_MWP2.wav
+
+03_A_Pova_Sekyrky.wav
+  Použití: Pova / Sekyrky; Max / Rozpolcení · Shift; Další pohyb / Náraz hráče do stěny; Kondulič / Odkopnutí · E
+  Asi 62 sekund; vystřihnout jednotlivé varianty těžkých švihů/úderů.
+  Originál: David Dumais Audio - Melee Weapons Sound Effects Pack 2/SWSH_SWING IMPACTS Quick Heavy Weapon Swing To Thud Impact Var 01_DDUMAIS_MWP2.wav
+
+04_A_Spolecna_knihovna_Sekera_kosa_drevo.wav
+  Použití: Společná knihovna / Sekera / kosa → dřevo
+  Dřevěný kontakt, posoudit pro sečný zásah.
+  Originál: 344 Audio - Historical Weapons Vol. 2/WEAPBlnt_Spear And Stick Impact, Wooden MKH 2_344 Audio_Medieval Weapons Vol 2.wav
+
+05_A_Spolecna_knihovna_Sekera_kosa_kov.wav
+  Použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Kovový kontakt historické zbraně.
+  Originál: 344 Audio - Historical Weapons Vol. 2/WEAPSwrd_Sword Slide Cuts, Metallic, Impact CM4 2_344 Audio_Medieval Weapons Vol 2.wav
+
+06_A_Pova_Modry_plamen_Shift.wav
+  Použití: Pova / Modrý plamen · Shift; Pova / Ohnivý dopad · Q
+  Hotový ohnivý švih/nástup. Není to smyčka hoření.
+  Originál: Epic Stock Media - Elemental Mutation Whooshes and Impacts/FIREWhsh_Whoosh Fire Deep Growl Monster Saturated Crisp 03_ESM_EMWI.wav
+
+07_A_Kotel_ohen_a_prehrati.wav
+  Použití: Kotel · oheň a přehřátí; Krb a gril; Pova / Modrý plamen · Shift
+  Smyčka ohně, mono; základ pro kotel/krb. Přidat hučení podle poslechu.
+  Originál: Epic Stock Media - Synthesized Nature Loops and Sounds/FIREBurn_Loop Elements Fire Crackling Crunchy Flame Burn 03_ESM_SNLS.wav
+
+08_A_Viktor_Pulzni_granat_RMB.wav
+  Použití: Viktor / Pulzní granát · RMB; Zpětná vazba a stavy / Omráčení
+  Krátký elektrický zásah; pro granát vrstvit s výbuchem.
+  Originál: InMotionAudio - Arc/ELECArc_ArcDesign15_InMotionAudio_Arc.wav
+
+09_A_Viktor_Takticky_zamerovac_Q.wav
+  Použití: Viktor / Taktický zaměřovač · Q; Kondulič / Infravize · Q; David / Posílení · Q
+  Delší elektronické nabíjení, pro aktivaci zkrátit.
+  Originál: InMotionAudio - Arc/ELECArc_ArcPowerUpDesign04_InMotionAudio_Arc.wav
+
+10_A_Viktor_Pulzni_granat_RMB.wav
+  Použití: Viktor / Pulzní granát · RMB; Mošino / Dopad zvukového projektilu
+  Hlubší elektrický kontakt.
+  Originál: Epic Stock Media - Elemental Mutation Whooshes and Impacts/ELECMisc_Impact Electric Tonal Deep Movement Motion Hiss Glitch 01_ESM_EMWI.wav
+
+11_A_Mosino_Basovy_uder_RMB.wav
+  Použití: Mošino / Basový úder · RMB
+  Krátký basový drop; pro častý RMB vybrat úderný začátek.
+  Originál: 344 Audio - Bass Drops & Downers Vol. 1/DSGNBass_Bass Drop & Downer Fast 16_344 Audio_Bass Drops & Downers.wav
+
+12_A_Mosino_Drop_the_Beat_Q.wav
+  Použití: Mošino / Drop the Beat · Q
+  Basový nástup/dopad, nenahrazuje taneční hudbu.
+  Originál: 344 Audio - Bass Drops & Downers Vol. 3/DSGNBass_Jump Start Drop 3_344 Audio_Bass Drops and Downers Vol 3.wav
+
+13_A_Mirek_Smrst_Q.wav
+  Použití: Mirek / Smršť · Q; Další pohyb / Odraz a dvojskok
+  Více variant x5 v souboru, rozstříhat. Není automaticky hotová smyčka víru.
+  Originál: 344 Audio - Elemental Palette Designed Vol. 1/WINDDsgn_Wind, Rush, Whoosh, Long x5 01_344 Audio_Elemental Palette Designed Vol 1.wav
+
+14_A_David_Bioticka_strela_kontakt.wav
+  Použití: David / Biotická střela · kontakt; Zpětná vazba a stavy / Léčení a zesílení; Šindel / Spravedlivý skok · Shift
+  Světlá léčivá/magická vrstva; podle akce zkrátit.
+  Originál: Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/MAGAngl_Magic Light Spell Enchantment Potion Effect Tonal Bright 03_ESM_FG2.wav
+
+15_A_David_Posileni_Q.wav
+  Použití: David / Posílení · Q; Zpětná vazba a stavy / Léčení a zesílení
+  Krátký pozitivní power-up.
+  Originál: Epic Stock Media - Anime Game/DSGNStngr_Power Up Bright Positive Successful Light Saturation Crash Shimmer 05_ESM_AG.wav
+
+16_A_Spolecna_knihovna_Maly_vybuch.wav
+  Použití: Společná knihovna / Malý výbuch
+  Stylizovaný malý výbuch s delay; ověřit cartoon charakter.
+  Originál: Epic Stock Media - Anime Game/EXPLDsgn_Explosion Small Blast Enemy Death Crunchy Boom Cartoon Noisy Crash Impact Delay 03_ESM_AG.wav
+
+17_A_Zpetna_vazba_a_stavy_Zasahy_do_tela.wav
+  Použití: Zpětná vazba a stavy / Zásahy do těla; Další pohyb / Náraz hráče do stěny; Kondulič / Odkopnutí · E
+  Čtyři tělesné údery; rozstříhat.
+  Originál: 344 Audio - Cinematic Fight Vol. 1/FGHTImpt_4 x Punch, Body 02_344 Audio_Cinematic Fight Vol 1.wav
+
+18_A_Spolecna_knihovna_Kulka_kov.wav
+  Použití: Společná knihovna / Kulka → kov; Kotel · páka
+  Krátký kovový úder, pro kulku možná přidat ostrou počáteční vrstvu.
+  Originál: Epic Stock Media - HD Game Materials/METLImpt_Metal Old File Impact Tap Against Tire Iron Metallic Hit 01_ESM_HDGM.wav
+
+19_A_Kotel_paka.wav
+  Použití: Kotel · páka; Honza / Past na medvědy · E; Společná knihovna / Prázdná zbraň
+  Krátké cvaknutí západky, základ pro páku/past.
+  Originál: Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav
+
+20_A_Tlacitka_a_vyber_hrdiny.wav
+  Použití: Tlačítka a výběr hrdiny; Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké potvrzení; jako hitmarker posoudit délku.
+  Originál: Cinematic Sound Design - Interface & Infographics/Interface Accept Glassy Snap.wav
+
+21_A_Tik_zabirani.wav
+  Použití: Tik zabírání
+  Kandidát na jemný tik zabírání.
+  Originál: Cinematic Sound Design - Interface & Infographics/Interface Pop High Short.wav
+
+22_A_Zpetna_vazba_a_stavy_Neplatna_akce_zadny_cil.wav
+  Použití: Zpětná vazba a stavy / Neplatná akce / žádný cíl; Tlačítka a výběr hrdiny
+  Krátké zamítnutí akce.
+  Originál: Cinematic Sound Design - UI Interaction Elements/Deny Muted.wav
+
+23_A_Zpetna_vazba_a_stavy_Ultimatka_naboj_pripraveny.wav
+  Použití: Zpětná vazba a stavy / Ultimátka / náboj připravený; Odemčení bodu
+  Připravená ultimátka nebo odemčení bodu.
+  Originál: Cinematic Sound Design - User Interface/Button Arp Twinkle.wav
+
+24_A_Zabrani_bodu.wav
+  Použití: Zabrání bodu; Zpětná vazba a stavy / Oživení
+  Pozitivní znělka, kandidát na získání bodu/respawn.
+  Originál: Cinematic Sound Design - Hybrid Game & UI Elements/Game Entry Happy Short.wav
+
+25_A_Lekarnicka.wav
+  Použití: Lékárnička; Honzův karburátor
+  Velmi krátké sebrání; fyzickou vrstvu předmětu lze přidat.
+  Originál: Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/UIAlert_Collect Scifi Futuristic Electronic Bass Burst Sweep Heavy 04_ESM_FG2.wav
+
+26_B_Kroky_a_dopady_Trava.wav
+  Použití: Kroky a dopady / Tráva
+  Metadata: Flip Flops Grass Walk Medium. Žabky na trávě, rozstříhat cca 39 s; ne hotová sada bot.
+  Originál: TheWorkRoom - Flip Flops/FFG002.wav
+
+27_B_Kroky_a_dopady_Drevena_podlaha.wav
+  Použití: Kroky a dopady / Dřevěná podlaha
+  Metadata: Flip Flops Wood Walk Fast. Žabky na dřevě, rozstříhat cca 31 s; dopady po skoku chybí.
+  Originál: TheWorkRoom - Flip Flops/FFW003.wav
+
+28_B_Pova_Sekera_na_retezu_E.wav
+  Použití: Pova / Sekera na řetězu · E; Kondulič / Hák · Shift; Honza / Past na medvědy · E
+  Svinovací metr: materiál pro návrat háku/pružinu, není to skutečný řetěz.
+  Originál: Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHMisc_Tool Tape Measure Pull Retract Spring Slide Spin Long 07_ESM_HDLM.wav
+
+29_B_Viktor_Prebiti_zbrane.wav
+  Použití: Viktor / Přebití zbraně; Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  Krátká mechanická vrstva. Kompletní přebití zbraně to není.
+  Originál: Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MACHMech_Mechanism Counting Machine Interact Loose Container Short 01_ESM_HDLM.wav
+
+30_B_Honza_Past_na_medvedy_E.wav
+  Použití: Honza / Past na medvědy · E
+  Manipulace s pružinou/drátem, vybrat jednotlivé kontakty.
+  Originál: Epic Stock Media - HD Lock And Mechanism Sound Design Kit/METLTonl_Item Spring Wire Impact Flick Top Clatter Light Tap Roll Handling Short 01_ESM_HDLM.wav
+
+31_B_Pova_Zkrizene_sekyry_RMB.wav
+  Použití: Pova / Zkřížené sekyry · RMB; Honza / Past na medvědy · E
+  Rotující štít na zemi: kovové chvění a odrazy.
+  Originál: 344 Audio - Historical Weapons Vol. 2/WEAPArmr_Metal Shield Spin On Floor, Buckler MKH_344 Audio_Medieval Weapons Vol 2.wav
+
+32_B_Pova_Sekera_na_retezu_E.wav
+  Použití: Pova / Sekera na řetězu · E; Honza / Past na medvědy · E
+  Kovové prosvištění a rachot x4, vystřihnout varianty.
+  Originál: 344 Audio - Elemental Palette Designed Vol. 1/METLMisc_Metal, Slow Whoosh, Rattle, Pass By x4 01_344 Audio_Elemental Palette Designed Vol 1.wav
+
+33_B_Kondulic_Hak_Shift.wav
+  Použití: Kondulič / Hák · Shift; Další pohyb / Lezení po žebříku
+  Karabina na laně: detail háku nebo lezení.
+  Originál: 344 Audio - Climbing Gear Foley Vol. 1/EQUISprt_Climbing Gear, Flicking Carabiner On Rope_344 Audio_Climbing Gear Foley Vol 1.wav
+
+34_B_Max_Stinova_forma_E.wav
+  Použití: Max / Stínová forma · E; Max / Vpád do stínu · Q
+  Temná magie asi 38 s; vystřihnout krátký nástup.
+  Originál: Alexander Kopeikin - Emotion and Magic/magic, action gesture, evil presence, onslaught-004.wav
+
+35_B_Max_Stinova_forma_E.wav
+  Použití: Max / Stínová forma · E; Max / Vpád do stínu · Q
+  Temná plocha asi 64 s; pro smyčku ověřit šev.
+  Originál: Alexander Kopeikin - Emotion and Magic/magic, drone, tension, spellbound, evanescence-002.wav
+
+36_B_Max_Stinova_forma_E.wav
+  Použití: Max / Stínová forma · E; Max / Vpád do stínu · Q
+  Magický pohyb asi 61 s; materiál pro přechod/zhmotnění.
+  Originál: Alexander Kopeikin - Emotion and Magic/magic, energy flow, astral travel-015.wav
+
+37_B_Max_Dlouhy_rez_RMB.wav
+  Použití: Max / Dlouhý řez · RMB; Max / Vpád do stínu · Q
+  Krátký modulovaný stínový efekt.
+  Originál: Epic Stock Media - Anime Game/DSGNMisc_Misc Monster Tentacle Modulated Creature Shadow Abstract Swept Wobble Lfo 02_ESM_AG.wav
+
+38_B_Spolecna_knihovna_Velky_vybuch_uder.wav
+  Použití: Společná knihovna / Velký výbuch / úder; Pova / Ohnivý dopad · Q; Šindel / Ezechiel 25:17 · Q
+  Velký designovaný úder, základ pro odlišné ultimátky.
+  Originál: Cinematic Sound Design - Colossal Impacts/Impact Cut Sweep.wav
+
+39_B_Spolecna_knihovna_Velky_vybuch_uder.wav
+  Použití: Společná knihovna / Velký výbuch / úder; Honza / Balvan · Q
+  Trailerový basový úder; ne skutečné valení kamene.
+  Originál: Federico Soler - Effective Trailer Booms Vol. 2/EffectiveTrailer_Booms_Vol2_011.wav
+
+40_B_David_Bioticky_granat_E.wav
+  Použití: David / Biotický granát · E
+  Stylizovaný hluboký vodní kontakt, ne automaticky přirozený splash.
+  Originál: Epic Stock Media - Elemental Mutation Whooshes and Impacts/WATRImpt_Impact Water Deep Submerge Bubble Drown Ship Hit 05_ESM_EMWI.wav
+
+41_B_David_Bioticky_granat_E.wav
+  Použití: David / Biotický granát · E; Mošino / Dopad zvukového projektilu
+  Tekutý/sci-fi zásah, další kandidát na biotický granát.
+  Originál: 344 Audio - Elemental Palette Designed Vol. 1/WATRMisc_Water, Liquid Impact, Bubble, Sci Fi, Hit 04_344 Audio_Elemental Palette Designed Vol 1.wav
+
+42_B_Spolecna_knihovna_Dopady_sipu.wav
+  Použití: Společná knihovna / Dopady šípů
+  Komický dopad šípu. Napínání a vypuštění luku chybí.
+  Originál: Cinematic Sound Design - Cartoon Bloopers/Arrow Hit Rattle.wav
+
+43_B_Rolba_motor.wav
+  Použití: Rolba · motor
+  Lodní diesel volnoběh, nouzový základ rolby; start, zátěž, vypnutí a pásy chybí.
+  Originál: Epic Stock Media - Public Spaces - Basic Transportation Sounds/BOATMotr_Diesel Engine Boat Idle Steady Rpm Hum Motor Mic One 01_ESM_CPS.wav
+
+44_B_Honza_Past_na_medvedy_E.wav
+  Použití: Honza / Past na medvědy · E; Pova / Sekera na řetězu · E
+  Metadata: ohýbání drátu kleštěmi. Není to motor auta.
+  Originál: TheWorkRoom - Wire Cars/WIR006.wav
+
+45_B_Spolecna_knihovna_Kulka_mekky_povrch.wav
+  Použití: Společná knihovna / Kulka → měkký povrch
+  Lehké kontakty s látkou; pro zásah nutno vrstvit.
+  Originál: InMotionAudio - Foley T-Shirt/FOLYClth_SinglePats04_InMotionAudio_FoleyT-Shirt.wav
+
+46_B_Kondulic_Optika_a_nabiti_rany.wav
+  Použití: Kondulič / Optika a nabití rány; Viktor / Taktický zaměřovač · Q; Kondulič / Infravize · Q
+  Elektronické čtení jako materiál pro optiku/sken.
+  Originál: Cinematic Sound Design - User Interface/Readout Thin Long.wav
+
+47_C_Dalsi_pohyb_Pohyb_obleceni.wav
+  Použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Pohyb trička, tichá tělesná vrstva.
+  Originál: InMotionAudio - Foley T-Shirt/FOLYClth_ClothMovement24_InMotionAudio_FoleyT-Shirt.wav
+
+48_C_Dalsi_pohyb_Pohyb_obleceni.wav
+  Použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Další varianta oblečení.
+  Originál: InMotionAudio - Foley T-Shirt/FOLYClth_ClothMovement29_InMotionAudio_FoleyT-Shirt.wav
+
+49_C_Yaris_motor_a_pneumatiky.wav
+  Použití: Yaris · motor a pneumatiky
+  Jízda jiného auta než Yaris, posoudit a případně upravit charakter motoru.
+  Originál: SoundBits - Cars - Mad Mustang Mercury/VEHCar_Various Driving at Slow Speed 15 06_SNDBTS_CRS-MMM.wav
+
+50_C_Yaris_motor_a_pneumatiky.wav
+  Použití: Yaris · motor a pneumatiky
+  Smyk na štěrku, ne klidné odvalování pneumatik.
+  Originál: SoundBits - Cars - Mad Mustang Mercury/VEHSkid_Tire Skids on Gravel 15 06_SNDBTS_CRS-MMM.wav
+
+51_C_Workshop_pocitac.wav
+  Použití: Workshop · počítač; Tunel · atmosféra
+  Elektrické bzučení; pro smyčku nejdřív posoudit.
+  Originál: InMotionAudio - Arc/ELECBuzz_Buzz27_InMotionAudio_Arc.wav
+
+52_C_Workshop_pocitac.wav
+  Použití: Workshop · počítač; Tunel · atmosféra
+  Hučení lednice jako možný místní technický podkres.
+  Originál: Jake Fielding - Fridge Hums Vol.2/MACHAppl_Deep Fridge Hum, Buzz, Electric Tone, Deep_Jake Fielding_Fridge Hums Pt2.wav
+
+53_C_Hanamura_atmosfera.wav
+  Použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Stereo: ptáci, hmyz a vítr v trávě.
+  Originál: Just Sound Effects - Highlands of Norway/AMBSwmp_Meadow Pipits calling many Insects humming Wind blowing through Grass_JSE_HoN_Stereo.wav
+
+54_C_Chaty_dalsi_ambientove_vrstvy.wav
+  Použití: Chaty · další ambientové vrstvy
+  Lesní cvrčci a ptáci; ověřit vhodnost prostředí.
+  Originál: 344 Audio - East Coast America Vol. 1/AMBSubn_Ambience, Forest Crickets, Birds, Connecticut 02_344 Audio_East Coast America.wav
+
+55_C_Potok.wav
+  Použití: Potok
+  Jemné vlnění jezera: pro jezírko, nikoli věrný proudící potok.
+  Originál: Epic Stock Media - Public Spaces - Storms Lakes Parks and Rural Nature Exteriors/WATRLap_Summer Tennessee Lake Dock Water Ripples Wake Wave Gentle 05 Distant_ESM_CPS.wav
+
+56_C_Krb_a_gril.wav
+  Použití: Krb a gril; Kotel · oheň a přehřátí
+  Přidávání větví, praskání a syčení; ne nutně čistá klidná smyčka.
+  Originál: Ivo Vicic - Campfire - Bonfire FX/24 Campfire, Dropping Fresh Pine Branches in Fire, Crackling, Sizzling Strong, Close 02.wav
+
+57_C_Kotel_ohen_a_prehrati.wav
+  Použití: Kotel · oheň a přehřátí
+  Hašení vodou: sykavý konec jen pokud odpovídá dění.
+  Originál: Ivo Vicic - Campfire - Bonfire FX/42 Campfire, Putting Out Fire, Water from Bottle, Variation, Close.wav
+
+58_C_Respin_Joker_vyhra.wav
+  Použití: Respin Joker · výhra
+  Cinknutí mincí jako část Joker výhry; celou znělku je třeba složit.
+  Originál: Cinematic Sound Design - UI Interaction Elements/Ting Coins.wav
+
+59_C_Tlacitka_a_vyber_hrdiny.wav
+  Použití: Tlačítka a výběr hrdiny; Zabrání bodu
+  Další pozitivní UI varianta.
+  Originál: Cinematic Sound Design - User Interface/Interface Plucks Happy.wav
+
+60_C_Zpetna_vazba_a_stavy_Neplatna_akce_zadny_cil.wav
+  Použití: Zpětná vazba a stavy / Neplatná akce / žádný cíl; Tlačítka a výběr hrdiny
+  Alternativa zamítnutí.
+  Originál: Cinematic Sound Design - System & UI Feedback Elements/Interface Deny Low Fat Dark.wav
+
+61_C_Zpetna_vazba_a_stavy_Headshot_a_zabiti.wav
+  Použití: Zpětná vazba a stavy / Headshot a zabití
+  Anglický announcer Headshot je volitelný, nenahrazuje vlastní hlášky postav.
+  Originál: Epic Stock Media - Shooter Game Announcer Voice/VOXMale_Announcer Vocal Male Dry Special Kill Headshot 01_ESM_SGAV.wav
+
+62_C_Zabrani_bodu.wav
+  Použití: Zabrání bodu
+  Anglický announcer Objective Completed, jen pokud ho chcete používat.
+  Originál: Epic Stock Media - Shooter Game Announcer Voice/VOXMale_Announcer Vocal Male Dry Game Statement Objective Completed 04_ESM_SGAV.wav

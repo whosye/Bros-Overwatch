@@ -109,7 +109,7 @@ public class KickAbility : NetworkBehaviour
     void KickHitClientRpc(Vector3 point)
     {
         Fx.BulletImpact(point, Color.white, 1.5f);
-        ProceduralSfx.Play(ProceduralSfx.Hit, point, 1f);
+        ProceduralSfx.Play(CollectedAudioBank.Pick("kondulic_kick", ProceduralSfx.Hit), point, 0.7f);
     }
 }
 

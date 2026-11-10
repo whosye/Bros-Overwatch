@@ -127,6 +127,12 @@ public partial class MatchManager
             CaptureUI.Announce($"Máš Honzův karburátor - nastartuj rolbu u chaty [R] ({CarburetorSeconds:0} s)", PickupSpot.KindColor(kind), 4f);
         Fx.Sparks(position + Vector3.up * 0.8f, PickupSpot.KindColor(kind));
         bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth || kind == PickupKind.Tramal;
-        ProceduralSfx.Play(heal ? ProceduralSfx.Spawn : ProceduralSfx.CaptureUnlock, position, 0.8f);
+        string cue = kind == PickupKind.Carburetor ? "pickup_carburetor"
+            : kind == PickupKind.Invulnerable ? "pickup_invulnerable"
+            : kind == PickupKind.Tramal ? "pickup_tramal"
+            : kind == PickupKind.BigHealth ? "pickup_big_health" : "pickup_health";
+        var sound = CollectedAudioBank.Pick(cue);
+        if (sound == null && heal) sound = CollectedAudioBank.Pick("pickup_health");
+        ProceduralSfx.Play(sound != null ? sound : heal ? ProceduralSfx.Spawn : ProceduralSfx.CaptureUnlock, position, 0.8f);
     }
 }

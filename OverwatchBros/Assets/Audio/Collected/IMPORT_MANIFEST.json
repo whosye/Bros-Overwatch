@@ -1,0 +1,4488 @@
+{
+  "revision": 341,
+  "items": {
+    "steps_wood": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/wood_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_08.wav",
+        "inbox:CS2_kandidati/player/land2.mp3",
+        "inbox:CS2_kandidati/player/land3.mp3"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/wood_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_08.wav",
+        "inbox:CS2_kandidati/player/land2.mp3",
+        "inbox:CS2_kandidati/player/land3.mp3"
+      ],
+      "cues": [
+        "steps_wood.step",
+        "steps_wood.land"
+      ]
+    },
+    "steps_solid_wood": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/wood_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_02.wav",
+        "inbox:CS2_kandidati/player/land2.mp3",
+        "inbox:CS2_kandidati/player/land3.mp3"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/wood_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/wood_02.wav",
+        "inbox:CS2_kandidati/player/land2.mp3",
+        "inbox:CS2_kandidati/player/land3.mp3"
+      ],
+      "cues": [
+        "steps_solid_wood.step",
+        "steps_solid_wood.land"
+      ]
+    },
+    "steps_stone": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_concrete_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_08.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_concrete_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/concrete_ct_08.wav"
+      ],
+      "cues": [
+        "steps_stone.step",
+        "steps_stone.land"
+      ]
+    },
+    "steps_tile": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/tile_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_tile_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_tile_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_tile_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/tile_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/tile_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_tile_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_tile_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_tile_03.wav"
+      ],
+      "cues": [
+        "steps_tile.step",
+        "steps_tile.land"
+      ]
+    },
+    "steps_gravel": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/gravel_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_gravel_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_gravel_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_gravel_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/gravel_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/gravel_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_gravel_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_gravel_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_gravel_03.wav"
+      ],
+      "cues": [
+        "steps_gravel.step",
+        "steps_gravel.land"
+      ]
+    },
+    "steps_grass": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/grass_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_grass_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_grass_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_grass_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/grass_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/grass_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_grass_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_grass_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_grass_03.wav"
+      ],
+      "cues": [
+        "steps_grass.step",
+        "steps_grass.land"
+      ]
+    },
+    "steps_dirt": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/dirt_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_dirt_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_dirt_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_dirt_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/dirt_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/dirt_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_dirt_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_dirt_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_dirt_03.wav"
+      ],
+      "cues": [
+        "steps_dirt.step",
+        "steps_dirt.land"
+      ]
+    },
+    "steps_sand": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/sand_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_sand_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_sand_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_sand_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/sand_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/sand_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_sand_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_sand_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_sand_03.wav"
+      ],
+      "cues": [
+        "steps_sand.step",
+        "steps_sand.land"
+      ]
+    },
+    "steps_carpet": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/carpet_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_09.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_11.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_14.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_carpet_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_carpet_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_carpet_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/carpet_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_09.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_11.wav",
+        "inbox:CS2_kandidati/player/footsteps/carpet_14.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_carpet_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_carpet_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_carpet_03.wav"
+      ],
+      "cues": [
+        "steps_carpet.step",
+        "steps_carpet.land"
+      ]
+    },
+    "steps_rubber": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/rubber_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_11.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_12.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_rubber_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_rubber_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_rubber_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/rubber_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_07.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_08.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_11.wav",
+        "inbox:CS2_kandidati/player/footsteps/rubber_12.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_rubber_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_rubber_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_rubber_03.wav"
+      ],
+      "cues": [
+        "steps_rubber.step",
+        "steps_rubber.land"
+      ]
+    },
+    "steps_metal": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_35.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_36.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_37.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_38.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_39.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_40.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_41.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_42.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_metal_solid_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_metal_solid_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_metal_solid_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_35.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_36.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_37.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_38.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_39.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_40.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_41.wav",
+        "inbox:CS2_kandidati/player/footsteps/metal_solid_42.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_metal_solid_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_metal_solid_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/land_metal_solid_03.wav"
+      ],
+      "cues": [
+        "steps_metal.step",
+        "steps_metal.land"
+      ]
+    },
+    "steps_water": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/water_wade_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/puddle_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/puddle_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/puddle_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/puddle_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_03.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_01.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_02.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/water_wade_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_wade_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/puddle_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/puddle_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/puddle_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/puddle_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_03.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_01.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_02.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_03.wav"
+      ],
+      "cues": [
+        "steps_water.step",
+        "steps_water.enter",
+        "steps_water.exit",
+        "steps_water.land"
+      ]
+    },
+    "move_jump": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/jump_launch_01.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/jump_launch_01.wav"
+      ],
+      "cues": [
+        "move_jump"
+      ]
+    },
+    "move_ladder": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_04.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_04.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_05.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_wood_06.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/ladder_04.wav"
+      ],
+      "cues": [
+        "move_ladder"
+      ]
+    },
+    "move_ledge": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/suit_ct_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/suit_ct_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/suit_ct_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/suit_ct_04.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/suit_ct_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/suit_ct_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/suit_ct_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/suit_ct_04.wav"
+      ],
+      "cues": [
+        "move_ledge"
+      ]
+    },
+    "move_body_wall": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_01.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_02.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_03.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_04.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_01.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_02.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_03.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_04.wav"
+      ],
+      "cues": [
+        "move_body_wall"
+      ]
+    },
+    "combat_empty": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/clipempty_rifle.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/clipempty_rifle.wav"
+      ],
+      "cues": [
+        "combat_empty"
+      ]
+    },
+    "combat_bullet_wood": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet4.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet1.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet2.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet3.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet4.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet1.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet2.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet3.wav"
+      ],
+      "cues": [
+        "combat_bullet_wood"
+      ]
+    },
+    "combat_bullet_stone": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet1.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet4.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet3.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet2.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet1.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet4.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet3.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet2.wav"
+      ],
+      "cues": [
+        "combat_bullet_stone"
+      ]
+    },
+    "combat_bullet_metal": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet4.wav",
+        "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet3.wav",
+        "inbox:GDC2026_kandidati/18_A_Spolecna_knihovna_Kulka_kov.wav",
+        "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet2.wav",
+        "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet1.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet4.wav",
+        "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet3.wav",
+        "inbox:GDC2026_kandidati/18_A_Spolecna_knihovna_Kulka_kov.wav",
+        "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet2.wav",
+        "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet1.wav"
+      ],
+      "cues": [
+        "combat_bullet_metal"
+      ]
+    },
+    "combat_bullet_glass": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/glass/glass_impact_bullet4.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_impact_bullet3.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_impact_bullet2.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_impact_bullet1.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/glass/glass_impact_bullet4.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_impact_bullet3.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_impact_bullet2.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_impact_bullet1.wav"
+      ],
+      "cues": [
+        "combat_bullet_glass"
+      ]
+    },
+    "combat_bullet_ground": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_04.wav",
+        "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_03.wav",
+        "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_02.wav",
+        "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_01.wav",
+        "inbox:CS2_kandidati/physics/surfaces/sand_impact_bullet1.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_04.wav",
+        "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_03.wav",
+        "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_02.wav",
+        "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_01.wav",
+        "inbox:CS2_kandidati/physics/surfaces/sand_impact_bullet1.wav"
+      ],
+      "cues": [
+        "combat_bullet_ground"
+      ]
+    },
+    "combat_bullet_soft": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_04.wav",
+        "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_03.wav",
+        "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_02.wav",
+        "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_01.wav",
+        "inbox:CS2_kandidati/physics/rubber/rubber_tire_impact_bullet1.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_04.wav",
+        "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_03.wav",
+        "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_02.wav",
+        "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_01.wav",
+        "inbox:CS2_kandidati/physics/rubber/rubber_tire_impact_bullet1.wav"
+      ],
+      "cues": [
+        "combat_bullet_soft"
+      ]
+    },
+    "combat_slash_wood": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard3.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard2.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard1.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard3.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard2.wav",
+        "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard1.wav"
+      ],
+      "cues": [
+        "combat_slash_wood"
+      ]
+    },
+    "combat_slash_stone": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/concrete/rock_impact_hard1.wav",
+        "inbox:CS2_kandidati/physics/concrete/rock_impact_hard2.wav",
+        "inbox:CS2_kandidati/physics/concrete/rock_impact_hard3.wav",
+        "inbox:CS2_kandidati/physics/concrete/rock_impact_hard4.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/concrete/rock_impact_hard1.wav",
+        "inbox:CS2_kandidati/physics/concrete/rock_impact_hard2.wav",
+        "inbox:CS2_kandidati/physics/concrete/rock_impact_hard3.wav",
+        "inbox:CS2_kandidati/physics/concrete/rock_impact_hard4.wav"
+      ],
+      "cues": [
+        "combat_slash_stone"
+      ]
+    },
+    "combat_grenade_bounce": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/hegrenade/he_bounce-1.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/hegrenade/he_bounce-1.wav"
+      ],
+      "cues": [
+        "combat_grenade_bounce"
+      ]
+    },
+    "state_stun": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode1.wav",
+        "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode2.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode1.wav",
+        "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode2.wav"
+      ],
+      "cues": [
+        "state_stun"
+      ]
+    },
+    "state_denied": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/items/rush_terminal_no_01.mp3"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/items/rush_terminal_no_01.mp3"
+      ],
+      "cues": [
+        "state_denied"
+      ]
+    },
+    "state_death": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_01.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_02.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_03.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_04.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_01.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_02.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_03.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_ct_04.wav"
+      ],
+      "cues": [
+        "state_death"
+      ]
+    },
+    "combat_slash_soft": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet1.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet2.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet3.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet1.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet2.wav",
+        "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet3.wav"
+      ],
+      "cues": [
+        "combat_slash_soft"
+      ]
+    },
+    "pova_weapon": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/knife/knife_slash1.wav",
+        "inbox:CS2_kandidati/weapons/knife/knife_slash2.wav",
+        "inbox:CS2_kandidati/weapons/knife/knife_hit2.wav",
+        "inbox:CS2_kandidati/weapons/knife/knife_stab.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/knife/knife_slash1.wav",
+        "inbox:CS2_kandidati/weapons/knife/knife_slash2.wav",
+        "inbox:CS2_kandidati/weapons/knife/knife_hit2.wav",
+        "inbox:CS2_kandidati/weapons/knife/knife_stab.wav"
+      ],
+      "cues": [
+        "pova_weapon.swing",
+        "pova_weapon.impact.surface",
+        "pova_weapon.impact.body"
+      ]
+    },
+    "max_weapon": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_01.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_02.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_03.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_light_02.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_light_01.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_light_03.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_light_04.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_02.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_01.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_02.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_03.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_light_02.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_light_01.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_light_03.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_light_04.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_02.mp3",
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3"
+      ],
+      "cues": [
+        "max_weapon.impact.surface",
+        "max_weapon.swing"
+      ]
+    },
+    "sindel_reload": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/glock18/glock_clipout.wav",
+        "inbox:CS2_kandidati/weapons/glock18/glock_clipin.wav",
+        "inbox:CS2_kandidati/weapons/glock18/glock_slideback.wav",
+        "inbox:CS2_kandidati/weapons/glock18/glock_sliderelease.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/deagle/de_clipout.wav",
+        "inbox:CS2_kandidati/weapons/deagle/de_clipin.mp3",
+        "inbox:CS2_kandidati/weapons/deagle/de_slideback.wav",
+        "inbox:CS2_kandidati/weapons/deagle/de_slideforward.wav"
+      ],
+      "cues": [
+        "sindel_reload"
+      ]
+    },
+    "sindel_grenade": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_02.wav",
+        "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_02.wav",
+        "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_03.wav"
+      ],
+      "cues": [
+        "sindel_grenade"
+      ]
+    },
+    "mosino_reload": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/p90/p90_cliprelease.wav",
+        "inbox:CS2_kandidati/weapons/p90/p90_clipout.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/p90/p90_cliprelease.wav",
+        "inbox:CS2_kandidati/weapons/p90/p90_clipout.wav"
+      ],
+      "cues": [
+        "mosino_reload"
+      ]
+    },
+    "kondulic_ult": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/items/nvg_on.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/items/nvg_on.wav"
+      ],
+      "cues": [
+        "kondulic_ult"
+      ]
+    },
+    "kondulic_kick": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/body/body_impact_fists_01.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_fists_02.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_fists_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/body/body_impact_fists_01.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_fists_02.wav",
+        "inbox:CS2_kandidati/physics/body/body_impact_fists_03.wav"
+      ],
+      "cues": [
+        "kondulic_kick"
+      ]
+    },
+    "kondulic_scope": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/awp/zoom.wav",
+        "inbox:CS2_kandidati/weapons/taser/taser_charge_ready.wav",
+        "inbox:CS2_kandidati/weapons/awp/awp_zoom_out.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/awp/zoom.wav",
+        "inbox:CS2_kandidati/weapons/taser/taser_charge_ready.wav",
+        "inbox:CS2_kandidati/weapons/awp/awp_zoom_out.wav"
+      ],
+      "cues": [
+        "kondulic_scope.enter",
+        "kondulic_scope.ready",
+        "kondulic_scope.exit"
+      ]
+    },
+    "kondulic_reload": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/awp/awp_clipout.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_clipin.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_cliphit.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_boltback.wav",
+        "inbox:CS2_kandidati/weapons/awp/awp_boltforward.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/awp/awp_clipout.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_clipin.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_cliphit.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_boltback.wav",
+        "inbox:CS2_kandidati/weapons/awp/awp_boltforward.wav"
+      ],
+      "cues": [
+        "kondulic_reload"
+      ]
+    },
+    "david_grenade": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/hegrenade/grenade_throw.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/hegrenade/grenade_throw.wav"
+      ],
+      "cues": [
+        "david_grenade"
+      ]
+    },
+    "david_reload": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/awp/awp_clipout.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_clipin.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_cliphit.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_boltback.wav",
+        "inbox:CS2_kandidati/weapons/awp/awp_boltforward.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/awp/awp_clipout.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_clipin.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_cliphit.mp3",
+        "inbox:CS2_kandidati/weapons/awp/awp_boltback.wav",
+        "inbox:CS2_kandidati/weapons/awp/awp_boltforward.wav"
+      ],
+      "cues": [
+        "david_reload"
+      ]
+    },
+    "viktor_ult": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/taser/taser_charging.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/taser/taser_charging.wav"
+      ],
+      "cues": [
+        "viktor_ult"
+      ]
+    },
+    "viktor_grenade": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode1.wav",
+        "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode2.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode1.wav",
+        "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode2.wav"
+      ],
+      "cues": [
+        "viktor_grenade"
+      ]
+    },
+    "viktor_reload": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_clipout.mp3",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_clipin.mp3",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_boltback.mp3",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_boltforward.mp3"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_clipout.mp3",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_clipin.mp3",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_boltback.mp3",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_boltforward.mp3"
+      ],
+      "cues": [
+        "viktor_reload"
+      ]
+    },
+    "honza_ult": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav"
+      ],
+      "cues": [
+        "honza_ult.land"
+      ]
+    },
+    "honza_mine": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_05.wav",
+        "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_04.wav",
+        "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_03.wav",
+        "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_03.wav",
+        "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_02.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_05.wav",
+        "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_04.wav",
+        "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_03.wav",
+        "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_03.wav",
+        "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_02.wav"
+      ],
+      "cues": [
+        "honza_mine.impact",
+        "honza_mine.explode"
+      ]
+    },
+    "honza_reload": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/mag7/mag7_insertshell.wav",
+        "inbox:CS2_kandidati/weapons/mag7/mag7_pump_back.mp3",
+        "inbox:CS2_kandidati/weapons/mag7/mag7_pump_forward.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/mag7/mag7_insertshell.wav",
+        "inbox:CS2_kandidati/weapons/mag7/mag7_pump_back.mp3",
+        "inbox:CS2_kandidati/weapons/mag7/mag7_pump_forward.wav"
+      ],
+      "cues": [
+        "honza_reload"
+      ]
+    },
+    "world_stream": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/ambient/anubis/anubis_riverlap.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/ambient/anubis/anubis_riverlap.wav"
+      ],
+      "cues": [
+        "world_stream"
+      ]
+    },
+    "world_splash": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/player/footsteps/water_entry_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_03.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_01.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_02.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/player/footsteps/water_entry_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_entry_03.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_01.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_02.wav",
+        "inbox:CS2_kandidati/player/footsteps/water_exit_03.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_01.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_02.wav",
+        "inbox:CS2_kandidati/physics/water/water_splash_03.wav"
+      ],
+      "cues": [
+        "world_splash"
+      ]
+    },
+    "world_boiler_fire": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/ambient/common/fire/fire_med_loop1.mp3"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/ambient/common/fire/fire_med_loop1.mp3"
+      ],
+      "cues": [
+        "world_boiler_fire"
+      ]
+    },
+    "world_groomer_engine": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:GDC2026_kandidati/43_B_Rolba_motor.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:GDC2026_kandidati/43_B_Rolba_motor.wav"
+      ],
+      "cues": [
+        "world_groomer_engine"
+      ]
+    },
+    "pickup_health": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+      ],
+      "cues": [
+        "pickup_health"
+      ]
+    },
+    "pickup_invulnerable": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard1.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard2.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard1.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard2.wav",
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav"
+      ],
+      "cues": [
+        "pickup_invulnerable"
+      ]
+    },
+    "pickup_tramal": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+      ],
+      "cues": [
+        "pickup_tramal"
+      ]
+    },
+    "pickup_carburetor": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/items/pickup_ammo_01.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "inbox:CS2_kandidati/items/pickup_ammo_01.wav"
+      ],
+      "cues": [
+        "pickup_carburetor"
+      ]
+    },
+    "viktor_fire": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_01.wav",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_02.wav",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_03.wav",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_04.wav"
+      ],
+      "integration_default": true,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_01.wav",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_02.wav",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_03.wav",
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_04.wav"
+      ],
+      "cues": [
+        "viktor_fire"
+      ]
+    },
+    "david_fire": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_silencer_01.wav"
+      ],
+      "integration_default": true,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/m4a1/m4a1_silencer_01.wav"
+      ],
+      "cues": [
+        "david_fire"
+      ]
+    },
+    "sindel_fire": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/revolver/revolver-1_01.wav"
+      ],
+      "integration_default": true,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/revolver/revolver-1_01.wav"
+      ],
+      "cues": [
+        "sindel_fire"
+      ]
+    },
+    "kondulic_fire_scoped": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/awp/awp_01.wav",
+        "inbox:CS2_kandidati/weapons/awp/awp_02.wav"
+      ],
+      "integration_default": true,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/awp/awp_01.wav",
+        "inbox:CS2_kandidati/weapons/awp/awp_02.wav"
+      ],
+      "cues": [
+        "kondulic_fire_scoped"
+      ]
+    },
+    "kondulic_fire": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "inbox:CS2_kandidati/weapons/mp5/mp5_01.wav"
+      ],
+      "integration_default": true,
+      "playback_sources": [
+        "inbox:CS2_kandidati/weapons/mp5/mp5_01.wav"
+      ],
+      "cues": [
+        "kondulic_fire"
+      ]
+    }
+  },
+  "files": [
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/wood_02.wav",
+      "source_sha256": "ade737f80d306f2a7ca88d8e4f429c6af0466298a7e620274b51920da7d2ebeb",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/wood_02_ade737f8.wav",
+      "guid": "e8f4f8f75c805c2cafde6acc907914ab",
+      "seconds": 0.498,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/wood_01.wav",
+      "source_sha256": "4cbcfaff372f81580ff66db58463dfb1fc5d943600984bf9988162e8b4738233",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/wood_01_4cbcfaff.wav",
+      "guid": "117b0cc6a43d5d12b07ee81b6047e0c1",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/wood_03.wav",
+      "source_sha256": "15e518e6104b5b11a3332930f77d51b4ddc4f2ec3040868dadae8d1357e2387d",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/wood_03_15e518e6.wav",
+      "guid": "20a89bac958959c48c5c72a8f6f10106",
+      "seconds": 0.5033,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/wood_04.wav",
+      "source_sha256": "d071e3a751c1c44dafa94a4db20c7d093c0460a64c10c5b81e4686bead465d1e",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/wood_04_d071e3a7.wav",
+      "guid": "4ad02ae032a25803b4e2e23a0edc972f",
+      "seconds": 0.4984,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/wood_05.wav",
+      "source_sha256": "7c331d627307b07dd26e2aa73ce4041dc5c5e43b6ddd50dbd85b47fe192c73b3",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/wood_05_7c331d62.wav",
+      "guid": "01b9b0b1e5cd514e88204448454109ad",
+      "seconds": 0.498,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/wood_06.wav",
+      "source_sha256": "c518b4553021e9a4f5ab4e8dde263dc586f0d3bcd8a9fa932fdde1fe5966e61b",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/wood_06_c518b455.wav",
+      "guid": "762d73e92c0252c2a2019aeeb44cf131",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/wood_07.wav",
+      "source_sha256": "8895fcb437b45a16e410f2b7aeef97e0bfd89e2ebcc4638e20d914b4b6845fd6",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/wood_07_8895fcb4.wav",
+      "guid": "0dc1a7aa02ac50af9a867ce496dd501f",
+      "seconds": 0.499,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/wood_08.wav",
+      "source_sha256": "820c4f94e1168d518952fb527415d50e0dfac9c4c07a2cd945a05f0ca3bb25b5",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/wood_08_820c4f94.wav",
+      "guid": "6c21f7ba921f59d78cb8286f9b27e20b",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/land2.mp3",
+      "source_sha256": "7e0a9db33c32fad65b3c355df0fa28983ceea7945ca93cf6ce90e3cacf912cae",
+      "asset": "Assets/Audio/Collected/CS2/player/land2_7e0a9db3.wav",
+      "guid": "0dda17a2571b5ac2aab381c15a94c04e",
+      "seconds": 0.8932,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/land3.mp3",
+      "source_sha256": "e1e836aa1f9b0cf5a8c8f1a7a47e45e677a00e5fad60a2f092a69d90bafa6fb5",
+      "asset": "Assets/Audio/Collected/CS2/player/land3_e1e836aa.wav",
+      "guid": "3b5967b494575aa6b1182a17b67364e3",
+      "seconds": 0.9401,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/concrete_ct_01.wav",
+      "source_sha256": "7306790ee20b0ac39e2d4a7260aa207e470de4187abce856436951662969faa7",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_01_7306790e.wav",
+      "guid": "9d57c4ecada65be48eb089c232aa5bd2",
+      "seconds": 0.5611,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/concrete_ct_02.wav",
+      "source_sha256": "f7c8fdccf73bf771700a4ffad00aafb380449c3a404afa6b047bd6783734c2a8",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_02_f7c8fdcc.wav",
+      "guid": "7bb7d787f1735f1b8c4c2b2992b317b5",
+      "seconds": 0.5611,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/concrete_ct_03.wav",
+      "source_sha256": "ef6ed9433403938a9f8a4870625b7983f41a9637205607ceb3b56798103c00ad",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_03_ef6ed943.wav",
+      "guid": "86a4fdabb43e5733beb40371bd6731f8",
+      "seconds": 0.5611,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/concrete_ct_04.wav",
+      "source_sha256": "fa40222462016a7ccff63477cd480b225b3cbc25a44b485712d90cb71d7bb655",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_04_fa402224.wav",
+      "guid": "e5f21734ac925fd589f3990feb469eb1",
+      "seconds": 0.5611,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/concrete_ct_05.wav",
+      "source_sha256": "d05a3892fe67fec3c4b67d669765550c388f891c5aa06a918bc88b73a8316ff5",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_05_d05a3892.wav",
+      "guid": "9ab31683d0765fc8b6aae7bb27420a2f",
+      "seconds": 0.5611,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/concrete_ct_06.wav",
+      "source_sha256": "bb01942695dbd354aed8e261f4282ab310be312f486943605ac96e9bfb7929d3",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_06_bb019426.wav",
+      "guid": "adbc9b47fd9d59cc9a1c57f2a666a095",
+      "seconds": 0.5608,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/concrete_ct_07.wav",
+      "source_sha256": "7ace0b62546540af182c21d0fb765081883224616c7728ef6ca9b53075f7e165",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_07_7ace0b62.wav",
+      "guid": "4ae3ff7b7ab45961b98771c27ead4d94",
+      "seconds": 0.5611,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_concrete_01.wav",
+      "source_sha256": "cd9b5ba7b62eccde0a9f09a1fb4fc1f6a8f510dd786dae8d8247a503a677bec1",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_concrete_01_cd9b5ba7.wav",
+      "guid": "5d9cce28178e5173acf3756167f78ffc",
+      "seconds": 0.3402,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/concrete_ct_08.wav",
+      "source_sha256": "df1420fc56cc21848b2798ddb2c9cace8e2a65835e1340f07729c040bd818c84",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_08_df1420fc.wav",
+      "guid": "1a6efe9861f054e0a25b99a2a5243f81",
+      "seconds": 0.5611,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/tile_01.wav",
+      "source_sha256": "62347ffd3b03334a6ba5302cf67c971cba0e5e76bc785d699a17081bcfa21214",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/tile_01_62347ffd.wav",
+      "guid": "d8a5a5fb1d6959058d5e38d5b08d0679",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/tile_02.wav",
+      "source_sha256": "984a4cfb23bfd391c601addf8ff4330f9de6b6ad476f56cb25b372040238783e",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/tile_02_984a4cfb.wav",
+      "guid": "5a01b690696b58adbf129f386873a6c9",
+      "seconds": 0.4995,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/tile_03.wav",
+      "source_sha256": "6fe54d90747f3b1e564cd20bee3a50d34e2d8c4620f14eb9be08536873d714d1",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/tile_03_6fe54d90.wav",
+      "guid": "41f1b0f19da059468c4bf71757654e61",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/tile_04.wav",
+      "source_sha256": "0bcdd9629dba66327b33296bd77d2ac8db5e992688e8b1e53eef81820e823865",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/tile_04_0bcdd962.wav",
+      "guid": "1e5b4829df395ab5aa906f97fc085b17",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/tile_05.wav",
+      "source_sha256": "f7305d3ea78ea9966ff49320261f8d4ae89d6c36543696977f055eb010227f97",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/tile_05_f7305d3e.wav",
+      "guid": "7fd318a52f8555309cfa5099f504b478",
+      "seconds": 0.4979,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/tile_06.wav",
+      "source_sha256": "361b32d197c9668af1b4335df2fbcfc5ab1f830be66adaad1319a674329463e0",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/tile_06_361b32d1.wav",
+      "guid": "020c6f2827aa5bd480f27bbeb721ed97",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/tile_07.wav",
+      "source_sha256": "8fc54658ed4f3df44b599f405a4304ed4af051f7ccf1b59b8d11e066042d5034",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/tile_07_8fc54658.wav",
+      "guid": "d976268af35a5ef9b16e3653e1a08c05",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/tile_08.wav",
+      "source_sha256": "34c767e245cf8112d5433db6431a9f1da506bb63fbd57383c3e02d5bbeb54079",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/tile_08_34c767e2.wav",
+      "guid": "7f0401ef4d4c59369a46af97783367a6",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_tile_01.wav",
+      "source_sha256": "7f96d49c7bda69d5f5704b1246e58c480f531e4b728162a2cf248f1eae647419",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_tile_01_7f96d49c.wav",
+      "guid": "3088f45da13d5eb0956d65943509d853",
+      "seconds": 0.3662,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_tile_02.wav",
+      "source_sha256": "e3582012fe2af2ccbe44c656ecde52b409125d945aea2f721a329ba6f726fd3d",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_tile_02_e3582012.wav",
+      "guid": "12ee76c39d385627bc45d2f78498ecf3",
+      "seconds": 0.2585,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_tile_03.wav",
+      "source_sha256": "90582a9ffd5dcbaaa5da2e577e42d6542f99dd05e068a9a7d0b1455bbc0183f1",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_tile_03_90582a9f.wav",
+      "guid": "291e88107a9758ef904b69e9710bf0f1",
+      "seconds": 0.7092,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/gravel_01.wav",
+      "source_sha256": "004df9e410367f0d830ee03ff38ebcf8f1101ce9b3c6e8cf4514715e97692a85",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/gravel_01_004df9e4.wav",
+      "guid": "b843f9c82cff5bf997764013fa1983b7",
+      "seconds": 0.5175,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/gravel_02.wav",
+      "source_sha256": "285594850938a9b66788dad91aad1228b4cf0f257da67ef662426edcfdaca43a",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/gravel_02_28559485.wav",
+      "guid": "c2fd453152ef5189853f40a816686f50",
+      "seconds": 0.5765,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/gravel_03.wav",
+      "source_sha256": "dfad862a8aa51c83825c1d2d520b4522627835eda0d678a9767e0be226c9553b",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/gravel_03_dfad862a.wav",
+      "guid": "17d6cec278d0558ea121e2279158f160",
+      "seconds": 0.8654,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/gravel_04.wav",
+      "source_sha256": "8e778a91005a724e6c002022bb17ba36302b100cfe94865523eabc2042e61085",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/gravel_04_8e778a91.wav",
+      "guid": "5fa8ee28882953149f642e53376968be",
+      "seconds": 0.5595,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/gravel_05.wav",
+      "source_sha256": "710b7047b6e0acb4e6dfc135a195681cb2747776ad8e383d27c88b72e8fc59f8",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/gravel_05_710b7047.wav",
+      "guid": "4c55444a3bb15979b1d99010fda807e3",
+      "seconds": 0.8653,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/gravel_06.wav",
+      "source_sha256": "9ebd60a6022a3a5f6a853a70835c19da4d0adc6d9db042aac55b2c732968ba66",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/gravel_06_9ebd60a6.wav",
+      "guid": "ed778b7186535314aec3dc901a8a7bf9",
+      "seconds": 0.6583,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/gravel_07.wav",
+      "source_sha256": "b7e5e34e2009300c42950d11405ec7fba99d8bae8be741c97ada95ebeb08a1e8",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/gravel_07_b7e5e34e.wav",
+      "guid": "72d622c0188b5d348ad2d9ac855b58cd",
+      "seconds": 0.8726,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/gravel_08.wav",
+      "source_sha256": "3192e6048bb385a4d7eccc8a649c31148368b5164f986a7318e7b9d2a03005be",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/gravel_08_3192e604.wav",
+      "guid": "b8be464c2fad5af1bac9781183c25027",
+      "seconds": 0.562,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_gravel_01.wav",
+      "source_sha256": "cd15da90ba3f8fc8536487c198812adeb11f5682f93948282aa8219a988b42d4",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_gravel_01_cd15da90.wav",
+      "guid": "da9d8e483a8c50ec8d009faa5d82a3e3",
+      "seconds": 0.9598,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_gravel_02.wav",
+      "source_sha256": "cc4f3de0915e905e8035f7e64f8e4928b6f22485eddb52d6e134a52c0c0ac1aa",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_gravel_02_cc4f3de0.wav",
+      "guid": "da2c343311d65932b082947839832264",
+      "seconds": 0.9798,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_gravel_03.wav",
+      "source_sha256": "b6114f916ac72a17ae56d87cbdb9b818fa8597e0b0e81c67520f0f184dc5f0bd",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_gravel_03_b6114f91.wav",
+      "guid": "1e13dab0a24151e4bee60724a723f0d5",
+      "seconds": 0.8501,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/grass_01.wav",
+      "source_sha256": "70a21df8d8105e201410f206a0ef16b747ced2cb6d6c87a30623f3f3439e168d",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/grass_01_70a21df8.wav",
+      "guid": "2a8a4c767a2a58cbaba378a654d1e843",
+      "seconds": 0.3483,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/grass_02.wav",
+      "source_sha256": "72c6eafa2fdae907ed9859322ad700ca521620195187f508b736d6571e526109",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/grass_02_72c6eafa.wav",
+      "guid": "51c173b6fe0054d8a1cad8797cef22f9",
+      "seconds": 0.32,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/grass_03.wav",
+      "source_sha256": "a34050ce3f0e4fc9721d9b11bcf2002fcbfabf2760f7ad0643e14ef4637f9e61",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/grass_03_a34050ce.wav",
+      "guid": "e848eb3acd75538d8d5306cf80971261",
+      "seconds": 0.283,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/grass_04.wav",
+      "source_sha256": "a50844898f0972982028f529bf5fa0eb778eb955675e19f871ff57fd43ad4932",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/grass_04_a5084489.wav",
+      "guid": "396e04eb3f79585cb2229a9989161e2d",
+      "seconds": 0.3178,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/grass_05.wav",
+      "source_sha256": "8d81b04af8f3b2a0bee855b3b08b164db9c564fbd84f0e135df9bb8b890ec82b",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/grass_05_8d81b04a.wav",
+      "guid": "6e9416b6ca26599d98595e23550fde5f",
+      "seconds": 0.245,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/grass_06.wav",
+      "source_sha256": "3f6ae2d783a143ef0dff7d24cfd7e65b31c5259cbae53c3735266fcc60c762f3",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/grass_06_3f6ae2d7.wav",
+      "guid": "da3a71dccda75738a2059155591ba13d",
+      "seconds": 0.2438,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/grass_07.wav",
+      "source_sha256": "5333ae63cfec2fe1368dff9de40ea7f616f07f100ab0769d7a62440b835f257d",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/grass_07_5333ae63.wav",
+      "guid": "acc62d25587e5e28a1da6158a68e8698",
+      "seconds": 0.3367,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/grass_08.wav",
+      "source_sha256": "33b7c37b43793668771cd8715b441015a50019285aec6b57216d22b518409540",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/grass_08_33b7c37b.wav",
+      "guid": "b4c7f7ee43d95def8b912c9c1fecc149",
+      "seconds": 0.4528,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_grass_01.wav",
+      "source_sha256": "788de0db904d80c4928aacb4ab882dbaffbd9e5e236e4c9033dd6c83bc9ab443",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_grass_01_788de0db.wav",
+      "guid": "76f2ff5a9bca569ca32d97c3bef607cc",
+      "seconds": 0.9901,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_grass_02.wav",
+      "source_sha256": "51a91d996db8b5df095abe111fa47e475dbabc1303ff907c70a64f6e35b80052",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_grass_02_51a91d99.wav",
+      "guid": "5e858bd402375f3cac856cda7c73929c",
+      "seconds": 0.7546,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_grass_03.wav",
+      "source_sha256": "f46779e68c332b4f1d521e2b546730eecb805b258bbeed78903f88a36e3811b3",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_grass_03_f46779e6.wav",
+      "guid": "c8a44a1e28d356159b281d436e084bd4",
+      "seconds": 0.8464,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/dirt_01.wav",
+      "source_sha256": "4304079e3ec078eda369fb9038c0c5ac09ae51028fbe10bfa392d70a7238cd77",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/dirt_01_4304079e.wav",
+      "guid": "ac6bd88a8ad15c2eb02c72a2981c5f53",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/dirt_02.wav",
+      "source_sha256": "1aee36573b5b92ff26d94b68cd939ffae7401186cc8bdbddcf7cc9d7d701d4d3",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/dirt_02_1aee3657.wav",
+      "guid": "9e19c327ca20528688c3df9181c4d418",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/dirt_03.wav",
+      "source_sha256": "48dac21e8692d03df9c506d3ade47416650139363b282f39089d54d00a7417d9",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/dirt_03_48dac21e.wav",
+      "guid": "acadda9d835c5e13a5c49c41f30974ed",
+      "seconds": 0.608,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/dirt_04.wav",
+      "source_sha256": "ea9c29e6b73a791cfcf85fe4fca2be42a69c85755476f538e41a0a8322cfe514",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/dirt_04_ea9c29e6.wav",
+      "guid": "def3d888b60953fcba4678f554570de3",
+      "seconds": 0.576,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/dirt_05.wav",
+      "source_sha256": "15c7b6ace8a80f0da14d573742bfbc4161d1d60d4974a777156b415cd702d4a9",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/dirt_05_15c7b6ac.wav",
+      "guid": "8933d60d7e585724b8f7586e55a0a11c",
+      "seconds": 0.7467,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/dirt_06.wav",
+      "source_sha256": "3373ec9b9f0fa1d084ae1b0900b50655e997cc0f1f753d3fbb05f37ec27164a8",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/dirt_06_3373ec9b.wav",
+      "guid": "cfad2d4b06255ff3b3f18f7cc1a617bd",
+      "seconds": 0.7467,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/dirt_07.wav",
+      "source_sha256": "82df571b65b730b00f09c999869bf50497f72e088d88f44c5e4c7468f79a0cf8",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/dirt_07_82df571b.wav",
+      "guid": "41edb9a7b1875ba69240c87b0600fb27",
+      "seconds": 0.6933,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/dirt_08.wav",
+      "source_sha256": "03e01ca6d4d89fb7d1be7c6be620e457664147a619bc73d6060e6449dd080c17",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/dirt_08_03e01ca6.wav",
+      "guid": "51b6d3459b02568fad9d7354da0ec088",
+      "seconds": 0.64,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_dirt_01.wav",
+      "source_sha256": "a0b5b0f49dac5ddc5269c25536845543b646ffd9f90dd8408af8dee8bf1e89fe",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_dirt_01_a0b5b0f4.wav",
+      "guid": "c3a9009ddcb3573a9c0b97443076a6b5",
+      "seconds": 0.7792,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_dirt_02.wav",
+      "source_sha256": "3ec56f9948e7dd7ded23eefc12ca824bac37db014f255d61c7f1413b8f59ade5",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_dirt_02_3ec56f99.wav",
+      "guid": "b5b02aaf05fe5b3d987f2ae6f6781da1",
+      "seconds": 0.6814,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_dirt_03.wav",
+      "source_sha256": "8cf1afc1ead144aba4b634eebbc4a371eaa3778523189ad71a2f90bafa9c3c7f",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_dirt_03_8cf1afc1.wav",
+      "guid": "86003cb020685d2e91d4a1f9547b0aaa",
+      "seconds": 0.7612,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/sand_01.wav",
+      "source_sha256": "3f44c2da937fb5d74d8cbaec225dbf5aa9fe8045e14dba2e9a33b4bd0f4bd786",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/sand_01_3f44c2da.wav",
+      "guid": "3f027ba93dbb539d9a60d899b7ebf7bc",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/sand_02.wav",
+      "source_sha256": "928738ede58835f6d44f7df54f727e9df40242566ce1693bdebaecc2b16d0c97",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/sand_02_928738ed.wav",
+      "guid": "75dbf88129ad59a1a34802f1f64058ac",
+      "seconds": 0.4978,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/sand_03.wav",
+      "source_sha256": "beb0944db13e95d6c4e1ade24564d2882561ae1ad2fd322113494a16448aa24d",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/sand_03_beb0944d.wav",
+      "guid": "ab82bcc7fe7659bf8f73ff226c3f2d44",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/sand_04.wav",
+      "source_sha256": "6d1c21eabd551a0a0832d3ad22136de5058bf3dd351180cea37c7a3ef98475b0",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/sand_04_6d1c21ea.wav",
+      "guid": "c92acf9f41c15cb5885038cd5c2fd3e8",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/sand_05.wav",
+      "source_sha256": "8b7f7f7c56c727bf152482a69aed88832e451a3eab1599f26887b1ded5b67080",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/sand_05_8b7f7f7c.wav",
+      "guid": "531a34d6dc5554a88c4f7c68acf661a0",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/sand_06.wav",
+      "source_sha256": "5d6bdba2866478d202d212514f4ca7ed006e87550009bfc4d7f7224b4e012921",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/sand_06_5d6bdba2.wav",
+      "guid": "5c4ec2f3549059cf9ed7d72286e7ffe0",
+      "seconds": 0.5,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/sand_07.wav",
+      "source_sha256": "5c8e9a901b4b9b575c7eb26fe5d05c2a536441983ec4c5a70f2998737b332f63",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/sand_07_5c8e9a90.wav",
+      "guid": "ef717777212c5c6c8b1f6d6b5a875ecc",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/sand_08.wav",
+      "source_sha256": "661240e327d197714acd4d72901e0492cf648e1506580093e2ac44d65858f8f8",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/sand_08_661240e3.wav",
+      "guid": "f7475d42948b5309aa9068453e25a960",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_sand_01.wav",
+      "source_sha256": "b5e3bf38cc054f24ff93a10f6bec6635bd297f5a4a923d3357958e5d672cc802",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_sand_01_b5e3bf38.wav",
+      "guid": "d9bf908b76515cf3be8e608cbb1fc5ac",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_sand_02.wav",
+      "source_sha256": "1b9dc41a54b05772de6404943292a6a95c35d172c5195a51ee873545fc1f8390",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_sand_02_1b9dc41a.wav",
+      "guid": "0cdea546770a5d51adebec567fbfe9e9",
+      "seconds": 0.7482,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_sand_03.wav",
+      "source_sha256": "529bcf0e89ae11fb424ef21a1637fbb3cfe012662ba0e6dedc6e28970dab2113",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_sand_03_529bcf0e.wav",
+      "guid": "2d5724d5cc93556ab7f68603da81a525",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/carpet_01.wav",
+      "source_sha256": "7f41b6e57c3343a9fb574e8948476d0600b4001e777ef12df69506302d4a92be",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/carpet_01_7f41b6e5.wav",
+      "guid": "e45a53c876e45547bb6bc189ba8444e4",
+      "seconds": 0.3086,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/carpet_03.wav",
+      "source_sha256": "381252adece797aa5cad2389a126803daf5b3c999a4167ff83443b6055ebb1f2",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/carpet_03_381252ad.wav",
+      "guid": "5121bf5148415517b4c1922ed7cd20b5",
+      "seconds": 0.3407,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/carpet_04.wav",
+      "source_sha256": "0e3911588c2e6b215041205d6b729ebdfdcfffc93c87adb614f2700c98402777",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/carpet_04_0e391158.wav",
+      "guid": "c374e83493635d84980afa77d790c8c0",
+      "seconds": 0.3412,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/carpet_05.wav",
+      "source_sha256": "93b89100be56e8e8eebcae21dea8d75f366ed3e89ff7b7a054560f97d48ea163",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/carpet_05_93b89100.wav",
+      "guid": "e6da3b515d875933aee96180afc4c5ae",
+      "seconds": 0.3199,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/carpet_08.wav",
+      "source_sha256": "3b1f9b2a2934bb50f22741b584e5f14059d197b09d7f1b8ca3568b7deb4e2532",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/carpet_08_3b1f9b2a.wav",
+      "guid": "f5e7f07fe5335ebcb603e98bb5e6ac91",
+      "seconds": 0.3592,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/carpet_09.wav",
+      "source_sha256": "d3a24cb0a5215148a2e7c9bf3dbe4a634a20b0118e021a904ef6e093cc82a493",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/carpet_09_d3a24cb0.wav",
+      "guid": "6c39d62466d05e94b75d15dfbac6a911",
+      "seconds": 0.3485,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/carpet_11.wav",
+      "source_sha256": "db6b0fce70303e5b15f6274eb75766d6ffc28570054db89dc4aaba4c4cf55070",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/carpet_11_db6b0fce.wav",
+      "guid": "a34aabeb79195e2bbbf4eea28852c3aa",
+      "seconds": 0.3508,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/carpet_14.wav",
+      "source_sha256": "0388ea83e9264b41a212181f4cf5097890cba8184b756e0118d581590e6d887f",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/carpet_14_0388ea83.wav",
+      "guid": "e071c6250a595dfd80964e7a799b9705",
+      "seconds": 0.3504,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_carpet_01.wav",
+      "source_sha256": "36c0a1f099e1e5c532fba8b4ed68911c4bece02b5eaec4e93d613b6c4d39dfa1",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_carpet_01_36c0a1f0.wav",
+      "guid": "d377a2424e5e5c6cbd0d8fc798175daf",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_carpet_02.wav",
+      "source_sha256": "fe526075902451e62568f5c6c1bcff6eac04b5a90b931ad68bc2630c1e7e1c42",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_carpet_02_fe526075.wav",
+      "guid": "0bfd6dfb903e5d67a8ab46766b1a1399",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_carpet_03.wav",
+      "source_sha256": "5d58f76bdef176ef86cb8949b78c63e46292d88b253235a60fcced7a371a7346",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_carpet_03_5d58f76b.wav",
+      "guid": "4ce1f07da84b52bbb52dbfda0ab9404f",
+      "seconds": 0.75,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/rubber_03.wav",
+      "source_sha256": "2930604c3dea3e3f249b927e14b2461230e352aac7a5dcbd9d17dc172d18d129",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/rubber_03_2930604c.wav",
+      "guid": "dc7703c8337e5b28b44e261d4414812a",
+      "seconds": 0.4105,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/rubber_04.wav",
+      "source_sha256": "375561327e982a2f9b175a7c73bbf2ea7cfa3ef6a571009aeacf0b63156c1f0c",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/rubber_04_37556132.wav",
+      "guid": "d7963c166d55588dbed30f1a9a04f042",
+      "seconds": 0.5211,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/rubber_05.wav",
+      "source_sha256": "df9db2a485d5a6d541f0da18a8dcaacd872238186bfebb8c46f4f61ee1f68d09",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/rubber_05_df9db2a4.wav",
+      "guid": "1a232149c80455f5896ebefb2fa39596",
+      "seconds": 0.4488,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/rubber_06.wav",
+      "source_sha256": "62c6eee1a265549c1fa5bbae30019f88acbb5ae15468c35af6b91231e66a8035",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/rubber_06_62c6eee1.wav",
+      "guid": "e37ec1abf60358cfa710ef332474bbe9",
+      "seconds": 0.4057,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/rubber_07.wav",
+      "source_sha256": "d542b88c4c12bc0164432f6b63992a54b53bbc9e2b9d51838126d7e35c1df978",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/rubber_07_d542b88c.wav",
+      "guid": "502dde6b3c2b567dbc7eb06326fdfc8c",
+      "seconds": 0.4874,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/rubber_08.wav",
+      "source_sha256": "51975f6eaf9a4b8ce3057503c1ec2cd54214ad62466c29ab034719196dd1f8b1",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/rubber_08_51975f6e.wav",
+      "guid": "52f41300c86955fc82e34cceda3acb93",
+      "seconds": 0.417,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/rubber_11.wav",
+      "source_sha256": "497a5c08c5e4f20e53f12f02ef3059965ec71bfbb1fb6da97a51c2652adbd971",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/rubber_11_497a5c08.wav",
+      "guid": "7fb81b627e745aa38de40c7abcec5d2d",
+      "seconds": 0.3767,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/rubber_12.wav",
+      "source_sha256": "926442f25eef52da7250893fbe5c9eeba1afbd0060be54e8a3ecd51a182d2d68",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/rubber_12_926442f2.wav",
+      "guid": "2e09f73ce6fe509da2782fbde045c2a9",
+      "seconds": 0.4138,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_rubber_01.wav",
+      "source_sha256": "83e1f9dc2c2d99f15dcd8a3118fc24a593d3d2286ae5134c44fe100d1f94cf53",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_rubber_01_83e1f9dc.wav",
+      "guid": "9322c6c71927592284a72b7eb180c55d",
+      "seconds": 0.5256,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_rubber_02.wav",
+      "source_sha256": "1757cad5a049bd46d1084ebb44eb1fca1c5968049090a13756679c9517639fa5",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_rubber_02_1757cad5.wav",
+      "guid": "ba147ce50df258be8ba23b7c5a4e16f1",
+      "seconds": 0.5276,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_rubber_03.wav",
+      "source_sha256": "aea35d7e0eb5ba8cfc9720429c7f4273108ffa24415ea7bbe953d98789c75a63",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_rubber_03_aea35d7e.wav",
+      "guid": "cb30ae383bc956f29b996db7f312772b",
+      "seconds": 0.4829,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/metal_solid_35.wav",
+      "source_sha256": "30938e3ff92be8f3890ab95068ec3f9bdf4ce0c1fb283e973e9a98c03e655d58",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/metal_solid_35_30938e3f.wav",
+      "guid": "b0388bdf3ec759ff9e4f048c91f7a504",
+      "seconds": 0.445,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/metal_solid_36.wav",
+      "source_sha256": "146bcc4374ed10209bf5b023f2aa8108aceedaf70a6f15d7d9fe4aa4b5765b80",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/metal_solid_36_146bcc43.wav",
+      "guid": "c590a8120a79512e90f0b86318b619db",
+      "seconds": 0.423,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/metal_solid_37.wav",
+      "source_sha256": "32ab16e9668fa0a292408b785b38d4b0d8bd2107af4e5f5468cf047cca68a3d8",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/metal_solid_37_32ab16e9.wav",
+      "guid": "eff06fd6def95e59890c080ff02c890b",
+      "seconds": 0.363,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/metal_solid_38.wav",
+      "source_sha256": "957ad225a154d484f3988230a7273845c53ee5f3b1b5edc44909982ee375175a",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/metal_solid_38_957ad225.wav",
+      "guid": "abf81a1b65ad54308d3daed53e58530c",
+      "seconds": 0.3784,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/metal_solid_39.wav",
+      "source_sha256": "e6ee9e023706058869ac91890a9896abb71f17928b3273d9196b5e112bae2b0e",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/metal_solid_39_e6ee9e02.wav",
+      "guid": "365f90b01c055a638834d1ee8cc558cf",
+      "seconds": 0.4365,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/metal_solid_40.wav",
+      "source_sha256": "e5b8577378afee4a18a62fc73a33905353634b34045175ee0e5da5d8ce96dfff",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/metal_solid_40_e5b85773.wav",
+      "guid": "10f89ae53ebd5cf2b0e4480f3f181ecc",
+      "seconds": 0.5362,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/metal_solid_41.wav",
+      "source_sha256": "29a757cb9ad49483725537680aa2556c3bd4b65d8996f2ee6d5657375b52b7d5",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/metal_solid_41_29a757cb.wav",
+      "guid": "4125bf20d32c5fbd82aeb0568abb72d3",
+      "seconds": 0.598,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/metal_solid_42.wav",
+      "source_sha256": "9df56c4e1f30ea2d2765d47123d8a55128918adcf46b304e1f33379fc121bcc9",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/metal_solid_42_9df56c4e.wav",
+      "guid": "8dd8c6f8bcce5833b52b70c6e978c256",
+      "seconds": 0.5396,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_metal_solid_01.wav",
+      "source_sha256": "f3e28107222648e39c34b7c430bc89b202f0789bfb05e761b708068cfa05e8a3",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_metal_solid_01_f3e28107.wav",
+      "guid": "6c4ca813054e5ff68af499a14d4a9bbb",
+      "seconds": 0.5992,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_metal_solid_02.wav",
+      "source_sha256": "653d57b85a661fc7a11d0752728a816dc97ab5dae461407c8ced1d14abc9ea92",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_metal_solid_02_653d57b8.wav",
+      "guid": "357a187c483b527cbc35b788f6c1f34e",
+      "seconds": 0.3346,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/land_metal_solid_03.wav",
+      "source_sha256": "69f47528a9a8d94520ccb5e870b0d642716015ce2f4a3fc4e82f7fb9a74bed83",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/land_metal_solid_03_69f47528.wav",
+      "guid": "2e433a419e2e59158e5e210fe6f063e2",
+      "seconds": 0.2613,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_wade_01.wav",
+      "source_sha256": "c7d1d5c4db580395ce4ac4f0aad99856ca07cc75011f3d3d9ac16ede07827012",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_wade_01_c7d1d5c4.wav",
+      "guid": "2b2c7c9a203f509aa55785da7aa68caa",
+      "seconds": 1.062,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_wade_02.wav",
+      "source_sha256": "ec0dab090677854d1e0d14b95e5ffa63f2aa20b48d9790c36199297e7500fa94",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_wade_02_ec0dab09.wav",
+      "guid": "7ad55911a11b57899647fa36f862d32c",
+      "seconds": 1.1615,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_wade_03.wav",
+      "source_sha256": "1ed60bbb2be18df0c616a8f73aeb4f7628747c7acbbe2db96603ad5bcb1a1daf",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_wade_03_1ed60bbb.wav",
+      "guid": "a6ed07729cb85cc19a7862c9e31e56aa",
+      "seconds": 1.0791,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_wade_04.wav",
+      "source_sha256": "a35fcc21201101520baf5c573dea326bc09842afd88d5d74b7b8ebfab85d5d26",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_wade_04_a35fcc21.wav",
+      "guid": "63418487335557be99db4cb87606a60f",
+      "seconds": 1.4544,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_wade_05.wav",
+      "source_sha256": "a4ced6331f30b278dd575c1b2c90783854b5f6a4ebc36c8cbd9e42358492769b",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_wade_05_a4ced633.wav",
+      "guid": "b72009d1692b5ea88bb2ea52b10d0dcb",
+      "seconds": 2.7307,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_wade_06.wav",
+      "source_sha256": "bd395ae20d50ce0a924c06b9ac48c2a55845b0dc45af9395630e08ad2fc3a856",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_wade_06_bd395ae2.wav",
+      "guid": "54d56754c18351e1a32d5066b6a079a2",
+      "seconds": 2.9867,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/puddle_01.wav",
+      "source_sha256": "4b0d6386133ba7bf44b045b5262f955b897f2ae95e3ecb6a6d1ecc10a316b45f",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/puddle_01_4b0d6386.wav",
+      "guid": "bfd13344f4c45514ad92d30b50d405e5",
+      "seconds": 0.7543,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/puddle_02.wav",
+      "source_sha256": "c39814dc3fcd67c05e75ab0c634cf287996f40599dab30d88f09598e6427a09b",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/puddle_02_c39814dc.wav",
+      "guid": "f1a01d87eddf5ba19e9e7fab82d93296",
+      "seconds": 0.7704,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/puddle_03.wav",
+      "source_sha256": "89d4206fd320556b2a1dec980e760abbfd2846c80a456cdf6972a82062f34b51",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/puddle_03_89d4206f.wav",
+      "guid": "abab2f7c635b5f3282c3b52a234f3f4b",
+      "seconds": 0.7105,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/puddle_04.wav",
+      "source_sha256": "af3dd85249c6e0298006400e7ba218161b6572d46c734a4d3e6811b6cb9760bc",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/puddle_04_af3dd852.wav",
+      "guid": "47c07f1973005b8baa7d05b101573906",
+      "seconds": 0.7537,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_entry_01.wav",
+      "source_sha256": "32314d9b79f1216c76816ec3e1fb51400ec9664d4daf292a9cb3b9eb446a34a6",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_entry_01_32314d9b.wav",
+      "guid": "ac63658258ce5183a9c3799f4636a60f",
+      "seconds": 0.7423,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_entry_02.wav",
+      "source_sha256": "6e7bda92553a8e14f5292a48812f7344e29241712526f7337f33c4835e378184",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_entry_02_6e7bda92.wav",
+      "guid": "935a422b93c65d98b0d756233eb0a7ab",
+      "seconds": 0.8155,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_entry_03.wav",
+      "source_sha256": "649381652ef7dbd62e09af001ffe109eabcb3501c54667b9cf0ada3342ee1eed",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_entry_03_64938165.wav",
+      "guid": "22b0900b2b715e98a56fb07b3458ecb8",
+      "seconds": 0.7304,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_exit_01.wav",
+      "source_sha256": "509cd41c0052e04eb365f66d3bb7cb426e83ed811f01618cd8a609352ae24c86",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_exit_01_509cd41c.wav",
+      "guid": "bfed30afd6b957339a3d5c8a71c72e1a",
+      "seconds": 1.3307,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_exit_02.wav",
+      "source_sha256": "1e0d7aedcfaeec026713363ef07a4a1c51cc5e38f0eca4298d6d9b8a581a43f1",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_exit_02_1e0d7aed.wav",
+      "guid": "f4150199b56b58768e13ea99e823f3b5",
+      "seconds": 1.3515,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/water_exit_03.wav",
+      "source_sha256": "a11df6a3063ab0e99f6ccae635f6cae155e0851d1c86d6a8275fc466e886b4b9",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/water_exit_03_a11df6a3.wav",
+      "guid": "83c1325224d65383b41ea7331c688cd3",
+      "seconds": 1.4455,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/water/water_splash_01.wav",
+      "source_sha256": "fac41236062595ccdcd7b27715b1f277eb7f00508e35654389629b7a17028bd0",
+      "asset": "Assets/Audio/Collected/CS2/physics/water/water_splash_01_fac41236.wav",
+      "guid": "61bb6aca6bdc5046a88a0bcacda24f25",
+      "seconds": 1.3026,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/water/water_splash_02.wav",
+      "source_sha256": "18b9f95df6d2330fb220fcdd9c2c36979c0180da76f65effbada37fd8fc3a2a0",
+      "asset": "Assets/Audio/Collected/CS2/physics/water/water_splash_02_18b9f95d.wav",
+      "guid": "0f922fa8f6315a9697645e25c96e93b2",
+      "seconds": 1.6694,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/water/water_splash_03.wav",
+      "source_sha256": "d0956c11894acc0ef60f2d6643beaf18a8f3cd799235bf103004698cfcbfaa1f",
+      "asset": "Assets/Audio/Collected/CS2/physics/water/water_splash_03_d0956c11.wav",
+      "guid": "3b14554010d855509cf84a9d282d59ca",
+      "seconds": 2.1846,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/jump_launch_01.wav",
+      "source_sha256": "218e991b718088fc4b85da79442deff7e363ed771e5438bfc1b4ca342e3d3301",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/jump_launch_01_218e991b.wav",
+      "guid": "cebf8ca98fc55023b23b9fc6107997e5",
+      "seconds": 0.5391,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_wood_01.wav",
+      "source_sha256": "b43914253f204a102db8c42c6a58c30f72552fd535c4160d7bcac8d99169dfbf",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_01_b4391425.wav",
+      "guid": "cd787ee0d541518ea26e745192e45fd6",
+      "seconds": 0.5845,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_wood_02.wav",
+      "source_sha256": "8cc8a8216952e84a702ab0ea23e84ed090dfa6767c6c1455d2ba9071d4d64434",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_02_8cc8a821.wav",
+      "guid": "b75d0a4c279d53e8b620f33c9436bd83",
+      "seconds": 0.5406,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_wood_03.wav",
+      "source_sha256": "1fd249859db21e32bf01455bd8d993d182cac687e6132c4dc6acbbcd2ad0452c",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_03_1fd24985.wav",
+      "guid": "de6f52490c4f52a6948fedfd446cff5a",
+      "seconds": 0.5544,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_wood_04.wav",
+      "source_sha256": "9ea1a4470a7d243973daf1e04ab219180bd227a873f9adaf16ddc964866d404f",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_04_9ea1a447.wav",
+      "guid": "d2cff461a7555610b132a4bdfa760806",
+      "seconds": 0.9066,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_wood_05.wav",
+      "source_sha256": "9815178305e82d45eea1100f7f29fe8bb271c7f5801e5d65ab584732ae740e0d",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_05_98151783.wav",
+      "guid": "9fd4c1047957542aaa9bf4255e2ad665",
+      "seconds": 0.5846,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_wood_06.wav",
+      "source_sha256": "37eccf3f894a766bf1f516bdaaeb1ff53d4b8ebc7f2cd26f2fbbc0bd2355bff4",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_06_37eccf3f.wav",
+      "guid": "8d6ee08a545956f9936fcc09ac4ca257",
+      "seconds": 0.2643,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_01.wav",
+      "source_sha256": "d9d34636eec2b3b5cf8af141508e1ed9c81bab823d463d52ab2f9e9648650c04",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_01_d9d34636.wav",
+      "guid": "7d14707007fd50218ae90e0bd72a0f46",
+      "seconds": 0.7588,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_02.wav",
+      "source_sha256": "5cb92b4d935177fe0e07db7d71823f22bca1fbb6009cab29e3de71e51b972abb",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_02_5cb92b4d.wav",
+      "guid": "cd65bf1b72025a048b802ac6bb1d6262",
+      "seconds": 0.8738,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_03.wav",
+      "source_sha256": "3ab7df2b17a9b193d50d039a7cb2665f11dd53265420f8e554fe43c6b5c10485",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_03_3ab7df2b.wav",
+      "guid": "da74dffb06f759aca8168bccd8b84eba",
+      "seconds": 0.6162,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/ladder_04.wav",
+      "source_sha256": "9f73ac3177598e73c7958f475dfa4d6a7aacbc4deb17346bcd4c1d0537a5cb70",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/ladder_04_9f73ac31.wav",
+      "guid": "5203a0b6a9255ba796f77bc1cacbd8b1",
+      "seconds": 0.6644,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/suit_ct_01.wav",
+      "source_sha256": "f1f6152f0c74e22754a40eb465e4f9b63ba6be1270de0d515a03826339fa25bb",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/suit_ct_01_f1f6152f.wav",
+      "guid": "5200242d2e2e577286e9202bd2cccf59",
+      "seconds": 0.6638,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/suit_ct_02.wav",
+      "source_sha256": "f2a86da700ec82143c5eff47302f38d1d4fe2d21bcd7b8f41aaaf02755f7830d",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/suit_ct_02_f2a86da7.wav",
+      "guid": "bc2f3b30d5e254c8b6191224246fb987",
+      "seconds": 0.4106,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/suit_ct_03.wav",
+      "source_sha256": "d4f70dd06f21eb1224206de41a256515313d2eecb8b8bcfe13b58a640b71281b",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/suit_ct_03_d4f70dd0.wav",
+      "guid": "7773223bb31f5f8a8d6c368b78c7970d",
+      "seconds": 0.6094,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/player/footsteps/suit_ct_04.wav",
+      "source_sha256": "e5fc348aee9509e937c844cacc258a0abc98478b78886c4eeaccf4fe710febf0",
+      "asset": "Assets/Audio/Collected/CS2/player/footsteps/suit_ct_04_e5fc348a.wav",
+      "guid": "cb8013a2f6e353c5b900f5b524554dce",
+      "seconds": 0.8237,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/body/body_impact_ct_01.wav",
+      "source_sha256": "cb76e444d76080952f1b2d9822dac2a02ce40faea88184bb207fe63dc1705fd9",
+      "asset": "Assets/Audio/Collected/CS2/physics/body/body_impact_ct_01_cb76e444.wav",
+      "guid": "e483db5230785672a2204df918d26a7a",
+      "seconds": 0.832,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/body/body_impact_ct_02.wav",
+      "source_sha256": "f9020b4b919da23ead86665a5efd0c57257eb393ab8b9ce9b5c53112ee11da73",
+      "asset": "Assets/Audio/Collected/CS2/physics/body/body_impact_ct_02_f9020b4b.wav",
+      "guid": "c68c0995872058d9a89ea5ebf82662da",
+      "seconds": 1.0215,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/body/body_impact_ct_03.wav",
+      "source_sha256": "bcb3c52f446ccbf797db5ced373539ed3dc0c09641c2740580a68502ed384da8",
+      "asset": "Assets/Audio/Collected/CS2/physics/body/body_impact_ct_03_bcb3c52f.wav",
+      "guid": "ff89315d09db582694533bb75cfe5fcf",
+      "seconds": 1.0242,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/body/body_impact_ct_04.wav",
+      "source_sha256": "a65a8af464812f75fee5fa7166c1b3f221756a266f49539ce1a0de3fa703dcd7",
+      "asset": "Assets/Audio/Collected/CS2/physics/body/body_impact_ct_04_a65a8af4.wav",
+      "guid": "58730f718a9256a6a32c2e41ddfb70cd",
+      "seconds": 0.9821,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/clipempty_rifle.wav",
+      "source_sha256": "957cfa5605e6168cebb96e733dd3e7c5e4cf0cde86a331deced2668bf85a10cd",
+      "asset": "Assets/Audio/Collected/CS2/weapons/clipempty_rifle_957cfa56.wav",
+      "guid": "c276a24de57b50689a9ab839c352e24b",
+      "seconds": 0.2569,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet4.wav",
+      "source_sha256": "473d8dc91ed6e30ccaead33555722d998f6b3501c0822fba6aa2cfdf0fe47eaa",
+      "asset": "Assets/Audio/Collected/CS2/physics/wood/wood_solid_impact_bullet4_473d8dc9.wav",
+      "guid": "f12cba3f98c9567181d116e051165478",
+      "seconds": 0.3091,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet1.wav",
+      "source_sha256": "0d27b27d04a56e0dd81dacf14cfce06c6e9977274e7b0a1e25895d308febf937",
+      "asset": "Assets/Audio/Collected/CS2/physics/wood/wood_solid_impact_bullet1_0d27b27d.wav",
+      "guid": "7fd67a75ea3e50beae26f1c89e6700ef",
+      "seconds": 0.2688,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet2.wav",
+      "source_sha256": "58b28f6d49045b6ee45fddef7360800a7bd2e25f5af90a0c79520939cc12f6aa",
+      "asset": "Assets/Audio/Collected/CS2/physics/wood/wood_solid_impact_bullet2_58b28f6d.wav",
+      "guid": "591148d79d0051faa254e1f8fe78f3c9",
+      "seconds": 0.4111,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/wood/wood_solid_impact_bullet3.wav",
+      "source_sha256": "f4075b5cb7bf524cfede6dfe29a2a8e2291ad12037370394fbce65135ba3293f",
+      "asset": "Assets/Audio/Collected/CS2/physics/wood/wood_solid_impact_bullet3_f4075b5c.wav",
+      "guid": "13246da99da753528fc9fd356807c069",
+      "seconds": 0.7649,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet1.wav",
+      "source_sha256": "68af2ab7349cb73acedce62e8e7e896b6227e491e5edf1d1fed90f93aad82b63",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/concrete_impact_bullet1_68af2ab7.wav",
+      "guid": "c9ad1ad8e3ff58efb6dc050dc8b66dec",
+      "seconds": 0.7697,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet4.wav",
+      "source_sha256": "b2f6f85b8e1aa03d1b7b766915cb04e46e44953eec5cff14a556243f77380713",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/concrete_impact_bullet4_b2f6f85b.wav",
+      "guid": "b133421b3e62547393d4c3599b93aa23",
+      "seconds": 1.2892,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet3.wav",
+      "source_sha256": "71e2fca5047606dc02bb48cdea1fbcf249cfd80e348f9802a8827b7f1949816b",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/concrete_impact_bullet3_71e2fca5.wav",
+      "guid": "4aa4eed6bbe252a385b67283a44b3c96",
+      "seconds": 1.6925,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/concrete_impact_bullet2.wav",
+      "source_sha256": "2a9982eea497ef79680bfb454b1696fc2cc9f4e52a08c4069efdcacf95dd3b3b",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/concrete_impact_bullet2_2a9982ee.wav",
+      "guid": "e2ce78a25fe35029bfd15430f3dab920",
+      "seconds": 1.6326,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet4.wav",
+      "source_sha256": "d252ebe338e6807b11b430840ec361439db7c799b0666f6e08adb7e2ee575c76",
+      "asset": "Assets/Audio/Collected/CS2/physics/metal/metal_solid_impact_bullet4_d252ebe3.wav",
+      "guid": "2a78c942432d525d9c3fb0d6d5a1efba",
+      "seconds": 0.6841,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet3.wav",
+      "source_sha256": "002c05ea6b3d17ad13fb9c6f8da09881b773334074ab11bb00dff65df37f526a",
+      "asset": "Assets/Audio/Collected/CS2/physics/metal/metal_solid_impact_bullet3_002c05ea.wav",
+      "guid": "8ea7556d438a5b87bbbcdf0535ea84cc",
+      "seconds": 0.4837,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:GDC2026_kandidati/18_A_Spolecna_knihovna_Kulka_kov.wav",
+      "source_sha256": "c60d03117c3e00aa38a121941c5f1beefd4bc195eba8b887af1bdbadbac00124",
+      "asset": "Assets/Audio/Collected/GDC2026/Effects/18_A_Spolecna_knihovna_Kulka_kov_c60d0311.wav",
+      "guid": "97bade8e1c2f527b8ed2ec7250dc4168",
+      "seconds": 0.3407,
+      "loop": false,
+      "provenance": {
+        "source": "https://gdc.sonniss.com/",
+        "license": "Sonniss GDC 2026 – licence přiložená v balíčku",
+        "author": "Epic Stock Media - HD Game Materials"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet2.wav",
+      "source_sha256": "39341880894a274f813081069837cd8c66ce2466f0694f36b90ca7004022ba37",
+      "asset": "Assets/Audio/Collected/CS2/physics/metal/metal_solid_impact_bullet2_39341880.wav",
+      "guid": "8c90d1f926d85c5f86929976c8d1d4e7",
+      "seconds": 0.6735,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/metal/metal_solid_impact_bullet1.wav",
+      "source_sha256": "7ef9e61d350f9c2221685c2fe7f32017a3074e73203c438c1cfd54f014e994fa",
+      "asset": "Assets/Audio/Collected/CS2/physics/metal/metal_solid_impact_bullet1_7ef9e61d.wav",
+      "guid": "2d238295919f5b409cbd2c7e0a628f96",
+      "seconds": 0.4427,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/glass/glass_impact_bullet4.wav",
+      "source_sha256": "f9fb3d3527a531bcb5f550856a04438edf95de1cd70f661c213996aa52426cbd",
+      "asset": "Assets/Audio/Collected/CS2/physics/glass/glass_impact_bullet4_f9fb3d35.wav",
+      "guid": "5841f2fb05165dcd847acdeea5898bf6",
+      "seconds": 1.3863,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/glass/glass_impact_bullet3.wav",
+      "source_sha256": "0060e8eb08530c52824c72aa5825391ca12f9b7c9cdb04afd1e661a361be9081",
+      "asset": "Assets/Audio/Collected/CS2/physics/glass/glass_impact_bullet3_0060e8eb.wav",
+      "guid": "a0144bb11b5554409006e98e656ef914",
+      "seconds": 1.1223,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/glass/glass_impact_bullet2.wav",
+      "source_sha256": "b8fb0f04f9a3accad0af6331f2d685c17d6526df447ae7eca4a5ed04adbda959",
+      "asset": "Assets/Audio/Collected/CS2/physics/glass/glass_impact_bullet2_b8fb0f04.wav",
+      "guid": "2fe0d53101af5ceda6631f1eec81d6d8",
+      "seconds": 1.0943,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/glass/glass_impact_bullet1.wav",
+      "source_sha256": "ee972dac3015300ddf1ffe47d56ed6384457a1a6ce71356c20dffb88bf44c6c8",
+      "asset": "Assets/Audio/Collected/CS2/physics/glass/glass_impact_bullet1_ee972dac.wav",
+      "guid": "a04564f7e2885060948c6a610d89c0eb",
+      "seconds": 0.9624,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_04.wav",
+      "source_sha256": "a4e05bc664c0730726aa257064b5018dbc4007de97f184e9762ec0a906475eb0",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/dirt_impact_bullet_04_a4e05bc6.wav",
+      "guid": "793428146773573d878639e95647451a",
+      "seconds": 1.1795,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_03.wav",
+      "source_sha256": "69d61545b21b8a58c8ee32616b2ef569d34098eb488ab1d3ae8045306fc6ec5b",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/dirt_impact_bullet_03_69d61545.wav",
+      "guid": "1d10bcdab56a50fead333dcf60a1ac2f",
+      "seconds": 1.2015,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_02.wav",
+      "source_sha256": "f8ac711cdd1d1d4f5aa207f115191a3a989d5f39f8bd377af784c482c6744d5d",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/dirt_impact_bullet_02_f8ac711c.wav",
+      "guid": "91ef9e9ce7b45c51a4cacc913ec11f38",
+      "seconds": 1.1129,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/dirt_impact_bullet_01.wav",
+      "source_sha256": "fdacb12417af5da85715424afca506dac0d214e5403fadd9ae66287af02f5841",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/dirt_impact_bullet_01_fdacb124.wav",
+      "guid": "d1938d11d0ec540ea446a2f5c398ef1a",
+      "seconds": 1.1615,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/sand_impact_bullet1.wav",
+      "source_sha256": "1e0114741bbbce4227bcf207d549e115bd49c13508335809621867b51ab5fd44",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/sand_impact_bullet1_1e011474.wav",
+      "guid": "7cd81ee7c7775a03bf48c29d531f4646",
+      "seconds": 1.161,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_04.wav",
+      "source_sha256": "8c7694d56c996ef47789bde4e06f1bae66e1969d351e93b8c220a159244276d8",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/carpet_impact_bullet_04_8c7694d5.wav",
+      "guid": "d45aa7d411e85587a27bdb0bf9262fb0",
+      "seconds": 0.7196,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_03.wav",
+      "source_sha256": "ca0a5ea4b956c255950c30783e28f9544a05ec5d12971f7144cb3d02999266b3",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/carpet_impact_bullet_03_ca0a5ea4.wav",
+      "guid": "a3db74032f3b5075bcefc29846141a0c",
+      "seconds": 0.5936,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_02.wav",
+      "source_sha256": "1f2d20203cc5875ab4f855fb082d403779b16d80fec50d2a3b78934e6ddf435b",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/carpet_impact_bullet_02_1f2d2020.wav",
+      "guid": "098766b2d8b75df7ac3bfaaeaacd49a5",
+      "seconds": 0.5708,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/surfaces/carpet_impact_bullet_01.wav",
+      "source_sha256": "51580131c981ee693f5dbcaab1a60790693800a94f9121e2dbdaf05c29e594cf",
+      "asset": "Assets/Audio/Collected/CS2/physics/surfaces/carpet_impact_bullet_01_51580131.wav",
+      "guid": "ea2b1597821e542e80a6628279be0dde",
+      "seconds": 0.6556,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/rubber/rubber_tire_impact_bullet1.wav",
+      "source_sha256": "87a10c6923512aefe7b02d1de021f25c86a405b4fd53c7b39edc8b9515ba2701",
+      "asset": "Assets/Audio/Collected/CS2/physics/rubber/rubber_tire_impact_bullet1_87a10c69.wav",
+      "guid": "5200cd24331359b8a19c9011676cfb13",
+      "seconds": 0.2097,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard3.wav",
+      "source_sha256": "fc1fef07a6ec1051cfaf8d4746e0955651dada18fc54efc1e27dbb29774817d7",
+      "asset": "Assets/Audio/Collected/CS2/physics/wood/wood_plank_impact_hard3_fc1fef07.wav",
+      "guid": "526751d7bdc45019be036f3f3adb9d69",
+      "seconds": 0.1185,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard2.wav",
+      "source_sha256": "31bf511b63eeffd3caaa5856c8649fc63fd3334f72d2ec634be8b415eded5469",
+      "asset": "Assets/Audio/Collected/CS2/physics/wood/wood_plank_impact_hard2_31bf511b.wav",
+      "guid": "30c58bf20f5f57998be82ec6fa4e1e0c",
+      "seconds": 0.2978,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/wood/wood_plank_impact_hard1.wav",
+      "source_sha256": "2da02aeb4d5e1d3c089a535a499f0d096a0fbbf8c0592c815d282765085c838d",
+      "asset": "Assets/Audio/Collected/CS2/physics/wood/wood_plank_impact_hard1_2da02aeb.wav",
+      "guid": "9dd6c61be976502498b2531513ecf47d",
+      "seconds": 0.3043,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/rock_impact_hard1.wav",
+      "source_sha256": "2d54853a11792b8b581bc67e412433d0306d7f192e5777780497a223d06d4641",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/rock_impact_hard1_2d54853a.wav",
+      "guid": "f8fd77ea068554549c2390809ae803c1",
+      "seconds": 0.196,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/rock_impact_hard2.wav",
+      "source_sha256": "a0f950725c0cfccb0f4910b654f99f1faa391fcad2101b86217e2ddc38053684",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/rock_impact_hard2_a0f95072.wav",
+      "guid": "f08267e4600e524699158f0b18ab9f1f",
+      "seconds": 0.2368,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/rock_impact_hard3.wav",
+      "source_sha256": "e9d85d25564a1bb30a5a3de737bbff4542caf24ff5eeea6980dfb6a5b45bd1cb",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/rock_impact_hard3_e9d85d25.wav",
+      "guid": "a97d7866ea70527dabe1dfc639481ad8",
+      "seconds": 0.1171,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/rock_impact_hard4.wav",
+      "source_sha256": "c52799b784fbef72ba3308254c9122f27b270dfeca5a693907eb497cbf9b9a13",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/rock_impact_hard4_c52799b7.wav",
+      "guid": "518071694e1a579396014b15874f43a0",
+      "seconds": 0.1751,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/hegrenade/he_bounce-1.wav",
+      "source_sha256": "967974eacd15c529915c35e5756f79503589e39bf013252e17c6126356496bca",
+      "asset": "Assets/Audio/Collected/CS2/weapons/hegrenade/he_bounce-1_967974ea.wav",
+      "guid": "faa62f42b52a541ab80c809e3d29c5d3",
+      "seconds": 0.7399,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode1.wav",
+      "source_sha256": "a94dfe03e67a18884dcf68e402e91ff68487b98dacff35399f5eccceeee9940b",
+      "asset": "Assets/Audio/Collected/CS2/weapons/flashbang/flashbang_explode1_a94dfe03.wav",
+      "guid": "3a0f0af5446d5c44bb06f2166883fd22",
+      "seconds": 2.413,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/flashbang/flashbang_explode2.wav",
+      "source_sha256": "560af3f20d9f3952752e917027dbd3603fcad2d6a7c0241f16198618337f8efd",
+      "asset": "Assets/Audio/Collected/CS2/weapons/flashbang/flashbang_explode2_560af3f2.wav",
+      "guid": "731302c230ad5b0bbca96bb70f613495",
+      "seconds": 2.414,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/items/rush_terminal_no_01.mp3",
+      "source_sha256": "6de48898869c681bc7e74c383312e1ace0401430783940fea42b756426db697d",
+      "asset": "Assets/Audio/Collected/CS2/items/rush_terminal_no_01_6de48898.wav",
+      "guid": "16d5e3eb9a935504b960c8ebab2889fd",
+      "seconds": 1.039,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_slash1.wav",
+      "source_sha256": "f12791cc6d732430d3d5feab625ca2a359ffcf5dadfffc3fd49d21b4e791535e",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_slash1_f12791cc.wav",
+      "guid": "1db39df03218555daafe0510551772af",
+      "seconds": 0.1563,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_slash2.wav",
+      "source_sha256": "cb4c0f91d779dc35b79989b4f28a667f0ae897b477e92b4ebfe2e9592c24a735",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_slash2_cb4c0f91.wav",
+      "guid": "41e28c8d42a250e8a987d7475816f103",
+      "seconds": 0.1414,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_hit2.wav",
+      "source_sha256": "37afe21de8e588b4f07f753d03e5cc2e81240effaf18312ce75c145d5ca246e9",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_hit2_37afe21d.wav",
+      "guid": "2ffa409959455c83a6af005a271dd6b8",
+      "seconds": 0.5912,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_stab.wav",
+      "source_sha256": "4559003b5dedce6e30033468597721c6d461e4bf0656f2b7a3ec1fc7a053fa7b",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_stab_4559003b.wav",
+      "guid": "226ea07acff05c15b68d1e25c5ecc262",
+      "seconds": 1.4786,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_01.mp3",
+      "source_sha256": "e0817867ef183dbd05d492d883bc01d2c979aeef3e74e2f6d89182fb978765e9",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_hit_light_thud_01_e0817867.wav",
+      "guid": "43920476b03f5482a9246e6116531af6",
+      "seconds": 1.268,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_02.mp3",
+      "source_sha256": "a739b2c06053ee1ac851a8de76e43acde8d359eeea5781f1720ad4549daaed49",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_hit_light_thud_02_a739b2c0.wav",
+      "guid": "7fa9bca37cdb54cf895aa24ef80a29a8",
+      "seconds": 1.7456,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_03.mp3",
+      "source_sha256": "a6dd0a2f083ac1e176415e815148a0ba9571e249f460f339fab8fdb3acf41ef6",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_hit_light_thud_03_a6dd0a2f.wav",
+      "guid": "43e7c0b462a250848223a31c43193b26",
+      "seconds": 1.2898,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_swish_light_02.mp3",
+      "source_sha256": "0f0b07c7673b765b6da95e816399b8ad47c2dd0c09c5585139485845c8e70a70",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_swish_light_02_0f0b07c7.wav",
+      "guid": "f65fa61b328c5674889b1d8d0e2154db",
+      "seconds": 0.2173,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_swish_light_01.mp3",
+      "source_sha256": "522048e08e236ec1a0f5f29f2f51dc42c3ddf6ca4d6963de044a3c6673994098",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_swish_light_01_522048e0.wav",
+      "guid": "7db5ddc967a854fbba379bebf9efef47",
+      "seconds": 0.1706,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_swish_light_03.mp3",
+      "source_sha256": "0635c0f003ffda791e7d076c8f3c53b0123d0915a9ee97bd09167a448f0988f4",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_swish_light_03_0635c0f0.wav",
+      "guid": "20a6704ba21c567286a18e6ab133575e",
+      "seconds": 0.1866,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_swish_light_04.mp3",
+      "source_sha256": "190c075a5a7cafc57503b8168801824647c1cf81b59bd126956f4ad57b18be0a",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_swish_light_04_190c075a.wav",
+      "guid": "0b59f4dfcc39508bbc0b53ddba30380f",
+      "seconds": 0.1948,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_02.mp3",
+      "source_sha256": "9c779c201ba2f67509d03c0e45a20b6ecc7653fae70e0b1b78b51f89081e2d47",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_swish_heavy_02_9c779c20.wav",
+      "guid": "7e8e4fe6dd1b513d8c4f9eb5497e51c6",
+      "seconds": 0.2024,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3",
+      "source_sha256": "85bf72d29fd76991ac88abce7317727144d713bc781e6f4992e0c619f8560a0b",
+      "asset": "Assets/Audio/Collected/CS2/weapons/knife/knife_swish_heavy_03_85bf72d2.wav",
+      "guid": "c2f1d789e5a3554ab5c71b6c770dab8e",
+      "seconds": 0.201,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/deagle/de_clipout.wav",
+      "source_sha256": "6fd8ce11dd747c85053e68b5c226e9ada2c1026e0dd6a088e831e466d0352c08",
+      "asset": "Assets/Audio/Collected/CS2/weapons/deagle/de_clipout_6fd8ce11.wav",
+      "guid": "6b989eec5cc75218a025bee49f120676",
+      "seconds": 0.2697,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/deagle/de_clipin.mp3",
+      "source_sha256": "05d5c188f0ee4e163c87ccdd00cf61b4b079687e037e7b9c2dead9c556b1d613",
+      "asset": "Assets/Audio/Collected/CS2/weapons/deagle/de_clipin_05d5c188.wav",
+      "guid": "c3fb28226c6b5266a08d19cfd845657e",
+      "seconds": 0.1253,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/deagle/de_slideback.wav",
+      "source_sha256": "868726b5b9fb958c2a2c15c892be67249b10d400d479cd01fab15f404608378b",
+      "asset": "Assets/Audio/Collected/CS2/weapons/deagle/de_slideback_868726b5.wav",
+      "guid": "1effe5f91966533c82b82b718912b873",
+      "seconds": 0.1812,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/deagle/de_slideforward.wav",
+      "source_sha256": "98dd776f9d55964974b8a1198bac4f00d4e0f2865ae0d57bb40cdae6542d0635",
+      "asset": "Assets/Audio/Collected/CS2/weapons/deagle/de_slideforward_98dd776f.wav",
+      "guid": "bc949972baf1516799d2018f344d186a",
+      "seconds": 0.1316,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_02.wav",
+      "source_sha256": "774840d68641471d8fe21dfd37f49797689e0b96e067393f0c18d027bdb7c8b0",
+      "asset": "Assets/Audio/Collected/CS2/weapons/hegrenade/hegrenade_detonate_02_774840d6.wav",
+      "guid": "dd7ab2a203b65a65a2535224c5531d5e",
+      "seconds": 4.8603,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_03.wav",
+      "source_sha256": "ffe3ac56dd7f2687a95c8fe580447b3ee2954bd8b47448c454c21456f80fec33",
+      "asset": "Assets/Audio/Collected/CS2/weapons/hegrenade/hegrenade_detonate_03_ffe3ac56.wav",
+      "guid": "9760a827412e5181938d41c55700458e",
+      "seconds": 4.6266,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/p90/p90_cliprelease.wav",
+      "source_sha256": "c7c73a0a1bc8435d8538687601d88ca521a71f03a96bd036266b4d543a102efe",
+      "asset": "Assets/Audio/Collected/CS2/weapons/p90/p90_cliprelease_c7c73a0a.wav",
+      "guid": "e46cf5f8e44658ffbf2707dca333c745",
+      "seconds": 0.2279,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/p90/p90_clipout.wav",
+      "source_sha256": "5da8bd60075446bdc4469c18a14f066b7703dcd3e476b120530479361482c657",
+      "asset": "Assets/Audio/Collected/CS2/weapons/p90/p90_clipout_5da8bd60.wav",
+      "guid": "6b70f55376f3595c86a2ca5d303eea4f",
+      "seconds": 0.2344,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/items/nvg_on.wav",
+      "source_sha256": "a7ebad08a2a33aee0bbbb64aca07d10d776bfa9ed61594d334b1cf7905301004",
+      "asset": "Assets/Audio/Collected/CS2/items/nvg_on_a7ebad08.wav",
+      "guid": "524ceaa29a4f5d6abe35529855fc60dd",
+      "seconds": 1.7578,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/body/body_impact_fists_01.wav",
+      "source_sha256": "53d25d4bffb8488ad42cfcf523e84610e9e8553981d954c3fed492a21729ba75",
+      "asset": "Assets/Audio/Collected/CS2/physics/body/body_impact_fists_01_53d25d4b.wav",
+      "guid": "ca0fe1ef3b3b59ffa9a1ff6e93bed531",
+      "seconds": 0.5547,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/body/body_impact_fists_02.wav",
+      "source_sha256": "bfacfa4adc84fdf465dedb7e173786fdfde84a63134c53d7963a69f714e18f64",
+      "asset": "Assets/Audio/Collected/CS2/physics/body/body_impact_fists_02_bfacfa4a.wav",
+      "guid": "69e4cbe689765d9b88373a9aa1ef1fb2",
+      "seconds": 0.5675,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/body/body_impact_fists_03.wav",
+      "source_sha256": "7cb7cadade2e4ed1bfcfb8f5570f6d3edb3bef66a3230e451c09a5462d6be491",
+      "asset": "Assets/Audio/Collected/CS2/physics/body/body_impact_fists_03_7cb7cada.wav",
+      "guid": "dde8a8683fd85ad894d8f61d302abba6",
+      "seconds": 0.3868,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/zoom.wav",
+      "source_sha256": "e34ca34f15a4e741507dece929a44260232a7bf1a81e8b3377fab72482083555",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/zoom_e34ca34f.wav",
+      "guid": "b1ae1e4fa0105c65a214c3a9ab6dd1a7",
+      "seconds": 0.2322,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/taser/taser_charge_ready.wav",
+      "source_sha256": "9f17523316df7a8f309628760a6f0ec40188d56e6e7ea7aa83ce88472c686a7e",
+      "asset": "Assets/Audio/Collected/CS2/weapons/taser/taser_charge_ready_9f175233.wav",
+      "guid": "d188b2a41f285382b9718df368035106",
+      "seconds": 0.4115,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/awp_zoom_out.wav",
+      "source_sha256": "4765a4f6456ed0b644aa9cb9c4e30056df1760d977ec06b332e21a6dead0370e",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_zoom_out_4765a4f6.wav",
+      "guid": "9f00001fbb995d4a8c9ee0a678783cb5",
+      "seconds": 0.1871,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/awp_clipout.mp3",
+      "source_sha256": "d4100551529ccacda040311768a5fb7bd735c90353db97870eb07a85807c8520",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_clipout_d4100551.wav",
+      "guid": "a52e704606db5829a2f6b6a62cd4db19",
+      "seconds": 0.1441,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/awp_clipin.mp3",
+      "source_sha256": "51d113c1b69b526219f943c299b36ec200d0e9f52f2bcc0198ab7b478cf345a7",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_clipin_51d113c1.wav",
+      "guid": "430f7c29c1f95b0a92eba0961ff1f547",
+      "seconds": 0.3006,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/awp_cliphit.mp3",
+      "source_sha256": "5ea5bcc78d574f108e86dda7441757a8acb623f0d5a4dc0184695b369023a034",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_cliphit_5ea5bcc7.wav",
+      "guid": "7cfb3631e47a559ca149bd3f7badba3e",
+      "seconds": 0.2664,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/awp_boltback.wav",
+      "source_sha256": "2ee1d6f1cc4e2b4e3933ef09e285c0b1a09f1f8130d9f4b8afe94281e989f2b8",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_boltback_2ee1d6f1.wav",
+      "guid": "d008332125a158b3bc022a1397e42dfc",
+      "seconds": 0.3329,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/awp_boltforward.wav",
+      "source_sha256": "8a9ec313fdd18eb719c3b87fe6d2cdd0387acc2fea03d8358cb19cee718fd11b",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_boltforward_8a9ec313.wav",
+      "guid": "7383be54cdbc58e5937e7ebe2f6d866e",
+      "seconds": 0.2147,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/hegrenade/grenade_throw.wav",
+      "source_sha256": "f69bafba011129edf6cf822c7e1bb26448e8952671e18f31f498bf3563fe519e",
+      "asset": "Assets/Audio/Collected/CS2/weapons/hegrenade/grenade_throw_f69bafba.wav",
+      "guid": "32a773c5c7135847ba021d9c6441c72a",
+      "seconds": 0.7635,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/taser/taser_charging.wav",
+      "source_sha256": "ddcf6e0e8a0ccf6c50155d6d249f95f0f9cd42ceb856460094f67678a857693a",
+      "asset": "Assets/Audio/Collected/CS2/weapons/taser/taser_charging_ddcf6e0e.wav",
+      "guid": "c3db6004a855594cbffafe9a7e50f4fe",
+      "seconds": 2.0622,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_clipout.mp3",
+      "source_sha256": "ba5374221a140614bc7bc5d413eddd52907277fbf8778f7669b7724ae87c316c",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_clipout_ba537422.wav",
+      "guid": "88b23918446a58899078cfc1d24dcb93",
+      "seconds": 0.375,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_clipin.mp3",
+      "source_sha256": "72101a4575b27c5a9a4995ec0e05565360052670451d3e3ada30a91245531bc3",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_clipin_72101a45.wav",
+      "guid": "8383a5acd54554d9989ad2b933b5a332",
+      "seconds": 0.0998,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_boltback.mp3",
+      "source_sha256": "d0df890c6e7cc9cbb83765caf5fe4950f3fa08c8a24be423f9a45b687f121c50",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_boltback_d0df890c.wav",
+      "guid": "f949a51fe6b655918c80690c06919aa4",
+      "seconds": 0.375,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_boltforward.mp3",
+      "source_sha256": "f3ec14350e9b0123af875e60afd4b1e562fc8534db63400c8ce1cf5db7b89598",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_boltforward_f3ec1435.wav",
+      "guid": "7c6312acbc965d81912d392de4de9821",
+      "seconds": 0.37,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav",
+      "source_sha256": "e1f6ebc936cc2ca009e7393fd8d0c7b07ae9d78995eccba9031a6cfa95d84a87",
+      "asset": "Assets/Audio/Collected/CS2/physics/concrete/boulder_impact_hard4_e1f6ebc9.wav",
+      "guid": "a93e7b6026b65fff80bafaef18219eda",
+      "seconds": 1.0442,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_05.wav",
+      "source_sha256": "61928b997ba2cee6509e3ab8cb427f2d2831472524c2183d9232159c4342a05b",
+      "asset": "Assets/Audio/Collected/CS2/physics/weapons/weapon_hegrenade_impact_05_61928b99.wav",
+      "guid": "cf45299961135cda8d157b1ec8a17958",
+      "seconds": 0.3093,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_04.wav",
+      "source_sha256": "46bc76d29b3f0404021a0e7f75adeacda5b5aa44581ca4489519fc4e28456d0b",
+      "asset": "Assets/Audio/Collected/CS2/physics/weapons/weapon_hegrenade_impact_04_46bc76d2.wav",
+      "guid": "0e9aa4b0f9355464a89b347f8633413d",
+      "seconds": 0.3413,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/weapons/weapon_hegrenade_impact_03.wav",
+      "source_sha256": "e0a47ba6e57de17adc7ea5475e3e284f52038c43707e063d9315b75f2ebe74af",
+      "asset": "Assets/Audio/Collected/CS2/physics/weapons/weapon_hegrenade_impact_03_e0a47ba6.wav",
+      "guid": "00e5f0078c285ef78314f5dfb00227a1",
+      "seconds": 0.5227,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/mag7/mag7_insertshell.wav",
+      "source_sha256": "8387724410690ff67ba9b3ee07c1d86eeb49a613187a578f3b4309c8eceeb09f",
+      "asset": "Assets/Audio/Collected/CS2/weapons/mag7/mag7_insertshell_83877244.wav",
+      "guid": "3fd1a50ab97555709f3403c7ee8fb10f",
+      "seconds": 0.3653,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/mag7/mag7_pump_back.mp3",
+      "source_sha256": "ee555941105a36222bb963830e7906b4751e2f5b96243c19ef9f8498ce31d308",
+      "asset": "Assets/Audio/Collected/CS2/weapons/mag7/mag7_pump_back_ee555941.wav",
+      "guid": "6455b43a2c375a6dbea0e2c86e638756",
+      "seconds": 0.1383,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/mag7/mag7_pump_forward.wav",
+      "source_sha256": "0cebb88bea3723a9282f9e0c54428b94c57c69622857a7e8728c4ad8483d2cb0",
+      "asset": "Assets/Audio/Collected/CS2/weapons/mag7/mag7_pump_forward_0cebb88b.wav",
+      "guid": "8841bc4be0195f249b7b1cf117f9afc6",
+      "seconds": 0.1121,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/ambient/anubis/anubis_riverlap.wav",
+      "source_sha256": "f52967180c8a39c82a4042d8774c047f4d04a5266ee1dd02d1767703b465a704",
+      "asset": "Assets/Audio/Collected/CS2/ambient/anubis/anubis_riverlap_f5296718.wav",
+      "guid": "3d140b70c41e5141999d2fb1aa371ba4",
+      "seconds": 15.975,
+      "loop": true,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/ambient/common/fire/fire_med_loop1.mp3",
+      "source_sha256": "209df5fdc47eac7c1489265816faf886f6b0ba5953be8e0af3b987e8f2fa572b",
+      "asset": "Assets/Audio/Collected/CS2/ambient/common/fire/fire_med_loop1_209df5fd.wav",
+      "guid": "8ad20983b32755fc806f3f450c6a00aa",
+      "seconds": 4.5212,
+      "loop": true,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:GDC2026_kandidati/43_B_Rolba_motor.wav",
+      "source_sha256": "c79d2c3436bfbc5eee8398a1111369fa3de82237914a5839e8a051a67019ef7c",
+      "asset": "Assets/Audio/Collected/GDC2026/Effects/43_B_Rolba_motor_c79d2c34.wav",
+      "guid": "1595afd2c7ce58b689e4deb7b0e77a77",
+      "seconds": 15.975,
+      "loop": true,
+      "provenance": {
+        "source": "https://gdc.sonniss.com/",
+        "license": "Sonniss GDC 2026 – licence přiložená v balíčku",
+        "author": "Epic Stock Media - Public Spaces - Basic Transportation Sounds"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/items/healthshot_success_01.wav",
+      "source_sha256": "ef784ccd76f357e5224874507a2c1c277ddbbbf2a741dc60f02e3f378dd38a3c",
+      "asset": "Assets/Audio/Collected/CS2/items/healthshot_success_01_ef784ccd.wav",
+      "guid": "6add0dd2aa875e92b62fa5926d18d25e",
+      "seconds": 1.6058,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard1.wav",
+      "source_sha256": "a2e16f4b1c804634dbbb5f44bd071239e2e2e6338ff85fb9624d8f25cb884be6",
+      "asset": "Assets/Audio/Collected/CS2/physics/glass/glass_bottle_impact_hard1_a2e16f4b.wav",
+      "guid": "920d126731e95e28af43499f974e59b1",
+      "seconds": 0.4769,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard2.wav",
+      "source_sha256": "cba3cce176b3d224c14fdec216394ae77c04c12630e352d4306a180904a73edc",
+      "asset": "Assets/Audio/Collected/CS2/physics/glass/glass_bottle_impact_hard2_cba3cce1.wav",
+      "guid": "d41ee2d20f545a95975c4838765a359f",
+      "seconds": 0.518,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav",
+      "source_sha256": "030868f055783aa743393a6a325174cf761922d7a98e8a22905bb79fdf7ce18e",
+      "asset": "Assets/Audio/Collected/CS2/physics/glass/glass_bottle_impact_hard3_030868f0.wav",
+      "guid": "8a3816abdd745f06857be689a7fb6596",
+      "seconds": 0.5652,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/items/pickup_ammo_01.wav",
+      "source_sha256": "a8c4d2ebb3a1a6c8c36c171dfe5f8a39ddfe982815076a8badbdc045284aafa9",
+      "asset": "Assets/Audio/Collected/CS2/items/pickup_ammo_01_a8c4d2eb.wav",
+      "guid": "3dbc3df8c54c52cf92c6b553559b6f03",
+      "seconds": 0.5846,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_01.wav",
+      "source_sha256": "08cb16351b877b274f46430c00175e6d067f1ef318fd8848e95f2b1633928a46",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_01_08cb1635.wav",
+      "guid": "4a6634229b165cc694830a4bfbde3c64",
+      "seconds": 3.192,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_02.wav",
+      "source_sha256": "52606a81e0a1d0bac1381624565146bcebf37f7f64fb36dc157d7c7aeb70f0d9",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_02_52606a81.wav",
+      "guid": "d9ec3eeba1c9597680d8d19407b2033f",
+      "seconds": 1.8598,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_03.wav",
+      "source_sha256": "bb0ce61824697f20aab8c25ab3dd7cbf614e2aec5356d25db9eb95da75162295",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_03_bb0ce618.wav",
+      "guid": "7219297d52a9536fae5cacba4151e8dd",
+      "seconds": 2.4792,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_04.wav",
+      "source_sha256": "30a328a94f843b7dee78456cb7a785ab1f6c9023ca7ec70f121d107f7c09cb5f",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_04_30a328a9.wav",
+      "guid": "36c1f0e8fff35516ad9c5a47e3acde12",
+      "seconds": 2.816,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_silencer_01.wav",
+      "source_sha256": "02da0d81a5780fb19b2800d0919c1c8252491e359a37c7ff14d88bbd95587fab",
+      "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_silencer_01_02da0d81.wav",
+      "guid": "5b286284ff97551e9f91918ecb4f856d",
+      "seconds": 1.4103,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/revolver/revolver-1_01.wav",
+      "source_sha256": "14963b95dacd8872286ae852516429516b98a628d135f9357072a4250bee0e15",
+      "asset": "Assets/Audio/Collected/CS2/weapons/revolver/revolver-1_01_14963b95.wav",
+      "guid": "a3162f6f5cc15c6aa901b2bb92148746",
+      "seconds": 3.4849,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/awp_01.wav",
+      "source_sha256": "4bccb603bea8bcd39e287a7959b5bb7e8ed7c0aabe74755715b169482d6fa8b0",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_01_4bccb603.wav",
+      "guid": "ab4165cf6b6250cf9767a14f8247630f",
+      "seconds": 4.129,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/awp/awp_02.wav",
+      "source_sha256": "80c8f0fca70acd0123a46ce90192b30fcfc5a46e9585f583bc1c3ea3d7be1719",
+      "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_02_80c8f0fc.wav",
+      "guid": "8765c7a6c98a537e816c9972794cb62c",
+      "seconds": 4.129,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/mp5/mp5_01.wav",
+      "source_sha256": "32b0a412ee247ed209469b6abd4437792db1451faac4be9346810ec8375e7c77",
+      "asset": "Assets/Audio/Collected/CS2/weapons/mp5/mp5_01_32b0a412.wav",
+      "guid": "49e52e5651ef5567aea58f7518c61de6",
+      "seconds": 1.4147,
+      "loop": false,
+      "provenance": {}
+    }
+  ],
+  "rules": [
+    "Assigned files are used even when done is false; skipped items are excluded.",
+    "Land and water entry/exit are separate from walking.",
+    "Melee swing and contact are separate.",
+    "Reload components are assembled in order, not randomly exchanged.",
+    "Existing recordings and hero voices take priority and are not modified."
+  ],
+  "cue_count": 81,
+  "unique_source_files": 247,
+  "reload_overrides": {
+    "honza_reload": {
+      "source": "inbox:CS2_kandidati/weapons/nova/nova_insertshell_01.mp3",
+      "repeats": 5,
+      "source_sha256": "657e2ce9f7cf131ad7c611894faaaf62e8b937182bb77c231b22ff6d4e2fd2fc"
+    }
+  }
+}

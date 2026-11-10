@@ -1,0 +1,6 @@
+Sem muzes vlozit dalsi zvuky secneho zasahu do hrace.
+Ve Zvukove sbirce otevri Zbrane a zasahy / Sekera-kosa -> hrac (spolecna sada).
+Klikni Pridat jiny soubor, vyber zvuky z teto slozky a prirad je.
+Vsechny postavy pak mohou sdilet stejnou nahodnou sadu kontaktu do tela.
+Zvuky svihu a zasahu do zdi sem nepatri.
+Po vyberu spust export_to_unity.py; potom obnov Play v Unity.

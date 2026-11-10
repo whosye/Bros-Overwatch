@@ -1,0 +1,1092 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.5/staging' branch; Version is '6000.5.9f1 (b57deb96f08d) revision 11894251'; Using compiler version '194234433'; Build Type 'Release'
+[Licensing::IpcConnector] Channel LicenseClient-lenit doesn't exist
+OS: 'Windows 11  (10.0.26300) Professional' Language: 'cs' Physical Memory: 31801 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-11-10T18:51:37Z
+[Licensing::Module] Successfully launched the LicensingClient (PId: 26968)
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Unity.exe
+-batchmode
+-nographics
+-projectPath
+C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros
+-quit
+-executeMethod
+CollectedAudioValidation.Run
+-logFile
+C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/tools/sound-collector/research/UNITY_AUDIO_IMPORT.log
+Successfully changed project path to: C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros
+C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-remapper-allocator-initial-capacity=32768"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [15356]  Target information:
+
+Player connection [15356]  * "[IP] 192.168.0.129 [Port] 55504 [Flags] 2 [Guid] 2515453476 [EditorId] 2515453476 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-4KINKII) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [15356] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [15356] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-lenit" at "2026-11-10T18:51:38.2325188Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 26968, path: "C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              4e3e45c2ae7f4cb0947ed58e20e72c26
+  Correlation Id:          fa112288b1acfe56ba6e8c08ee9c7142
+  External correlation Id: 6704935844682193276
+  Machine Id:              70eBWWns6fsGXv/M3Ubo6CM9Uco=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-lenit" (connect: 0.24s, validation: 0.14s, handshake: 0.03s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-lenit-notifications" at "2026-11-10T18:51:38.4043138Z"
+[Licensing::Module] Connected to LicensingClient (PId: 26968, launch time: 0.01, total connection time: 0.42s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 7972627692131-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.45s
+[Package Manager] Connected to IPC stream "Upm-27592" after 0.3 seconds.
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Initialize engine version: 6000.5.9f1 (b57deb96f08d)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros/Assets
+Forcing GfxDevice: Null
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+NullGfxDevice:
+    Version:  NULL 1.0 [1.0]
+    Renderer: Null Device
+    Vendor:   Unity Technologies
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56592
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.002054 seconds.
+Native extension for WindowsStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.385 seconds
+Domain Reload Profiling: 783ms
+	BeginReloadAssembly (104ms)
+		CreateAndSetChildDomain (7ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (12ms)
+	initialDomainReloadingComplete (57ms)
+	LoadAllAssembliesAndSetupDomain (219ms)
+		LoadAssemblies (94ms)
+		AnalyzeDomain (154ms)
+			TypeCache.Refresh (153ms)
+				TypeCache.ScanAssembly (143ms)
+	FinalizeReload (387ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (67ms)
+			ProcessInitializeOnLoadAttributes (80ms)
+			ProcessInitializeOnLoadMethodAttributes (176ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 62 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.ai.navigation@2.0.14 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ai.navigation@134dd6a3b97b)
+    com.unity.cloud.gltfast@6.20.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.cloud.gltfast@11ddc2436f97)
+    com.unity.collab-proxy@2.13.6 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4)
+    com.unity.ide.rider@3.0.38 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ide.rider@1f60b3138684)
+    com.unity.ide.visualstudio@2.0.26 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ide.visualstudio@a99d56dec63f)
+    com.unity.inputsystem@1.20.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.inputsystem@7a4e1a2a8194)
+    com.unity.netcode.gameobjects@2.13.1 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17)
+    com.unity.probuilder@6.1.2 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.12 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.visualscripting@4edfcc09512f)
+    com.unity.settings-manager@2.1.1 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.settings-manager@0b8638c5ce86)
+    com.unity.nuget.mono-cecil@1.11.6 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.burst@1.8.30 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.burst@2f3d916873ea)
+    com.unity.searcher@4.9.5 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.searcher@a463122f2c00)
+    com.unity.test-framework.performance@3.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.test-framework.performance@8b56083ec0f0)
+  Built-in packages:
+    com.unity.multiplayer.center@1.0.1 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.render-pipelines.universal@d7774c218bdf)
+    com.unity.test-framework@1.7.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ugui@1c4864518158)
+    com.unity.modules.accessibility@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.physics2d)
+    com.unity.modules.physicscore2d@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.1.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.render-pipelines.core@a4c9a9793789)
+    com.unity.shadergraph@17.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.shadergraph@8d7376ec43ee)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.transport@6.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.transport@0c07c94c2861)
+    com.unity.collections@6.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.collections@ec2c217e4cb2)
+    com.unity.mathematics@1.4.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.mathematics@981956d94fb6)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.02 seconds
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 4s14ms
+[ 904/1168  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[1160/1168  1s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp.dll (+2 others)
+[1161/1168  0s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+[1162/1168  1s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp-Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll, with 140 defines and 374 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Netcode.Editor.CodeGen.INetworkMessageILPP, Unity.Netcode.Editor.CodeGen.INetworkSerializableILPP, Unity.Netcode.Editor.CodeGen.NetworkBehaviourILPP, Unity.Netcode.Editor.CodeGen.RuntimeAccessModifiersILPP, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Netcode.Editor.CodeGen.INetworkMessageILPP
+
+running Unity.Netcode.Editor.CodeGen.INetworkSerializableILPP
+
+running Unity.Netcode.Editor.CodeGen.NetworkBehaviourILPP
+
+running Unity.Netcode.Editor.CodeGen.RuntimeAccessModifiersILPP
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1163/1168  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[1164/1168  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+[1165/1168  2s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp.dll, with 142 defines and 352 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Netcode.Editor.CodeGen.INetworkMessageILPP, Unity.Netcode.Editor.CodeGen.INetworkSerializableILPP, Unity.Netcode.Editor.CodeGen.NetworkBehaviourILPP, Unity.Netcode.Editor.CodeGen.RuntimeAccessModifiersILPP, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Netcode.Editor.CodeGen.INetworkMessageILPP
+
+running Unity.Netcode.Editor.CodeGen.INetworkSerializableILPP
+
+running Unity.Netcode.Editor.CodeGen.NetworkBehaviourILPP
+
+running Unity.Netcode.Editor.CodeGen.RuntimeAccessModifiersILPP
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1166/1168  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp.pdb
+[1167/1168  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp.dll
+*** Tundra build success (3.98 seconds), 9 items updated, 1168 evaluated
+Total cache size 84304152
+Total cache size after purge 84304152, took 00:00:00.2497465
+AssetDatabase: script compilation time: 4.677757s
+Begin MonoManager ReloadAssembly
+Importing 'GUID: f8c6572cf8b8a884789e48f36951d594 - Path: Assets/Audio/Collected' with importer (DefaultImporter)
+Imported 'GUID: f8c6572cf8b8a884789e48f36951d594' -> (Import Result ID: 'c40b8f0b916918cd4b24c31660924875') in 0.025 seconds [static dependencies only]. Details - ImportResultOutputID=c103303af58f71df615ff35c2621b783 DependenciesID=965db2b98ce1e7680fd003c464a5e30f StaticDependenciesID=58eabf196a0972c1a1cacc717a367cd8 
+Importing 'GUID: 7463e9f819e659345978f58a30a5a59a - Path: Assets/Audio/Collected/GDC2026' with importer (DefaultImporter)
+Imported 'GUID: 7463e9f819e659345978f58a30a5a59a' -> (Import Result ID: '1cb191151f138b4891cadf716b268cd0') in 0.009 seconds [static dependencies only]. Details - ImportResultOutputID=b624740a2c949b2364b0cb2a1f3130ef DependenciesID=e6aab0a4d5b0d3cb95453572f3586812 StaticDependenciesID=7a990500e3f63090b3501c795c0a577f 
+Importing 'GUID: 493dbb3c1c23d7a4ea9bd54ffe14d121 - Path: Assets/Audio/Collected/CS2' with importer (DefaultImporter)
+Imported 'GUID: 493dbb3c1c23d7a4ea9bd54ffe14d121' -> (Import Result ID: 'f8f92c30b91fb267ba343ec2095448f3') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=3546f72bb9ec819ad6dea67f29f1dd09 DependenciesID=2ddf12f622f6666c45a4726c2763c0d2 StaticDependenciesID=829167d0ec9280b4d51ec559c1cf675c 
+Importing 'GUID: cc949c9ab1da9844ba8580125ff9f41b - Path: Assets/Audio/Collected/Weapons' with importer (DefaultImporter)
+Imported 'GUID: cc949c9ab1da9844ba8580125ff9f41b' -> (Import Result ID: 'd26e0468eef5033fdb809ec725d86752') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=47b2bb8450de2c2f5b0206a29c7de76a DependenciesID=8d1842d7989b71bc951a55a776681e46 StaticDependenciesID=2668485be612f5a70deb7aee895839fd 
+Importing 'GUID: b17bf149091c83947b7d15f8f580c482 - Path: Assets/Audio/Collected/CS2/items' with importer (DefaultImporter)
+Imported 'GUID: b17bf149091c83947b7d15f8f580c482' -> (Import Result ID: '8e5a60c696506333a00695b6864813d5') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=ed9603ac6cb33b520f6862bd577529b3 DependenciesID=5e22f53f890ed50f12b19b59dd4328fd StaticDependenciesID=c61ce87c62b6804870e8a2de60c79fd7 
+Importing 'GUID: f19c767a92075b547abf369a7e1a23c8 - Path: Assets/Audio/Collected/CS2/player' with importer (DefaultImporter)
+Imported 'GUID: f19c767a92075b547abf369a7e1a23c8' -> (Import Result ID: '87e257c5f813ce67b887b0a12c67196c') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=98c9ad969ecfee5a118b6095530dfba0 DependenciesID=ae1203cedc417499533e7b5e532b5442 StaticDependenciesID=53b36d768b1e05f246241d8b926128f5 
+Importing 'GUID: 63338984d631ab7428eb41cfc4449ac8 - Path: Assets/Audio/Collected/CS2/physics' with importer (DefaultImporter)
+Imported 'GUID: 63338984d631ab7428eb41cfc4449ac8' -> (Import Result ID: '82f787789386333ee2494d05966db284') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=36b2687b729998e4e7d14addb263f58d DependenciesID=742fd28d244e72046cce3c8ddcacc68c StaticDependenciesID=f5830a5db0e7d116ce410b195b57aae3 
+Importing 'GUID: 45eac84a84428524bb80f9a8c4db9385 - Path: Assets/Audio/Collected/CS2/ambient' with importer (DefaultImporter)
+Imported 'GUID: 45eac84a84428524bb80f9a8c4db9385' -> (Import Result ID: '34df899b26f2d0d8df6a8d6b9689b118') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=f492b35aaf735dc234292c2df10fbb49 DependenciesID=b5a1928b9b76e65d998db6b0997c6662 StaticDependenciesID=62f734314db0c6868662f911dde16be5 
+Importing 'GUID: 36920db63eb2e964e94bc3563705dbff - Path: Assets/Audio/Collected/Weapons/Reload' with importer (DefaultImporter)
+Imported 'GUID: 36920db63eb2e964e94bc3563705dbff' -> (Import Result ID: 'c2db68853f2e9f739374ad3c68882abc') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=eabb105f55d67607da0e41c294cb7c0e DependenciesID=f0bcd516b6b9f179050d60b43f425860 StaticDependenciesID=046f9067eb1207971e7e8ac6ea63c792 
+Importing 'GUID: 5854ebe562cfcd64bba5f3176a71cb10 - Path: Assets/Audio/Collected/CS2/weapons' with importer (DefaultImporter)
+Imported 'GUID: 5854ebe562cfcd64bba5f3176a71cb10' -> (Import Result ID: 'b16f8cb80e81d65abb37284743a7fff9') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=5c18f2bd3080919e23c336da45a09968 DependenciesID=aad9f5f4db87d0fa7055bb369c3d4362 StaticDependenciesID=d684ec1b793e839b2ea5f1426ddf4404 
+Importing 'GUID: 19dee034724544b41accfee32d6c39a9 - Path: Assets/Audio/Collected/GDC2026/Effects' with importer (DefaultImporter)
+Imported 'GUID: 19dee034724544b41accfee32d6c39a9' -> (Import Result ID: '46976f24e4ae409d6c19e319c8b5a4c0') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=7b3459986d0972ea98a306191b875fb9 DependenciesID=0917cc755ccc00e4856de863750676a1 StaticDependenciesID=36678e82f4a7cb691c92fbbca3a8026a 
+Importing 'GUID: 316c5577ddad369499e3f77a83169110 - Path: Assets/Audio/Collected/CS2/weapons/taser' with importer (DefaultImporter)
+Imported 'GUID: 316c5577ddad369499e3f77a83169110' -> (Import Result ID: '6484db2668c6dda16e20555df3925841') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=13fd26af10c963330d23e1bec3d0fbbc DependenciesID=0b205d70ef6eb6933874d58bf9eadfd7 StaticDependenciesID=8db1e505e0aabd041465688ee571be87 
+Importing 'GUID: 81dbce9a88acf934a9352f8f1463c30e - Path: Assets/Audio/Collected/CS2/physics/wood' with importer (DefaultImporter)
+Imported 'GUID: 81dbce9a88acf934a9352f8f1463c30e' -> (Import Result ID: '189f9aab5afc059678636fa5886cc138') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=2833abf7757e655f64cea2dea680d2f2 DependenciesID=2122f31820e09fb172d3af9597ba995a StaticDependenciesID=c42e26e1fbeacd9d5ce72332fc1ca7c3 
+Importing 'GUID: e1fda59f5aac3394ba4d81f53ed9ce64 - Path: Assets/Audio/Collected/CS2/player/footsteps' with importer (DefaultImporter)
+Imported 'GUID: e1fda59f5aac3394ba4d81f53ed9ce64' -> (Import Result ID: '7cb6b9524889a87579a9d32bad281372') in 0.007 seconds [static dependencies only]. Details - ImportResultOutputID=c9cd37c8440d3a7c362202dae7bbf500 DependenciesID=2490e22cbf9e6d39288b23158bbbc779 StaticDependenciesID=311fb5ce0c4fee72265b75065bb856ea 
+Importing 'GUID: 328375d7ba3d93644be7100467f5ca10 - Path: Assets/Audio/Collected/CS2/weapons/awp' with importer (DefaultImporter)
+Imported 'GUID: 328375d7ba3d93644be7100467f5ca10' -> (Import Result ID: 'a1be95e0468e8ea06da0ea9d6c3cd9bb') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=2e375940773ed0e1ba2296a760743cdc DependenciesID=ac4eb7855dd7ca39d6721ffd5b06f00c StaticDependenciesID=be485a88a46a97aaac066a4cb8c692d7 
+Importing 'GUID: c2689431dea57484d8e4db861a687911 - Path: Assets/Audio/Collected/CS2/weapons/m4a1' with importer (DefaultImporter)
+Imported 'GUID: c2689431dea57484d8e4db861a687911' -> (Import Result ID: '5e71cef1424b4b69b812944529b55b9c') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=f9c71ab53d54575303929a794d0a3924 DependenciesID=beee4134a0fa34fd386159482618f6ca StaticDependenciesID=6afb39c6f154ffb8c761f8e4f62da92e 
+Importing 'GUID: 23959036f296a9740b3fbd1a32a51bb4 - Path: Assets/Audio/Collected/CS2/weapons/knife' with importer (DefaultImporter)
+Imported 'GUID: 23959036f296a9740b3fbd1a32a51bb4' -> (Import Result ID: '9221b56254005221cbae9de182f82679') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=1b4262d6070e7c29cc4bfb028e106521 DependenciesID=fa8b3d0101e90363e988307d2eb8166e StaticDependenciesID=d94febc49067c6f9adc4108031482452 
+Importing 'GUID: a406e4c482793ef47a31977dc8dd7cd3 - Path: Assets/Audio/Collected/CS2/physics/surfaces' with importer (DefaultImporter)
+Imported 'GUID: a406e4c482793ef47a31977dc8dd7cd3' -> (Import Result ID: '681bd8ff7d7616a31173c5af0a4fa248') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=2955436a051145045df48b769b463512 DependenciesID=3103ea158bbb257fdfc367a2a989d5e7 StaticDependenciesID=048e61d8673fb93516ab54c9d9f935c9 
+Importing 'GUID: f544a83bebb2f1144a38223d1489c457 - Path: Assets/Audio/Collected/CS2/physics/rubber' with importer (DefaultImporter)
+Imported 'GUID: f544a83bebb2f1144a38223d1489c457' -> (Import Result ID: 'd5e8a3ed3138b6ca9a2a8e6fe278a7c5') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=bd8729c180cdb788e0643bc691bdd679 DependenciesID=e3a8c77a7f14124b7626397ea2386ffe StaticDependenciesID=7c47bd33671f82b698fed6c34412ef9a 
+Importing 'GUID: 765262bd25c94304e96b25c6d92a4f63 - Path: Assets/Audio/Collected/CS2/weapons/hegrenade' with importer (DefaultImporter)
+Imported 'GUID: 765262bd25c94304e96b25c6d92a4f63' -> (Import Result ID: '6a2ed09ca43103924f23b434f0297ee1') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=2d8dafd4695cd9677d60aad7da38c199 DependenciesID=60b50e865dedfb87df1aa47a42da3c62 StaticDependenciesID=cf67e29d3c6f8ee561e68aca5b49cf21 
+Importing 'GUID: a6a0ff71d4075804999e5ce0e7c41b42 - Path: Assets/Audio/Collected/CS2/ambient/common' with importer (DefaultImporter)
+Imported 'GUID: a6a0ff71d4075804999e5ce0e7c41b42' -> (Import Result ID: 'bee0298a7c9daf3c93e594430bd628e0') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=1ee8c9d8df064682a65345f0053fd481 DependenciesID=f4f1c9acd2ac274e94812ef838d34399 StaticDependenciesID=97560f4fadc4bbd5621d3b0aa4cd5cde 
+Importing 'GUID: 574b710afe92ed34fa0b9946646ca29c - Path: Assets/Audio/Collected/CS2/weapons/flashbang' with importer (DefaultImporter)
+Imported 'GUID: 574b710afe92ed34fa0b9946646ca29c' -> (Import Result ID: '2001ef45599efd5decc016465a9bdf53') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=98130a74441441dd2c9805f966159799 DependenciesID=99a8c3a7b36670c5f497f1b3a9697b3b StaticDependenciesID=92a110991dd5ad7115ab970a539926ed 
+Importing 'GUID: e7d649781c2396640a42d1cbb49b8b7d - Path: Assets/Audio/Collected/CS2/physics/concrete' with importer (DefaultImporter)
+Imported 'GUID: e7d649781c2396640a42d1cbb49b8b7d' -> (Import Result ID: '75e09e66f059c8e8c408dc1368fbe795') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=249c484c694f9d3a4d9d33f06505a506 DependenciesID=834bb91f2be10813f56cc208e82b97c7 StaticDependenciesID=9a2277a4740ebd583e7183b00048e55c 
+Importing 'GUID: 08cf2482c7d7e0843ad2683ed17e9db8 - Path: Assets/Audio/Collected/CS2/weapons/mag7' with importer (DefaultImporter)
+Imported 'GUID: 08cf2482c7d7e0843ad2683ed17e9db8' -> (Import Result ID: 'e1138eba2762ff8ebf8946374e896283') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=b055cada70656f2132561130c1ca3690 DependenciesID=929f8d80385a82f73616d4e1331a4e9e StaticDependenciesID=324b2e84ab2618986c672af057265a1c 
+Importing 'GUID: 488490019ab55014bb1dbbd9f6e130e6 - Path: Assets/Audio/Collected/CS2/physics/glass' with importer (DefaultImporter)
+Imported 'GUID: 488490019ab55014bb1dbbd9f6e130e6' -> (Import Result ID: '1f5ad8938e149ba2d1837aa971d10126') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=69e0b533f1ab8cba7cfc038b1add7c7d DependenciesID=34e17048d00fcd27ae0db3cc28740a4d StaticDependenciesID=073ef8df316b02969c16fd238255fa9e 
+Importing 'GUID: 2ad4f5ddf330ee9438fb3be760095595 - Path: Assets/Audio/Collected/CS2/physics/metal' with importer (DefaultImporter)
+Imported 'GUID: 2ad4f5ddf330ee9438fb3be760095595' -> (Import Result ID: '95c82884658673608de855a1adfb1c72') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=d6235a563b8325846ca0779d1fbde23f DependenciesID=0874e05101fe14c24b7a46952c26a4a4 StaticDependenciesID=e4a5a5da9b17c3bfe72f603e1d2f1b84 
+Importing 'GUID: 5abffef43a5b0bb449488b18c6e552dd - Path: Assets/Audio/Collected/CS2/weapons/p90' with importer (DefaultImporter)
+Imported 'GUID: 5abffef43a5b0bb449488b18c6e552dd' -> (Import Result ID: '4a9bce4073c9c3f040faeb605ad60f89') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=c485988ce90c150387e2d86150d716d1 DependenciesID=9c8f2788ee30a31c1f75b1a5bfbd22da StaticDependenciesID=ee95748c35a2f53891812db444eb16cc 
+Importing 'GUID: abb78532e6db90c409472cfeccbbaae7 - Path: Assets/Audio/Collected/CS2/physics/weapons' with importer (DefaultImporter)
+Imported 'GUID: abb78532e6db90c409472cfeccbbaae7' -> (Import Result ID: '065effabd561b8174d5dd4321b6b51d1') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=d407e887fed598a941abba292276a1cb DependenciesID=afba7b2069945cd5d8104bd37b702744 StaticDependenciesID=865101787d98aba75c64b83988e1cb8f 
+Importing 'GUID: 3e5c353c5603ef842b08c80ef76f51cf - Path: Assets/Audio/Collected/CS2/physics/body' with importer (DefaultImporter)
+Imported 'GUID: 3e5c353c5603ef842b08c80ef76f51cf' -> (Import Result ID: 'a161d94cebc8a6ed736668e9e61a67e6') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=de2cbf4ccd7c8b334c02935cdfa9802a DependenciesID=16b6d5fb6fa839cbb9a89c5cffc78092 StaticDependenciesID=e28b8593bca82252582b787b9fe39c5a 
+Importing 'GUID: 3e7c85aafd0624341aaed563d0df68af - Path: Assets/Audio/Collected/CS2/ambient/anubis' with importer (DefaultImporter)
+Imported 'GUID: 3e7c85aafd0624341aaed563d0df68af' -> (Import Result ID: '4579e2eca68c3860c106b654704034de') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=8c8aac898d2733945eec6e9c267c53bb DependenciesID=7e0b9b89c85f0616bdfc9265b4f93119 StaticDependenciesID=0ed6a29dbf27da4450785fd5c4182b26 
+Importing 'GUID: 8ee5487421f82674089b4dbfbe927c04 - Path: Assets/Audio/Collected/CS2/physics/water' with importer (DefaultImporter)
+Imported 'GUID: 8ee5487421f82674089b4dbfbe927c04' -> (Import Result ID: 'f1c9668744e20d50bc7f8b2f36896733') in 0.006 seconds [static dependencies only]. Details - ImportResultOutputID=2eb857d9696b1b5fdb2c813ca3f8f5ee DependenciesID=077d67b9e58fc7d0507db6c29c8b3eb9 StaticDependenciesID=b74e55675a7f4e8b0930bc6afb741afd 
+Importing 'GUID: ef694864ff735f343b65777d9c232169 - Path: Assets/Audio/Collected/CS2/weapons/glock18' with importer (DefaultImporter)
+Imported 'GUID: ef694864ff735f343b65777d9c232169' -> (Import Result ID: '048c25ff2ad8feb6e301e0bb2b7a7e6b') in 0.011 seconds [static dependencies only]. Details - ImportResultOutputID=bcdcecca46da4e57a42206046f91dea1 DependenciesID=8293b43213e74851d082756221981a8d StaticDependenciesID=ef4ac989469f90a0323e900c3cf8d7e7 
+Importing 'GUID: 7360ffdddae2b8c42996439dc5b9b90b - Path: Assets/Audio/Collected/CS2/ambient/common/fire' with importer (DefaultImporter)
+Imported 'GUID: 7360ffdddae2b8c42996439dc5b9b90b' -> (Import Result ID: '49bbe6b1135c4dd029688fa03d276424') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=10add6455356c05a8da8a980b16799ec DependenciesID=3873908285da17f96a18ef9d91fad4a7 StaticDependenciesID=988dd85f6db7df59115bea586cba9ba0 
+Refreshing native plugins compatible for Editor in 55.75 ms, found 4 plugins.
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 3.12 ms, found 4 plugins.
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-OverwatchBros
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  3.314 seconds
+Domain Reload Profiling: 5257ms
+	BeginReloadAssembly (195ms)
+		DisableScriptedObjects (24ms)
+		CreateAndSetChildDomain (40ms)
+	RebuildCommonClasses (7ms)
+	RebuildNativeTypeToScriptingClass (14ms)
+	initialDomainReloadingComplete (57ms)
+	LoadAllAssembliesAndSetupDomain (1669ms)
+		LoadAssemblies (1395ms)
+		AnalyzeDomain (245ms)
+			TypeCache.Refresh (158ms)
+				TypeCache.ScanAssembly (149ms)
+			BuildScriptInfoCaches (78ms)
+			ResolveRequiredComponents (7ms)
+	FinalizeReload (3315ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (65ms)
+			ProcessInitializeOnLoadAttributes (2138ms)
+			ProcessInitializeOnLoadMethodAttributes (354ms)
+			AfterProcessingInitializeOnLoad (8ms)
+		AwakeInstancesAfterBackupRestoration (25ms)
+Importing 'GUID: 2334e8147c0159ba990dd2c55e7b7e7a - Path: Assets/Resources/CollectedAudioBank.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2334e8147c0159ba990dd2c55e7b7e7a' -> (Import Result ID: 'd4596af701b4d9ae8d5e9e6a26f74f18') in 0.003 seconds [static dependencies only]. Details - ImportResultOutputID=6e9d5ced6da66fb537e46d7fbce7dee8 DependenciesID=dc70f541e59e60827ae12c0f3420d47d StaticDependenciesID=8ed08a42ea73f0d1aa8ecfb2e207cae6 
+Importing 'GUID: 1142bbad8b9e8c44c83a9775ff120d37 - Path: Packages/com.unity.render-pipelines.core/Tests/Editor/UnifiedRayTracing/TraceRays.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.02 seconds
+
+Compiling Ray Tracing Shader "TraceRays.urtshader", keywords = <no keywords>
+    finished in 0.25 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 1142bbad8b9e8c44c83a9775ff120d37' -> (Import Result ID: '0b96c3b86570567784a79fb6fcee341b') in 0.435 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=dd8ac7dc757973ce66df0f8192beeedc DependenciesID=4ae0f085da221ce6a5184d4f2ee33472 StaticDependenciesID=b590610e5fcd8a708a4f2de850e8beb3 
+Importing 'GUID: d19f4f8a13b6edb48b986a47ec96402e - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/LightmapShadowMaskIntegration.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "LightmapShadowMaskIntegration.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: d19f4f8a13b6edb48b986a47ec96402e' -> (Import Result ID: 'd71c48d21287770271d638be4d1b79eb') in 0.177 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=499fc64076f1f590df971ff5e4fbd1c5 DependenciesID=1d1d0f83694069e2548d7e9668a5855d StaticDependenciesID=49e323bdcc1546638b13bdfb4cfc68f8 
+Importing 'GUID: 737a1597422c12547a8714d76a9406ec - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/LightmapGBufferDebug.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "LightmapGBufferDebug.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 737a1597422c12547a8714d76a9406ec' -> (Import Result ID: 'ba4388b73073e0d464deb6d5b922736d') in 0.024 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=16f68e3e486cb0a6d621a68709f3d760 DependenciesID=dbeaad5f1c081e52bcff7361eb5c7f5c StaticDependenciesID=3f20227e84078b6c645405c46cb8ba27 
+Importing 'GUID: f32463968f29423cad25aee15a14b9f1 - Path: Packages/com.unity.render-pipelines.core/Runtime/Lighting/SurfaceCache/PunctualLightSampling.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "PunctualLightSampling.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: f32463968f29423cad25aee15a14b9f1' -> (Import Result ID: '73fb2c263737ca8a99cc0268229fafce') in 0.060 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=28f8d88b951aa9c78cab18343c534c09 DependenciesID=beba7bd3f262ea98d40225cb716e3e51 StaticDependenciesID=4f869afac6e91401aa4f6406345ebaa4 
+Importing 'GUID: 1451d029813b192429211be28181beab - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/LightmapNormalIntegration.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "LightmapNormalIntegration.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 1451d029813b192429211be28181beab' -> (Import Result ID: '5966dc95a50e6c5b7ea358005013e8c0') in 0.025 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f83e0b874436be7c3e309a20b0d1ecfa DependenciesID=7dbc60e237721464220df70dda8027a2 StaticDependenciesID=626f7de18fff1a2955b8662085b4dbf4 
+Importing 'GUID: 94a070d33e408384bafc1dea4a565df9 - Path: Packages/com.unity.render-pipelines.core/Editor/Lighting/ProbeVolume/RenderingLayerMask/TraceRenderingLayerMask.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "TraceRenderingLayerMask.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 94a070d33e408384bafc1dea4a565df9' -> (Import Result ID: 'f831cd30129018644ebd4f051e7dd522') in 0.025 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6872af197717ae627f5e54d73b15a29e DependenciesID=f18776aa5f44dca240ea1831c855c695 StaticDependenciesID=1fb66491edd8b32229e5d2cbc061e2c6 
+Importing 'GUID: 94a39d12848d8d64ca962a72b74e7c50 - Path: Packages/com.unity.render-pipelines.core/Runtime/Lighting/SurfaceCache/Estimation.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "Estimation.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 94a39d12848d8d64ca962a72b74e7c50' -> (Import Result ID: '6ce460b75e49beb4a9e86760dc1ab8cc') in 0.028 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1b0eb138d1e1b0e28d1dc38e6c2ee3c2 DependenciesID=89b03a7458c4c0f4eb4f03099f2cb9b9 StaticDependenciesID=8d6e14e20b029a55e979a2936b1a7ca7 
+Importing 'GUID: 6513c3b892e933c4f8d00c19d5c47532 - Path: Packages/com.unity.render-pipelines.core/Tests/Editor/UnifiedRayTracing/TraceTransparentRays.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "TraceTransparentRays.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 6513c3b892e933c4f8d00c19d5c47532' -> (Import Result ID: 'b67a1ed01236db3f1f310217d354c135') in 0.017 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=059128fa4c67d89d87bfe4d554ad391b DependenciesID=8cbc5b68d697f6fa5d69f4e1a84826d9 StaticDependenciesID=1d53447eb896b42061753339acb6425c 
+Importing 'GUID: 7624adbeb148b5c48ab5ab660cc2602a - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/LightmapIndirectIntegration.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "LightmapIndirectIntegration.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 7624adbeb148b5c48ab5ab660cc2602a' -> (Import Result ID: 'f1174f095413a9df5038e9a4a7f20aba') in 0.025 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=651f333fdaed0e40587f8aa4cea5a3ad DependenciesID=881f11b2ee5b0c6fd3ca2f3c581da500 StaticDependenciesID=dfa7396d5ca1cf2ef064ee30a15c28cb 
+Importing 'GUID: 471c663dc4cc6b9468c54c56fc7f297f - Path: Assets/Audio/Collected/IMPORT_MANIFEST.json' with importer (TextScriptImporter)
+Imported 'GUID: 471c663dc4cc6b9468c54c56fc7f297f' -> (Import Result ID: 'fa5d486cd527c26d631841d6cdf30a40') in 0.025 seconds [static dependencies only]. Details - ImportResultOutputID=3bd2407806da250c9369516253737aff DependenciesID=3b651259915a69f072f8de5213c5a1c2 StaticDependenciesID=37949a7b8c9500ab80cd128745315446 
+Importing 'GUID: e9f4de6d1e07fb94f9a60d35b618f724 - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/LightmapGBufferIntegration.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "LightmapGBufferIntegration.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: e9f4de6d1e07fb94f9a60d35b618f724' -> (Import Result ID: '3ea23a5af053f155c34a42586bb5fb35') in 0.030 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a7f5bdb587796a71d8ca128a644b358f DependenciesID=0d867bb82aaa8b4306e7bb29b7765e7e StaticDependenciesID=c1c19c6613f9208e5bdf4763e0c6f025 
+Importing 'GUID: 5a2a534753fbdb44e96c3c78b5a6999d - Path: Packages/com.unity.render-pipelines.core/Editor/Lighting/ProbeVolume/DynamicGI/DynamicGISkyOcclusion.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "DynamicGISkyOcclusion.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 5a2a534753fbdb44e96c3c78b5a6999d' -> (Import Result ID: 'c70dba5f5cf4bd90d90504e7acfee288') in 0.021 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1cf97bfff22f517865c2e82dc6d8c4c7 DependenciesID=029414c2cd9908223f641f23b43213b5 StaticDependenciesID=9a3cb12acb0dec6d8b8b546f6957ac54 
+Importing 'GUID: 5bbebdef5916845478fcef13fa10d89f - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/LightmapDirectIntegration.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "LightmapDirectIntegration.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 5bbebdef5916845478fcef13fa10d89f' -> (Import Result ID: 'e9d1f2ffb674ffcfde85bdaf0b128372') in 0.030 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2b6674bbee23d83bde2dba5e821f786b DependenciesID=52075b7fccb9a82ec2922fdf7488c6af StaticDependenciesID=ab8dfb6112dd9c39408de08a801f1c40 
+Importing 'GUID: fbc59f55df2416344b008dc23753cae2 - Path: Packages/com.unity.render-pipelines.core/Tests/Editor/UnifiedRayTracing/TraceRaysAndFetchAttributes.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "TraceRaysAndFetchAttributes.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: fbc59f55df2416344b008dc23753cae2' -> (Import Result ID: '9947802832171d8d8276382968898cbd') in 0.018 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=22c22f4b614e9358e9dd846829db8146 DependenciesID=6f827ff9d33f330f68d3d4fca6934fab StaticDependenciesID=bb4038394feca1bf80603c9ecafaf941 
+Importing 'GUID: 1c410815c01ce1d4d82c645c0cd45747 - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/LightmapAOIntegration.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "LightmapAOIntegration.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 1c410815c01ce1d4d82c645c0cd45747' -> (Import Result ID: '21f6af03da53b54c36f98efbc23bffd8') in 0.029 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a9f2363aac9c0df7d7bb3de151fef5d1 DependenciesID=b5531176883cc3436c2c988191685a0b StaticDependenciesID=2a6f0b41367922b80676f60713a1f940 
+Importing 'GUID: 2c32233d92a2d0745930664c087c5c9a - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/ProbeIntegrationValidity.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "ProbeIntegrationValidity.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 2c32233d92a2d0745930664c087c5c9a' -> (Import Result ID: 'dae28f4f51fc6a49a71bc6cc02ed011f') in 0.024 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c4a7bb57fe624e31c8db046d8a711a75 DependenciesID=824ac197bcdb643e74af4e573a94b04c StaticDependenciesID=716f4e45d1a45953f3ce73d3fbf3ee8f 
+Importing 'GUID: ace95ac84e213794891b4bd7c9b3c158 - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/LightmapValidityIntegration.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "LightmapValidityIntegration.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: ace95ac84e213794891b4bd7c9b3c158' -> (Import Result ID: '63b39dea02c2bd3a871557341c46645a') in 0.025 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3e952a12ab256969b8100ec72f531c66 DependenciesID=0655467d4ce3c3405c56dfae9e044ea3 StaticDependenciesID=aa8b51d51372d9acaf9acfb058c3fae3 
+Importing 'GUID: 5ecdabd800f05984696f22ba95284516 - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/ProbeIntegrationIndirect.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "ProbeIntegrationIndirect.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 5ecdabd800f05984696f22ba95284516' -> (Import Result ID: '5e98a189b1e59b3fd008779aaf14c557') in 0.033 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=85d2a984eb75bdb3e5fdb7aab0ebc867 DependenciesID=8eeeb5d5f38376a81b53d94c616ee145 StaticDependenciesID=2385462edeeea1f1fc9193c7edbfff8e 
+Importing 'GUID: 6e0b547bab30a804c8123974120d583f - Path: Packages/com.unity.render-pipelines.core/Tests/Runtime/PathTracing/PathIteratorTest.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "PathIteratorTest.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 6e0b547bab30a804c8123974120d583f' -> (Import Result ID: '0115afb03834175348508c8ef9e6fc19') in 0.029 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1133bd6c7f591f1dbb12e91a079e804f DependenciesID=cffe6b9bb06a488d8409559fcc8bad3a StaticDependenciesID=d71187151fc008df7658be7f7d10f903 
+Importing 'GUID: de3013e16d99f2746ab1735ec06a660b - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/ProbeIntegrationOcclusion.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "ProbeIntegrationOcclusion.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: de3013e16d99f2746ab1735ec06a660b' -> (Import Result ID: '6ce99a6f47a32b8c096098c76a248777') in 0.027 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=df1739e5f2b54e51c65943867080e15a DependenciesID=d762108df62899b3383519c4f20a5336 StaticDependenciesID=208d47b8903d77848e11a18b72e01619 
+Importing 'GUID: 1f9bfe60b4ad75943a5281839c1a4e5c - Path: Packages/com.unity.render-pipelines.core/Runtime/PathTracing/Shaders/ProbeIntegrationDirect.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "ProbeIntegrationDirect.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: 1f9bfe60b4ad75943a5281839c1a4e5c' -> (Import Result ID: '49a0d6d80a178d99bd74d25bb30536eb') in 0.028 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=738fdbbe71a2f2ee3456986b74513de9 DependenciesID=b763fc42a1e71279de7224237d3cbb98 StaticDependenciesID=11eb62a12594dcb52ff4b378a213954b 
+Importing 'GUID: ff2cbab5da58bf04d82c5f34037ed123 - Path: Packages/com.unity.render-pipelines.core/Editor/Lighting/ProbeVolume/VirtualOffset/TraceVirtualOffset.urtshader' with importer (ScriptedImporter : Unity.Rendering.LightTransport.Editor:UnityEditor.Rendering.UnifiedRayTracing:UnifiedRTShaderImporter)
+
+Compiling Ray Tracing Shader "TraceVirtualOffset.urtshader", keywords = <no keywords>
+    finished in 0.00 seconds. Local cache hits 1, remote cache hits 0, compiled 0 platform variants
+Imported 'GUID: ff2cbab5da58bf04d82c5f34037ed123' -> (Import Result ID: '027a1e4645cf3290e2fec5a9799bdd46') in 0.028 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c668d5d1ed862acb07b707b7fd362ac3 DependenciesID=ddbcf47e899b5b2006304a887c4230fc StaticDependenciesID=01d1bb4a8db62c88e4fe35fdba25fa75 
+Importing 'GUID: 00e5f0078c285ef78314f5dfb00227a1 - Path: Assets/Audio/Collected/CS2/physics/weapons/weapon_hegrenade_impact_03_e0a47ba6.wav' with importer (AudioImporter)
+Imported 'GUID: 00e5f0078c285ef78314f5dfb00227a1' -> (Import Result ID: 'f4b637feec5925fe2ec011c4062b8917') in 0.128 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9461d484a8789e3216dad994d2176411 DependenciesID=9430560e4023c45bed449223393df1e0 StaticDependenciesID=c51dc85a3367414ee9423b7d75a87a17 
+Importing 'GUID: 10f89ae53ebd5cf2b0e4480f3f181ecc - Path: Assets/Audio/Collected/CS2/player/footsteps/metal_solid_40_e5b85773.wav' with importer (AudioImporter)
+Imported 'GUID: 10f89ae53ebd5cf2b0e4480f3f181ecc' -> (Import Result ID: '4c7d6683811a52a632e3b7f8906a51a7') in 0.065 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9e82cfbcb4a068fccc7fb711a0f11ccc DependenciesID=b49f412ae57df322cbb9fb34b3739e26 StaticDependenciesID=cb26c779533a146d4621e18a1fcb086d 
+Importing 'GUID: 20a6704ba21c567286a18e6ab133575e - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_swish_light_03_0635c0f0.wav' with importer (AudioImporter)
+Imported 'GUID: 20a6704ba21c567286a18e6ab133575e' -> (Import Result ID: '931ff22ded9698e60675db6b71ea18a3') in 0.062 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=038baa59a4550a8689e02e2b686ccbfd DependenciesID=2192cf490725ba41043fcdb3e39708cc StaticDependenciesID=d366ba44dfbde21bec560069d8c882f7 
+Importing 'GUID: 20a89bac958959c48c5c72a8f6f10106 - Path: Assets/Audio/Collected/CS2/player/footsteps/wood_03_15e518e6.wav' with importer (AudioImporter)
+Imported 'GUID: 20a89bac958959c48c5c72a8f6f10106' -> (Import Result ID: 'cc96b487af09e9870b85023108bcba24') in 0.066 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=71c1f9b04600c817248b0e6830c47cb9 DependenciesID=8f33a6a6ebd23c1b3391eda02566b4b6 StaticDependenciesID=8b72e253923879fd1a113d74487ee055 
+Importing 'GUID: 30c58bf20f5f57998be82ec6fa4e1e0c - Path: Assets/Audio/Collected/CS2/physics/wood/wood_plank_impact_hard2_31bf511b.wav' with importer (AudioImporter)
+Imported 'GUID: 30c58bf20f5f57998be82ec6fa4e1e0c' -> (Import Result ID: '20bd7748fe652c68aac5ff4db0b45349') in 0.114 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=370fc3a53edefa9ef76ab9f01314c1b1 DependenciesID=e27ce0103709d08be677c4429484f74a StaticDependenciesID=ba88e258e2d9ec9a612c5e485b8c229a 
+Importing 'GUID: 3088f45da13d5eb0956d65943509d853 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_tile_01_7f96d49c.wav' with importer (AudioImporter)
+Imported 'GUID: 3088f45da13d5eb0956d65943509d853' -> (Import Result ID: 'f390dcbafefab4992c472c21c088abe1') in 0.060 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ab2ffefebd54ed23372175b18d8b7357 DependenciesID=1fa47de2f14184b1a838f204446a9f61 StaticDependenciesID=a0795e5e8a82402a979b2d1b5246b217 
+Importing 'GUID: 502dde6b3c2b567dbc7eb06326fdfc8c - Path: Assets/Audio/Collected/CS2/player/footsteps/rubber_07_d542b88c.wav' with importer (AudioImporter)
+Imported 'GUID: 502dde6b3c2b567dbc7eb06326fdfc8c' -> (Import Result ID: '45eb075ce5bcc7fc54563e857346c586') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f4c359ac193402d46c07ff014f3758a4 DependenciesID=d542d3a593486b38ec6d6ed6789dafa3 StaticDependenciesID=d5810b6ca9052c51be48a770a475a509 
+Importing 'GUID: a0144bb11b5554409006e98e656ef914 - Path: Assets/Audio/Collected/CS2/physics/glass/glass_impact_bullet3_0060e8eb.wav' with importer (AudioImporter)
+Imported 'GUID: a0144bb11b5554409006e98e656ef914' -> (Import Result ID: '2dc6a960b9cce7f85503aacd62d1310e') in 0.053 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fb12a38e8c4eb9950b118d4a1b1875b6 DependenciesID=19a56c2301f9cef5add4f7b244f2c96f StaticDependenciesID=58e8217e073bb1d51ccdaf31622cc804 
+Importing 'GUID: a04564f7e2885060948c6a610d89c0eb - Path: Assets/Audio/Collected/CS2/physics/glass/glass_impact_bullet1_ee972dac.wav' with importer (AudioImporter)
+Imported 'GUID: a04564f7e2885060948c6a610d89c0eb' -> (Import Result ID: '73fda8b8f2c89ee30b3d547014d2d67d') in 0.053 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=962bfef8c86337bf3d718d7d006f96f1 DependenciesID=e71736e6d21e9bde1f26a0c1602bc9eb StaticDependenciesID=2e2a340f50d771387c6f97ccf936b53a 
+Importing 'GUID: b0388bdf3ec759ff9e4f048c91f7a504 - Path: Assets/Audio/Collected/CS2/player/footsteps/metal_solid_35_30938e3f.wav' with importer (AudioImporter)
+Imported 'GUID: b0388bdf3ec759ff9e4f048c91f7a504' -> (Import Result ID: '5ad1a3e152e6256ea5116a834194a66a') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3d0c75d5a2e232dc195350017e24bb0e DependenciesID=15ec2bf0a0e21493ffd55ed44b485974 StaticDependenciesID=7ca2a2054e9a1fb149076c1527d0b768 
+Importing 'GUID: d008332125a158b3bc022a1397e42dfc - Path: Assets/Audio/Collected/CS2/weapons/awp/awp_boltback_2ee1d6f1.wav' with importer (AudioImporter)
+Imported 'GUID: d008332125a158b3bc022a1397e42dfc' -> (Import Result ID: '0f2b5bfbadfe3c25c79e8dadc5afa86b') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fa1c2ddd19d1a99207715215429078f3 DependenciesID=3a67c44aa862df03de7c8a752bb7431d StaticDependenciesID=234f64aaa36e429d5693bf25aa5aaa2f 
+Importing 'GUID: e071c6250a595dfd80964e7a799b9705 - Path: Assets/Audio/Collected/CS2/player/footsteps/carpet_14_0388ea83.wav' with importer (AudioImporter)
+Imported 'GUID: e071c6250a595dfd80964e7a799b9705' -> (Import Result ID: '6fecf7683dc6ab397ae6aa31a482cfcc') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=01437ac029304361dddc953c847ffb1f DependenciesID=f57ec107cbe97d15bb50655195f6c58d StaticDependenciesID=cadc1b63637e8782822d6a734bce2739 
+Importing 'GUID: f08267e4600e524699158f0b18ab9f1f - Path: Assets/Audio/Collected/CS2/physics/concrete/rock_impact_hard2_a0f95072.wav' with importer (AudioImporter)
+Imported 'GUID: f08267e4600e524699158f0b18ab9f1f' -> (Import Result ID: '482aff185b61880f9cf5d62b05a7c1ac') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=11a935f208c887615f609a7d0159e2ad DependenciesID=941b8b305b508e789e33619ef84bd3a4 StaticDependenciesID=326563a75ef3fe1923de40e47108a8d8 
+Importing 'GUID: 01b9b0b1e5cd514e88204448454109ad - Path: Assets/Audio/Collected/CS2/player/footsteps/wood_05_7c331d62.wav' with importer (AudioImporter)
+Imported 'GUID: 01b9b0b1e5cd514e88204448454109ad' -> (Import Result ID: '9fb2839b7c4d00a930a5d3192d3a16df') in 0.061 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7e56f522bcecc668baa1452a8eb07e5a DependenciesID=bfe54280f895d69ab51397f5e25560ba StaticDependenciesID=49b23dce5868ea545dc86880f4a8d79f 
+Importing 'GUID: 117b0cc6a43d5d12b07ee81b6047e0c1 - Path: Assets/Audio/Collected/CS2/player/footsteps/wood_01_4cbcfaff.wav' with importer (AudioImporter)
+Imported 'GUID: 117b0cc6a43d5d12b07ee81b6047e0c1' -> (Import Result ID: 'efd173d06fe950f15b22a65ffba53f09') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0edb2636b4a5c24b9c3f107cdc4436b9 DependenciesID=3f33e81c309f2bb8eb186a0ee19340c9 StaticDependenciesID=e452f4f5e40c097880e6a04912ecc454 
+Importing 'GUID: 31eb704fd5835b13b4d5e1e4492b7a32 - Path: Assets/Audio/Collected/Weapons/Reload/viktor_reload.wav' with importer (AudioImporter)
+Imported 'GUID: 31eb704fd5835b13b4d5e1e4492b7a32' -> (Import Result ID: 'c1f899552bbab421a99c23e3050b1beb') in 0.053 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=935ed975b76ea97203f80810b3a2973a DependenciesID=b47586398a505627a8901d486a43ece4 StaticDependenciesID=03ded133d09ff9c199a37d816b42d2f6 
+Importing 'GUID: 41f1b0f19da059468c4bf71757654e61 - Path: Assets/Audio/Collected/CS2/player/footsteps/tile_03_6fe54d90.wav' with importer (AudioImporter)
+Imported 'GUID: 41f1b0f19da059468c4bf71757654e61' -> (Import Result ID: '7781266d0e94371b7bc0eeb01fb9025f') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d0a8bfc4452ee21309c67329b28d5cf2 DependenciesID=a062e99f098cced38bba58ea0d54364a StaticDependenciesID=32efdaa852e09bfb5c3fb30ed33df155 
+Importing 'GUID: 41e28c8d42a250e8a987d7475816f103 - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_slash2_cb4c0f91.wav' with importer (AudioImporter)
+Imported 'GUID: 41e28c8d42a250e8a987d7475816f103' -> (Import Result ID: '1c4e5cff7a14a8a73aea3f0ddf2c9e2f') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d69c49dbf3772518ec4b115344fa9780 DependenciesID=5aec6c24f20a65faee30141216185c08 StaticDependenciesID=940774d90c0724e4eaa883411a9a980f 
+Importing 'GUID: 4125bf20d32c5fbd82aeb0568abb72d3 - Path: Assets/Audio/Collected/CS2/player/footsteps/metal_solid_41_29a757cb.wav' with importer (AudioImporter)
+Imported 'GUID: 4125bf20d32c5fbd82aeb0568abb72d3' -> (Import Result ID: 'f34312700ef9fa8692b3a755b7de823d') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a7933b2b7e93d9d19269da7702ea8d6f DependenciesID=b60d17e43792ec751c14fa9142fe4f8b StaticDependenciesID=e242aa7b52a0a0a500073ea830baa1c3 
+Importing 'GUID: 41edb9a7b1875ba69240c87b0600fb27 - Path: Assets/Audio/Collected/CS2/player/footsteps/dirt_07_82df571b.wav' with importer (AudioImporter)
+Imported 'GUID: 41edb9a7b1875ba69240c87b0600fb27' -> (Import Result ID: '4dae9402ee33af8db15ff01d4389ad1f') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6e59ac6da2d897df4ece3d888831c34d DependenciesID=1473003c4ce624ee6d6babaad698fdcf StaticDependenciesID=51fcf2cf4ae89c5ce456823f91fe5ba2 
+Importing 'GUID: 518071694e1a579396014b15874f43a0 - Path: Assets/Audio/Collected/CS2/physics/concrete/rock_impact_hard4_c52799b7.wav' with importer (AudioImporter)
+Imported 'GUID: 518071694e1a579396014b15874f43a0' -> (Import Result ID: '4fdccc2a02a0526fa9491e8eded01dc6') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d9b827a4b22f6e067ac07803dd75d088 DependenciesID=0a69caf9d0478170f61e88e5a18e99e5 StaticDependenciesID=d4c2c3f017e9a557d97b965ba4291408 
+Importing 'GUID: 5121bf5148415517b4c1922ed7cd20b5 - Path: Assets/Audio/Collected/CS2/player/footsteps/carpet_03_381252ad.wav' with importer (AudioImporter)
+Imported 'GUID: 5121bf5148415517b4c1922ed7cd20b5' -> (Import Result ID: 'f3ac041454c4ff487bfba25c7d3e1060') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a44efea3b4aa32b46b724606d9e44175 DependenciesID=6db9871050b31d19d1454573262c9802 StaticDependenciesID=5e17cdd2af0729c48ce0d7883b8c709f 
+Importing 'GUID: 51c173b6fe0054d8a1cad8797cef22f9 - Path: Assets/Audio/Collected/CS2/player/footsteps/grass_02_72c6eafa.wav' with importer (AudioImporter)
+Imported 'GUID: 51c173b6fe0054d8a1cad8797cef22f9' -> (Import Result ID: '54a4227ed5d44d9285ffa32dd8c3b400') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e2180921a9e04273084c3ae9411c7724 DependenciesID=f8ce7a98c489c40f8ce1ffd7e8c2e8b2 StaticDependenciesID=911163dcd2ddfdfffc775a9aa32a93a1 
+Importing 'GUID: 51b6d3459b02568fad9d7354da0ec088 - Path: Assets/Audio/Collected/CS2/player/footsteps/dirt_08_03e01ca6.wav' with importer (AudioImporter)
+Imported 'GUID: 51b6d3459b02568fad9d7354da0ec088' -> (Import Result ID: '327ec5260b502fdfafb4fa312a3e50ab') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=de979e2d8bcd8daa05a0689e361765f9 DependenciesID=685e2b9ee0b4a1b073a3fe17180ddde4 StaticDependenciesID=8dc5368d997edd49b3821c4164c1119e 
+Importing 'GUID: 61bb6aca6bdc5046a88a0bcacda24f25 - Path: Assets/Audio/Collected/CS2/physics/water/water_splash_01_fac41236.wav' with importer (AudioImporter)
+Imported 'GUID: 61bb6aca6bdc5046a88a0bcacda24f25' -> (Import Result ID: '80583634a4c54f50af863416a80c2bc9') in 0.158 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c9962eff3648b6440c7beae4d4e6c29e DependenciesID=cde6a88791be7ae503f00b0f3d03895d StaticDependenciesID=30a4d368bcbb3c424d745342369ba9e0 
+Importing 'GUID: 91ef9e9ce7b45c51a4cacc913ec11f38 - Path: Assets/Audio/Collected/CS2/physics/surfaces/dirt_impact_bullet_02_f8ac711c.wav' with importer (AudioImporter)
+Imported 'GUID: 91ef9e9ce7b45c51a4cacc913ec11f38' -> (Import Result ID: 'd6a6aeb0c5d960d1db25d8448755d80d') in 0.057 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c3c4955801986aea379753ac25abdeef DependenciesID=bc4149159dc224fc5fbdab2cb8ca65da StaticDependenciesID=897e832ec90fd2a645e00c914622a153 
+Importing 'GUID: b133421b3e62547393d4c3599b93aa23 - Path: Assets/Audio/Collected/CS2/physics/concrete/concrete_impact_bullet4_b2f6f85b.wav' with importer (AudioImporter)
+Imported 'GUID: b133421b3e62547393d4c3599b93aa23' -> (Import Result ID: 'e47df96c7cc78734b6426ccf0b1dc99b') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d8e073c1b6bde8008dc4caf070773f95 DependenciesID=de90c2a3fa6c90c01cc713e04234da09 StaticDependenciesID=6a7c1c9e7de907df501d7f0631b335a3 
+Importing 'GUID: b1ae1e4fa0105c65a214c3a9ab6dd1a7 - Path: Assets/Audio/Collected/CS2/weapons/awp/zoom_e34ca34f.wav' with importer (AudioImporter)
+Imported 'GUID: b1ae1e4fa0105c65a214c3a9ab6dd1a7' -> (Import Result ID: '392f941b67dce146fabfe1e848fdedcf') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2378b7d2db9b4edab957de2f7afd24c2 DependenciesID=238ebd2dd0b53caa17486956700e6d8a StaticDependenciesID=ae32da431fefa2cb83d0d8d4ba0f14b2 
+Importing 'GUID: d1938d11d0ec540ea446a2f5c398ef1a - Path: Assets/Audio/Collected/CS2/physics/surfaces/dirt_impact_bullet_01_fdacb124.wav' with importer (AudioImporter)
+Imported 'GUID: d1938d11d0ec540ea446a2f5c398ef1a' -> (Import Result ID: '0f02084588909fb806d015ccdce0ae00') in 0.052 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4a74163bcd2e23a083f6b42c03ac4fba DependenciesID=0bd934ee723fbb761fb8e98fcc52527c StaticDependenciesID=f625db7c71c43985400932b99a53c7e5 
+Importing 'GUID: d188b2a41f285382b9718df368035106 - Path: Assets/Audio/Collected/CS2/weapons/taser/taser_charge_ready_9f175233.wav' with importer (AudioImporter)
+Imported 'GUID: d188b2a41f285382b9718df368035106' -> (Import Result ID: 'e182aa3ce9b0620c6bfa0ee498dc3002') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e7ffb289bded9e9ee7bf3f75a52534d6 DependenciesID=834574c72e4422b0616ccbed12ed2e72 StaticDependenciesID=32c70ef1ebfc1c4dca7978dfe5ec8ced 
+Importing 'GUID: d1d879dec28857a9a2c7ec67bc8f900b - Path: Assets/Audio/Collected/Weapons/Reload/kondulic_reload.wav' with importer (AudioImporter)
+Imported 'GUID: d1d879dec28857a9a2c7ec67bc8f900b' -> (Import Result ID: '36d35fdae462fce6ae2ab82bf1a34b6b') in 0.062 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=aeb4040a50d4b2492cce154aa2af9290 DependenciesID=ac9a03b7d4ed07c0d50d21b687b00fdf StaticDependenciesID=7bd2699fc00a2f521f8577c468322eb3 
+Importing 'GUID: f1a01d87eddf5ba19e9e7fab82d93296 - Path: Assets/Audio/Collected/CS2/player/footsteps/puddle_02_c39814dc.wav' with importer (AudioImporter)
+Imported 'GUID: f1a01d87eddf5ba19e9e7fab82d93296' -> (Import Result ID: '3e02e162ba17690dff1e96ff1ae3affb') in 0.052 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=356c084bdc057d5662907cbfa779cbdc DependenciesID=7595838dc0ca49b3ed31d832daea4361 StaticDependenciesID=5430bb7c608777e908eee3548b7246a2 
+Importing 'GUID: f12cba3f98c9567181d116e051165478 - Path: Assets/Audio/Collected/CS2/physics/wood/wood_solid_impact_bullet4_473d8dc9.wav' with importer (AudioImporter)
+Imported 'GUID: f12cba3f98c9567181d116e051165478' -> (Import Result ID: '277b512e26c28ed6fc9e136e0ff7b36f') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e61851b6fa2df5f0586366345d33ec44 DependenciesID=be544d8f96433a04caecaf4902a5a37d StaticDependenciesID=a8ab71e545a921cedb44d2fa9203b37c 
+Importing 'GUID: 020c6f2827aa5bd480f27bbeb721ed97 - Path: Assets/Audio/Collected/CS2/player/footsteps/tile_06_361b32d1.wav' with importer (AudioImporter)
+Imported 'GUID: 020c6f2827aa5bd480f27bbeb721ed97' -> (Import Result ID: '3214a388a78bc24c7b903674d07b4693') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1acb6508842c15da0592449012a36f47 DependenciesID=473419469e9fb04e0d1600f6debf449c StaticDependenciesID=c506b5b16691712584bcf7821c66bda9 
+Importing 'GUID: 12ee76c39d385627bc45d2f78498ecf3 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_tile_02_e3582012.wav' with importer (AudioImporter)
+Imported 'GUID: 12ee76c39d385627bc45d2f78498ecf3' -> (Import Result ID: 'cb6f7fb4f397b246d8556976ec568e87') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7e4b16072204eb1cc1016b9c41d2b197 DependenciesID=bb877f148ed68f4e46fb14861f76ba4a StaticDependenciesID=998374b70bee2704c798135b4f68df49 
+Importing 'GUID: 22b0900b2b715e98a56fb07b3458ecb8 - Path: Assets/Audio/Collected/CS2/player/footsteps/water_entry_03_64938165.wav' with importer (AudioImporter)
+Imported 'GUID: 22b0900b2b715e98a56fb07b3458ecb8' -> (Import Result ID: 'c0c4b88d2d307dc0c087a43f92c85f9a') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b98ab5cd37678352f67294d4942283df DependenciesID=ff1e01be1809abcfbe0220a869952744 StaticDependenciesID=58b0900e12a4b08317bfed8c780f45b8 
+Importing 'GUID: 226ea07acff05c15b68d1e25c5ecc262 - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_stab_4559003b.wav' with importer (AudioImporter)
+Imported 'GUID: 226ea07acff05c15b68d1e25c5ecc262' -> (Import Result ID: 'bec9966e226d771f8a80fe24a6edde79') in 0.052 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f127f45f22359352b9965e03d6f632b9 DependenciesID=ce9964b78e401b54ca268a5d76a31c5f StaticDependenciesID=77c8e6d0e38a68e6936b04dc3df2c687 
+Importing 'GUID: 32a773c5c7135847ba021d9c6441c72a - Path: Assets/Audio/Collected/CS2/weapons/hegrenade/grenade_throw_f69bafba.wav' with importer (AudioImporter)
+Imported 'GUID: 32a773c5c7135847ba021d9c6441c72a' -> (Import Result ID: '7b512c5fccb05ca067f87eef9ad0ebf4') in 0.058 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=53a06526bab5c819a52ab84d13a40d11 DependenciesID=12801a8e0a1dd218170f2b0714d5d438 StaticDependenciesID=23ca7a49fceafc06d2c300e707adf34b 
+Importing 'GUID: 5200242d2e2e577286e9202bd2cccf59 - Path: Assets/Audio/Collected/CS2/player/footsteps/suit_ct_01_f1f6152f.wav' with importer (AudioImporter)
+Imported 'GUID: 5200242d2e2e577286e9202bd2cccf59' -> (Import Result ID: '208a6240c8053cde2fd189cec81aad4f') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4442c2df26b508b17ff29b5e9b4a587c DependenciesID=dbff12290c442d253e182db29bb39f96 StaticDependenciesID=74e11aa90d270e73aa11354653c17102 
+Importing 'GUID: 5200cd24331359b8a19c9011676cfb13 - Path: Assets/Audio/Collected/CS2/physics/rubber/rubber_tire_impact_bullet1_87a10c69.wav' with importer (AudioImporter)
+Imported 'GUID: 5200cd24331359b8a19c9011676cfb13' -> (Import Result ID: '195318a9575c6db9fff0107e577146f8') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3f90693e24b34df55a97ffaefd8fb40c DependenciesID=2aa9bbe4eed41d851ece96e20b3afe2e StaticDependenciesID=d5c86692b211da73be7d4ada4dfaff29 
+Importing 'GUID: 5203a0b6a9255ba796f77bc1cacbd8b1 - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_04_9f73ac31.wav' with importer (AudioImporter)
+Imported 'GUID: 5203a0b6a9255ba796f77bc1cacbd8b1' -> (Import Result ID: '4d659d660f2456ff6182b2652caa3d5f') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=254bb120fde3a7cef0c8236997384a09 DependenciesID=36eb43e0b059716197690b01368b49b5 StaticDependenciesID=1eca2856b1a5e78d8a071160748c1369 
+Importing 'GUID: 52f41300c86955fc82e34cceda3acb93 - Path: Assets/Audio/Collected/CS2/player/footsteps/rubber_08_51975f6e.wav' with importer (AudioImporter)
+Imported 'GUID: 52f41300c86955fc82e34cceda3acb93' -> (Import Result ID: 'f82ca523c69df334d9c42690a1089e44') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=49434d4616c945844bbeb2c6a5956f40 DependenciesID=0283591adf9f06df34c427450de92f0e StaticDependenciesID=8e23bf6c57f1057fa9c2c2db0700c9a6 
+Importing 'GUID: 526751d7bdc45019be036f3f3adb9d69 - Path: Assets/Audio/Collected/CS2/physics/wood/wood_plank_impact_hard3_fc1fef07.wav' with importer (AudioImporter)
+Imported 'GUID: 526751d7bdc45019be036f3f3adb9d69' -> (Import Result ID: '7c987cc4000cd05d99e8f0f8b9c3894b') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fb1d798f222cf3ef40fe659d0734f735 DependenciesID=153102474fde956b7c3abaf1c33e4e9d StaticDependenciesID=d16bf98f7299d4eb8f4b982e2a7ccc81 
+Importing 'GUID: 524ceaa29a4f5d6abe35529855fc60dd - Path: Assets/Audio/Collected/CS2/items/nvg_on_a7ebad08.wav' with importer (AudioImporter)
+Imported 'GUID: 524ceaa29a4f5d6abe35529855fc60dd' -> (Import Result ID: '5ac8ec3b191049dca4834df7e71a5643') in 0.055 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ba592782696a73cb89d253c76256346d DependenciesID=9a81fa0bc690ba6b002a62414dfaa7d8 StaticDependenciesID=d20ddc3797292bf7196ee8e8594182f1 
+Importing 'GUID: 72d622c0188b5d348ad2d9ac855b58cd - Path: Assets/Audio/Collected/CS2/player/footsteps/gravel_07_b7e5e34e.wav' with importer (AudioImporter)
+Imported 'GUID: 72d622c0188b5d348ad2d9ac855b58cd' -> (Import Result ID: '5998e5a85bcc25beff1d300cf14b8039') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=340a84b9b526e8fbd632020e95e0de9d DependenciesID=3f60285b0af56d45d61e78020f1d9dd5 StaticDependenciesID=8478cd3e55d377e1de958c74369c4378 
+Importing 'GUID: 92b9351b1427528eaca5cc9d88444dae - Path: Assets/Audio/Collected/Weapons/Reload/mosino_reload.wav' with importer (AudioImporter)
+Imported 'GUID: 92b9351b1427528eaca5cc9d88444dae' -> (Import Result ID: '70d87a6c6715f1e25c9af83e45fe4604') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d5fe8499e8057c20c299d8441df44c14 DependenciesID=d329521edf3975d39d388e52aa9c0ffb StaticDependenciesID=1d4f9cb08013bc19eb8ea56b50a8ac69 
+Importing 'GUID: 920d126731e95e28af43499f974e59b1 - Path: Assets/Audio/Collected/CS2/physics/glass/glass_bottle_impact_hard1_a2e16f4b.wav' with importer (AudioImporter)
+Imported 'GUID: 920d126731e95e28af43499f974e59b1' -> (Import Result ID: 'dffe8cbcd9c08a2952fd03a341809b6e') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=899f1180e86bda94a0cad4fb497d87e4 DependenciesID=74d1dbfd08c9f20af95c45d2c572c962 StaticDependenciesID=aaf0fc9cfffc8a87d92bc105219b69f0 
+Importing 'GUID: c2f1d789e5a3554ab5c71b6c770dab8e - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_swish_heavy_03_85bf72d2.wav' with importer (AudioImporter)
+Imported 'GUID: c2f1d789e5a3554ab5c71b6c770dab8e' -> (Import Result ID: 'fd44197fc156047aed0313f7b9d99dee') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=df258e1a6af94013076ff1bdc2c6fe9c DependenciesID=299f447866107e05d5d2e93fa1743ae7 StaticDependenciesID=273b9d1887047032a6bd8b2aec6af12f 
+Importing 'GUID: c276a24de57b50689a9ab839c352e24b - Path: Assets/Audio/Collected/CS2/weapons/clipempty_rifle_957cfa56.wav' with importer (AudioImporter)
+Imported 'GUID: c276a24de57b50689a9ab839c352e24b' -> (Import Result ID: 'f2868b50cf7bf64ea49510c26f4a747d') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=977bfd41fb3dde5afea6983103636de3 DependenciesID=5d8fbc11543e3839a8483ddd5b7e3b01 StaticDependenciesID=58d77e9288cbb32374a890c8f9bac589 
+Importing 'GUID: c2fd453152ef5189853f40a816686f50 - Path: Assets/Audio/Collected/CS2/player/footsteps/gravel_02_28559485.wav' with importer (AudioImporter)
+Imported 'GUID: c2fd453152ef5189853f40a816686f50' -> (Import Result ID: '3f6ba973c1603310735e23ca9a69150f') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=bb88172112ef91a2fc87612b36e14ae2 DependenciesID=28dc801629290f8507e7e44da90c2ab4 StaticDependenciesID=ccf9579aa9c7cea114cd0400e842045d 
+Importing 'GUID: d2cff461a7555610b132a4bdfa760806 - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_04_9ea1a447.wav' with importer (AudioImporter)
+Imported 'GUID: d2cff461a7555610b132a4bdfa760806' -> (Import Result ID: '7e37b3f9580b69b097c8224871084bff') in 0.052 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b39ae23dc2febe7f70720f079b807ade DependenciesID=edb2e4bad52482ee191584bbcb880a07 StaticDependenciesID=5cdf1ce3ec9581e7a33e8285d50f2ab4 
+Importing 'GUID: e2ce78a25fe35029bfd15430f3dab920 - Path: Assets/Audio/Collected/CS2/physics/concrete/concrete_impact_bullet2_2a9982ee.wav' with importer (AudioImporter)
+Imported 'GUID: e2ce78a25fe35029bfd15430f3dab920' -> (Import Result ID: '6f901e5675eba9bab40c99a1f97bf41d') in 0.056 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b17b66fed82c20129bf95914c5472359 DependenciesID=94fc6904be00fa37e348234d7fd57cbd StaticDependenciesID=c92e4f101dc48823055c9ff6285f2284 
+Importing 'GUID: 03648bee79e45220a92fde4bcd913f8c - Path: Assets/Audio/Collected/CS2/weapons/glock18/glock_slideback_7cc666bb.wav' with importer (AudioImporter)
+Imported 'GUID: 03648bee79e45220a92fde4bcd913f8c' -> (Import Result ID: 'b990183986cdebfeddcc89a5eb34566c') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=77ea0df812c372cd6f93f57de693a83a DependenciesID=ee2242f4fe5de9a8ea8764a9e3aa0a83 StaticDependenciesID=dc2becf80e25dc201b4da763b8e42c03 
+Importing 'GUID: 13246da99da753528fc9fd356807c069 - Path: Assets/Audio/Collected/CS2/physics/wood/wood_solid_impact_bullet3_f4075b5c.wav' with importer (AudioImporter)
+Imported 'GUID: 13246da99da753528fc9fd356807c069' -> (Import Result ID: 'd446db59704bf0b42d26521ff3e4c955') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=882e7908fa0f9c19b3ddd422f5e51593 DependenciesID=83a22395ab1b68364ecc34f355f463f0 StaticDependenciesID=6adc79f64f88af58f81e2bea85e0ff66 
+Importing 'GUID: 43920476b03f5482a9246e6116531af6 - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_hit_light_thud_01_e0817867.wav' with importer (AudioImporter)
+Imported 'GUID: 43920476b03f5482a9246e6116531af6' -> (Import Result ID: '7b6d0320ff3ee97630a0610ed3372ff1') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6315465f67c93cd947f504410d760d6d DependenciesID=2d15d977507d3d13894a658685e99c3e StaticDependenciesID=8077356b91a9edc8f53c4513e03ae0a0 
+Importing 'GUID: 43e7c0b462a250848223a31c43193b26 - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_hit_light_thud_03_a6dd0a2f.wav' with importer (AudioImporter)
+Imported 'GUID: 43e7c0b462a250848223a31c43193b26' -> (Import Result ID: '89ec767a49aee8b67a3e3adfccd252c2') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5bb1282d5c73425bf89c3ecf4bb02e90 DependenciesID=2dd9ae50464ad1fcd017403a14453611 StaticDependenciesID=c88eab3c3b23084a753a78602f5e62d3 
+Importing 'GUID: 430f7c29c1f95b0a92eba0961ff1f547 - Path: Assets/Audio/Collected/CS2/weapons/awp/awp_clipin_51d113c1.wav' with importer (AudioImporter)
+Imported 'GUID: 430f7c29c1f95b0a92eba0961ff1f547' -> (Import Result ID: '13ae8cd537f672f293e305dd0b4e5fbe') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c08538ba77962c8507bf8f2acff32c9b DependenciesID=8fdee59999f8ed95012f64b8a012fb59 StaticDependenciesID=241e033faab085ba88f7163999e7a357 
+Importing 'GUID: 531a34d6dc5554a88c4f7c68acf661a0 - Path: Assets/Audio/Collected/CS2/player/footsteps/sand_05_8b7f7f7c.wav' with importer (AudioImporter)
+Imported 'GUID: 531a34d6dc5554a88c4f7c68acf661a0' -> (Import Result ID: '738d4fb03539bee68d4bcba1e88b2382') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e62d38db3333e4c4c875883b1c9a3398 DependenciesID=171c0adb10493b1a48a30e9a3a7140ff StaticDependenciesID=3453d209d0ecbc31d42c8873ff7a2f77 
+Importing 'GUID: 63418487335557be99db4cb87606a60f - Path: Assets/Audio/Collected/CS2/player/footsteps/water_wade_04_a35fcc21.wav' with importer (AudioImporter)
+Imported 'GUID: 63418487335557be99db4cb87606a60f' -> (Import Result ID: '2acf2eac5dc8cf38dc3ebc289fada0b4') in 0.058 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b95696b83c5e2f3fa0b90c5bd84dfb2a DependenciesID=199a64ad14c4f9d4013d1112aea47214 StaticDependenciesID=3e7453ae9aece122f6d1f3150cc6793d 
+Importing 'GUID: 731302c230ad5b0bbca96bb70f613495 - Path: Assets/Audio/Collected/CS2/weapons/flashbang/flashbang_explode2_560af3f2.wav' with importer (AudioImporter)
+Imported 'GUID: 731302c230ad5b0bbca96bb70f613495' -> (Import Result ID: 'f28a5980ecd5178df8f3f51bc58affc5') in 0.059 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8eae719ab21e1289919ed14525e2211f DependenciesID=082919030b7bf2ad8265182228e9922a StaticDependenciesID=caacd9a93f02636ed8e07594f9844302 
+Importing 'GUID: 7383be54cdbc58e5937e7ebe2f6d866e - Path: Assets/Audio/Collected/CS2/weapons/awp/awp_boltforward_8a9ec313.wav' with importer (AudioImporter)
+Imported 'GUID: 7383be54cdbc58e5937e7ebe2f6d866e' -> (Import Result ID: 'acec37241a6632b4faf0e2a71f6d79b2') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=37b9b350feac4a97c144db2884cf0482 DependenciesID=920100d78ae1bb2d337fc1a7df3fcf13 StaticDependenciesID=fd8461f0ca1e9443bcabda986b6fcde2 
+Importing 'GUID: 83c1325224d65383b41ea7331c688cd3 - Path: Assets/Audio/Collected/CS2/player/footsteps/water_exit_03_a11df6a3.wav' with importer (AudioImporter)
+Imported 'GUID: 83c1325224d65383b41ea7331c688cd3' -> (Import Result ID: 'd45df5df1ba4f2d2161c769e6a3630ba') in 0.057 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9081ee3d2a11dcbaf45896dd5c39096a DependenciesID=3fe376c51d221269254c1f64935f627b StaticDependenciesID=2cec38a7d936e0e5a241f0754541efef 
+Importing 'GUID: 8383a5acd54554d9989ad2b933b5a332 - Path: Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_clipin_72101a45.wav' with importer (AudioImporter)
+Imported 'GUID: 8383a5acd54554d9989ad2b933b5a332' -> (Import Result ID: 'a53fee3e509b0699affcd5244fb70905') in 0.118 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=63b8d602b42d2f0860897965619c20a6 DependenciesID=3ef5b82595722467553f94aa4cffed26 StaticDependenciesID=4123457059e4eef576c8be94a07e1872 
+Importing 'GUID: 9322c6c71927592284a72b7eb180c55d - Path: Assets/Audio/Collected/CS2/player/footsteps/land_rubber_01_83e1f9dc.wav' with importer (AudioImporter)
+Imported 'GUID: 9322c6c71927592284a72b7eb180c55d' -> (Import Result ID: '74650a445f09ef44d5000c140d10753d') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0a4d75caeebdf4e45a6e2e86527debcb DependenciesID=db789eaba6a7931bd9074d704edb3acb StaticDependenciesID=b4effc38ee4d369a7be93aed418255bb 
+Importing 'GUID: 935a422b93c65d98b0d756233eb0a7ab - Path: Assets/Audio/Collected/CS2/player/footsteps/water_entry_02_6e7bda92.wav' with importer (AudioImporter)
+Imported 'GUID: 935a422b93c65d98b0d756233eb0a7ab' -> (Import Result ID: 'e9eb7c9719c870902189ba4d43901d34') in 0.052 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=bc9643eae67e58a8e4d6999acfcf52e2 DependenciesID=5b4cfd106b1ef78ebe79c240d5961fe9 StaticDependenciesID=ccbb42b4f4b35cbc5af236a25fe3b679 
+Importing 'GUID: a34aabeb79195e2bbbf4eea28852c3aa - Path: Assets/Audio/Collected/CS2/player/footsteps/carpet_11_db6b0fce.wav' with importer (AudioImporter)
+Imported 'GUID: a34aabeb79195e2bbbf4eea28852c3aa' -> (Import Result ID: 'd9768cf031555e1c1f4807c015f04cc6') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=69f81978334d72e44434da277e675771 DependenciesID=4d364a58af31d2a7e34be9324c6d77f6 StaticDependenciesID=7ccce3a18ffb626020895682a31788d3 
+Importing 'GUID: a3db74032f3b5075bcefc29846141a0c - Path: Assets/Audio/Collected/CS2/physics/surfaces/carpet_impact_bullet_03_ca0a5ea4.wav' with importer (AudioImporter)
+Imported 'GUID: a3db74032f3b5075bcefc29846141a0c' -> (Import Result ID: '41b86a5fc0c5fbc9e4de2b1ad7a8cdde') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=26eb305a5a8a4ec8a9e23ac53923c10d DependenciesID=b27f3de9f5eb3df433a0bb6734497e96 StaticDependenciesID=abdd856c5e34e00a6019a0a6a61b234a 
+Importing 'GUID: c374e83493635d84980afa77d790c8c0 - Path: Assets/Audio/Collected/CS2/player/footsteps/carpet_04_0e391158.wav' with importer (AudioImporter)
+Imported 'GUID: c374e83493635d84980afa77d790c8c0' -> (Import Result ID: '14869e56ce4db4bb4b4ebaa8bce56ab6') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b953d362a12a91afbf1426f99eaeb513 DependenciesID=b8aa49159e1327e1f8aa3402a3d60c3b StaticDependenciesID=971033b25addab4d54c0eb523e803e78 
+Importing 'GUID: c3a9009ddcb3573a9c0b97443076a6b5 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_dirt_01_a0b5b0f4.wav' with importer (AudioImporter)
+Imported 'GUID: c3a9009ddcb3573a9c0b97443076a6b5' -> (Import Result ID: 'ce26d0386b7bc0fb2e255d99329748e0') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ceabb6e8967b17109d65356d376ad1bf DependenciesID=3802f4567e3aac54fb6f43623835d431 StaticDependenciesID=935620664f54ebb3cfc012becda7a16e 
+Importing 'GUID: c3db6004a855594cbffafe9a7e50f4fe - Path: Assets/Audio/Collected/CS2/weapons/taser/taser_charging_ddcf6e0e.wav' with importer (AudioImporter)
+Imported 'GUID: c3db6004a855594cbffafe9a7e50f4fe' -> (Import Result ID: '36fd268fa5cec133ea5a75d274f8dd1e') in 0.056 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=406f8c38716537973855ea5cd71395b1 DependenciesID=d96a7430e35312bd1492b5a555a1add7 StaticDependenciesID=0e92965002aa24c3364be5ad92c5cd1c 
+Importing 'GUID: d377a2424e5e5c6cbd0d8fc798175daf - Path: Assets/Audio/Collected/CS2/player/footsteps/land_carpet_01_36c0a1f0.wav' with importer (AudioImporter)
+Imported 'GUID: d377a2424e5e5c6cbd0d8fc798175daf' -> (Import Result ID: 'ae5a8fa08cb9673147ab6420dbe9e021') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0cd8712c76a42d4a25d8d4edaa5fc5fc DependenciesID=0e2753a6bf5a536dfd1a77e8a75e1146 StaticDependenciesID=fa74246da33505506aed80bca8716368 
+Importing 'GUID: e37ec1abf60358cfa710ef332474bbe9 - Path: Assets/Audio/Collected/CS2/player/footsteps/rubber_06_62c6eee1.wav' with importer (AudioImporter)
+Imported 'GUID: e37ec1abf60358cfa710ef332474bbe9' -> (Import Result ID: '7c3d429860d9c6808b4b737aba862e75') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b6f37d7f1ae65ef7b5d842dac5a7f5a1 DependenciesID=55e81a9d9fcb78a1925c1e44629406ff StaticDependenciesID=ff422505bdc3b8ab9de6e12699318dcd 
+Importing 'GUID: 54d56754c18351e1a32d5066b6a079a2 - Path: Assets/Audio/Collected/CS2/player/footsteps/water_wade_06_bd395ae2.wav' with importer (AudioImporter)
+Imported 'GUID: 54d56754c18351e1a32d5066b6a079a2' -> (Import Result ID: '5f08d4f11fe3f38257cdde8975dd2108') in 0.057 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3d948d3dbb71a27013cdde772fcfbe18 DependenciesID=61f95519a57193f951afcff09c0ec96b StaticDependenciesID=d09df35b2f8fd6ad4b05cdd2e33e1aaf 
+Importing 'GUID: 545cee33abb35227b11bcb4152aa6829 - Path: Assets/Audio/Collected/Weapons/Reload/sindel_reload.wav' with importer (AudioImporter)
+Imported 'GUID: 545cee33abb35227b11bcb4152aa6829' -> (Import Result ID: '06df6c74fc5a4bbaf0c0ff46f88bf5b3') in 0.055 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=77b9779441e4d782e287da850bb4b336 DependenciesID=6f94202da74c333c87b1d1878788c704 StaticDependenciesID=09a7b5e525f95a6bc5009143278af174 
+Importing 'GUID: 6455b43a2c375a6dbea0e2c86e638756 - Path: Assets/Audio/Collected/CS2/weapons/mag7/mag7_pump_back_ee555941.wav' with importer (AudioImporter)
+Imported 'GUID: 6455b43a2c375a6dbea0e2c86e638756' -> (Import Result ID: '1116dbfc2a557ec017aa86063065da15') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=30ff1d8f195d43846487226a0e2789b6 DependenciesID=dcd89cc3f2a3250693e49fad3f9dda5b StaticDependenciesID=ae818ef65be42022aab8df24859c732a 
+Importing 'GUID: b4c7f7ee43d95def8b912c9c1fecc149 - Path: Assets/Audio/Collected/CS2/player/footsteps/grass_08_33b7c37b.wav' with importer (AudioImporter)
+Imported 'GUID: b4c7f7ee43d95def8b912c9c1fecc149' -> (Import Result ID: '63643109b802551051b25ba2110d4492') in 0.061 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=69ded7f4b9588db880b312571659f794 DependenciesID=6a9ee68c8f539ce7fa97a85c6d2f911f StaticDependenciesID=c2ea2e9f62a6bbbfa4fcf231c69828b5 
+Importing 'GUID: d45aa7d411e85587a27bdb0bf9262fb0 - Path: Assets/Audio/Collected/CS2/physics/surfaces/carpet_impact_bullet_04_8c7694d5.wav' with importer (AudioImporter)
+Imported 'GUID: d45aa7d411e85587a27bdb0bf9262fb0' -> (Import Result ID: 'ccde93cbd51e93dd7a648a55075a28dc') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2b4115d32421009626215eb8f75bba40 DependenciesID=8e73ef481d631453bb67ef1dd4a59012 StaticDependenciesID=d888b99f6b219b2b0e4bc722c09f2004 
+Importing 'GUID: d41ee2d20f545a95975c4838765a359f - Path: Assets/Audio/Collected/CS2/physics/glass/glass_bottle_impact_hard2_cba3cce1.wav' with importer (AudioImporter)
+Imported 'GUID: d41ee2d20f545a95975c4838765a359f' -> (Import Result ID: '8afd1df928cc962017be0a54fbaeaf41') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5c5a69024680d0472cc59d9a338a4bc7 DependenciesID=57a9f934c5d2b024b820760a7d811837 StaticDependenciesID=b0b893548768db30dd829b21af2e92f5 
+Importing 'GUID: e483db5230785672a2204df918d26a7a - Path: Assets/Audio/Collected/CS2/physics/body/body_impact_ct_01_cb76e444.wav' with importer (AudioImporter)
+Imported 'GUID: e483db5230785672a2204df918d26a7a' -> (Import Result ID: '33052f59bb734e447c43dbd5e83a9afd') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b90f3ec08d05845129dd1505a3745120 DependenciesID=51b389c478cdb58051cb74dcb9d36a8f StaticDependenciesID=3becd04aeba1a8ba3d50f2f71a2ae1b2 
+Importing 'GUID: e45a53c876e45547bb6bc189ba8444e4 - Path: Assets/Audio/Collected/CS2/player/footsteps/carpet_01_7f41b6e5.wav' with importer (AudioImporter)
+Imported 'GUID: e45a53c876e45547bb6bc189ba8444e4' -> (Import Result ID: '68e68c67e55e22ebfb64d18c74976c24') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ae695b0d284147bdc58680bb02595f57 DependenciesID=a0dafe64a5f9081b2724fed16271ba94 StaticDependenciesID=94b4400b52d44c578e707c9fcc6df4b9 
+Importing 'GUID: e46cf5f8e44658ffbf2707dca333c745 - Path: Assets/Audio/Collected/CS2/weapons/p90/p90_cliprelease_c7c73a0a.wav' with importer (AudioImporter)
+Imported 'GUID: e46cf5f8e44658ffbf2707dca333c745' -> (Import Result ID: '50377b40f6cd572f325e14c7d9328c6a') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e367a68932684add8f658cbed437c6cb DependenciesID=35405564a4f47badccf3a6689536eb0f StaticDependenciesID=671e3d86b0b6ebb861d5556e39ccc9c0 
+Importing 'GUID: f4150199b56b58768e13ea99e823f3b5 - Path: Assets/Audio/Collected/CS2/player/footsteps/water_exit_02_1e0d7aed.wav' with importer (AudioImporter)
+Imported 'GUID: f4150199b56b58768e13ea99e823f3b5' -> (Import Result ID: '4999966f1fce8e41fe0399fec4ec8a7d') in 0.054 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6753878fb7894e6fb85397dcb8e0d4ae DependenciesID=a0959207b818e4e39fc7b5659fede20c StaticDependenciesID=213741d02bd4a5e95760604b52a42092 
+Importing 'GUID: 1595afd2c7ce58b689e4deb7b0e77a77 - Path: Assets/Audio/Collected/GDC2026/Effects/43_B_Rolba_motor_c79d2c34.wav' with importer (AudioImporter)
+Imported 'GUID: 1595afd2c7ce58b689e4deb7b0e77a77' -> (Import Result ID: 'f8cd229a6a4790edfc306de049fc26f4') in 0.120 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7d89d4580390c6f0e822205c99838cbe DependenciesID=d45e98f0efd86312f190237f93898f7b StaticDependenciesID=bc5c42fb0d32d98355943df472554fd6 
+Importing 'GUID: 357a187c483b527cbc35b788f6c1f34e - Path: Assets/Audio/Collected/CS2/player/footsteps/land_metal_solid_02_653d57b8.wav' with importer (AudioImporter)
+Imported 'GUID: 357a187c483b527cbc35b788f6c1f34e' -> (Import Result ID: 'e87c93e33968f39a926eeffc1fd176dd') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=32fd4a930031e6fb51572aaec1ea3834 DependenciesID=55e2afe1d10a45dfebca0971dfa8bb7e StaticDependenciesID=6b4c51b4b8d2ef45aa8bacba95e5c02c 
+Importing 'GUID: 75dbf88129ad59a1a34802f1f64058ac - Path: Assets/Audio/Collected/CS2/player/footsteps/sand_02_928738ed.wav' with importer (AudioImporter)
+Imported 'GUID: 75dbf88129ad59a1a34802f1f64058ac' -> (Import Result ID: 'a9ceb2e5dab268badeb2b250a128b4b0') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e868dcd0d03769d9d16b40af4da3a98d DependenciesID=1d10916001d9d3eb88681f7d2555ca5b StaticDependenciesID=e82a39b15effa70747e584698e3f2c7b 
+Importing 'GUID: a52e704606db5829a2f6b6a62cd4db19 - Path: Assets/Audio/Collected/CS2/weapons/awp/awp_clipout_d4100551.wav' with importer (AudioImporter)
+Imported 'GUID: a52e704606db5829a2f6b6a62cd4db19' -> (Import Result ID: '5dacb2ef002bce059f9c5661b53814d8') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=bdd1e8712ee3196b04717b24b74f3dd1 DependenciesID=24758b69872c29de7b2e3b3323784af5 StaticDependenciesID=8d6c3983bd01e3a2b2a7d338ed1ec47a 
+Importing 'GUID: b5b02aaf05fe5b3d987f2ae6f6781da1 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_dirt_02_3ec56f99.wav' with importer (AudioImporter)
+Imported 'GUID: b5b02aaf05fe5b3d987f2ae6f6781da1' -> (Import Result ID: 'df769e3c21d30c5ec8cc7ea0f58cc30e') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=92188eeaecd3594e1b58afd6204a3e58 DependenciesID=54b10074f63495f88b1d7b86ad8f6bdf StaticDependenciesID=32c01d4be8e7693a00c19be990dce894 
+Importing 'GUID: c590a8120a79512e90f0b86318b619db - Path: Assets/Audio/Collected/CS2/player/footsteps/metal_solid_36_146bcc43.wav' with importer (AudioImporter)
+Imported 'GUID: c590a8120a79512e90f0b86318b619db' -> (Import Result ID: '260ee42a14917e774d373a3afab68ae9') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c0495b891dee22e3129ae35d8e45fcfe DependenciesID=e301c1fcdc51f38edf87d12cfe301d1d StaticDependenciesID=1d552eede1b949264ac392c3173d5a78 
+Importing 'GUID: e5f21734ac925fd589f3990feb469eb1 - Path: Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_04_fa402224.wav' with importer (AudioImporter)
+Imported 'GUID: e5f21734ac925fd589f3990feb469eb1' -> (Import Result ID: 'deb32112123c4520d39bb020ffd0f817') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=df098ce16bcf7db480bf6d0ebd9257f5 DependenciesID=5b36aed4efb4fb077933387be63f542f StaticDependenciesID=92c424e258e162489a555e583d7c8dd3 
+Importing 'GUID: f5e7f07fe5335ebcb603e98bb5e6ac91 - Path: Assets/Audio/Collected/CS2/player/footsteps/carpet_08_3b1f9b2a.wav' with importer (AudioImporter)
+Imported 'GUID: f5e7f07fe5335ebcb603e98bb5e6ac91' -> (Import Result ID: '5147e2423000452ae405ced2fbe94e31') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=be29b13508ee34bb1f72f88e94a64df7 DependenciesID=94a34033149bcefc3ac9e542667b2b89 StaticDependenciesID=68e0d5d6b82fbea21d43fa6e288be922 
+Importing 'GUID: 16d5e3eb9a935504b960c8ebab2889fd - Path: Assets/Audio/Collected/CS2/items/rush_terminal_no_01_6de48898.wav' with importer (AudioImporter)
+Imported 'GUID: 16d5e3eb9a935504b960c8ebab2889fd' -> (Import Result ID: 'f375683d6a093b102e4e9cde03c7813d') in 0.053 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=74cddb45d22c4be9a6feffc599454190 DependenciesID=9184d47f2b09f08f328e3aaacff1cc4f StaticDependenciesID=2f01ae47f69647d19ffaf13f7e729216 
+Importing 'GUID: 365f90b01c055a638834d1ee8cc558cf - Path: Assets/Audio/Collected/CS2/player/footsteps/metal_solid_39_e6ee9e02.wav' with importer (AudioImporter)
+Imported 'GUID: 365f90b01c055a638834d1ee8cc558cf' -> (Import Result ID: 'd50ddcd69646a95f1d7abea5514722b9') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ba0c080c4fbac09ba9028154a9bf9658 DependenciesID=ab4e9c2c824d7ec0c1458cfdb3f2046e StaticDependenciesID=2554cf640e33d0fce59cd417b0ae768d 
+Importing 'GUID: 76f2ff5a9bca569ca32d97c3bef607cc - Path: Assets/Audio/Collected/CS2/player/footsteps/land_grass_01_788de0db.wav' with importer (AudioImporter)
+Imported 'GUID: 76f2ff5a9bca569ca32d97c3bef607cc' -> (Import Result ID: '41f04d22c820e07015bbbecc9be533fc') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d61970b525f2fbc5f6dbcdc971ef0c0c DependenciesID=13714715f609036635a4f7693e8e00ce StaticDependenciesID=f10560f105471d32274c4e82d65b7218 
+Importing 'GUID: 762d73e92c0252c2a2019aeeb44cf131 - Path: Assets/Audio/Collected/CS2/player/footsteps/wood_06_c518b455.wav' with importer (AudioImporter)
+Imported 'GUID: 762d73e92c0252c2a2019aeeb44cf131' -> (Import Result ID: 'cff2e617b6775ee52e63b63e92f13dd6') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2015562061d262cdea89a22de02ebb54 DependenciesID=05bc6c0b5fe9d3ae5e23e1ea05a2bb8f StaticDependenciesID=5886c90c1f693a5cf4dabae5d63a3622 
+Importing 'GUID: 86003cb020685d2e91d4a1f9547b0aaa - Path: Assets/Audio/Collected/CS2/player/footsteps/land_dirt_03_8cf1afc1.wav' with importer (AudioImporter)
+Imported 'GUID: 86003cb020685d2e91d4a1f9547b0aaa' -> (Import Result ID: '518ff476ce84cc74287fb59fa3cf4720') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=419b1a50af38078aa3fc694b4969e0e3 DependenciesID=d7ed3338a4acd0f73056c728b522b015 StaticDependenciesID=7042922683de80b685418c6eda6803bc 
+Importing 'GUID: 86a4fdabb43e5733beb40371bd6731f8 - Path: Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_03_ef6ed943.wav' with importer (AudioImporter)
+Imported 'GUID: 86a4fdabb43e5733beb40371bd6731f8' -> (Import Result ID: '6774c9ff0fba30b9eeabff7d61860c82') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=84f4d06acb2645d9acc547c6ac972528 DependenciesID=d4567d30448e6cdec00cd4e2c3ee86b8 StaticDependenciesID=bcb2b192b2c45a018720f8874e686029 
+Importing 'GUID: a6ed07729cb85cc19a7862c9e31e56aa - Path: Assets/Audio/Collected/CS2/player/footsteps/water_wade_03_1ed60bbb.wav' with importer (AudioImporter)
+Imported 'GUID: a6ed07729cb85cc19a7862c9e31e56aa' -> (Import Result ID: 'f7a7532d67cff427dfbf7e5f7edd8994') in 0.052 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=aa0110d482c45bf909c894d6e27bf659 DependenciesID=54cd728aa1fae329d735f4e4d9c9c45c StaticDependenciesID=78f77df93458aad874886feb51ba367d 
+Importing 'GUID: b6e3241cacfc5a1099aa3fc3c7e75dfd - Path: Assets/Audio/Collected/CS2/weapons/glock18/glock_clipout_092f655b.wav' with importer (AudioImporter)
+Imported 'GUID: b6e3241cacfc5a1099aa3fc3c7e75dfd' -> (Import Result ID: '2938e419543f0ea0bce4a10db943d140') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6305710fc8fa1162699d2414dee1dff9 DependenciesID=e88d394f9351babbcfb6d59d6bd5627b StaticDependenciesID=dca3f21aae3ede7b757707cfa39eb0e0 
+Importing 'GUID: c68c0995872058d9a89ea5ebf82662da - Path: Assets/Audio/Collected/CS2/physics/body/body_impact_ct_02_f9020b4b.wav' with importer (AudioImporter)
+Imported 'GUID: c68c0995872058d9a89ea5ebf82662da' -> (Import Result ID: '0cabe789f39bc66c4d502344d2445e6b') in 0.055 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=608ba614570397fc61bdfc522b1cb051 DependenciesID=d12b845351d68c4e5fa719d69a449c58 StaticDependenciesID=8972f0ec4a48fb8fa867b23130f3c2dd 
+Importing 'GUID: e6da3b515d875933aee96180afc4c5ae - Path: Assets/Audio/Collected/CS2/player/footsteps/carpet_05_93b89100.wav' with importer (AudioImporter)
+Imported 'GUID: e6da3b515d875933aee96180afc4c5ae' -> (Import Result ID: 'f479c25a91dfd2718fe8b9b3c91973db') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ff59878bd6137126a453d5c952776147 DependenciesID=9bde735b164f7b44d114a30cbd5f0690 StaticDependenciesID=0a53789d8f35e2eaa7991b27ab226ba7 
+Importing 'GUID: f65fa61b328c5674889b1d8d0e2154db - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_swish_light_02_0f0b07c7.wav' with importer (AudioImporter)
+Imported 'GUID: f65fa61b328c5674889b1d8d0e2154db' -> (Import Result ID: '802ffca64a30ce9a0aae94ad12955e62') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c9370f2d16c5aa93ab974e46ccbf8433 DependenciesID=de03603c54fcd0e48c0772acdaab2030 StaticDependenciesID=3b286d050165dc72f61c1734a65d723e 
+Importing 'GUID: 17d6cec278d0558ea121e2279158f160 - Path: Assets/Audio/Collected/CS2/player/footsteps/gravel_03_dfad862a.wav' with importer (AudioImporter)
+Imported 'GUID: 17d6cec278d0558ea121e2279158f160' -> (Import Result ID: '91d5be9c1aad93209001c4db99a574ad') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=548fa1e19aa2fcfed8a80e5d90f6c154 DependenciesID=832843c701d2f75b2cdac096b8ecc1db StaticDependenciesID=05efed4ece1b6ae1ad53261477f087e0 
+Importing 'GUID: 47c07f1973005b8baa7d05b101573906 - Path: Assets/Audio/Collected/CS2/player/footsteps/puddle_04_af3dd852.wav' with importer (AudioImporter)
+Imported 'GUID: 47c07f1973005b8baa7d05b101573906' -> (Import Result ID: '51831373730b88090685d6c53cefdbf2') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=03bbf7428cb749d3f2cba5bbc53373d7 DependenciesID=3ab470ef4d98e18c5e44ee3d6b2c015a StaticDependenciesID=b23141417cc84a3a718b62460ab579f9 
+Importing 'GUID: 7773223bb31f5f8a8d6c368b78c7970d - Path: Assets/Audio/Collected/CS2/player/footsteps/suit_ct_03_d4f70dd0.wav' with importer (AudioImporter)
+Imported 'GUID: 7773223bb31f5f8a8d6c368b78c7970d' -> (Import Result ID: '3353ae966a06afd8a446c37cc31fa087') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8a709dd5c3e4e45c4e85bd6de8195b4c DependenciesID=62daa61b43824d66e839c2d8f25705af StaticDependenciesID=bd71ab5f28f80726f9471f0a2390fc0e 
+Importing 'GUID: 9760a827412e5181938d41c55700458e - Path: Assets/Audio/Collected/CS2/weapons/hegrenade/hegrenade_detonate_03_ffe3ac56.wav' with importer (AudioImporter)
+Imported 'GUID: 9760a827412e5181938d41c55700458e' -> (Import Result ID: 'c1d479287d2608ebc47ca78b04a055fe') in 0.067 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=450f143797d049b12d6e4f9c2c1a06f6 DependenciesID=e45ffbc8fcfa3832cc83d9e561c9123d StaticDependenciesID=904e5524e0a483eae5ca6d2631f3ba67 
+Importing 'GUID: 97bade8e1c2f527b8ed2ec7250dc4168 - Path: Assets/Audio/Collected/GDC2026/Effects/18_A_Spolecna_knihovna_Kulka_kov_c60d0311.wav' with importer (AudioImporter)
+Imported 'GUID: 97bade8e1c2f527b8ed2ec7250dc4168' -> (Import Result ID: '2a96b0bd26f3e2df897d789e547c756d') in 0.054 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=cf9683bc3d48fc6ae3172360f0254789 DependenciesID=c2bfa8cbead91d69c0cd15afc69c5c0e StaticDependenciesID=566872af172dd07488489be0b42c3a2f 
+Importing 'GUID: b72009d1692b5ea88bb2ea52b10d0dcb - Path: Assets/Audio/Collected/CS2/player/footsteps/water_wade_05_a4ced633.wav' with importer (AudioImporter)
+Imported 'GUID: b72009d1692b5ea88bb2ea52b10d0dcb' -> (Import Result ID: '7bfe2419d57b0da67381f1985c18e88c') in 0.057 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e07eb78289e4a0c16b3d173e7b92abab DependenciesID=f03d539d56858f8a70d615bec2e87d2a StaticDependenciesID=865b656653c978fb054bbf29628cbf0b 
+Importing 'GUID: b75d0a4c279d53e8b620f33c9436bd83 - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_02_8cc8a821.wav' with importer (AudioImporter)
+Imported 'GUID: b75d0a4c279d53e8b620f33c9436bd83' -> (Import Result ID: '388a1c3603adc8b1b8061d1f79b0a674') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0d7d3a182cd4c177b4ee145c011370e0 DependenciesID=7368ad21059afae0b965712f5b4c216c StaticDependenciesID=4e198df5beae8c7d1a4942114f1c0062 
+Importing 'GUID: d7963c166d55588dbed30f1a9a04f042 - Path: Assets/Audio/Collected/CS2/player/footsteps/rubber_04_37556132.wav' with importer (AudioImporter)
+Imported 'GUID: d7963c166d55588dbed30f1a9a04f042' -> (Import Result ID: '635e48a113327abd31956a36266ea4a8') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4e379cef717384abbf8d8697012c1f24 DependenciesID=50878aebd04b6dc69dc80c64ebb3fecc StaticDependenciesID=833c139c172718ae205aad308877196b 
+Importing 'GUID: f7475d42948b5309aa9068453e25a960 - Path: Assets/Audio/Collected/CS2/player/footsteps/sand_08_661240e3.wav' with importer (AudioImporter)
+Imported 'GUID: f7475d42948b5309aa9068453e25a960' -> (Import Result ID: 'f89d795a44465168cf3311c91f2086f2') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3d7781c7aea71b10a7971e6980cf91f1 DependenciesID=2c57f061fa6db2afed9aa84dff13768f StaticDependenciesID=ced870a154f7667e2c5ee360f7e0d136 
+Importing 'GUID: 5841f2fb05165dcd847acdeea5898bf6 - Path: Assets/Audio/Collected/CS2/physics/glass/glass_impact_bullet4_f9fb3d35.wav' with importer (AudioImporter)
+Imported 'GUID: 5841f2fb05165dcd847acdeea5898bf6' -> (Import Result ID: '87c33817f5d9e65f6817c3141a51eba6') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=db0ac51665a8c58cb8f4903a7628ab13 DependenciesID=78304fd77cd9c986751adefe076fb11b StaticDependenciesID=faecb73d26ac1e6bc2717c63cc243a76 
+Importing 'GUID: 58730f718a9256a6a32c2e41ddfb70cd - Path: Assets/Audio/Collected/CS2/physics/body/body_impact_ct_04_a65a8af4.wav' with importer (AudioImporter)
+Imported 'GUID: 58730f718a9256a6a32c2e41ddfb70cd' -> (Import Result ID: '0f3871c8b3228dccf384c5ab4112125b') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e4acf3c506963beebdd678927ed58514 DependenciesID=eafc33bb15aa9791bc8979ef95e746f3 StaticDependenciesID=6ff928774b581091dcdd124de883d2ed 
+Importing 'GUID: 8841bc4be0195f249b7b1cf117f9afc6 - Path: Assets/Audio/Collected/CS2/weapons/mag7/mag7_pump_forward_0cebb88b.wav' with importer (AudioImporter)
+Imported 'GUID: 8841bc4be0195f249b7b1cf117f9afc6' -> (Import Result ID: 'aa976c92b2eebb858458bac767fd635b') in 0.042 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=53ffa8a83b48ba09e645077ed3b4ff0c DependenciesID=6249d1e22fb9bb6d3102a1b29cd19c89 StaticDependenciesID=4341fbeffb0e7fb12f8a1cd6ede06c74 
+Importing 'GUID: 88b23918446a58899078cfc1d24dcb93 - Path: Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_clipout_ba537422.wav' with importer (AudioImporter)
+Imported 'GUID: 88b23918446a58899078cfc1d24dcb93' -> (Import Result ID: '7d415f217e3d93dcb74a1d70d352734a') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c72683652cf7298af0a8ed43b9cd1527 DependenciesID=1e0b5c28a14ff3fd911365885d09c0ce StaticDependenciesID=77019314d0e7e9d601291570d0de1ffe 
+Importing 'GUID: b843f9c82cff5bf997764013fa1983b7 - Path: Assets/Audio/Collected/CS2/player/footsteps/gravel_01_004df9e4.wav' with importer (AudioImporter)
+Imported 'GUID: b843f9c82cff5bf997764013fa1983b7' -> (Import Result ID: '3066eab0690f5d0aa6e57bc3e148b9c4') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e2fba50379bdf43982c115302d654c3d DependenciesID=2838da8e3936cee2200b027c1f4ff158 StaticDependenciesID=cfac4fdb08eeee29a4f777183c6894a7 
+Importing 'GUID: b8be464c2fad5af1bac9781183c25027 - Path: Assets/Audio/Collected/CS2/player/footsteps/gravel_08_3192e604.wav' with importer (AudioImporter)
+Imported 'GUID: b8be464c2fad5af1bac9781183c25027' -> (Import Result ID: '12cbf2aa5ebc174ecdd1546ba4202f21') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8cd7f75c59ff605a12e4797bf605149e DependenciesID=5ecf9f481bc74addaf5a1aae86963123 StaticDependenciesID=d84db4a8c891e3d8b84ee73e8c12df3d 
+Importing 'GUID: c8a44a1e28d356159b281d436e084bd4 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_grass_03_f46779e6.wav' with importer (AudioImporter)
+Imported 'GUID: c8a44a1e28d356159b281d436e084bd4' -> (Import Result ID: '2a31effb0ac6224f57636f5c7cc0a8f4') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9e2edcdc471aac63896a944abfc20b97 DependenciesID=ea741663b0cade6b7b2be732070c4705 StaticDependenciesID=09ef68ecb27e2cdd224a2e62493f6d0d 
+Importing 'GUID: d8a5a5fb1d6959058d5e38d5b08d0679 - Path: Assets/Audio/Collected/CS2/player/footsteps/tile_01_62347ffd.wav' with importer (AudioImporter)
+Imported 'GUID: d8a5a5fb1d6959058d5e38d5b08d0679' -> (Import Result ID: '524f7aa2d4b822dbfdb6274ef87d678a') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b2db5afed0c9019849bfb4f05eb35ce4 DependenciesID=b3e2dd8b5ed553aa4e89bb67399444c5 StaticDependenciesID=eeac46e53f9150be675a0c7009ce69b1 
+Importing 'GUID: e8f4f8f75c805c2cafde6acc907914ab - Path: Assets/Audio/Collected/CS2/player/footsteps/wood_02_ade737f8.wav' with importer (AudioImporter)
+Imported 'GUID: e8f4f8f75c805c2cafde6acc907914ab' -> (Import Result ID: '23a72e2ead3ff51ed1807a96d78b22d1') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5209d7ac4d34238f8c3c22c54f53b804 DependenciesID=8600e9360231f4671250feac810b61cc StaticDependenciesID=ab8b77b228e205c7ade3617ff0a40140 
+Importing 'GUID: e848eb3acd75538d8d5306cf80971261 - Path: Assets/Audio/Collected/CS2/player/footsteps/grass_03_a34050ce.wav' with importer (AudioImporter)
+Imported 'GUID: e848eb3acd75538d8d5306cf80971261' -> (Import Result ID: '014bef1715a64eef62f60a11b4950d5b') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=118b1e8ebd6c2f5d53a6b081edb9c1a6 DependenciesID=6c36cfe083719becbcdb53b577f0092d StaticDependenciesID=9b553efb00e4047baa0a09aaafe72f1b 
+Importing 'GUID: f8fd77ea068554549c2390809ae803c1 - Path: Assets/Audio/Collected/CS2/physics/concrete/rock_impact_hard1_2d54853a.wav' with importer (AudioImporter)
+Imported 'GUID: f8fd77ea068554549c2390809ae803c1' -> (Import Result ID: 'f593b25f5c54ca116861034aa44038f7') in 0.042 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e02d518766f8731a2257f86e70747116 DependenciesID=e5308ee95b5c51b7060f5c091ef378e7 StaticDependenciesID=e9a9fdc530233a6239d14be9fb2fcd0b 
+Importing 'GUID: 098766b2d8b75df7ac3bfaaeaacd49a5 - Path: Assets/Audio/Collected/CS2/physics/surfaces/carpet_impact_bullet_02_1f2d2020.wav' with importer (AudioImporter)
+Imported 'GUID: 098766b2d8b75df7ac3bfaaeaacd49a5' -> (Import Result ID: '9593d3c96378baaa8051dea76bf1a8fc') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4a37b2f44f8c0e495b462590f1b8a721 DependenciesID=7be565c1a955cfa94a95da97fbdd3736 StaticDependenciesID=bdb86864311c1f735ed4d86534ca1e97 
+Importing 'GUID: 291e88107a9758ef904b69e9710bf0f1 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_tile_03_90582a9f.wav' with importer (AudioImporter)
+Imported 'GUID: 291e88107a9758ef904b69e9710bf0f1' -> (Import Result ID: '0f859d49cee829aa4da984253076ff47') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3b0b149b7138a191ff33849350f788ac DependenciesID=13ebd5e823d14ea56d748e511a9493db StaticDependenciesID=c9850e2e038f47c1dd52ec221fb2d4f9 
+Importing 'GUID: 396e04eb3f79585cb2229a9989161e2d - Path: Assets/Audio/Collected/CS2/player/footsteps/grass_04_a5084489.wav' with importer (AudioImporter)
+Imported 'GUID: 396e04eb3f79585cb2229a9989161e2d' -> (Import Result ID: 'e60c0bba8ca89b406e0b8190a6b3efa0') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=034aa473347397ff4c681f9232d7c657 DependenciesID=9ed54f48ab1c3dfe8da131adabd3b044 StaticDependenciesID=4f6f35fd92a128eaf7ce1f42f6938f15 
+Importing 'GUID: 591148d79d0051faa254e1f8fe78f3c9 - Path: Assets/Audio/Collected/CS2/physics/wood/wood_solid_impact_bullet2_58b28f6d.wav' with importer (AudioImporter)
+Imported 'GUID: 591148d79d0051faa254e1f8fe78f3c9' -> (Import Result ID: '41c48826834acc73d65f1841ce2cae76') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0d544b3dd499cb0189b678bd26e16f61 DependenciesID=dfbed7d45607f5e449e74ba5e1247f04 StaticDependenciesID=11c7b69405e0bda7f587ce7df1c0273a 
+Importing 'GUID: 69e4cbe689765d9b88373a9aa1ef1fb2 - Path: Assets/Audio/Collected/CS2/physics/body/body_impact_fists_02_bfacfa4a.wav' with importer (AudioImporter)
+Imported 'GUID: 69e4cbe689765d9b88373a9aa1ef1fb2' -> (Import Result ID: '7d0252b40a2fb9db913d7d57f863d57b') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=40bed416587de3cc88e1e09de2e6c4bd DependenciesID=b4faffb1e2f7ae0ffee46cfadbe50c00 StaticDependenciesID=abca72d12acfc94da482c1fc73ba3660 
+Importing 'GUID: 793428146773573d878639e95647451a - Path: Assets/Audio/Collected/CS2/physics/surfaces/dirt_impact_bullet_04_a4e05bc6.wav' with importer (AudioImporter)
+Imported 'GUID: 793428146773573d878639e95647451a' -> (Import Result ID: '4c8f45ee6bca119ed67390135c71c01c') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5656e58b40507668b1ea568c8a6a6294 DependenciesID=9918248c78afa27e4c0cdec1a5d2a89d StaticDependenciesID=3249d193263b88f0dbdc24be3604cb54 
+Importing 'GUID: 8933d60d7e585724b8f7586e55a0a11c - Path: Assets/Audio/Collected/CS2/player/footsteps/dirt_05_15c7b6ac.wav' with importer (AudioImporter)
+Imported 'GUID: 8933d60d7e585724b8f7586e55a0a11c' -> (Import Result ID: '42e73e29cd40f6299a3485e379e805f0') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=22b839caf21a3c36ef4295b74097140e DependenciesID=c3817b4c4805977561e4c6e189a513ea StaticDependenciesID=15b12b3508d6d8701f52085674fe511f 
+Importing 'GUID: a97d7866ea70527dabe1dfc639481ad8 - Path: Assets/Audio/Collected/CS2/physics/concrete/rock_impact_hard3_e9d85d25.wav' with importer (AudioImporter)
+Imported 'GUID: a97d7866ea70527dabe1dfc639481ad8' -> (Import Result ID: '554ff307ced8a2e3f4d7dea5bcf2feda') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f85eb2ce098e023cc0609a3fa858e204 DependenciesID=8a20094dc67ccda1c7a446846e3d8638 StaticDependenciesID=29802a214427eddfea6eb1acd6a4bab4 
+Importing 'GUID: a93e7b6026b65fff80bafaef18219eda - Path: Assets/Audio/Collected/CS2/physics/concrete/boulder_impact_hard4_e1f6ebc9.wav' with importer (AudioImporter)
+Imported 'GUID: a93e7b6026b65fff80bafaef18219eda' -> (Import Result ID: '6d00833d76c023faceeb49b1333853d4') in 0.054 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9383ac96a383a4a271c8204c1c5fc52b DependenciesID=4a8f230b933b48a22df1b36c7daf82d7 StaticDependenciesID=2fdbc3443c35aac345f3d406fa300caa 
+Importing 'GUID: c92acf9f41c15cb5885038cd5c2fd3e8 - Path: Assets/Audio/Collected/CS2/player/footsteps/sand_04_6d1c21ea.wav' with importer (AudioImporter)
+Imported 'GUID: c92acf9f41c15cb5885038cd5c2fd3e8' -> (Import Result ID: '32fbd182e15b458093b84f389833960d') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1c9d1aca7c0797d9b0d5dc813a12ca3b DependenciesID=3c2f7fe8d0a62ce4e9102687c8dcd308 StaticDependenciesID=ed0a7afe57833637623399f72c6ddfca 
+Importing 'GUID: c9ad1ad8e3ff58efb6dc050dc8b66dec - Path: Assets/Audio/Collected/CS2/physics/concrete/concrete_impact_bullet1_68af2ab7.wav' with importer (AudioImporter)
+Imported 'GUID: c9ad1ad8e3ff58efb6dc050dc8b66dec' -> (Import Result ID: 'cf95c599adf55ea9611d2ba3effb38b4') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e68302511c3c291f9ea571642e397418 DependenciesID=4d018666c35f4ebf06bce16aa5bc2b4f StaticDependenciesID=1b69992ff0c654a22ccc9da497eac1f2 
+Importing 'GUID: d976268af35a5ef9b16e3653e1a08c05 - Path: Assets/Audio/Collected/CS2/player/footsteps/tile_07_8fc54658.wav' with importer (AudioImporter)
+Imported 'GUID: d976268af35a5ef9b16e3653e1a08c05' -> (Import Result ID: '63142d87ebb8adfaf0b226444916bc1c') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3fef2fdb8d5fd95d6f6b5cd182e7bba4 DependenciesID=a4ef53ee4a8490547c48a6f469791f99 StaticDependenciesID=66b0d2ce6f88bed301df44849fcb9649 
+Importing 'GUID: d9bf908b76515cf3be8e608cbb1fc5ac - Path: Assets/Audio/Collected/CS2/player/footsteps/land_sand_01_b5e3bf38.wav' with importer (AudioImporter)
+Imported 'GUID: d9bf908b76515cf3be8e608cbb1fc5ac' -> (Import Result ID: 'b66928d8a3d5b1de7d83be600884b086') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a0be91bde5bc776be386f540e887c970 DependenciesID=7914fb6c798d05f433ccd5dc719eb7a1 StaticDependenciesID=eee4f798d702bd2c911651aa6658c8d9 
+Importing 'GUID: f949a51fe6b655918c80690c06919aa4 - Path: Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_boltback_d0df890c.wav' with importer (AudioImporter)
+Imported 'GUID: f949a51fe6b655918c80690c06919aa4' -> (Import Result ID: '5cb735b580e0695bd2338c008de49ba2') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7cb77c1e8c9f02640040ca4e2a9b1f41 DependenciesID=ef5a4522223e104aacf70dd053cea96a StaticDependenciesID=e4f12489dabc2f24859fd847a635afbf 
+Importing 'GUID: f95d1efdb8485134b119acdf758602ed - Path: Assets/Audio/Collected/CS2/weapons/glock18/glock_sliderelease_a9f315e9.wav' with importer (AudioImporter)
+Imported 'GUID: f95d1efdb8485134b119acdf758602ed' -> (Import Result ID: '4fc486be75cec85d3624e52bebe70192') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0900b7114a6ec782ab57714f137147c1 DependenciesID=3508c510ddd5a9c691ce1712614c8e38 StaticDependenciesID=0dd0d1874269afd6db73486504071546 
+Importing 'GUID: 1a232149c80455f5896ebefb2fa39596 - Path: Assets/Audio/Collected/CS2/player/footsteps/rubber_05_df9db2a4.wav' with importer (AudioImporter)
+Imported 'GUID: 1a232149c80455f5896ebefb2fa39596' -> (Import Result ID: '6aaf920e1e3ffcb3fadf2422d7ecd9f8') in 0.054 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=74a645fa1889590de3f5880c05ce8e79 DependenciesID=d187bf3c312f6aaf7001b23b01092865 StaticDependenciesID=007ed1067d029d84416b583e8319d6a2 
+Importing 'GUID: 1a6efe9861f054e0a25b99a2a5243f81 - Path: Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_08_df1420fc.wav' with importer (AudioImporter)
+Imported 'GUID: 1a6efe9861f054e0a25b99a2a5243f81' -> (Import Result ID: '63b0a7b39cef2d8634030dbc14466d1f') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=84852d7d50563f32c2ca17166a312476 DependenciesID=c4e884e57ea7e7eb4fd31de8bb02b3bd StaticDependenciesID=c2bbf5b15bdcf9c67d9e7e5d348dc954 
+Importing 'GUID: 2a78c942432d525d9c3fb0d6d5a1efba - Path: Assets/Audio/Collected/CS2/physics/metal/metal_solid_impact_bullet4_d252ebe3.wav' with importer (AudioImporter)
+Imported 'GUID: 2a78c942432d525d9c3fb0d6d5a1efba' -> (Import Result ID: '67eef55392343d5327506e7cec968c46') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c19dd5715798b0211881072ad8919869 DependenciesID=c10684931f96a9364604f3f6d241d420 StaticDependenciesID=ffeab6c4e821ec032a2ae9bfe9b0aca3 
+Importing 'GUID: 2a8a4c767a2a58cbaba378a654d1e843 - Path: Assets/Audio/Collected/CS2/player/footsteps/grass_01_70a21df8.wav' with importer (AudioImporter)
+Imported 'GUID: 2a8a4c767a2a58cbaba378a654d1e843' -> (Import Result ID: '3f9645a2692db9385b9f832bc8bd5c78') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f66bff4cb81edee7e6bdf4d89c8d38f5 DependenciesID=6f510483cdc2ebd61520536df8ae6dab StaticDependenciesID=30e98ee5e638b5d7bc7d9bd246207137 
+Importing 'GUID: 3a0f0af5446d5c44bb06f2166883fd22 - Path: Assets/Audio/Collected/CS2/weapons/flashbang/flashbang_explode1_a94dfe03.wav' with importer (AudioImporter)
+Imported 'GUID: 3a0f0af5446d5c44bb06f2166883fd22' -> (Import Result ID: '9ddda74aecdc04e433a2e186a4a6b712') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fb33bd2b5ba31a33f4951498446d9d7c DependenciesID=38d44deca56eb25d9e27a14144525642 StaticDependenciesID=44405d242187fe381f1479ad4a08af5e 
+Importing 'GUID: 4ad02ae032a25803b4e2e23a0edc972f - Path: Assets/Audio/Collected/CS2/player/footsteps/wood_04_d071e3a7.wav' with importer (AudioImporter)
+Imported 'GUID: 4ad02ae032a25803b4e2e23a0edc972f' -> (Import Result ID: 'be560b6f9dfd5800657e0f9daa99d05d') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e566d4784abc06d4d9a114322c6a21c7 DependenciesID=926120bf8d9f398ed946a2ecc38e70bf StaticDependenciesID=ff78d4791480f45742e8897e6026f103 
+Importing 'GUID: 4a42b2637a035877b442db03b93211a8 - Path: Assets/Audio/Collected/Weapons/Reload/honza_reload.wav' with importer (AudioImporter)
+Imported 'GUID: 4a42b2637a035877b442db03b93211a8' -> (Import Result ID: '131b000ca6513a0e3da2c0198e715eba') in 0.058 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=228b08fb9093c16d613b46b0cb24574f DependenciesID=e2d2e41531ca9fcff7a4efecbc1841f5 StaticDependenciesID=67ee44e6ee966c8c8e24f7a35d05db7e 
+Importing 'GUID: 4ae3ff7b7ab45961b98771c27ead4d94 - Path: Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_07_7ace0b62.wav' with importer (AudioImporter)
+Imported 'GUID: 4ae3ff7b7ab45961b98771c27ead4d94' -> (Import Result ID: '599e1791c0ef59a02e3abde5e227b3d7') in 0.117 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3afb65d4b6a55e287882de69a9bfc10c DependenciesID=2e77ee6081b213a5f47581e392aa5239 StaticDependenciesID=5b1fd401a320b6eec8e711a27bd2a730 
+Importing 'GUID: 4aa4eed6bbe252a385b67283a44b3c96 - Path: Assets/Audio/Collected/CS2/physics/concrete/concrete_impact_bullet3_71e2fca5.wav' with importer (AudioImporter)
+Imported 'GUID: 4aa4eed6bbe252a385b67283a44b3c96' -> (Import Result ID: '6b34fc0dc41fc51ce9f166c5a4df5271') in 0.061 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=555eb73f690cd331e1676a6cb165e248 DependenciesID=587b9f888948b41161d5f77eb7911513 StaticDependenciesID=70fa0282122877922453450eb8461eaf 
+Importing 'GUID: 5a01b690696b58adbf129f386873a6c9 - Path: Assets/Audio/Collected/CS2/player/footsteps/tile_02_984a4cfb.wav' with importer (AudioImporter)
+Imported 'GUID: 5a01b690696b58adbf129f386873a6c9' -> (Import Result ID: 'd091d848d36e73736cb7b84ca94705e8') in 0.086 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ebc8a2b548377a31e9f739f8d35ba47b DependenciesID=75f83c2d76f83e4aee5215c74ae9531b StaticDependenciesID=7f5e8a7614bf0f9c53cf8e48a6b6b7a3 
+Importing 'GUID: 6add0dd2aa875e92b62fa5926d18d25e - Path: Assets/Audio/Collected/CS2/items/healthshot_success_01_ef784ccd.wav' with importer (AudioImporter)
+Imported 'GUID: 6add0dd2aa875e92b62fa5926d18d25e' -> (Import Result ID: '0c01b77e508048a6febbe052dd5ffe3c') in 0.057 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3b022cba3b1cf7cb320381044d50cd69 DependenciesID=476ac8184d1736dea2cd82ef1c37cdb6 StaticDependenciesID=446544f4db1bb96609ae34f842b65f36 
+Importing 'GUID: 7ad55911a11b57899647fa36f862d32c - Path: Assets/Audio/Collected/CS2/player/footsteps/water_wade_02_ec0dab09.wav' with importer (AudioImporter)
+Imported 'GUID: 7ad55911a11b57899647fa36f862d32c' -> (Import Result ID: '788375692e88e44126f6c6afcd465359') in 0.063 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=198d98382774e1ad65c0f63a89d46578 DependenciesID=e1762b32cf510c6bac7e2c2ca0a9e072 StaticDependenciesID=de87e4ba24adbcc595447545779f5231 
+Importing 'GUID: 8ad20983b32755fc806f3f450c6a00aa - Path: Assets/Audio/Collected/CS2/ambient/common/fire/fire_med_loop1_209df5fd.wav' with importer (AudioImporter)
+Imported 'GUID: 8ad20983b32755fc806f3f450c6a00aa' -> (Import Result ID: '345b2ed4ea59d6d9e362adb3e4012c4d') in 0.065 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=49a5f7a81c1b425607cb274ef2710907 DependenciesID=1b116936c657b254a29078b7079576f2 StaticDependenciesID=a983cd89ece85fb882c6f0fba377ebaf 
+Importing 'GUID: 8a3816abdd745f06857be689a7fb6596 - Path: Assets/Audio/Collected/CS2/physics/glass/glass_bottle_impact_hard3_030868f0.wav' with importer (AudioImporter)
+Imported 'GUID: 8a3816abdd745f06857be689a7fb6596' -> (Import Result ID: '9159c159c43b9e9e741373b1a9735d01') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9eda3c53e55c5be55d420b6ef4fada29 DependenciesID=95a4bd3dd25499685f6d50cbf0e78d5e StaticDependenciesID=3da3026fdc8821630262b00a335a2cca 
+Importing 'GUID: 9ab31683d0765fc8b6aae7bb27420a2f - Path: Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_05_d05a3892.wav' with importer (AudioImporter)
+Imported 'GUID: 9ab31683d0765fc8b6aae7bb27420a2f' -> (Import Result ID: 'a56b0a02454497307fa8482734e45acf') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3aa99ccc5709ba3dd2fd4544deb22d80 DependenciesID=ce62db974710721ac41692f684902014 StaticDependenciesID=42ce38676da974c8dac19d27e27bc376 
+Importing 'GUID: ba147ce50df258be8ba23b7c5a4e16f1 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_rubber_02_1757cad5.wav' with importer (AudioImporter)
+Imported 'GUID: ba147ce50df258be8ba23b7c5a4e16f1' -> (Import Result ID: '5bc3252fab302ae44319651f02d98aa1') in 0.085 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7b00b29ae8defc9b76502eff4cad6e07 DependenciesID=fffe06beaaffdfd4b9d1a78693fee767 StaticDependenciesID=e783ebfbbe00f2705a5a85a165fc89dd 
+Importing 'GUID: ca0fe1ef3b3b59ffa9a1ff6e93bed531 - Path: Assets/Audio/Collected/CS2/physics/body/body_impact_fists_01_53d25d4b.wav' with importer (AudioImporter)
+Imported 'GUID: ca0fe1ef3b3b59ffa9a1ff6e93bed531' -> (Import Result ID: '9dd0a32c94ab86ab213c8f9ae52ebffb') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d9a2f4743b724296b17d548582753aff DependenciesID=c2d7c9b27bbfa58dd37bb197d507aa0d StaticDependenciesID=466690574280ac03398436d745440c6a 
+Importing 'GUID: da74dffb06f759aca8168bccd8b84eba - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_03_3ab7df2b.wav' with importer (AudioImporter)
+Imported 'GUID: da74dffb06f759aca8168bccd8b84eba' -> (Import Result ID: '2b3798b4c2439dd90d2acbefd461857f') in 0.058 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=62978fcec856a8183a8e186d33227e29 DependenciesID=36f348e1176d48cea17e98ec51d92af1 StaticDependenciesID=b24d50e49cb44bd6c886475e7e1f5edd 
+Importing 'GUID: da3a71dccda75738a2059155591ba13d - Path: Assets/Audio/Collected/CS2/player/footsteps/grass_06_3f6ae2d7.wav' with importer (AudioImporter)
+Imported 'GUID: da3a71dccda75738a2059155591ba13d' -> (Import Result ID: '005fe40c629e7574ec3a084c79e064c3') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7c786bf69483a257c6af890329760a98 DependenciesID=bb29b1d2fc40d94552823845596f6565 StaticDependenciesID=06f8c8a93c557d380db6f352ecde79e7 
+Importing 'GUID: da2c343311d65932b082947839832264 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_gravel_02_cc4f3de0.wav' with importer (AudioImporter)
+Imported 'GUID: da2c343311d65932b082947839832264' -> (Import Result ID: 'd37d0999a54d2fb2c0fa89e33f943434') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=708963319fc8a7035d8338bd28201b4e DependenciesID=4881a95b05e90e01c550e3b46f2c4910 StaticDependenciesID=993a712d9a2add7b10299ef36f5d68cf 
+Importing 'GUID: da9d8e483a8c50ec8d009faa5d82a3e3 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_gravel_01_cd15da90.wav' with importer (AudioImporter)
+Imported 'GUID: da9d8e483a8c50ec8d009faa5d82a3e3' -> (Import Result ID: '0207ea50a8f54f1535473627ab92e900') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=81108875f760103cb30b0bf8b1f57e54 DependenciesID=ad7002109adc697366c9be890ce6be05 StaticDependenciesID=65774972ccb697a2128818700e9499c4 
+Importing 'GUID: ea2b1597821e542e80a6628279be0dde - Path: Assets/Audio/Collected/CS2/physics/surfaces/carpet_impact_bullet_01_51580131.wav' with importer (AudioImporter)
+Imported 'GUID: ea2b1597821e542e80a6628279be0dde' -> (Import Result ID: 'b7cc7c2798ec740f6d3b3877f6b8698b') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ca6714bceeb7eaed8eaef359ab39c478 DependenciesID=c5b75a5929b88ae3f56dc33db1b9c2d8 StaticDependenciesID=c156207fe356780b014c02851f58d022 
+Importing 'GUID: faa62f42b52a541ab80c809e3d29c5d3 - Path: Assets/Audio/Collected/CS2/weapons/hegrenade/he_bounce-1_967974ea.wav' with importer (AudioImporter)
+Imported 'GUID: faa62f42b52a541ab80c809e3d29c5d3' -> (Import Result ID: '9573eb25e31bab40f698559f7e761040') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=30d8ba92dec46afb479d956d9b97ffdb DependenciesID=e391fb1432d418de502d950d001ae9c6 StaticDependenciesID=34e05702470c7be1b1513ad066d4be37 
+Importing 'GUID: 0b59f4dfcc39508bbc0b53ddba30380f - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_swish_light_04_190c075a.wav' with importer (AudioImporter)
+Imported 'GUID: 0b59f4dfcc39508bbc0b53ddba30380f' -> (Import Result ID: '3a5341736212d909f0e7e3c1bfb3bf64') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d7eb2636212d4791aa12bf5faac6fb22 DependenciesID=d9d25849c825f1967d6014d24e5efb4b StaticDependenciesID=01bbd9741de9769333502043f7c78f63 
+Importing 'GUID: 0bfd6dfb903e5d67a8ab46766b1a1399 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_carpet_02_fe526075.wav' with importer (AudioImporter)
+Imported 'GUID: 0bfd6dfb903e5d67a8ab46766b1a1399' -> (Import Result ID: 'f8c1eaa3f47316baa29aefbd4e67b8a6') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1cd6028d91cde8b6c015673fc16a07c9 DependenciesID=c7696935a437a4469b3c1a376184724b StaticDependenciesID=8fd9766820dcef9441c3c7a3d560269f 
+Importing 'GUID: 2b2c7c9a203f509aa55785da7aa68caa - Path: Assets/Audio/Collected/CS2/player/footsteps/water_wade_01_c7d1d5c4.wav' with importer (AudioImporter)
+Imported 'GUID: 2b2c7c9a203f509aa55785da7aa68caa' -> (Import Result ID: '5e0cf4aa9cead92f9ad56da5b850b96e') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4996ae48e2b47f00d337e5df3bbd67d1 DependenciesID=1b3d3bd079f3eb40a6ecfe07150fd194 StaticDependenciesID=3745e68d48df2bde14490701db78040a 
+Importing 'GUID: 3b14554010d855509cf84a9d282d59ca - Path: Assets/Audio/Collected/CS2/physics/water/water_splash_03_d0956c11.wav' with importer (AudioImporter)
+Imported 'GUID: 3b14554010d855509cf84a9d282d59ca' -> (Import Result ID: 'ecc7b67eb06d195b7aff018e8a6c1e83') in 0.054 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8df908f0a78285616b7cbdb9a23c810f DependenciesID=73dbc56e67703ee70ddc25306c749f59 StaticDependenciesID=e76b10c194cf86ff221da0fa482f7cab 
+Importing 'GUID: 3b5967b494575aa6b1182a17b67364e3 - Path: Assets/Audio/Collected/CS2/player/land3_e1e836aa.wav' with importer (AudioImporter)
+Imported 'GUID: 3b5967b494575aa6b1182a17b67364e3' -> (Import Result ID: '26a2900745525b7eeb44c8af3c6cbeab') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5fbd8abbaa3a3fb7b2b68534ccd1c372 DependenciesID=45c2a45313ea1b10fc47bcf8ce79d380 StaticDependenciesID=6fcac41ae989429e88b7d0bdd097373b 
+Importing 'GUID: 6b70f55376f3595c86a2ca5d303eea4f - Path: Assets/Audio/Collected/CS2/weapons/p90/p90_clipout_5da8bd60.wav' with importer (AudioImporter)
+Imported 'GUID: 6b70f55376f3595c86a2ca5d303eea4f' -> (Import Result ID: '25889f75c10836290d9e0ec6e1cb58d1') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d226ba70e36db0c7d81a097f0eb59f09 DependenciesID=970b36c397901253fc28fc9421d42b80 StaticDependenciesID=252e3b3603304d54ea5b0428b988092d 
+Importing 'GUID: 7bb7d787f1735f1b8c4c2b2992b317b5 - Path: Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_02_f7c8fdcc.wav' with importer (AudioImporter)
+Imported 'GUID: 7bb7d787f1735f1b8c4c2b2992b317b5' -> (Import Result ID: 'ada9f329643cd760900f87f2c46e4c76') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8b6b04a3de20256ef7871784b0d5bf81 DependenciesID=e4fd5d2add4af205d09c10aff0331c44 StaticDependenciesID=56d4b849c482abc0e30321f2e8244927 
+Importing 'GUID: ab82bcc7fe7659bf8f73ff226c3f2d44 - Path: Assets/Audio/Collected/CS2/player/footsteps/sand_03_beb0944d.wav' with importer (AudioImporter)
+Imported 'GUID: ab82bcc7fe7659bf8f73ff226c3f2d44' -> (Import Result ID: '9519773e136420b1564256b867d84cb8') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=443f14cfc199f0cf4013792eb0fe8ae8 DependenciesID=b1414a22dcd1c95aa5367a75d117c5e8 StaticDependenciesID=8fa269af6179096115df5c2a174cb918 
+Importing 'GUID: abf81a1b65ad54308d3daed53e58530c - Path: Assets/Audio/Collected/CS2/player/footsteps/metal_solid_38_957ad225.wav' with importer (AudioImporter)
+Imported 'GUID: abf81a1b65ad54308d3daed53e58530c' -> (Import Result ID: 'f08e5b820e383db2a76f4c4b7a4547b4') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=86a9f602bb5fce10014ce76c0b7e1190 DependenciesID=07dafe2027a5bd476d4a8973a3f77649 StaticDependenciesID=d41a89b44208a14d3fd5bfd3b0102331 
+Importing 'GUID: abab2f7c635b5f3282c3b52a234f3f4b - Path: Assets/Audio/Collected/CS2/player/footsteps/puddle_03_89d4206f.wav' with importer (AudioImporter)
+Imported 'GUID: abab2f7c635b5f3282c3b52a234f3f4b' -> (Import Result ID: '414a1ba4b2c4fddc91c2ab04242f2165') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9a6f63d7f0673cdb58021a9d62f701c8 DependenciesID=18669267d9569d65cb58d10d5b787ab3 StaticDependenciesID=4b9d92b18788d63b38f3cf3fcdf521f1 
+Importing 'GUID: cb30ae383bc956f29b996db7f312772b - Path: Assets/Audio/Collected/CS2/player/footsteps/land_rubber_03_aea35d7e.wav' with importer (AudioImporter)
+Imported 'GUID: cb30ae383bc956f29b996db7f312772b' -> (Import Result ID: '6df1927b3a33fd331a3806b70d8c82cf') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7b57a37cf84d77e7536cb4711664b8ea DependenciesID=54d98675b702d080289286c0fadd4b32 StaticDependenciesID=aa3dc37dec4e57c9ff3629850e31a685 
+Importing 'GUID: cb8013a2f6e353c5b900f5b524554dce - Path: Assets/Audio/Collected/CS2/player/footsteps/suit_ct_04_e5fc348a.wav' with importer (AudioImporter)
+Imported 'GUID: cb8013a2f6e353c5b900f5b524554dce' -> (Import Result ID: '1471a1c413b4aa821de6663deaf280e5') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c2a9acfb866c1ab658f389eaeb5d1e94 DependenciesID=f62d0b9982f492f89a4b6bf4b36984ca StaticDependenciesID=5e4ddcb87c2783b26a25ca04458c97e8 
+Importing 'GUID: 0cdea546770a5d51adebec567fbfe9e9 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_sand_02_1b9dc41a.wav' with importer (AudioImporter)
+Imported 'GUID: 0cdea546770a5d51adebec567fbfe9e9' -> (Import Result ID: 'b9909f5e380cedcad729718e0d075011') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8fb7ba03c205e381d7b5c06b9e53bda8 DependenciesID=7d5e7cdc924987488f64ea9a2fa4d3e7 StaticDependenciesID=df5650d9355f341ddafe55b9659de2be 
+Importing 'GUID: 4ce1f07da84b52bbb52dbfda0ab9404f - Path: Assets/Audio/Collected/CS2/player/footsteps/land_carpet_03_5d58f76b.wav' with importer (AudioImporter)
+Imported 'GUID: 4ce1f07da84b52bbb52dbfda0ab9404f' -> (Import Result ID: '444944604631e20b57219e2ddf08ea34') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b20a374e383b80ca7ba2e063ac23e62e DependenciesID=014219e8c31355468c709b87d80dc57f StaticDependenciesID=b921417cb9b4538989be7b4d466ff2f5 
+Importing 'GUID: 4c55444a3bb15979b1d99010fda807e3 - Path: Assets/Audio/Collected/CS2/player/footsteps/gravel_05_710b7047.wav' with importer (AudioImporter)
+Imported 'GUID: 4c55444a3bb15979b1d99010fda807e3' -> (Import Result ID: '35c879cb10c26a9ead4f95c62534a9d4') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ca75fe3df1914c06cf583217b6a645aa DependenciesID=8b314045bcfb7c21215943bab85d8608 StaticDependenciesID=5e8fac23881432163760016c43ee934e 
+Importing 'GUID: 5c4ec2f3549059cf9ed7d72286e7ffe0 - Path: Assets/Audio/Collected/CS2/player/footsteps/sand_06_5d6bdba2.wav' with importer (AudioImporter)
+Imported 'GUID: 5c4ec2f3549059cf9ed7d72286e7ffe0' -> (Import Result ID: '29d03f99efb6923a027d89c4d0732c1c') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f7773981392b832170402ef6a65eff10 DependenciesID=29621746b4512b43c3b858419b938c33 StaticDependenciesID=28f9d56c74464cae986f13ca0db20635 
+Importing 'GUID: 6c21f7ba921f59d78cb8286f9b27e20b - Path: Assets/Audio/Collected/CS2/player/footsteps/wood_08_820c4f94.wav' with importer (AudioImporter)
+Imported 'GUID: 6c21f7ba921f59d78cb8286f9b27e20b' -> (Import Result ID: 'ec6527cc0398d9cd2a1797c5bc708021') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8bef828f1720d78ea42a7678c71ac724 DependenciesID=520218512c2b9e970b742a0652be181f StaticDependenciesID=8eedf89378e08e7c20b45294f33a1a3c 
+Importing 'GUID: 6c39d62466d05e94b75d15dfbac6a911 - Path: Assets/Audio/Collected/CS2/player/footsteps/carpet_09_d3a24cb0.wav' with importer (AudioImporter)
+Imported 'GUID: 6c39d62466d05e94b75d15dfbac6a911' -> (Import Result ID: '759e6f96cc3abf92f13c955dea0ac4aa') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=389e63b178a68754c9a6ddfac856f28c DependenciesID=6d6d0b542de9a8874dbf540f0faab19c StaticDependenciesID=e4a809ec79723e3e6bd7172c35a8cf61 
+Importing 'GUID: 6c4ca813054e5ff68af499a14d4a9bbb - Path: Assets/Audio/Collected/CS2/player/footsteps/land_metal_solid_01_f3e28107.wav' with importer (AudioImporter)
+Imported 'GUID: 6c4ca813054e5ff68af499a14d4a9bbb' -> (Import Result ID: '6657f18176774caaa0d823b77c86ea62') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8fb724f059bfbde596f4efe95e7a4a94 DependenciesID=30a1a1b292a2ff096125a98727314ed6 StaticDependenciesID=af69d516f0c9912bd89cd5b5024e491b 
+Importing 'GUID: 7c6312acbc965d81912d392de4de9821 - Path: Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_boltforward_f3ec1435.wav' with importer (AudioImporter)
+Imported 'GUID: 7c6312acbc965d81912d392de4de9821' -> (Import Result ID: '1c85542fb6cd3e7f848c6e4a1c398ea0') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=37311b8e38a8577419ccd18ec72bd71b DependenciesID=c2c05089eea6ee8e53ffcaef0bfc7a04 StaticDependenciesID=768111f668a000fabd41b0f23c76aaec 
+Importing 'GUID: 7cd81ee7c7775a03bf48c29d531f4646 - Path: Assets/Audio/Collected/CS2/physics/surfaces/sand_impact_bullet1_1e011474.wav' with importer (AudioImporter)
+Imported 'GUID: 7cd81ee7c7775a03bf48c29d531f4646' -> (Import Result ID: 'fcdf4afe7c10a85e6be078dcd0df7eb9') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9c4c7d8ab68fad698b81cc12eeca3afc DependenciesID=8160e3ae15c24080965464d3b87135d7 StaticDependenciesID=0eb6fd52f4eada6b190d40d4c4ad9564 
+Importing 'GUID: 7cfb3631e47a559ca149bd3f7badba3e - Path: Assets/Audio/Collected/CS2/weapons/awp/awp_cliphit_5ea5bcc7.wav' with importer (AudioImporter)
+Imported 'GUID: 7cfb3631e47a559ca149bd3f7badba3e' -> (Import Result ID: 'e3d95504eaaa6620cc819ae6d1075bbe') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fce265143ab627bff646abcd203e8552 DependenciesID=b5d435cc64ce5777f4c7c5bc1311822b StaticDependenciesID=0347d90d96ff72c1beabceced99ac295 
+Importing 'GUID: 8c90d1f926d85c5f86929976c8d1d4e7 - Path: Assets/Audio/Collected/CS2/physics/metal/metal_solid_impact_bullet2_39341880.wav' with importer (AudioImporter)
+Imported 'GUID: 8c90d1f926d85c5f86929976c8d1d4e7' -> (Import Result ID: '6110eeba82627636f30a583e9e95690a') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5de30a0b551c336d1cb4f760554c2b56 DependenciesID=0cbce891c9313ef053d3fa9705a42732 StaticDependenciesID=56b6451d3bac757600d57cf0feed3aab 
+Importing 'GUID: ac63658258ce5183a9c3799f4636a60f - Path: Assets/Audio/Collected/CS2/player/footsteps/water_entry_01_32314d9b.wav' with importer (AudioImporter)
+Imported 'GUID: ac63658258ce5183a9c3799f4636a60f' -> (Import Result ID: 'a37e38866bd25f8af32b4545b3413880') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a6bddef204162135ce0cc6fd24865ee8 DependenciesID=063677d3ca36c237e8d49d01f18b9a92 StaticDependenciesID=608777d3664f5753b7b99fe47c79c7f9 
+Importing 'GUID: acc62d25587e5e28a1da6158a68e8698 - Path: Assets/Audio/Collected/CS2/player/footsteps/grass_07_5333ae63.wav' with importer (AudioImporter)
+Imported 'GUID: acc62d25587e5e28a1da6158a68e8698' -> (Import Result ID: '5a036365476b1275565ce82bc1597f78') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c15cba013d1d869b8fc76cee4b2a0678 DependenciesID=e04a93acdf689e414365cd4a39df66e8 StaticDependenciesID=9f4c5237540e253ced12ff0f63c25e23 
+Importing 'GUID: ac6bd88a8ad15c2eb02c72a2981c5f53 - Path: Assets/Audio/Collected/CS2/player/footsteps/dirt_01_4304079e.wav' with importer (AudioImporter)
+Imported 'GUID: ac6bd88a8ad15c2eb02c72a2981c5f53' -> (Import Result ID: '58bfef2aa504bfba2fc749499c886531') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=14ef151a2e944f2ce4992b2e1113dc04 DependenciesID=d0a0f608c1d4d5c074d6380bee936bb7 StaticDependenciesID=692cd8f8b95c29e92b79ab5dce6cfe8e 
+Importing 'GUID: acadda9d835c5e13a5c49c41f30974ed - Path: Assets/Audio/Collected/CS2/player/footsteps/dirt_03_48dac21e.wav' with importer (AudioImporter)
+Imported 'GUID: acadda9d835c5e13a5c49c41f30974ed' -> (Import Result ID: 'e19bf71d44349b22d91ae4470607bffd') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f862ad0a25b8cc3c399967ecd748444c DependenciesID=b2b43c0026526c101775add9e877a76f StaticDependenciesID=74b149479dc141229dd95790dd84e80a 
+Importing 'GUID: bc2f3b30d5e254c8b6191224246fb987 - Path: Assets/Audio/Collected/CS2/player/footsteps/suit_ct_02_f2a86da7.wav' with importer (AudioImporter)
+Imported 'GUID: bc2f3b30d5e254c8b6191224246fb987' -> (Import Result ID: 'e718d79172be3300d20097510e9e104e') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=56818ceac63861209c4912472b5a48f6 DependenciesID=98ad985dc97701cc2fb01a39f4fe2e7c StaticDependenciesID=7437431e80fdff76faa3ffc390f690da 
+Importing 'GUID: ccdbd45470645711a3de79088146bc27 - Path: Assets/Audio/Collected/Weapons/Reload/david_reload.wav' with importer (AudioImporter)
+Imported 'GUID: ccdbd45470645711a3de79088146bc27' -> (Import Result ID: '402dc5734fe9baa1bf3aa18ba86a364d') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c24bf25497a0dd58653fee5dad5ce6a3 DependenciesID=7e46ba2bbe404bc1e3ba4bb4b2307ac6 StaticDependenciesID=69c728857d9887b7f5f9ce81fc7fbc62 
+Importing 'GUID: dc7703c8337e5b28b44e261d4414812a - Path: Assets/Audio/Collected/CS2/player/footsteps/rubber_03_2930604c.wav' with importer (AudioImporter)
+Imported 'GUID: dc7703c8337e5b28b44e261d4414812a' -> (Import Result ID: 'b1cbd752560eaf5146070bd73574db23') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f303f457757d2b6adf08fe7f1b4544b1 DependenciesID=6b24e94d77abdbfcbdec016278cd17f6 StaticDependenciesID=c3e59d9ca98ebf7ac5ff0b9293dd735b 
+Importing 'GUID: 0dc1a7aa02ac50af9a867ce496dd501f - Path: Assets/Audio/Collected/CS2/player/footsteps/wood_07_8895fcb4.wav' with importer (AudioImporter)
+Imported 'GUID: 0dc1a7aa02ac50af9a867ce496dd501f' -> (Import Result ID: '6507864ff1db7818f73749e68f28789b') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7813291835517cd605d2e3f34a2edf7a DependenciesID=9560d64a06af6a08e8772a09aa6bbfb4 StaticDependenciesID=a07a3bead712f0cfdf730fde26bf4c79 
+Importing 'GUID: 0dda17a2571b5ac2aab381c15a94c04e - Path: Assets/Audio/Collected/CS2/player/land2_7e0a9db3.wav' with importer (AudioImporter)
+Imported 'GUID: 0dda17a2571b5ac2aab381c15a94c04e' -> (Import Result ID: 'f77174e6945730129cb242f9caa6f294') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6ec667e49ceeeaa005317e952af13ac2 DependenciesID=323fc8078da40d2d3a435b5bc060395f StaticDependenciesID=27fc16fb9e21ffff4e6a8d8813f3384e 
+Importing 'GUID: 1d10bcdab56a50fead333dcf60a1ac2f - Path: Assets/Audio/Collected/CS2/physics/surfaces/dirt_impact_bullet_03_69d61545.wav' with importer (AudioImporter)
+Imported 'GUID: 1d10bcdab56a50fead333dcf60a1ac2f' -> (Import Result ID: '378f2847d98cdf492dfc81d3d51ace70') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e1e5f19581454863feb2b03e68eb1599 DependenciesID=484cf95f1f8dc54214c6c1c3000e79ed StaticDependenciesID=538e068b06b79e21570298cc980519f2 
+Importing 'GUID: 1db39df03218555daafe0510551772af - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_slash1_f12791cc.wav' with importer (AudioImporter)
+Imported 'GUID: 1db39df03218555daafe0510551772af' -> (Import Result ID: 'e1e9a43b1d37d6619c3924f52bbf1f50') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=15d97b6e0194e19d3f4a7eedc16b6ef2 DependenciesID=25e2d1764ea283c00faf638b8858ebfe StaticDependenciesID=22b6e963097d4673b9db57eb99b159c8 
+Importing 'GUID: 2d238295919f5b409cbd2c7e0a628f96 - Path: Assets/Audio/Collected/CS2/physics/metal/metal_solid_impact_bullet1_7ef9e61d.wav' with importer (AudioImporter)
+Imported 'GUID: 2d238295919f5b409cbd2c7e0a628f96' -> (Import Result ID: '31f832c32e0929b68b712c4d68a9f145') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=35567ba90880f802093456975d304a99 DependenciesID=51eb8b9ff11fff56481e652f9ecd9dbc StaticDependenciesID=76674580d196ee809be33baca7d60219 
+Importing 'GUID: 2d5724d5cc93556ab7f68603da81a525 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_sand_03_529bcf0e.wav' with importer (AudioImporter)
+Imported 'GUID: 2d5724d5cc93556ab7f68603da81a525' -> (Import Result ID: '7cf18e8431846227584565a6acd1928b') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c8932b993a6a9f4eaa26a1f79feb2d59 DependenciesID=2dae34aef8d4c7c8a8e28eac318d477f StaticDependenciesID=bbe7a55b78fd7722987efac993151e7d 
+Importing 'GUID: 3d140b70c41e5141999d2fb1aa371ba4 - Path: Assets/Audio/Collected/CS2/ambient/anubis/anubis_riverlap_f5296718.wav' with importer (AudioImporter)
+Imported 'GUID: 3d140b70c41e5141999d2fb1aa371ba4' -> (Import Result ID: 'c2da7a1119d75158d857184b31930895') in 0.118 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f2857a63c0b179233da5f9690a8bab4a DependenciesID=235e3700dc5da325ee1e513efe7d82a8 StaticDependenciesID=f24be3bdb96edc825935acc1c710c5d6 
+Importing 'GUID: 3dbc3df8c54c52cf92c6b553559b6f03 - Path: Assets/Audio/Collected/CS2/items/pickup_ammo_01_a8c4d2eb.wav' with importer (AudioImporter)
+Imported 'GUID: 3dbc3df8c54c52cf92c6b553559b6f03' -> (Import Result ID: '2e0ba30bb94809cad6c8af1411f16b74') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=19d85fc1442191b726f145c9dd4da4b2 DependenciesID=079e01e073e98a45a2a3851c526cc9f7 StaticDependenciesID=33375718a8e94f641f2b1934620f0229 
+Importing 'GUID: 5d9cce28178e5173acf3756167f78ffc - Path: Assets/Audio/Collected/CS2/player/footsteps/land_concrete_01_cd9b5ba7.wav' with importer (AudioImporter)
+Imported 'GUID: 5d9cce28178e5173acf3756167f78ffc' -> (Import Result ID: 'b11b5cb46c09990dbcfa662e673150f1') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=59723f4733aa1327fee5664000531f6d DependenciesID=eda0c0bc758410179b600387281c0751 StaticDependenciesID=aeebd453a832bd3ffaf530cb10b77c22 
+Importing 'GUID: 7d14707007fd50218ae90e0bd72a0f46 - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_01_d9d34636.wav' with importer (AudioImporter)
+Imported 'GUID: 7d14707007fd50218ae90e0bd72a0f46' -> (Import Result ID: '60e676881e75234a155336a923b38d48') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6a9d3d6fb9c8a591a5f62c5c0c554abd DependenciesID=c8dbebc66aecf3bde5ad88ab3e9c06a1 StaticDependenciesID=16375bb2ee5de2e318c5f078d35a221e 
+Importing 'GUID: 7db5ddc967a854fbba379bebf9efef47 - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_swish_light_01_522048e0.wav' with importer (AudioImporter)
+Imported 'GUID: 7db5ddc967a854fbba379bebf9efef47' -> (Import Result ID: '5d48b7410958cd3dc59826eafc0054eb') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=463860a41df815ee729c68799eb5e300 DependenciesID=4f24f65f5cc207ea65fc276f7289d8ba StaticDependenciesID=431c4ddd55694502a20ef3f754957396 
+Importing 'GUID: 8dd8c6f8bcce5833b52b70c6e978c256 - Path: Assets/Audio/Collected/CS2/player/footsteps/metal_solid_42_9df56c4e.wav' with importer (AudioImporter)
+Imported 'GUID: 8dd8c6f8bcce5833b52b70c6e978c256' -> (Import Result ID: '81ee54b3e8a04ddb48b95cf99b24ddb5') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=619801bedf0b50a93c8b7686ac05884c DependenciesID=e2428310fecd6490a7432ae7b4c2fdd9 StaticDependenciesID=3c23a9fd83c96ffacc2e64143c09a99d 
+Importing 'GUID: 8d6ee08a545956f9936fcc09ac4ca257 - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_06_37eccf3f.wav' with importer (AudioImporter)
+Imported 'GUID: 8d6ee08a545956f9936fcc09ac4ca257' -> (Import Result ID: '62bba60952d83514b1ad5755d141b6a0') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=12d25b046f2fd4fcdcf667aeb0cd522f DependenciesID=b787e7d28e3499a580f6c4647d4b9c26 StaticDependenciesID=6fcf2438e507705dc5c2ff194ac45eb5 
+Importing 'GUID: 9dd6c61be976502498b2531513ecf47d - Path: Assets/Audio/Collected/CS2/physics/wood/wood_plank_impact_hard1_2da02aeb.wav' with importer (AudioImporter)
+Imported 'GUID: 9dd6c61be976502498b2531513ecf47d' -> (Import Result ID: 'b27648a12716c7bcac66d31701f52459') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=92407c151ed35a8b567c56d970dab76e DependenciesID=64e3a77aae2b8b04facd14633995eb2f StaticDependenciesID=09df6d1cd14f57df265e18d62463f76a 
+Importing 'GUID: 9d57c4ecada65be48eb089c232aa5bd2 - Path: Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_01_7306790e.wav' with importer (AudioImporter)
+Imported 'GUID: 9d57c4ecada65be48eb089c232aa5bd2' -> (Import Result ID: '6ee00f07833af4f4e917d2dad2f151cb') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=040543ed2985eb325681ad65138ed72e DependenciesID=39896a20855db660629fe0581bcb4ab2 StaticDependenciesID=5497c25ff4a4bcf4a77f5f9c41e64482 
+Importing 'GUID: adbc9b47fd9d59cc9a1c57f2a666a095 - Path: Assets/Audio/Collected/CS2/player/footsteps/concrete_ct_06_bb019426.wav' with importer (AudioImporter)
+Imported 'GUID: adbc9b47fd9d59cc9a1c57f2a666a095' -> (Import Result ID: 'c0184f6c4c007f2f11042f98f432a4b6') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c1643fdc652b15b34eb3e66ae78b3f34 DependenciesID=922bcd1edac9bca03924c1f0dee66618 StaticDependenciesID=25bcfdf824a5637924ae9517c2a35562 
+Importing 'GUID: cd65bf1b72025a048b802ac6bb1d6262 - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_02_5cb92b4d.wav' with importer (AudioImporter)
+Imported 'GUID: cd65bf1b72025a048b802ac6bb1d6262' -> (Import Result ID: '3c5eebdbb83cf25b538238d7731dd901') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0f37194931f8743bddbf47105614fc00 DependenciesID=1d6fef3fbdb7ee2fca26d732e60dcaa1 StaticDependenciesID=c7bbf6a2c43ae6816c196cc9664c2c70 
+Importing 'GUID: cd787ee0d541518ea26e745192e45fd6 - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_01_b4391425.wav' with importer (AudioImporter)
+Imported 'GUID: cd787ee0d541518ea26e745192e45fd6' -> (Import Result ID: '79f8d1786b7eccbf8db40c61dc503831') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8f21483f39e379498f6c13c61c2c2d25 DependenciesID=682260c0d3400854d2f35c5c456b1bf7 StaticDependenciesID=1560ea814cf1105754537d8062b8331b 
+Importing 'GUID: dde8a8683fd85ad894d8f61d302abba6 - Path: Assets/Audio/Collected/CS2/physics/body/body_impact_fists_03_7cb7cada.wav' with importer (AudioImporter)
+Imported 'GUID: dde8a8683fd85ad894d8f61d302abba6' -> (Import Result ID: '866dfb54580dff1ce6a1a8202264677d') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=bd083933dea59c4e6663b9b56328fe33 DependenciesID=940c883116a9c46af69e3cd45803792c StaticDependenciesID=840402bf2474f689ae6ac2e97d92f46a 
+Importing 'GUID: dd7ab2a203b65a65a2535224c5531d5e - Path: Assets/Audio/Collected/CS2/weapons/hegrenade/hegrenade_detonate_02_774840d6.wav' with importer (AudioImporter)
+Imported 'GUID: dd7ab2a203b65a65a2535224c5531d5e' -> (Import Result ID: '9d209eedd57d26a03c4383996c59191a') in 0.063 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=89e0261480257bce36be0ada7af03051 DependenciesID=fca04f394447141b6a5d4831e9fbae12 StaticDependenciesID=4e1050ad6d9e14dec442af186bd74914 
+Importing 'GUID: ed778b7186535314aec3dc901a8a7bf9 - Path: Assets/Audio/Collected/CS2/player/footsteps/gravel_06_9ebd60a6.wav' with importer (AudioImporter)
+Imported 'GUID: ed778b7186535314aec3dc901a8a7bf9' -> (Import Result ID: 'a52df8f1a074a6387f4b45ff57ab11a9') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5213381c9c9a1217460311ea9158530b DependenciesID=ab959bd3067f92dcbfe77416baf4af45 StaticDependenciesID=d39f3ab21a0e310662a5ecc9ce3fd838 
+Importing 'GUID: 0e9aa4b0f9355464a89b347f8633413d - Path: Assets/Audio/Collected/CS2/physics/weapons/weapon_hegrenade_impact_04_46bc76d2.wav' with importer (AudioImporter)
+Imported 'GUID: 0e9aa4b0f9355464a89b347f8633413d' -> (Import Result ID: 'be511b4808ece287f8b3ade8e1abf7e5') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=48734416925295762fb86d2aa1fed658 DependenciesID=de93e1c974d1398b489fca8f1ac6fe86 StaticDependenciesID=2e2169a94007160ba614b10484711060 
+Importing 'GUID: 1e13dab0a24151e4bee60724a723f0d5 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_gravel_03_b6114f91.wav' with importer (AudioImporter)
+Imported 'GUID: 1e13dab0a24151e4bee60724a723f0d5' -> (Import Result ID: '07f9bf4005ba678866813aa4ff3aff25') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c18e36538039b8a3ea110f8d49022cdb DependenciesID=69f3d570ff6f56d8e254a8c1b5364474 StaticDependenciesID=c6809e62de9ef68e447a81fead592e5a 
+Importing 'GUID: 1e5b4829df395ab5aa906f97fc085b17 - Path: Assets/Audio/Collected/CS2/player/footsteps/tile_04_0bcdd962.wav' with importer (AudioImporter)
+Imported 'GUID: 1e5b4829df395ab5aa906f97fc085b17' -> (Import Result ID: 'ed6d14d6cf3ad73b3652727680d745fe') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ca48c90e961419d80c229adb56f7595d DependenciesID=7ff9ee36cb5b73eca0f26bc432d967a1 StaticDependenciesID=2a73160832c090751577a537558daa08 
+Importing 'GUID: 2e433a419e2e59158e5e210fe6f063e2 - Path: Assets/Audio/Collected/CS2/player/footsteps/land_metal_solid_03_69f47528.wav' with importer (AudioImporter)
+Imported 'GUID: 2e433a419e2e59158e5e210fe6f063e2' -> (Import Result ID: '002f900094c7ff6371020cb12f72ed88') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c4962c16efaef422ff93c76804ab843b DependenciesID=abc68f5a166087cbc364d7247135b043 StaticDependenciesID=105114ec7797ec71939039f6a8d349c1 
+Importing 'GUID: 2e09f73ce6fe509da2782fbde045c2a9 - Path: Assets/Audio/Collected/CS2/player/footsteps/rubber_12_926442f2.wav' with importer (AudioImporter)
+Imported 'GUID: 2e09f73ce6fe509da2782fbde045c2a9' -> (Import Result ID: 'f2561c3d10a88c31ed264f1b8ff20db1') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=63906c6a7512c4eb1dbd000e47a2369a DependenciesID=e4d71c4ba7e9b79b07ae1a72e08c91fd StaticDependenciesID=28051c5df8498fcf47a8b267a0d32c2b 
+Importing 'GUID: 5e858bd402375f3cac856cda7c73929c - Path: Assets/Audio/Collected/CS2/player/footsteps/land_grass_02_51a91d99.wav' with importer (AudioImporter)
+Imported 'GUID: 5e858bd402375f3cac856cda7c73929c' -> (Import Result ID: 'c5f5769f77cb979fd3058df716eb3a1d') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6b0c1482c14a817ccc1d54d0527f9b69 DependenciesID=5da0618108b39c22f4765d9046bc8f95 StaticDependenciesID=3dc8381720c2a6a39f9e26e621bbf892 
+Importing 'GUID: 6e9416b6ca26599d98595e23550fde5f - Path: Assets/Audio/Collected/CS2/player/footsteps/grass_05_8d81b04a.wav' with importer (AudioImporter)
+Imported 'GUID: 6e9416b6ca26599d98595e23550fde5f' -> (Import Result ID: 'fe74a16a9249e866fa8729539e34bdde') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a12c3b6a23fc31b6e2cf0f8f701e2e7c DependenciesID=c8dc1cf236ddb3b4a7e932349ecc89a1 StaticDependenciesID=14a9c9ed3cd5151b6b0663426e5d119d 
+Importing 'GUID: 6efcedcc39525a919cca2f970903ddd4 - Path: Assets/Audio/Collected/CS2/weapons/glock18/glock_clipin_c92fb13e.wav' with importer (AudioImporter)
+Imported 'GUID: 6efcedcc39525a919cca2f970903ddd4' -> (Import Result ID: '0e083bf511245071076fff32c2545902') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8e8e5b7a4b2a5513eeb1e9f00a6ed606 DependenciesID=e269296c0295fe5af78855942fb18c55 StaticDependenciesID=cf6891d6623f40e96537753de0d95d55 
+Importing 'GUID: 7e8e4fe6dd1b513d8c4f9eb5497e51c6 - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_swish_heavy_02_9c779c20.wav' with importer (AudioImporter)
+Imported 'GUID: 7e8e4fe6dd1b513d8c4f9eb5497e51c6' -> (Import Result ID: 'b5c66232a5a324c0e5d63827455a5ecb') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=511f334ae3ebcd2e8ceddf1ad7cc86dc DependenciesID=ec07dafed1bc68fd9c6d48612d68c420 StaticDependenciesID=83d8518a636adb92fd1d1a71d68b4508 
+Importing 'GUID: 8ea7556d438a5b87bbbcdf0535ea84cc - Path: Assets/Audio/Collected/CS2/physics/metal/metal_solid_impact_bullet3_002c05ea.wav' with importer (AudioImporter)
+Imported 'GUID: 8ea7556d438a5b87bbbcdf0535ea84cc' -> (Import Result ID: 'd5a58636bcedf9802a55a7c677370d39') in 0.124 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ee5be2d40c86d674fa24056506b6f84b DependenciesID=54425c6ef794fcb6d943e2937793c663 StaticDependenciesID=6f07283a276cdcb3e0cb663bc9316a21 
+Importing 'GUID: 9e19c327ca20528688c3df9181c4d418 - Path: Assets/Audio/Collected/CS2/player/footsteps/dirt_02_1aee3657.wav' with importer (AudioImporter)
+Imported 'GUID: 9e19c327ca20528688c3df9181c4d418' -> (Import Result ID: '354373dfeb79f6985e9a8e37235f23d4') in 0.049 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=564ea8a729cbd5a5c37bdd826483d222 DependenciesID=f965db1111a2e7f6d1ba517d5ddab5c4 StaticDependenciesID=27e35b572b478b8a2f66e3416a99e9d6 
+Importing 'GUID: cebf8ca98fc55023b23b9fc6107997e5 - Path: Assets/Audio/Collected/CS2/player/footsteps/jump_launch_01_218e991b.wav' with importer (AudioImporter)
+Imported 'GUID: cebf8ca98fc55023b23b9fc6107997e5' -> (Import Result ID: '4206856498ce33510cae316951e14ed0') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ee2a66c3976d059011b9832f76881304 DependenciesID=6ffbe577b3cf9bac1b76a6082e5dd97e StaticDependenciesID=c22c44407d989bbfed1f1892d070dd54 
+Importing 'GUID: def3d888b60953fcba4678f554570de3 - Path: Assets/Audio/Collected/CS2/player/footsteps/dirt_04_ea9c29e6.wav' with importer (AudioImporter)
+Imported 'GUID: def3d888b60953fcba4678f554570de3' -> (Import Result ID: '2be618faf9fa878151c8d5003f77ffcc') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e5f71c44124a05761c91abe2f3a362ff DependenciesID=a21ee011b03c68df0e037bfd7857146c StaticDependenciesID=d07c667e379abd0bacd0888a7a65c14a 
+Importing 'GUID: de6f52490c4f52a6948fedfd446cff5a - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_03_1fd24985.wav' with importer (AudioImporter)
+Imported 'GUID: de6f52490c4f52a6948fedfd446cff5a' -> (Import Result ID: 'e05622688ab676e2b9cd3897867b2c7d') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c072bbf77db4826b0bae31c32073baf2 DependenciesID=0d7b265882a3856c4be8c47e2f2cc064 StaticDependenciesID=b4cee6ad1a35d912dc35411c1d12fac2 
+Importing 'GUID: 0f922fa8f6315a9697645e25c96e93b2 - Path: Assets/Audio/Collected/CS2/physics/water/water_splash_02_18b9f95d.wav' with importer (AudioImporter)
+Imported 'GUID: 0f922fa8f6315a9697645e25c96e93b2' -> (Import Result ID: 'b484fc2a05eaee7ddf4225b75822bfcf') in 0.054 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=47085bc4b454d5e02635aa3be4200d82 DependenciesID=6e85dcc36e2af0d7d1e650e429c294cc StaticDependenciesID=7186db591808c3e6443cddb1e2467ad0 
+Importing 'GUID: 2fe0d53101af5ceda6631f1eec81d6d8 - Path: Assets/Audio/Collected/CS2/physics/glass/glass_impact_bullet2_b8fb0f04.wav' with importer (AudioImporter)
+Imported 'GUID: 2fe0d53101af5ceda6631f1eec81d6d8' -> (Import Result ID: '61cf0000feb3b9dbf68b9070afdca96d') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e4db169e7522a854a3fe3459de05428a DependenciesID=638ddb14371f2886be0b5dd4eb5c8db1 StaticDependenciesID=977676d8f515fd709b27aa79e15fa7d6 
+Importing 'GUID: 2ffa409959455c83a6af005a271dd6b8 - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_hit2_37afe21d.wav' with importer (AudioImporter)
+Imported 'GUID: 2ffa409959455c83a6af005a271dd6b8' -> (Import Result ID: '637d8b1e65f6a2e518e22fc07ff15973') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6fc87cea9b4246fa650f8803ee7ce364 DependenciesID=e8b126f90c5a61d260d57837b39fe8ea StaticDependenciesID=c9be0a5db8e52b58c48daee59ceacaf2 
+Importing 'GUID: 3fd1a50ab97555709f3403c7ee8fb10f - Path: Assets/Audio/Collected/CS2/weapons/mag7/mag7_insertshell_83877244.wav' with importer (AudioImporter)
+Imported 'GUID: 3fd1a50ab97555709f3403c7ee8fb10f' -> (Import Result ID: '6586035a9c7d2ca6becd81c42deb078b') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=31effb50dc76ae3e51d29be8a1f02d0d DependenciesID=6361e5e84f3d756b79530ebb6b142d90 StaticDependenciesID=6993bacef1841278c16f713d885f436c 
+Importing 'GUID: 3f027ba93dbb539d9a60d899b7ebf7bc - Path: Assets/Audio/Collected/CS2/player/footsteps/sand_01_3f44c2da.wav' with importer (AudioImporter)
+Imported 'GUID: 3f027ba93dbb539d9a60d899b7ebf7bc' -> (Import Result ID: '876a194bbf4e447af1dc55e8af05f25a') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1e4487a111bf4b0c4b9816c2231acb2a DependenciesID=a20b20023c5a813171cf1239ea4d2a9d StaticDependenciesID=9cde9f22939609bc1f22c7f5ed927dc0 
+Importing 'GUID: 5fa8ee28882953149f642e53376968be - Path: Assets/Audio/Collected/CS2/player/footsteps/gravel_04_8e778a91.wav' with importer (AudioImporter)
+Imported 'GUID: 5fa8ee28882953149f642e53376968be' -> (Import Result ID: 'ecbe3342f6ed39255ab1bb728934eb3d') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ed6d46a31c19b653bf07cbfde70ef705 DependenciesID=42405ead68b597e7ea2364d61fb536b7 StaticDependenciesID=c48f01ab3b999e2c353a2aa5acd5ebc1 
+Importing 'GUID: 7fd318a52f8555309cfa5099f504b478 - Path: Assets/Audio/Collected/CS2/player/footsteps/tile_05_f7305d3e.wav' with importer (AudioImporter)
+Imported 'GUID: 7fd318a52f8555309cfa5099f504b478' -> (Import Result ID: '0b8b600d1167e55a2763fd2bff0e5798') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4cb8df38183834e81369d5de799e69c4 DependenciesID=744062d9980b80fab300da35edf3d17f StaticDependenciesID=96be455392c316ca52d8ecd908aa82d4 
+Importing 'GUID: 7f0401ef4d4c59369a46af97783367a6 - Path: Assets/Audio/Collected/CS2/player/footsteps/tile_08_34c767e2.wav' with importer (AudioImporter)
+Imported 'GUID: 7f0401ef4d4c59369a46af97783367a6' -> (Import Result ID: '61b5ef81470ea1f63659ff1b4c737de7') in 0.116 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=680b3923a75041e03d1360525f5b05f2 DependenciesID=41f72d0b09755355bba75d724771fd69 StaticDependenciesID=913c36d6752731907f63e68642236c40 
+Importing 'GUID: 7fd67a75ea3e50beae26f1c89e6700ef - Path: Assets/Audio/Collected/CS2/physics/wood/wood_solid_impact_bullet1_0d27b27d.wav' with importer (AudioImporter)
+Imported 'GUID: 7fd67a75ea3e50beae26f1c89e6700ef' -> (Import Result ID: 'b7cac465c76c5bd78d6c816cb6ec6e3a') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ac259e70e786915a887e892c93946c2a DependenciesID=152f8fb1e027a5f5760ff2bf0cc1eb62 StaticDependenciesID=6f17a14ce9a079d9b6314b03378fa909 
+Importing 'GUID: 7fb81b627e745aa38de40c7abcec5d2d - Path: Assets/Audio/Collected/CS2/player/footsteps/rubber_11_497a5c08.wav' with importer (AudioImporter)
+Imported 'GUID: 7fb81b627e745aa38de40c7abcec5d2d' -> (Import Result ID: '98caead67c5c358ed5bbb013e12962ec') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=204428aec5f815a798fb2c5a08c7e578 DependenciesID=d797dcafc76c8896c56b1c125dc29d29 StaticDependenciesID=1fe8c2aa71131bddcded6892aaeae627 
+Importing 'GUID: 7fa9bca37cdb54cf895aa24ef80a29a8 - Path: Assets/Audio/Collected/CS2/weapons/knife/knife_hit_light_thud_02_a739b2c0.wav' with importer (AudioImporter)
+Imported 'GUID: 7fa9bca37cdb54cf895aa24ef80a29a8' -> (Import Result ID: '779b011109aeff790ce9f9ea82a93daa') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1743ee73b4426524575f21f9c63a9aec DependenciesID=c5e6b2f5ce8e51760484f10c02bb63c9 StaticDependenciesID=ae90289c4e5d1ac2c49f069cda294fce 
+Importing 'GUID: 9f00001fbb995d4a8c9ee0a678783cb5 - Path: Assets/Audio/Collected/CS2/weapons/awp/awp_zoom_out_4765a4f6.wav' with importer (AudioImporter)
+Imported 'GUID: 9f00001fbb995d4a8c9ee0a678783cb5' -> (Import Result ID: '0b15d820b9735a97aa2b62ce681173a5') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c94173105e2ac2d56b4b846c583996be DependenciesID=6919b2c4b9b8f9a4d51c147842c38bfe StaticDependenciesID=09a7307666c298067953cc701760b069 
+Importing 'GUID: 9fd4c1047957542aaa9bf4255e2ad665 - Path: Assets/Audio/Collected/CS2/player/footsteps/ladder_wood_05_98151783.wav' with importer (AudioImporter)
+Imported 'GUID: 9fd4c1047957542aaa9bf4255e2ad665' -> (Import Result ID: 'c4ae0ad1443cf03476e6d4b09dee3dce') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e94e8dbf5036438b846465a138d6cfa9 DependenciesID=ed0da502e26c563add5ed353e8ad8e86 StaticDependenciesID=56148f26cc7c21fccd499e8b689a0f6f 
+Importing 'GUID: bfd13344f4c45514ad92d30b50d405e5 - Path: Assets/Audio/Collected/CS2/player/footsteps/puddle_01_4b0d6386.wav' with importer (AudioImporter)
+Imported 'GUID: bfd13344f4c45514ad92d30b50d405e5' -> (Import Result ID: 'bc967ad480db77469ece2e52d80bcdda') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=05012df08abeb0ebaf66187c4a0c50fe DependenciesID=c783830e7e096db54cdfdb83b0091138 StaticDependenciesID=62dddd743bb37427298ea8a37b186c2d 
+Importing 'GUID: bfed30afd6b957339a3d5c8a71c72e1a - Path: Assets/Audio/Collected/CS2/player/footsteps/water_exit_01_509cd41c.wav' with importer (AudioImporter)
+Imported 'GUID: bfed30afd6b957339a3d5c8a71c72e1a' -> (Import Result ID: '2a4289cf7993560f0acfe9096cb522df') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ec2d18c4a7862286004e2eda5f259970 DependenciesID=6fded759edf1ac29561ac586cdbf2059 StaticDependenciesID=2f47ad1deefe92cf2ae711b94ccdaa81 
+Importing 'GUID: cf45299961135cda8d157b1ec8a17958 - Path: Assets/Audio/Collected/CS2/physics/weapons/weapon_hegrenade_impact_05_61928b99.wav' with importer (AudioImporter)
+Imported 'GUID: cf45299961135cda8d157b1ec8a17958' -> (Import Result ID: 'c6825f161fc0f1b0b1e331e7060af0bd') in 0.044 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f80e01944bae78e6496966c9116d26b4 DependenciesID=c1eaf528e9f1c6c1f3cfc066fb8000d6 StaticDependenciesID=4590f52548fa11f6f290350e0ffc5561 
+Importing 'GUID: cfad2d4b06255ff3b3f18f7cc1a617bd - Path: Assets/Audio/Collected/CS2/player/footsteps/dirt_06_3373ec9b.wav' with importer (AudioImporter)
+Imported 'GUID: cfad2d4b06255ff3b3f18f7cc1a617bd' -> (Import Result ID: 'b2643baca5b6a12cb3086537a2d62194') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d57fb7372dbe149dbfb27824cafd1cd6 DependenciesID=1a27f37a63e480eaa960204862ecd8e4 StaticDependenciesID=c16cdc46f4ba7aa5eb9255522b21de7a 
+Importing 'GUID: eff06fd6def95e59890c080ff02c890b - Path: Assets/Audio/Collected/CS2/player/footsteps/metal_solid_37_32ab16e9.wav' with importer (AudioImporter)
+Imported 'GUID: eff06fd6def95e59890c080ff02c890b' -> (Import Result ID: 'cc7acf2293eba95859fb1e42ee6b1bc3') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f64c686d2ebdbf6276008982616a27ec DependenciesID=020b0eeae982d28fd80fad994855db6b StaticDependenciesID=f35ae533fb49b8797a0e7d99dcb8f5a0 
+Importing 'GUID: ef717777212c5c6c8b1f6d6b5a875ecc - Path: Assets/Audio/Collected/CS2/player/footsteps/sand_07_5c8e9a90.wav' with importer (AudioImporter)
+Imported 'GUID: ef717777212c5c6c8b1f6d6b5a875ecc' -> (Import Result ID: '7894f59fae0cbab33413d83213076d0c') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=11b09ba61954a547bf662800f536a87c DependenciesID=43d72d56bbb1e48b3937a8a1f4cb23af StaticDependenciesID=ea4f5e15a7a1f294814e681ecd8c6bf2 
+Importing 'GUID: ff89315d09db582694533bb75cfe5fcf - Path: Assets/Audio/Collected/CS2/physics/body/body_impact_ct_03_bcb3c52f.wav' with importer (AudioImporter)
+Imported 'GUID: ff89315d09db582694533bb75cfe5fcf' -> (Import Result ID: '250b7b694abad093ecde0fb2f3c8255a') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fa242156c4c908a80a75db992b735daf DependenciesID=41b64a54fc5c709e0c0b429f2b51d204 StaticDependenciesID=24f5591055ca7294c7113d50dfa24eda 
+Starting new worker id: 0 with log in C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros/Logs/AssetImportWorkerHW0.log
+Refreshing native plugins compatible for Editor in 3.03 ms, found 4 plugins.
+
+Asset Pipeline Refresh (id=cea49cd7881c5bd40a5e2e3fbd05c797): Total: 25.217 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=300 (actual=300, local cache=0, cache server=0)
+		Asset DB Process Time: managed=46 ms, native=17925 ms
+		Asset DB Callback time: managed=208 ms, native=287 ms
+		Scripting: domain reloads=1, domain reload time=2004 ms, compile time=4687 ms, other=58 ms
+		Project Asset Count: scripts=1839, non-scripts=5148
+		Asset File Changes: new=0, changed=2, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokePackagesCallback: 24.451ms
+	ApplyChangesToAssetFolders: 0.615ms
+	Scan: 146.858ms
+	Collect global state as custom dependencies: 17.720ms
+	OnSourceAssetsModified: 0.584ms
+	CategorizeScriptCompilationAssets: 41.707ms
+	ProcessAssetsWithTransientArtifactChanges: 70.924ms
+	CategorizeAssets: 64.589ms
+	CompileScripts: 4686.699ms
+	ImportOutOfDateAssets: 17498.250ms (3389.383ms without children)
+		ImportManagerImport: 14054.966ms (8.632ms without children)
+			UpdateCategorizedAssets: 2.498ms
+		UnloadImportedAssets: 0.958ms
+		ReloadImportedAssets: 10.222ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.695ms
+		ImportSchedulerStart: 52.208ms
+	PostProcessAllAssets: 467.138ms
+		ComputeShaderImportPostprocess 154.173ms
+		RaytracingShaderImportPostprocess 87.142ms
+		ShaderAssetModifiedCallback 0.722ms
+		XRBuildSystem.XRAssetImported 0.709ms
+		PostProcessCallbackCreateDeferredMaterials 0.310ms
+		WindowTitlePostprocess 0.259ms
+		SpeedTreeImporter.PostprocessAllAssets 0.214ms
+		BlockShaderImporter.PostprocessAllAssets 0.199ms
+		Canvas.OnAllAssetImport 0.139ms
+		LocalizationDatabase.AssetDatabasePostprocessCallback 0.117ms
+		AssemblyValidation.PostprocessAllAssets 0.101ms
+		MonoPostProcessAllAssets: 206.924ms
+			AssetPostprocessor.OnPostprocessAllAssets 69.480ms
+			NetworkPrefabProcessor.OnPostprocessAllAssets 49.485ms
+			SyncVS.PostprocessSyncProject 22.841ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 19.087ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 7.980ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 7.090ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 4.069ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 1.727ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 1.509ms
+			AssetChangedListener.OnPostprocessAllAssets 1.497ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 1.396ms
+			MaterialPostprocessor.OnPostprocessAllAssets 1.348ms
+			PostProcessor.OnPostprocessAllAssets 1.213ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 1.038ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.864ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.847ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.701ms
+			AvatarImportWatcher.OnPostprocessAllAssets 0.641ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 0.563ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.532ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.404ms
+			AssetEvents.OnPostprocessAllAssets 0.329ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.329ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.324ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.294ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.240ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.195ms
+			MixamoAnimationSetup.OnPostprocessAllAssets 0.182ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.178ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.168ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.151ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.131ms
+			VoiceLineSetup.OnPostprocessAllAssets 0.117ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.111ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.098ms
+			AssetReloadNotifier.OnPostprocessAllAssets 0.078ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.072ms
+	PostAssetChangesProfiler: 5.884ms
+	UnloadStreamsBegin: 2.946ms
+	PersistCurrentRevisions: 1.188ms
+	GenerateScriptTypeHashes: 2.500ms
+	GenerateScriptTypeSerializationHashes: 5.703ms
+	Untracked: 2182.920ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 18.960ms
+Initializing Unity extensions:
+Unloading 54 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 8017 unused Assets / (4.0 MB). Loaded Objects now: 9151.
+Memory consumption went from 477.5 MB to 473.5 MB.
+Total: 9.437100 ms (FindLiveObjects: 0.437500 ms CreateObjectMapping: 1.524500 ms MarkObjects: 5.199000 ms  DeleteObjects: 2.124500 ms)
+
+Asset Pipeline Refresh (id=a8fb1aa5397616e4b9974a959836a8eb): Total: 0.098 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Opening scene 'Assets/Scenes/SampleScene.unity'
+Worker ready: AssetImportWorkerHW0 0
+Unloading 240 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Scenes/SampleScene.unity'
+	Deserialize:            348.558 ms
+	Integration:            3916.920 ms
+	Integration of assets:  23.553 ms
+	Thread Wait Time:       -21.599 ms
+	Total Operation Time:   4267.432 ms
+Unloading 3 unused Assets / (2.8 KB). Loaded Objects now: 33193.
+Memory consumption went from 0.53 GB to 0.53 GB.
+Total: 7.877300 ms (FindLiveObjects: 1.712600 ms CreateObjectMapping: 1.051000 ms MarkObjects: 5.086300 ms  DeleteObjects: 0.026400 ms)
+
+[CollectedAudio] PASS 2814 assertions; 74 cues; 251 references.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+CollectedAudioValidation:Run () (at Assets/Editor/CollectedAudioValidation.cs:99)
+
+(Filename: Assets/Editor/CollectedAudioValidation.cs Line: 99)
+
+Batchmode quit successfully invoked - shutting down!
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-lenit-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-lenit channel disconnected successfully.
+Lingering sessions upon destruction of worker manager
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+CodeReloadManager destroyed
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0

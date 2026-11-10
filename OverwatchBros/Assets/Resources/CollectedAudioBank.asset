@@ -1,0 +1,439 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2eecc632f9f5f0083f3e8b89bc4e246, type: 3}
+  m_Name: CollectedAudioBank
+  m_EditorClassIdentifier:
+  collectionRevision: 341
+  cues:
+  - id: combat_bullet_glass
+    clips:
+    - {fileID: 8300000, guid: 5841f2fb05165dcd847acdeea5898bf6, type: 3}
+    - {fileID: 8300000, guid: a0144bb11b5554409006e98e656ef914, type: 3}
+    - {fileID: 8300000, guid: 2fe0d53101af5ceda6631f1eec81d6d8, type: 3}
+    - {fileID: 8300000, guid: a04564f7e2885060948c6a610d89c0eb, type: 3}
+  - id: combat_bullet_ground
+    clips:
+    - {fileID: 8300000, guid: 793428146773573d878639e95647451a, type: 3}
+    - {fileID: 8300000, guid: 1d10bcdab56a50fead333dcf60a1ac2f, type: 3}
+    - {fileID: 8300000, guid: 91ef9e9ce7b45c51a4cacc913ec11f38, type: 3}
+    - {fileID: 8300000, guid: d1938d11d0ec540ea446a2f5c398ef1a, type: 3}
+    - {fileID: 8300000, guid: 7cd81ee7c7775a03bf48c29d531f4646, type: 3}
+  - id: combat_bullet_metal
+    clips:
+    - {fileID: 8300000, guid: 2a78c942432d525d9c3fb0d6d5a1efba, type: 3}
+    - {fileID: 8300000, guid: 8ea7556d438a5b87bbbcdf0535ea84cc, type: 3}
+    - {fileID: 8300000, guid: 97bade8e1c2f527b8ed2ec7250dc4168, type: 3}
+    - {fileID: 8300000, guid: 8c90d1f926d85c5f86929976c8d1d4e7, type: 3}
+    - {fileID: 8300000, guid: 2d238295919f5b409cbd2c7e0a628f96, type: 3}
+  - id: combat_bullet_soft
+    clips:
+    - {fileID: 8300000, guid: d45aa7d411e85587a27bdb0bf9262fb0, type: 3}
+    - {fileID: 8300000, guid: a3db74032f3b5075bcefc29846141a0c, type: 3}
+    - {fileID: 8300000, guid: 098766b2d8b75df7ac3bfaaeaacd49a5, type: 3}
+    - {fileID: 8300000, guid: ea2b1597821e542e80a6628279be0dde, type: 3}
+    - {fileID: 8300000, guid: 5200cd24331359b8a19c9011676cfb13, type: 3}
+  - id: combat_bullet_stone
+    clips:
+    - {fileID: 8300000, guid: c9ad1ad8e3ff58efb6dc050dc8b66dec, type: 3}
+    - {fileID: 8300000, guid: b133421b3e62547393d4c3599b93aa23, type: 3}
+    - {fileID: 8300000, guid: 4aa4eed6bbe252a385b67283a44b3c96, type: 3}
+    - {fileID: 8300000, guid: e2ce78a25fe35029bfd15430f3dab920, type: 3}
+  - id: combat_bullet_wood
+    clips:
+    - {fileID: 8300000, guid: f12cba3f98c9567181d116e051165478, type: 3}
+    - {fileID: 8300000, guid: 7fd67a75ea3e50beae26f1c89e6700ef, type: 3}
+    - {fileID: 8300000, guid: 591148d79d0051faa254e1f8fe78f3c9, type: 3}
+    - {fileID: 8300000, guid: 13246da99da753528fc9fd356807c069, type: 3}
+  - id: combat_empty
+    clips:
+    - {fileID: 8300000, guid: c276a24de57b50689a9ab839c352e24b, type: 3}
+  - id: combat_grenade_bounce
+    clips:
+    - {fileID: 8300000, guid: faa62f42b52a541ab80c809e3d29c5d3, type: 3}
+  - id: combat_slash_soft
+    clips:
+    - {fileID: 8300000, guid: c9ad1ad8e3ff58efb6dc050dc8b66dec, type: 3}
+    - {fileID: 8300000, guid: e2ce78a25fe35029bfd15430f3dab920, type: 3}
+    - {fileID: 8300000, guid: 4aa4eed6bbe252a385b67283a44b3c96, type: 3}
+  - id: combat_slash_stone
+    clips:
+    - {fileID: 8300000, guid: f8fd77ea068554549c2390809ae803c1, type: 3}
+    - {fileID: 8300000, guid: f08267e4600e524699158f0b18ab9f1f, type: 3}
+    - {fileID: 8300000, guid: a97d7866ea70527dabe1dfc639481ad8, type: 3}
+    - {fileID: 8300000, guid: 518071694e1a579396014b15874f43a0, type: 3}
+  - id: combat_slash_wood
+    clips:
+    - {fileID: 8300000, guid: 526751d7bdc45019be036f3f3adb9d69, type: 3}
+    - {fileID: 8300000, guid: 30c58bf20f5f57998be82ec6fa4e1e0c, type: 3}
+    - {fileID: 8300000, guid: 9dd6c61be976502498b2531513ecf47d, type: 3}
+  - id: david_fire
+    clips:
+    - {fileID: 8300000, guid: 5b286284ff97551e9f91918ecb4f856d, type: 3}
+  - id: david_grenade
+    clips:
+    - {fileID: 8300000, guid: 32a773c5c7135847ba021d9c6441c72a, type: 3}
+  - id: david_reload
+    clips:
+    - {fileID: 8300000, guid: ccdbd45470645711a3de79088146bc27, type: 3}
+  - id: honza_mine.explode
+    clips:
+    - {fileID: 8300000, guid: 9760a827412e5181938d41c55700458e, type: 3}
+    - {fileID: 8300000, guid: dd7ab2a203b65a65a2535224c5531d5e, type: 3}
+  - id: honza_mine.impact
+    clips:
+    - {fileID: 8300000, guid: cf45299961135cda8d157b1ec8a17958, type: 3}
+    - {fileID: 8300000, guid: 0e9aa4b0f9355464a89b347f8633413d, type: 3}
+    - {fileID: 8300000, guid: 00e5f0078c285ef78314f5dfb00227a1, type: 3}
+  - id: honza_reload
+    clips:
+    - {fileID: 8300000, guid: 4a42b2637a035877b442db03b93211a8, type: 3}
+  - id: honza_ult.land
+    clips:
+    - {fileID: 8300000, guid: a93e7b6026b65fff80bafaef18219eda, type: 3}
+  - id: honza_ult.roll
+    clips:
+    - {fileID: 8300000, guid: 81cfca07336d511da49286eef841ef12, type: 3}
+  - id: kondulic_fire
+    clips:
+    - {fileID: 8300000, guid: 49e52e5651ef5567aea58f7518c61de6, type: 3}
+  - id: kondulic_fire_scoped
+    clips:
+    - {fileID: 8300000, guid: ab4165cf6b6250cf9767a14f8247630f, type: 3}
+    - {fileID: 8300000, guid: 8765c7a6c98a537e816c9972794cb62c, type: 3}
+  - id: kondulic_kick
+    clips:
+    - {fileID: 8300000, guid: ca0fe1ef3b3b59ffa9a1ff6e93bed531, type: 3}
+    - {fileID: 8300000, guid: 69e4cbe689765d9b88373a9aa1ef1fb2, type: 3}
+    - {fileID: 8300000, guid: dde8a8683fd85ad894d8f61d302abba6, type: 3}
+  - id: kondulic_reload
+    clips:
+    - {fileID: 8300000, guid: d1d879dec28857a9a2c7ec67bc8f900b, type: 3}
+  - id: kondulic_scope.enter
+    clips:
+    - {fileID: 8300000, guid: b1ae1e4fa0105c65a214c3a9ab6dd1a7, type: 3}
+  - id: kondulic_scope.exit
+    clips:
+    - {fileID: 8300000, guid: 9f00001fbb995d4a8c9ee0a678783cb5, type: 3}
+  - id: kondulic_scope.ready
+    clips:
+    - {fileID: 8300000, guid: d188b2a41f285382b9718df368035106, type: 3}
+  - id: kondulic_ult
+    clips:
+    - {fileID: 8300000, guid: 524ceaa29a4f5d6abe35529855fc60dd, type: 3}
+  - id: max_weapon.impact.surface
+    clips:
+    - {fileID: 8300000, guid: 43920476b03f5482a9246e6116531af6, type: 3}
+    - {fileID: 8300000, guid: 7fa9bca37cdb54cf895aa24ef80a29a8, type: 3}
+    - {fileID: 8300000, guid: 43e7c0b462a250848223a31c43193b26, type: 3}
+  - id: max_weapon.swing
+    clips:
+    - {fileID: 8300000, guid: f65fa61b328c5674889b1d8d0e2154db, type: 3}
+    - {fileID: 8300000, guid: 7db5ddc967a854fbba379bebf9efef47, type: 3}
+    - {fileID: 8300000, guid: 20a6704ba21c567286a18e6ab133575e, type: 3}
+    - {fileID: 8300000, guid: 0b59f4dfcc39508bbc0b53ddba30380f, type: 3}
+    - {fileID: 8300000, guid: 7e8e4fe6dd1b513d8c4f9eb5497e51c6, type: 3}
+    - {fileID: 8300000, guid: c2f1d789e5a3554ab5c71b6c770dab8e, type: 3}
+  - id: mosino_reload
+    clips:
+    - {fileID: 8300000, guid: 92b9351b1427528eaca5cc9d88444dae, type: 3}
+  - id: move_body_wall
+    clips:
+    - {fileID: 8300000, guid: e483db5230785672a2204df918d26a7a, type: 3}
+    - {fileID: 8300000, guid: c68c0995872058d9a89ea5ebf82662da, type: 3}
+    - {fileID: 8300000, guid: ff89315d09db582694533bb75cfe5fcf, type: 3}
+    - {fileID: 8300000, guid: 58730f718a9256a6a32c2e41ddfb70cd, type: 3}
+  - id: move_jump
+    clips:
+    - {fileID: 8300000, guid: cebf8ca98fc55023b23b9fc6107997e5, type: 3}
+  - id: move_ladder
+    clips:
+    - {fileID: 8300000, guid: cd787ee0d541518ea26e745192e45fd6, type: 3}
+    - {fileID: 8300000, guid: b75d0a4c279d53e8b620f33c9436bd83, type: 3}
+    - {fileID: 8300000, guid: de6f52490c4f52a6948fedfd446cff5a, type: 3}
+    - {fileID: 8300000, guid: d2cff461a7555610b132a4bdfa760806, type: 3}
+    - {fileID: 8300000, guid: 9fd4c1047957542aaa9bf4255e2ad665, type: 3}
+    - {fileID: 8300000, guid: 8d6ee08a545956f9936fcc09ac4ca257, type: 3}
+    - {fileID: 8300000, guid: 7d14707007fd50218ae90e0bd72a0f46, type: 3}
+    - {fileID: 8300000, guid: cd65bf1b72025a048b802ac6bb1d6262, type: 3}
+    - {fileID: 8300000, guid: da74dffb06f759aca8168bccd8b84eba, type: 3}
+    - {fileID: 8300000, guid: 5203a0b6a9255ba796f77bc1cacbd8b1, type: 3}
+  - id: move_ledge
+    clips:
+    - {fileID: 8300000, guid: 5200242d2e2e577286e9202bd2cccf59, type: 3}
+    - {fileID: 8300000, guid: bc2f3b30d5e254c8b6191224246fb987, type: 3}
+    - {fileID: 8300000, guid: 7773223bb31f5f8a8d6c368b78c7970d, type: 3}
+    - {fileID: 8300000, guid: cb8013a2f6e353c5b900f5b524554dce, type: 3}
+  - id: pickup_carburetor
+    clips:
+    - {fileID: 8300000, guid: 3dbc3df8c54c52cf92c6b553559b6f03, type: 3}
+  - id: pickup_health
+    clips:
+    - {fileID: 8300000, guid: 6add0dd2aa875e92b62fa5926d18d25e, type: 3}
+  - id: pickup_invulnerable
+    clips:
+    - {fileID: 8300000, guid: 920d126731e95e28af43499f974e59b1, type: 3}
+    - {fileID: 8300000, guid: d41ee2d20f545a95975c4838765a359f, type: 3}
+    - {fileID: 8300000, guid: 8a3816abdd745f06857be689a7fb6596, type: 3}
+  - id: pickup_tramal
+    clips:
+    - {fileID: 8300000, guid: 6add0dd2aa875e92b62fa5926d18d25e, type: 3}
+  - id: pova_weapon.impact.body
+    clips:
+    - {fileID: 8300000, guid: 226ea07acff05c15b68d1e25c5ecc262, type: 3}
+  - id: pova_weapon.impact.surface
+    clips:
+    - {fileID: 8300000, guid: 2ffa409959455c83a6af005a271dd6b8, type: 3}
+  - id: pova_weapon.swing
+    clips:
+    - {fileID: 8300000, guid: 1db39df03218555daafe0510551772af, type: 3}
+    - {fileID: 8300000, guid: 41e28c8d42a250e8a987d7475816f103, type: 3}
+  - id: sindel_fire
+    clips:
+    - {fileID: 8300000, guid: a3162f6f5cc15c6aa901b2bb92148746, type: 3}
+  - id: sindel_grenade
+    clips:
+    - {fileID: 8300000, guid: dd7ab2a203b65a65a2535224c5531d5e, type: 3}
+    - {fileID: 8300000, guid: 9760a827412e5181938d41c55700458e, type: 3}
+  - id: sindel_reload
+    clips:
+    - {fileID: 8300000, guid: 545cee33abb35227b11bcb4152aa6829, type: 3}
+  - id: state_death
+    clips:
+    - {fileID: 8300000, guid: e483db5230785672a2204df918d26a7a, type: 3}
+    - {fileID: 8300000, guid: c68c0995872058d9a89ea5ebf82662da, type: 3}
+    - {fileID: 8300000, guid: ff89315d09db582694533bb75cfe5fcf, type: 3}
+    - {fileID: 8300000, guid: 58730f718a9256a6a32c2e41ddfb70cd, type: 3}
+  - id: state_denied
+    clips:
+    - {fileID: 8300000, guid: 16d5e3eb9a935504b960c8ebab2889fd, type: 3}
+  - id: state_stun
+    clips:
+    - {fileID: 8300000, guid: 3a0f0af5446d5c44bb06f2166883fd22, type: 3}
+    - {fileID: 8300000, guid: 731302c230ad5b0bbca96bb70f613495, type: 3}
+  - id: steps_carpet.land
+    clips:
+    - {fileID: 8300000, guid: d377a2424e5e5c6cbd0d8fc798175daf, type: 3}
+    - {fileID: 8300000, guid: 0bfd6dfb903e5d67a8ab46766b1a1399, type: 3}
+    - {fileID: 8300000, guid: 4ce1f07da84b52bbb52dbfda0ab9404f, type: 3}
+  - id: steps_carpet.step
+    clips:
+    - {fileID: 8300000, guid: e45a53c876e45547bb6bc189ba8444e4, type: 3}
+    - {fileID: 8300000, guid: 5121bf5148415517b4c1922ed7cd20b5, type: 3}
+    - {fileID: 8300000, guid: c374e83493635d84980afa77d790c8c0, type: 3}
+    - {fileID: 8300000, guid: e6da3b515d875933aee96180afc4c5ae, type: 3}
+    - {fileID: 8300000, guid: f5e7f07fe5335ebcb603e98bb5e6ac91, type: 3}
+    - {fileID: 8300000, guid: 6c39d62466d05e94b75d15dfbac6a911, type: 3}
+    - {fileID: 8300000, guid: a34aabeb79195e2bbbf4eea28852c3aa, type: 3}
+    - {fileID: 8300000, guid: e071c6250a595dfd80964e7a799b9705, type: 3}
+  - id: steps_dirt.land
+    clips:
+    - {fileID: 8300000, guid: c3a9009ddcb3573a9c0b97443076a6b5, type: 3}
+    - {fileID: 8300000, guid: b5b02aaf05fe5b3d987f2ae6f6781da1, type: 3}
+    - {fileID: 8300000, guid: 86003cb020685d2e91d4a1f9547b0aaa, type: 3}
+  - id: steps_dirt.step
+    clips:
+    - {fileID: 8300000, guid: ac6bd88a8ad15c2eb02c72a2981c5f53, type: 3}
+    - {fileID: 8300000, guid: 9e19c327ca20528688c3df9181c4d418, type: 3}
+    - {fileID: 8300000, guid: acadda9d835c5e13a5c49c41f30974ed, type: 3}
+    - {fileID: 8300000, guid: def3d888b60953fcba4678f554570de3, type: 3}
+    - {fileID: 8300000, guid: 8933d60d7e585724b8f7586e55a0a11c, type: 3}
+    - {fileID: 8300000, guid: cfad2d4b06255ff3b3f18f7cc1a617bd, type: 3}
+    - {fileID: 8300000, guid: 41edb9a7b1875ba69240c87b0600fb27, type: 3}
+    - {fileID: 8300000, guid: 51b6d3459b02568fad9d7354da0ec088, type: 3}
+  - id: steps_grass.land
+    clips:
+    - {fileID: 8300000, guid: 76f2ff5a9bca569ca32d97c3bef607cc, type: 3}
+    - {fileID: 8300000, guid: 5e858bd402375f3cac856cda7c73929c, type: 3}
+    - {fileID: 8300000, guid: c8a44a1e28d356159b281d436e084bd4, type: 3}
+  - id: steps_grass.step
+    clips:
+    - {fileID: 8300000, guid: 2a8a4c767a2a58cbaba378a654d1e843, type: 3}
+    - {fileID: 8300000, guid: 51c173b6fe0054d8a1cad8797cef22f9, type: 3}
+    - {fileID: 8300000, guid: e848eb3acd75538d8d5306cf80971261, type: 3}
+    - {fileID: 8300000, guid: 396e04eb3f79585cb2229a9989161e2d, type: 3}
+    - {fileID: 8300000, guid: 6e9416b6ca26599d98595e23550fde5f, type: 3}
+    - {fileID: 8300000, guid: da3a71dccda75738a2059155591ba13d, type: 3}
+    - {fileID: 8300000, guid: acc62d25587e5e28a1da6158a68e8698, type: 3}
+    - {fileID: 8300000, guid: b4c7f7ee43d95def8b912c9c1fecc149, type: 3}
+  - id: steps_gravel.land
+    clips:
+    - {fileID: 8300000, guid: da9d8e483a8c50ec8d009faa5d82a3e3, type: 3}
+    - {fileID: 8300000, guid: da2c343311d65932b082947839832264, type: 3}
+    - {fileID: 8300000, guid: 1e13dab0a24151e4bee60724a723f0d5, type: 3}
+  - id: steps_gravel.step
+    clips:
+    - {fileID: 8300000, guid: b843f9c82cff5bf997764013fa1983b7, type: 3}
+    - {fileID: 8300000, guid: c2fd453152ef5189853f40a816686f50, type: 3}
+    - {fileID: 8300000, guid: 17d6cec278d0558ea121e2279158f160, type: 3}
+    - {fileID: 8300000, guid: 5fa8ee28882953149f642e53376968be, type: 3}
+    - {fileID: 8300000, guid: 4c55444a3bb15979b1d99010fda807e3, type: 3}
+    - {fileID: 8300000, guid: ed778b7186535314aec3dc901a8a7bf9, type: 3}
+    - {fileID: 8300000, guid: 72d622c0188b5d348ad2d9ac855b58cd, type: 3}
+    - {fileID: 8300000, guid: b8be464c2fad5af1bac9781183c25027, type: 3}
+  - id: steps_metal.land
+    clips:
+    - {fileID: 8300000, guid: 6c4ca813054e5ff68af499a14d4a9bbb, type: 3}
+    - {fileID: 8300000, guid: 357a187c483b527cbc35b788f6c1f34e, type: 3}
+    - {fileID: 8300000, guid: 2e433a419e2e59158e5e210fe6f063e2, type: 3}
+  - id: steps_metal.step
+    clips:
+    - {fileID: 8300000, guid: b0388bdf3ec759ff9e4f048c91f7a504, type: 3}
+    - {fileID: 8300000, guid: c590a8120a79512e90f0b86318b619db, type: 3}
+    - {fileID: 8300000, guid: eff06fd6def95e59890c080ff02c890b, type: 3}
+    - {fileID: 8300000, guid: abf81a1b65ad54308d3daed53e58530c, type: 3}
+    - {fileID: 8300000, guid: 365f90b01c055a638834d1ee8cc558cf, type: 3}
+    - {fileID: 8300000, guid: 10f89ae53ebd5cf2b0e4480f3f181ecc, type: 3}
+    - {fileID: 8300000, guid: 4125bf20d32c5fbd82aeb0568abb72d3, type: 3}
+    - {fileID: 8300000, guid: 8dd8c6f8bcce5833b52b70c6e978c256, type: 3}
+  - id: steps_rubber.land
+    clips:
+    - {fileID: 8300000, guid: 9322c6c71927592284a72b7eb180c55d, type: 3}
+    - {fileID: 8300000, guid: ba147ce50df258be8ba23b7c5a4e16f1, type: 3}
+    - {fileID: 8300000, guid: cb30ae383bc956f29b996db7f312772b, type: 3}
+  - id: steps_rubber.step
+    clips:
+    - {fileID: 8300000, guid: dc7703c8337e5b28b44e261d4414812a, type: 3}
+    - {fileID: 8300000, guid: d7963c166d55588dbed30f1a9a04f042, type: 3}
+    - {fileID: 8300000, guid: 1a232149c80455f5896ebefb2fa39596, type: 3}
+    - {fileID: 8300000, guid: e37ec1abf60358cfa710ef332474bbe9, type: 3}
+    - {fileID: 8300000, guid: 502dde6b3c2b567dbc7eb06326fdfc8c, type: 3}
+    - {fileID: 8300000, guid: 52f41300c86955fc82e34cceda3acb93, type: 3}
+    - {fileID: 8300000, guid: 7fb81b627e745aa38de40c7abcec5d2d, type: 3}
+    - {fileID: 8300000, guid: 2e09f73ce6fe509da2782fbde045c2a9, type: 3}
+  - id: steps_sand.land
+    clips:
+    - {fileID: 8300000, guid: d9bf908b76515cf3be8e608cbb1fc5ac, type: 3}
+    - {fileID: 8300000, guid: 0cdea546770a5d51adebec567fbfe9e9, type: 3}
+    - {fileID: 8300000, guid: 2d5724d5cc93556ab7f68603da81a525, type: 3}
+  - id: steps_sand.step
+    clips:
+    - {fileID: 8300000, guid: 3f027ba93dbb539d9a60d899b7ebf7bc, type: 3}
+    - {fileID: 8300000, guid: 75dbf88129ad59a1a34802f1f64058ac, type: 3}
+    - {fileID: 8300000, guid: ab82bcc7fe7659bf8f73ff226c3f2d44, type: 3}
+    - {fileID: 8300000, guid: c92acf9f41c15cb5885038cd5c2fd3e8, type: 3}
+    - {fileID: 8300000, guid: 531a34d6dc5554a88c4f7c68acf661a0, type: 3}
+    - {fileID: 8300000, guid: 5c4ec2f3549059cf9ed7d72286e7ffe0, type: 3}
+    - {fileID: 8300000, guid: ef717777212c5c6c8b1f6d6b5a875ecc, type: 3}
+    - {fileID: 8300000, guid: f7475d42948b5309aa9068453e25a960, type: 3}
+  - id: steps_solid_wood.land
+    clips:
+    - {fileID: 8300000, guid: 0dda17a2571b5ac2aab381c15a94c04e, type: 3}
+    - {fileID: 8300000, guid: 3b5967b494575aa6b1182a17b67364e3, type: 3}
+  - id: steps_solid_wood.step
+    clips:
+    - {fileID: 8300000, guid: 6c21f7ba921f59d78cb8286f9b27e20b, type: 3}
+    - {fileID: 8300000, guid: 762d73e92c0252c2a2019aeeb44cf131, type: 3}
+    - {fileID: 8300000, guid: 01b9b0b1e5cd514e88204448454109ad, type: 3}
+    - {fileID: 8300000, guid: 4ad02ae032a25803b4e2e23a0edc972f, type: 3}
+    - {fileID: 8300000, guid: 0dc1a7aa02ac50af9a867ce496dd501f, type: 3}
+    - {fileID: 8300000, guid: 20a89bac958959c48c5c72a8f6f10106, type: 3}
+    - {fileID: 8300000, guid: 117b0cc6a43d5d12b07ee81b6047e0c1, type: 3}
+    - {fileID: 8300000, guid: e8f4f8f75c805c2cafde6acc907914ab, type: 3}
+  - id: steps_stone.land
+    clips:
+    - {fileID: 8300000, guid: 5d9cce28178e5173acf3756167f78ffc, type: 3}
+  - id: steps_stone.step
+    clips:
+    - {fileID: 8300000, guid: 9d57c4ecada65be48eb089c232aa5bd2, type: 3}
+    - {fileID: 8300000, guid: 7bb7d787f1735f1b8c4c2b2992b317b5, type: 3}
+    - {fileID: 8300000, guid: 86a4fdabb43e5733beb40371bd6731f8, type: 3}
+    - {fileID: 8300000, guid: e5f21734ac925fd589f3990feb469eb1, type: 3}
+    - {fileID: 8300000, guid: 9ab31683d0765fc8b6aae7bb27420a2f, type: 3}
+    - {fileID: 8300000, guid: adbc9b47fd9d59cc9a1c57f2a666a095, type: 3}
+    - {fileID: 8300000, guid: 4ae3ff7b7ab45961b98771c27ead4d94, type: 3}
+    - {fileID: 8300000, guid: 1a6efe9861f054e0a25b99a2a5243f81, type: 3}
+  - id: steps_tile.land
+    clips:
+    - {fileID: 8300000, guid: 3088f45da13d5eb0956d65943509d853, type: 3}
+    - {fileID: 8300000, guid: 12ee76c39d385627bc45d2f78498ecf3, type: 3}
+    - {fileID: 8300000, guid: 291e88107a9758ef904b69e9710bf0f1, type: 3}
+  - id: steps_tile.step
+    clips:
+    - {fileID: 8300000, guid: d8a5a5fb1d6959058d5e38d5b08d0679, type: 3}
+    - {fileID: 8300000, guid: 5a01b690696b58adbf129f386873a6c9, type: 3}
+    - {fileID: 8300000, guid: 41f1b0f19da059468c4bf71757654e61, type: 3}
+    - {fileID: 8300000, guid: 1e5b4829df395ab5aa906f97fc085b17, type: 3}
+    - {fileID: 8300000, guid: 7fd318a52f8555309cfa5099f504b478, type: 3}
+    - {fileID: 8300000, guid: 020c6f2827aa5bd480f27bbeb721ed97, type: 3}
+    - {fileID: 8300000, guid: d976268af35a5ef9b16e3653e1a08c05, type: 3}
+    - {fileID: 8300000, guid: 7f0401ef4d4c59369a46af97783367a6, type: 3}
+  - id: steps_water.enter
+    clips:
+    - {fileID: 8300000, guid: ac63658258ce5183a9c3799f4636a60f, type: 3}
+    - {fileID: 8300000, guid: 935a422b93c65d98b0d756233eb0a7ab, type: 3}
+    - {fileID: 8300000, guid: 22b0900b2b715e98a56fb07b3458ecb8, type: 3}
+  - id: steps_water.exit
+    clips:
+    - {fileID: 8300000, guid: bfed30afd6b957339a3d5c8a71c72e1a, type: 3}
+    - {fileID: 8300000, guid: f4150199b56b58768e13ea99e823f3b5, type: 3}
+    - {fileID: 8300000, guid: 83c1325224d65383b41ea7331c688cd3, type: 3}
+  - id: steps_water.land
+    clips:
+    - {fileID: 8300000, guid: 61bb6aca6bdc5046a88a0bcacda24f25, type: 3}
+    - {fileID: 8300000, guid: 0f922fa8f6315a9697645e25c96e93b2, type: 3}
+    - {fileID: 8300000, guid: 3b14554010d855509cf84a9d282d59ca, type: 3}
+  - id: steps_water.step
+    clips:
+    - {fileID: 8300000, guid: 2b2c7c9a203f509aa55785da7aa68caa, type: 3}
+    - {fileID: 8300000, guid: 7ad55911a11b57899647fa36f862d32c, type: 3}
+    - {fileID: 8300000, guid: a6ed07729cb85cc19a7862c9e31e56aa, type: 3}
+    - {fileID: 8300000, guid: 63418487335557be99db4cb87606a60f, type: 3}
+    - {fileID: 8300000, guid: b72009d1692b5ea88bb2ea52b10d0dcb, type: 3}
+    - {fileID: 8300000, guid: 54d56754c18351e1a32d5066b6a079a2, type: 3}
+    - {fileID: 8300000, guid: bfd13344f4c45514ad92d30b50d405e5, type: 3}
+    - {fileID: 8300000, guid: f1a01d87eddf5ba19e9e7fab82d93296, type: 3}
+    - {fileID: 8300000, guid: abab2f7c635b5f3282c3b52a234f3f4b, type: 3}
+    - {fileID: 8300000, guid: 47c07f1973005b8baa7d05b101573906, type: 3}
+  - id: steps_wood.land
+    clips:
+    - {fileID: 8300000, guid: 0dda17a2571b5ac2aab381c15a94c04e, type: 3}
+    - {fileID: 8300000, guid: 3b5967b494575aa6b1182a17b67364e3, type: 3}
+  - id: steps_wood.step
+    clips:
+    - {fileID: 8300000, guid: e8f4f8f75c805c2cafde6acc907914ab, type: 3}
+    - {fileID: 8300000, guid: 117b0cc6a43d5d12b07ee81b6047e0c1, type: 3}
+    - {fileID: 8300000, guid: 20a89bac958959c48c5c72a8f6f10106, type: 3}
+    - {fileID: 8300000, guid: 4ad02ae032a25803b4e2e23a0edc972f, type: 3}
+    - {fileID: 8300000, guid: 01b9b0b1e5cd514e88204448454109ad, type: 3}
+    - {fileID: 8300000, guid: 762d73e92c0252c2a2019aeeb44cf131, type: 3}
+    - {fileID: 8300000, guid: 0dc1a7aa02ac50af9a867ce496dd501f, type: 3}
+    - {fileID: 8300000, guid: 6c21f7ba921f59d78cb8286f9b27e20b, type: 3}
+  - id: viktor_fire
+    clips:
+    - {fileID: 8300000, guid: 4a6634229b165cc694830a4bfbde3c64, type: 3}
+    - {fileID: 8300000, guid: d9ec3eeba1c9597680d8d19407b2033f, type: 3}
+    - {fileID: 8300000, guid: 7219297d52a9536fae5cacba4151e8dd, type: 3}
+    - {fileID: 8300000, guid: 36c1f0e8fff35516ad9c5a47e3acde12, type: 3}
+  - id: viktor_grenade
+    clips:
+    - {fileID: 8300000, guid: 3a0f0af5446d5c44bb06f2166883fd22, type: 3}
+    - {fileID: 8300000, guid: 731302c230ad5b0bbca96bb70f613495, type: 3}
+  - id: viktor_reload
+    clips:
+    - {fileID: 8300000, guid: 31eb704fd5835b13b4d5e1e4492b7a32, type: 3}
+  - id: viktor_ult
+    clips:
+    - {fileID: 8300000, guid: c3db6004a855594cbffafe9a7e50f4fe, type: 3}
+  - id: world_boiler_fire
+    clips:
+    - {fileID: 8300000, guid: 8ad20983b32755fc806f3f450c6a00aa, type: 3}
+  - id: world_groomer_engine
+    clips:
+    - {fileID: 8300000, guid: 1595afd2c7ce58b689e4deb7b0e77a77, type: 3}
+  - id: world_splash
+    clips:
+    - {fileID: 8300000, guid: 61bb6aca6bdc5046a88a0bcacda24f25, type: 3}
+    - {fileID: 8300000, guid: 0f922fa8f6315a9697645e25c96e93b2, type: 3}
+    - {fileID: 8300000, guid: 3b14554010d855509cf84a9d282d59ca, type: 3}
+  - id: world_stream
+    clips:
+    - {fileID: 8300000, guid: 3d140b70c41e5141999d2fb1aa371ba4, type: 3}

@@ -1,0 +1,2434 @@
+{
+  "root": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026",
+  "files": [
+    {
+      "path": "344 Audio - Air Designed/AEROJet_Blast Off Clean_344 Audio_Air Designed.wav",
+      "description": "Airplane, Air, Wind, Noise, Jet, Airforce, Travel, Vehicles, Action, Sci-FI",
+      "seconds": 8.736,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Air Designed/AEROJet_Unidentified Encounter_344 Audio_Air Designed.wav",
+      "description": "Airplane, Air, Wind, Noise, Jet, Airforce, Travel, Vehicles, Action, Sci-FI",
+      "seconds": 58.036,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Anime Fight Voices Vol. 1/VOXMale_Boxer Level Up 1_344 Audio_Anime Fight Voices.wav",
+      "description": "Anime, Voice, VOX, Fight, Combat, Battle, Man, Announcer, Boxer, Adventurer. Epic, Attack, Defense, Game, Warrior, Opponent, Grunt, Yell, Level Up,",
+      "seconds": 5.2,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Anime Fight Voices Vol. 1/VOXMale_Male Adventurer, Active Yell 19_344 Audio_Anime Fight Voices.wav",
+      "description": "Anime, Voice, VOX, Fight, Combat, Battle, Man, Announcer, Boxer, Adventurer. Epic, Attack, Defense, Game, Warrior, Opponent, Grunt, Yell, Level Up,",
+      "seconds": 0.444,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Anime Fight Voices Vol. 1/VOXMale_Warrior Opponent Attack, 'Ai yah' 2_344 Audio_Anime Fight Voices.wav",
+      "description": "Anime, Voice, VOX, Fight, Combat, Battle, Man, Announcer, Boxer, Adventurer. Epic, Attack, Defense, Game, Warrior, Opponent, Grunt, Yell, Level Up,",
+      "seconds": 0.919,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Anime Fight Voices Vol. 2/VOXFem_Anime, Adult Warrior Breaths 40_344 Audio_Anime Fight Voices Vol 2.wav",
+      "description": "Anime, Voice, VOX, Vocal, Fight, Combat, Battle, Woman, Girl, Schoolgirl. Warrior, Slayer, Fighter. Epic, Attack, Defense, Game, Opponent, Grunt, Yell, Gasp, Grunt, Combat",
+      "seconds": 0.913,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Anime Fight Voices Vol. 2/VOXFem_Anime, Schoolgirl Fight Exhale 15_344 Audio_Anime Fight Voices Vol 2.wav",
+      "description": "Anime, Voice, VOX, Vocal, Fight, Combat, Battle, Woman, Girl, Schoolgirl. Warrior, Slayer, Fighter. Epic, Attack, Defense, Game, Opponent, Grunt, Yell, Gasp, Grunt, Combat",
+      "seconds": 0.665,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Anime Fight Voices Vol. 2/VOXFem_Anime, Warrior Elf Princess Aggressive Yell_344 Audio_Anime Fight Voices Vol 2_14.wav",
+      "description": "Anime, Voice, VOX, Vocal, Fight, Combat, Battle, Woman, Girl, Schoolgirl. Warrior, Slayer, Fighter. Epic, Attack, Defense, Game, Opponent, Grunt, Yell, Gasp, Grunt, Combat",
+      "seconds": 1.6,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Books/PAPRMisc_Antique Books Flicking Through Pages 11_344 Audio_Antiques - Books.wav",
+      "description": "Antique, Book, Paper, Page, Pile, Library, Flicking, Turning Page, Pages, Literature, Magic, Spells, Sorcery, Hard Back",
+      "seconds": 1.878,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Books/PAPRMisc_Antique Books Slow Page Turns 6_344 Audio_Antiques - Books.wav",
+      "description": "Antique, Book, Paper, Page, Pile, Library, Pages, Literature, Magic, Spells, Sorcery, Hard Back, Turning, Turning Page, Page, Slow",
+      "seconds": 13.75,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Books/PAPRMisc_Pile Of Antique Books Falling Over 8_344 Audio_Antiques - Books.wav",
+      "description": "Antique, Book, Paper, Page, Pile, Library, Pages, Literature, Magic, Spells, Sorcery, Hard Back, Falling Down, Dropping",
+      "seconds": 2.796,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Clocks/CLOCKTick_Crooked Antique Clock_344 Audio_Antique Clocks.wav",
+      "description": "Antiques, Clocks, Time, Metronome, Tinkering, Watch, Clanking, Ticking, Tick tock, Countdown",
+      "seconds": 60.0,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Clocks/CLOCKTick_You're Running Late _344 Audio_Antique Clocks.wav",
+      "description": "Antiques, Clocks, Time, Metronome, Tinkering, Watch, Clanking, Ticking, Tick tock, Countdown",
+      "seconds": 60.0,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Luggage/OBJLug_Rumaging Through Suitcase, Antique Suitcase_344 Audio_Antiques - Luggage_02.wav",
+      "description": "Luggage, Bag, Baggage, Suitcase, Travel, Trip, Vintage, Old, Antique",
+      "seconds": 8.738,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Luggage/OBJLug_Suitcase Being Locked, Antique Suitcase 1_344 Audio_Antiques - Luggage.wav",
+      "description": "Luggage, Bag, Baggage, Suitcase, Travel, Trip, Vintage, Old, Antique",
+      "seconds": 9.117,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Luggage/OBJLug_Suitcase Opening and Closing, Antique Suitcase_344 Audio_Antiques - Luggage_01.wav",
+      "description": "Luggage, Bag, Baggage, Suitcase, Travel, Trip, Vintage, Old, Antique, Opening, Closing",
+      "seconds": 8.21,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Small Metals/METLMvmt_  Antique Measuring Tape_344 Audio_Antique Small Metals.wav",
+      "description": "Antiques, Metals, Historical, Mechanical, ToolsTinkering, Movement, Small, Handling, Foley, Metal, Steel, Iron, Brass, Rust, Rusty",
+      "seconds": 0.686,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Small Metals/METLMvmt_  Opening Lid Of Antique Blowtorch_344 Audio_Antique Small Metals.wav",
+      "description": "Antiques, Metals, Historical, Mechanical, ToolsTinkering, Movement, Small, Handling, Foley, Metal, Steel, Iron, Brass, Rust, Rusty",
+      "seconds": 1.449,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Small Metals/METLMvmt_  Tinkering Antique Lock_344 Audio_Antique Small Metals.wav",
+      "description": "Antiques, Metals, Historical, Mechanical, ToolsTinkering, Movement, Small, Handling, Foley, Metal, Steel, Iron, Brass, Rust, Rusty",
+      "seconds": 4.049,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Telephone/COMTelph_Antique Telephone Ear Piece Falling Down_344 Audio_Antiques - Telephone_03.wav",
+      "description": "Telephone, Bell's Telephone, Phone, Phonecall, Analogue, Rotary, Rotary Phone, Rotary Telephone, Analogue Telephone, Analogue Phone, Dialling, Rotary Dials, Vintage, Old",
+      "seconds": 1.255,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Telephone/COMTelph_Antique Telephone Pick Up & Drop Ear Piece_344 Audio_Antiques - Telephone_05.wav",
+      "description": "Telephone, Bell's Telephone, Phone, Phonecall, Analogue, Rotary, Rotary Phone, Rotary Telephone, Analogue Telephone, Analogue Phone, Dialling, Rotary Dials, Vintage, Old",
+      "seconds": 3.217,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Telephone/COMTelph_Antique Telephone Rotary Dial Number  9_344 Audio_Antiques - Telephone.wav",
+      "description": "Telephone, Bell's Telephone, Phone, Phonecall, Analogue, Rotary, Rotary Phone, Rotary Telephone, Analogue Telephone, Analogue Phone, Dialling, Rotary Dials, Vintage, Old",
+      "seconds": 2.447,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Typewriter/COMType_Typewriter Carriage Movement, Typewriter_344 Audio_Antiques - Typewriter_01.wav",
+      "description": "Antique, Mechanical, Mechanical Keyboard, Mechanical Typewriter, Typewriter, Typing, Typist, Click, Switch, Keys, Keyboard, Old, Vintage, Computer, Antiquity, Relic, Victorian, Industrial, Typing Machine, Typer",
+      "seconds": 4.189,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Typewriter/COMType_Typewriter Paper Movements, Typewriter 04_344 Audio_Antiques - Typewriter.wav",
+      "description": "Antique, Mechanical, Mechanical Keyboard, Mechanical Typewriter, Typewriter, Typing, Typist, Click, Switch, Keys, Keyboard, Old, Vintage, Computer, Antiquity, Relic, Victorian, Industrial, Typing Machine, Typer, Paper, Paper Movement, Parchment, Script",
+      "seconds": 3.541,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Antique Typewriter/COMType_Typewriter Space Key, Typewriter 05_344 Audio_Antiques - Typewriter.wav",
+      "description": "Antique, Mechanical, Mechanical Keyboard, Mechanical Typewriter, Typewriter, Typing, Typist, Click, Switch, Keys, Keyboard, Old, Vintage, Computer, Antiquity, Relic, Victorian, Industrial, Typing Machine, Typer",
+      "seconds": 0.538,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Barbershop Vol. 1/OBJFurn_Barber Chair, Foot Pump 4_344 Audio_Barbershop Vol 1.wav",
+      "description": "Barbershop, Barber, Hairdresser, Salon, Hair, Grooming, Chair, Leather, Cushion, Metal, Foot Rest, Sit, Stand, Pump, Foley, Movement",
+      "seconds": 7.32,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Barbershop Vol. 1/OBJMisc_Hair Dryer, On, Idle, Off 4_344 Audio_Barbershop Vol 1.wav",
+      "description": "Barbershop, Barber, Hairdresser, Salon, Hair, Grooming, Hair Dryer, Blow Dry, Air, Hot, Switch, Button, On, Idle, Off, Movement",
+      "seconds": 12.32,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Barbershop Vol. 1/OBJMisc_Spray Bottle, Spray 1_344 Audio_Barbershop Vol 1.wav",
+      "description": "Barbershop, Barber, Hairdresser, Salon, Hair, Grooming, Water, Spray, Bottle, Air, Plastic, Handling, Pick Up, Put Down",
+      "seconds": 0.52,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Barbershop Vol. 2/OBJMisc_Hair Brush, Plastic Bristles, Brushing Hair_344 Audio_Barbershop Vol 2.wav",
+      "description": "Barbershop, Barber, Hairdresser, Salon, Hair, Grooming,, Hair Brush, Fade Brush, Comb, Wood, Plastic, Bristles, Hard, Soft, Beard, Handling, Movement, Foley",
+      "seconds": 6.0,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Barbershop Vol. 2/OBJMisc_Hair Scissor, Snips 4_344 Audio_Barbershop Vol 2.wav",
+      "description": "Barbershop, Barber, Hairdresser, Salon, Hair, Grooming,, Metal, Scissors, Snips, Cut, Pick Up, Put Down, Handling",
+      "seconds": 5.16,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Barbershop Vol. 2/OBJMisc_Wahl Sterling Trimmer, On, Idle, Off_344 Audio_Barbershop Vol 2.wav",
+      "description": "Barbershop, Barber, Hairdresser, Salon, Hair, Grooming,, Razor, Shaver, Trimmer, Clipper, Groomer, Electric, Beard, Handling, Pick Up, Put Down, Switch, Button, On, Idle, Off",
+      "seconds": 44.681,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 1/DSGNBass_Bass Drop & Downer Fast 16_344 Audio_Bass Drops & Downers.wav",
+      "description": "Bass, Sub, Subsonic, Low End, Drop, Trailer, Epic, Cineamatic, Rumble, Subwoofer, Downer, Stinger, Analogue, Synth, Movement, Low End",
+      "seconds": 2.125,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 1/DSGNBass_Bass Drop & Downer Medium 04_344 Audio_Bass Drops & Downers.wav",
+      "description": "Bass, Sub, Subsonic, Low End, Drop, Trailer, Epic, Cineamatic, Rumble, Subwoofer, Downer, Stinger, Analogue, Synth, Movement, Low End",
+      "seconds": 4.487,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 1/DSGNBass_Bass Drop & Downer Slow 10_344 Audio_Bass Drops & Downers.wav",
+      "description": "Bass, Sub, Subsonic, Low End, Drop, Trailer, Epic, Cineamatic, Rumble, Subwoofer, Downer, Stinger, Analogue, Synth, Movement, Low End",
+      "seconds": 7.962,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 2/DSGNBass_Bass Drop & Downer Fast 12_344 Audio_Bass Drops & Downers Vol 2.wav",
+      "description": "Bass, Sub, Subsonic, Low End, Drop, Trailer, Epic, Cinematic, Rumble, Subwoofer, Downer, Stinger, Analogue, Synth, Movement",
+      "seconds": 2.637,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 2/DSGNBass_Bass Drop & Downer Medium 15_344 Audio_Bass Drops & Downers Vol 2.wav",
+      "description": "Bass, Sub, Subsonic, Low End, Drop, Trailer, Epic, Cinematic, Rumble, Subwoofer, Downer, Stinger, Analogue, Synth, Movement",
+      "seconds": 3.537,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 2/DSGNBass_Bass Drop & Downer Slow 07_344 Audio_Bass Drops & Downers Vol 2.wav",
+      "description": "Bass, Sub, Subsonic, Low End, Drop, Trailer, Epic, Cinematic, Rumble, Subwoofer, Downer, Stinger, Analogue, Synth, Movement",
+      "seconds": 4.538,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 3/DSGNBass_Jump Start Drop 3_344 Audio_Bass Drops and Downers Vol 3.wav",
+      "description": "Bass, Drop, Drops, Down, Downers, SFX, Low Frequency, Frequencies, Sub, Woofer, Analog, Synth, Trailer, Cinematic",
+      "seconds": 3.702,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 3/DSGNBass_Rattling Downer 3_344 Audio_Bass Drops and Downers Vol 3.wav",
+      "description": "Bass, Drop, Drops, Down, Downers, SFX, Low Frequency, Frequencies, Sub, Woofer, Analog, Synth, Trailer, Cinematic",
+      "seconds": 5.59,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 3/DSGNBass_Tone Downer (Reverb)_344 Audio_Bass Drops and Downers Vol 3.wav",
+      "description": "Bass. Drop, Drops, Down, Downers, Downer, Low, Frequency, Cinematic, Trailer, Rattle, Analog, Synth, Synthesizer",
+      "seconds": 5.845,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - British Police Radio Vol. 1/VOXMale_Police Radio, Burglary, Calm, Update, Warning_344 Audio_British Police Radio.wav",
+      "description": "Police, Police Officer, British, English, Constable, Law, Communication, Dispatch, Radio, Voice, Male Voice, English Accent, Report, Information, Status, Details, Control To All Units Be Advised We Have Reports Of A Break-In In Progress, Suspects May Still",
+      "seconds": 7.443,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - British Police Radio Vol. 1/VOXMale_Police Radio, Car Theft, Relaxed, Update, Helpful_344 Audio_British Police Radio.wav",
+      "description": "Police, Police Officer, British, English, Constable, Law, Communication, Dispatch, Radio, Voice, Male Voice, English Accent, Calm, Informative, Details, Control, Registration Check Shows The Vehicle Is Not Reported Stolen, No Immediate Cause For Concern, O",
+      "seconds": 5.903,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - British Police Radio Vol. 1/VOXMale_Police, Vehicle, Calm, 'Standing By'_344 Audio_British Police Radio.wav",
+      "description": "Police, Police Officer, British, English, Constable, Law, Communication, Dispatch, Radio, Voice, Male Voice, English Accent, Serious, This Is Unit 1, Standing By, Futz",
+      "seconds": 2.396,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Car Foley Vol. 1/VEHInt_CLIMATE CONTROL SYSTEM, FAN SPEED DIAL, FAST_344 Audio_Car Foley Vol 1.wav",
+      "description": "Car, Vehicle, Interior, Foley. Buttons. Switches, Dials, Knobs, Controls,Cup Holder, Sun Visor, Indicator, Wiper, Stalk",
+      "seconds": 1.71,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Car Foley Vol. 1/VEHInt_CUP HOLDER, RELEASE 1_344 Audio_Car Foley Vol 1.wav",
+      "description": "Car, Vehicle, Interior, Foley. Buttons. Switches, Dials, Knobs, Controls,Cup Holder, Sun Visor, Indicator, Wiper, Stalk",
+      "seconds": 1.081,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Car Foley Vol. 1/VEHInt_LIGHTING CONTROL, RELEASE, HEADLIGHT FLASH_344 Audio_Car Foley Vol 1.wav",
+      "description": "Car, Vehicle, Interior, Foley. Buttons. Switches, Dials, Knobs, Controls,Cup Holder, Sun Visor, Indicator, Wiper, Stalk",
+      "seconds": 0.526,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Casino Cards Vol. 1/GAMECas_Automatic Shuffler, Shuffling 1_344 Audio_Casino Cards Vol 1.wav",
+      "description": "Casino, Gambling, Cards, Poker, Blackjack, Bacccarat, Texas Hold 'Em, Rummy, Patience, Solitaire, Cribbage, Gin Rummy, Crazy Eights, Auto, Automatic Shuffler, Machine, Motor, Mechanical, Tech, Foley, Handling, Props",
+      "seconds": 5.172,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Casino Cards Vol. 1/GAMECas_Dealing 3_344 Audio_Casino Cards Vol 1.wav",
+      "description": "Casino, Gambling, Cards, Poker, Blackjack, Bacccarat, Texas Hold 'Em, Rummy, Patience, Solitaire, Cribbage, Gin Rummy, Crazy Eights, Foley, Handling, Props",
+      "seconds": 6.965,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Casino Cards Vol. 1/GAMECas_Pick Up Multiple Cards At Once 5_344 Audio_Casino Cards Vol 1.wav",
+      "description": "Casino, Gambling, Cards, Poker, Blackjack, Bacccarat, Texas Hold 'Em, Rummy, Patience, Solitaire, Cribbage, Gin Rummy, Crazy Eights, Foley, Handling, Props",
+      "seconds": 0.375,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Christmas Vol. 1/MAGMisc_Magic Christmas Bells 2_344 Audio_Christmas.wav",
+      "description": "christmas, elves, elf, sleigh, tinsel, xmas, santa, grotto, present, carol, reindeer, footsteps, snow, snowball, wind, wrapping paper, workhshop, factory, ice, christmas list, wishlist",
+      "seconds": 17.786,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Christmas Vol. 1/MAGMisc_Sleigh Movement, Pulling_344 Audio_Christmas.wav",
+      "description": "christmas, elves, elf, sleigh, tinsel, xmas, santa, grotto, present, carol, reindeer, footsteps, snow, snowball, wind, wrapping paper, workhshop, factory, ice, christmas list, wishlist",
+      "seconds": 11.445,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Christmas Vol. 1/MAGMisc_Wrapping Paper, Opening Present 1_344 Audio_Christmas.wav",
+      "description": "christmas, elves, elf, sleigh, tinsel, xmas, santa, grotto, present, carol, reindeer, footsteps, snow, snowball, wind, wrapping paper, workhshop, factory, ice, christmas list, wishlist",
+      "seconds": 5.618,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Cinema Experience Vol. 1/FOLYProp_Sitting Down, Creaky Seat, Squeaks 3_344 Audio_CInema Experience.wav",
+      "description": "Cinema, Theatre, Theater, Movie, Film, Audience, Viewer, Reaction, Spectator, Popcorn, Snacks, Nachos, Drink, Soda, Cola, Fizzy, Obnoxious, Seat, Creaky, Wrapper, Noise, Shush, Murmur, Whisper, Perspective",
+      "seconds": 4.471,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Cinema Experience Vol. 1/FOODMisc_Broom Sweeping Up Snacks On Hard Floor 2_344 Audio_CInema Experience.wav",
+      "description": "Cinema, Theatre, Theater, Movie, Film, Audience, Viewer, Reaction, Spectator, Popcorn, Snacks, Nachos, Drink, Soda, Cola, Fizzy, Obnoxious, Seat, Creaky, Wrapper, Noise, Shush, Murmur, Whisper, Perspective",
+      "seconds": 5.963,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Cinema Experience Vol. 1/VOXReac_Spectator, Female, Various Questions_344 Audio_Cinema Experience.wav",
+      "description": "Cinema, Theatre, Theater, Movie, Film, Audience, Viewer, Reaction, Spectator, Popcorn, Snacks, Nachos, Drink, Soda, Cola, Fizzy, Obnoxious, Seat, Creaky, Wrapper, Noise, Shush, Murmur, Whisper, Perspective",
+      "seconds": 17.949,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Cinematic Fight Vol. 1/FGHTGrab_Choking, Tension 03_344 Audio_Cinematic Fight Vol 1.wav",
+      "description": "Fight, Combat, Fists, Gritty, Cinematic, Hollywood, Epic, Action, Brawl, Melee, Physical, Confict,\nImpact, Choking, Wet, Death, Grip",
+      "seconds": 8.873,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Cinematic Fight Vol. 1/FGHTImpt_4 x Punch, Body 02_344 Audio_Cinematic Fight Vol 1.wav",
+      "description": "Fight, Combat, Fists, Gritty, Cinematic, Hollywood, Epic, Action, Brawl, Melee, Physical, Confict,\nImpact,  Punch, Fist, Leg, Swing, Hard, Hit",
+      "seconds": 3.913,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Climbing Gear Foley Vol. 1/EQUISprt_Climbing Gear, Carabiner, Screwing Lock 01_344 Audio_Climbing Gear Foley Vol 1.wav",
+      "description": "Climbing, Athlete, Sport, Belay, Rope, Rock Climbing, Gear, Tools, Kit, Equipment, Metal, Clips, Carabiner, Quickdraw, Harness, Rappelling, Abseiling, Outdoor, Gym, Excursion, Adventure, Athletic, Mountaineering, Foley, Lead Climbing, Leading",
+      "seconds": 3.194,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Climbing Gear Foley Vol. 1/EQUISprt_Climbing Gear, Flicking Carabiner On Rope_344 Audio_Climbing Gear Foley Vol 1.wav",
+      "description": "Climbing, Athlete, Sport, Belay, Rope, Rock Climbing, Gear, Tools, Kit, Equipment, Metal, Clips, Carabiner, Quickdraw, Harness, Rappelling, Abseiling, Outdoor, Gym, Excursion, Adventure, Athletic, Mountaineering, Foley, Lead Climbing, Leading",
+      "seconds": 6.232,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Dinosaurs Vol. 1/ANMLRept_Hatchling Calling Out_344 Audio_Dinosaurs.wav",
+      "description": "Dinosaur, Dinosaurs, Prehistoric, Animal, Animals, Beast, Monster, Roar, Growl, Groan, Moan, Grumble, Giant, T-Rex, Velociraptor, Raptor, Triceratops, Stegosaurus. Vocalisations",
+      "seconds": 1.76,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Dinosaurs Vol. 1/ANMLRept_Raptor Flair_344 Audio_Dinosaurs.wav",
+      "description": "Dinosaur, Dinosaurs, Prehistoric, Animal, Animals, Beast, Monster, Roar, Growl, Groan, Moan, Grumble, Giant, T-Rex, Velociraptor, Raptor, Triceratops, Stegosaurus. Vocalisations",
+      "seconds": 1.776,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Dinosaurs Vol. 1/ANMLRept_T Rex_344 Audio_Dinosaurs.wav",
+      "description": "Dinosaur, Dinosaurs, Prehistoric, Animal, Animals, Beast, Monster, Roar, Growl, Groan, Moan, Grumble, Giant, T-Rex, Velociraptor, Raptor, Triceratops, Stegosaurus. Vocalisations",
+      "seconds": 5.707,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Dinosaurs Vol. 2/ANMLRept_Dinosaur Eating Meat 01_344 Audio_Dinosaurs Vol 2.wav",
+      "description": "Dinosaur, Reptile, Dragon, Monster, Beast, Mythology, Lizard, Creature, Animal, Eating, Munch, Munching, Chomp, Chomping, Flesh, Predator, Kill",
+      "seconds": 19.459,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Dinosaurs Vol. 2/ANMLRept_Dinosaur Egg Hatching 02_344 Audio_Dinosaurs Vol 2.wav",
+      "description": "Dinosaur, Reptile, Dragon, Monster, Beast, Mythology, Lizard, Creature, Animal,  Eggs, Hatching, Hatch, Baby, Crack, Breaking, Shell",
+      "seconds": 1.672,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Dinosaurs Vol. 2/ANMLRept_Large Herbivore Roar 01_344 Audio_Dinosaurs Vol 2.wav",
+      "description": "Dinosaur, Reptile, Dragon, Monster, Beast, Mythology, Lizard, Creature, Animal,  Roar, Growl, Scream, Cry, Vocalisation, Aggressive, Massive, Deep, Low",
+      "seconds": 12.461,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Dog Vocalisations Vol. 1/ANMLDog_Dog Barks, Multiple, Indoors, Perspective,_344 Audio_Dog Vocalisations_02.wav",
+      "description": "Dog, Whine, Animal, Canine, Chew, Squeal, Dog Toy, Movement, Sad, Crying, Dog Bowl, Playing, Happy, Bark",
+      "seconds": 5.934,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Dog Vocalisations Vol. 1/ANMLDog_Dog Shuffle, Grunt, Movement, Lying Down_344 Audio_Dog Vocalisations.wav",
+      "description": "Dog, Whine, Animal, Canine, Chew, Squeal, Dog Toy, Movement, Sad, Crying, Dog Bowl, Playing, Happy, Bark",
+      "seconds": 5.364,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - East Coast America Vol. 1/AMBSubn_Ambience, Forest Crickets, Birds, Connecticut 02_344 Audio_East Coast America.wav",
+      "description": "Ambience, Atmos, America, USA,  Insect, Nature, Water, Crickets, Birds",
+      "seconds": 52.302,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - East Coast America Vol. 1/AMBSubn_Electricity Hum, Lightbulb,  Coil Pickup 01_344 Audio_East Coast America.wav",
+      "description": "Electricity, Electronic, Hum, Static, Signal, Interference, Sparks, Lightbulb, Coil, Current",
+      "seconds": 61.804,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/METLMisc_Metal, Slow Whoosh, Rattle, Pass By x4 01_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Metal, Mech, Armour, Swords, Weapons, Medieval, Clang, Strike, Attack, Impact, Crush, Battle, Fight, \nAmbience, Fantasy, Sci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.214,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/WATRMisc_Water, Liquid Impact, Bubble, Sci Fi, Hit 04_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Water, Bubbles, Splash, Ripple, Gush, Wave, Gurgle, Surge, Plasma, Pulse, Glitch, Ambience, Fantasy, \nSci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.213,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/WINDDsgn_Wind, Rush, Whoosh, Long x5 01_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Wind, Howling, Whoosh, Whistle, Rustle, Wailing, Vehicle, Spaceship, Movement, Rush, Drift, Ambience, \nFantasy, Sci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.049,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "344 Audio - Extreme Winds Vol. 1/METLFric_Large Metal Box, Drag, Geofon_344 Audio_Extreme Winds Vol 1.wav",
+      "description": "Extreme, Wind, Gust, Howling, Whistling, Blistering, Cold, Intense, Swirling, Rumble, INT, EXT, Synthesizer, Synth, Cinematic, Textured",
+      "seconds": 67.28,
+      "channels": 1,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Extreme Winds Vol. 1/WINDDsgn_EXT, Eye Of The Storm_344 Audio_Extreme Winds Vol 1.wav",
+      "description": "Extreme, Wind, Gust, Howling, Whistling, Blistering, Cold, Intense, Swirling, Rumble, INT, EXT, Synthesizer, Synth, Cinematic, Textured",
+      "seconds": 180.18,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Ghostly Presences Vol. 1/AMBDsgn_Evil Spell Ambience_344 Audio_Ghostly Presences.wav",
+      "description": "Ambience, Drone, Horror, Scary. Screech, Wail, Ghost, Whisper, Interference, Wind, Resonant",
+      "seconds": 180.027,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Haunting Ambiences Vol. 3/METLImpt_Metal Bangs, Metal Hits, Banging On Doors_344 Audio_Haunting Ambiences Vol 3.wav",
+      "description": "Haunting, Horror, Evil, Ambience, Nightmare, Doom, Eerie, Environment, Background, Thriller, Suspense, Fear, Terror, Creepy, Darkness, Ominous, Scary, Mysterious , Prison, Prisoners, Criminals, Metal, Bang, Hits, Rattle, Metal Sheet",
+      "seconds": 180.18,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Haunting Ambiences Vol. 3/WOODImpt_Wooden Hit, Dark, Heavy Hit, Vampire's Prison_344 Audio_Haunting Ambiences Vol 3.wav",
+      "description": "Haunting, Horror, Evil, Ambience, Nightmare, Doom, Eerie, Environment, Background, Thriller, Suspense, Fear, Terror, Creepy, Darkness, Ominous, Scary, Mysterious , Prison, Prisoners, Criminals",
+      "seconds": 180.18,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Haunting Ambiences Vol. 5/FIRECrkl_Fire Crackling, Popping, Witch's Cauldron_344 Audio_Haunting Ambiences Vol 5.wav",
+      "description": "Haunting, Scary, Horror, Ambience, Atmosphere, Background, Witch, Cauldrn, Bubbling, Boiling, Spell, Cast Spell, Halloween, Howling Wind, Fire, Rumble, Evil Witch, Dark, Magic, Designed",
+      "seconds": 180.0,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Haunting Ambiences Vol. 5/HMNBrth_Respirator, Specimen Breathing, Mad Scientist Lab_344 Audio_Haunting Ambiences Vol 5.wav",
+      "description": "Haunting, Scary, Horror, Ambience, Atmosphere, Background, Mad Scientist, Lab, Laboratory, Evil, Experiment, Specimen, Tank, Bubbling, Respirator, Evil Lair, Alien, Designed",
+      "seconds": 180.0,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPArmr_Metal Shield Spin On Floor, Buckler MKH_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 36.25,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPBlnt_Spear And Stick Impact, Wooden MKH 2_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 11.294,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPSwrd_Sword Slide Cuts, Metallic, Impact CM4 2_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 12.96,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "Alexander Kopeikin - 100 kHz Designed Ice/ice, block of ice crushed, heavy-015.wav",
+      "description": "ice, block of ice crushed, heavy",
+      "seconds": 2.836,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Alexander Kopeikin - 100 kHz Designed Ice/ice, crack, ice block snapping-001.wav",
+      "description": "ice, crack, ice block snapping",
+      "seconds": 5.94,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Alexander Kopeikin - 100 kHz Designed Ice/ice, movement, ice drift, ice field cracking up, initial, wide-001.wav",
+      "description": "ice, movement, ice drift, ice field cracking up, initial, wide",
+      "seconds": 83.275,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Alexander Kopeikin - 100 kHz Designed Ice/ice, surface cracking, fissure, fast, hard-003.wav",
+      "description": "ice, surface cracking, fissure, fast, hard",
+      "seconds": 5.034,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, action gesture, evil presence, onslaught-004.wav",
+      "description": "magic, action gesture, evil presence, onslaught",
+      "seconds": 38.215,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, drone, tension, spellbound, evanescence-002.wav",
+      "description": "magic, drone, tension, spellbound, evanescence",
+      "seconds": 63.978,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, energy flow, astonishment-001.wav",
+      "description": "magic, energy flow, astonishment",
+      "seconds": 19.138,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, energy flow, astral travel-015.wav",
+      "description": "magic, energy flow, astral travel",
+      "seconds": 61.03,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "CB_Sounddesign - Applicable Sounds - Organic UI and Building Games SFX/GAMEMisc_Magic Creation 23_CB Sounddesign_APPlicable Sounds.wav",
+      "description": "",
+      "seconds": 3.186,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "CB_Sounddesign - Applicable Sounds - Organic UI and Building Games SFX/TOONMisc_Bird Flutes 3_CB Sounddesign_APPlicable Sounds.wav",
+      "description": "",
+      "seconds": 1.033,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "CB_Sounddesign - Applicable Sounds - Organic UI and Building Games SFX/UIMisc_Kalimba 3 Up_CB Sounddesign_APPlicable Sounds.wav",
+      "description": "",
+      "seconds": 0.553,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "CB_Sounddesign - Applicable Sounds - Organic UI and Building Games SFX/UIMisc_Xylophone Ringtone 2_CB Sounddesign_APPlicable Sounds.wav",
+      "description": "",
+      "seconds": 4.108,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon & Animation Vol 2/Cartoon Bubbles Short.wav",
+      "description": "cartoon, animation, sound, library, funny, whimsical, playful, characters, effects, fantasy, magical, comedic, lively, vibrant, imaginative, quirky, joyful, laughter, cartoonish, expressive, colorful, adventures, animated, soundscapes, creative, amusing, e",
+      "seconds": 0.875,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon & Animation Vol 2/Cartoon Pull Swoosh Readout.wav",
+      "description": "cartoon, animation, sound, library, funny, whimsical, playful, characters, effects, fantasy, magical, comedic, lively, vibrant, imaginative, quirky, joyful, laughter, cartoonish, expressive, colorful, adventures, animated, soundscapes, creative, amusing, e",
+      "seconds": 2.29,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon & Animation Vol 2/Cartoon Transition Bass Down.wav",
+      "description": "cartoon, animation, sound, library, funny, whimsical, playful, characters, effects, fantasy, magical, comedic, lively, vibrant, imaginative, quirky, joyful, laughter, cartoonish, expressive, colorful, adventures, animated, soundscapes, creative, amusing, e",
+      "seconds": 3.5,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon Bloopers/Arrow Hit Rattle.wav",
+      "description": "cartoon, comedy, funny, silly, goofy, blooper, gag, pratfall, slip, trip, stumble, clumsy, accident, mishap, fumble, laugh, humor, animated, childish, playful, wacky, absurd, exaggeration, lighthearted",
+      "seconds": 1.083,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon Bloopers/Cartoon Confused Dizzy.wav",
+      "description": "cartoon, comedy, funny, silly, goofy, blooper, gag, pratfall, slip, trip, stumble, clumsy, accident, mishap, fumble, laugh, humor, animated, childish, playful, wacky, absurd, exaggeration, lighthearted",
+      "seconds": 1.5,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon Bloopers/Character Elf It Shall Be Done.wav",
+      "description": "cartoon, comedy, funny, silly, goofy, blooper, gag, pratfall, slip, trip, stumble, clumsy, accident, mishap, fumble, laugh, humor, animated, childish, playful, wacky, absurd, exaggeration, lighthearted",
+      "seconds": 0.607,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon Impacts/Cartoon Airy Impact Creaks.wav",
+      "description": "cartoon, comedy, impact, ascend, boing, bongo, hit, jump, mallet, pops, pop, drain, punch, splat, squeak, sweep, swoosh, toys, whoosh",
+      "seconds": 2.5,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon Impacts/Cartoon Pops Random Sequence Reverb.wav",
+      "description": "cartoon, comedy, impact, ascend, boing, bongo, hit, jump, mallet, pops, pop, drain, punch, splat, squeak, sweep, swoosh, toys, whoosh",
+      "seconds": 1.396,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon Impacts/Vibrato Impact Snap Spin Transition.wav",
+      "description": "cartoon, comedy, impact, ascend, boing, bongo, hit, jump, mallet, pops, pop, drain, punch, splat, squeak, sweep, swoosh, toys, whoosh",
+      "seconds": 3.195,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Colossal Impacts/Impact Cut Sweep.wav",
+      "description": "impact, collision, explosion, smash, boom, crash, thud, cinematic, epic, massive, intense, heavy, powerful, action, game audio, trailer, movie, blockbuster, destruction, shockwave, tremor, bass, deep, dramatic, explosion, design, tension, energy,  epic, hi",
+      "seconds": 2.792,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Colossal Impacts/Transition Frantic Shaker Snap.wav",
+      "description": "impact, collision, explosion, smash, boom, crash, thud, cinematic, epic, massive, intense, heavy, powerful, action, game audio, trailer, movie, blockbuster, destruction, shockwave, tremor, bass, deep, dramatic, explosion, design, tension, energy,  epic, hi",
+      "seconds": 1.458,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Colossal Impacts/Woosh Debris.wav",
+      "description": "impact, collision, explosion, smash, boom, crash, thud, cinematic, epic, massive, intense, heavy, powerful, action, game audio, trailer, movie, blockbuster, destruction, shockwave, tremor, bass, deep, dramatic, explosion, design, tension, energy,  epic, hi",
+      "seconds": 2.375,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Hybrid Game & UI Elements/Cofetti Whoosh Pluck Spill.wav",
+      "description": "ui, system, click, button, menu, confirm, approve, error, alert, fail, success, notification, ding, ping, beep, bell, chime, sparkle, pop, swoosh, reward, bonus, coin, game, level, collect, foley, paper, door, zipper, crack",
+      "seconds": 2.536,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Hybrid Game & UI Elements/Foley Coin Flip Single Fast.wav",
+      "description": "ui, system, click, button, menu, confirm, approve, error, alert, fail, success, notification, ding, ping, beep, bell, chime, sparkle, pop, swoosh, reward, bonus, coin, game, level, collect, foley, paper, door, zipper, crack",
+      "seconds": 0.938,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Hybrid Game & UI Elements/Game Entry Happy Short.wav",
+      "description": "ui, system, click, button, menu, confirm, approve, error, alert, fail, success, notification, ding, ping, beep, bell, chime, sparkle, pop, swoosh, reward, bonus, coin, game, level, collect, foley, paper, door, zipper, crack",
+      "seconds": 0.875,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Interface & Infographics/Interface Accept Glassy Snap.wav",
+      "description": "interface, infographics, design, user-friendly, interactive, technology, digital, modern, sleek, visuals, graphical, interface design, data, information, user interface, digital design, graphics, user experience, UX, UI, interactive design, innovative, in",
+      "seconds": 0.438,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Interface & Infographics/Interface Percussion Snap.wav",
+      "description": "interface, infographics, design, user-friendly, interactive, technology, digital, modern, sleek, visuals, graphical, interface design, data, information, user interface, digital design, graphics, user experience, UX, UI, interactive design, innovative, in",
+      "seconds": 0.656,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Interface & Infographics/Interface Pop High Short.wav",
+      "description": "interface, infographics, design, user-friendly, interactive, technology, digital, modern, sleek, visuals, graphical, interface design, data, information, user interface, digital design, graphics, user experience, UX, UI, interactive design, innovative, in",
+      "seconds": 0.646,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Paper Foley/A4 Printing Paper Rattle Page Turn Tail.wav",
+      "description": "A4, printing, paper, foley, sheet, page, turn, rusty",
+      "seconds": 1.28,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Paper Foley/Encyclopedia Glossy Page Turn Muted.wav",
+      "description": "encyclopedia, paper, squash, movement, foley, page, turning, soft",
+      "seconds": 0.549,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Paper Foley/Newspaper Static Foley Rummage.wav",
+      "description": "newspaper, paper, foley, sheet, page, turning, rummage, squash, movement",
+      "seconds": 5.143,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Sci-Fi Drones/Dark Industrial Ambience.wav",
+      "description": "dark, cinematic, interior, drone, sci-fi, ghostly, horror, spaceship, noise, space, background, ambience, games",
+      "seconds": 31.286,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Sci-Fi Drones/Psycho Glitched Screechy Tones Noise.wav",
+      "description": "dark, cinematic, interior, drone, sci-fi, ghostly, horror, spaceship, noise, space, background, ambience, games",
+      "seconds": 62.392,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Sci-Fi Drones/Roomtone Space Ship Interior Muted.wav",
+      "description": "dark, cinematic, interior, drone, sci-fi, ghostly, horror, spaceship, noise, space, background, ambience, games",
+      "seconds": 72.691,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - System & UI Feedback Elements/Interface Arp Reveal Down Long.wav",
+      "description": "system, ui, feedback, interface, menu, button, navigation, confirmation, cancel, error, warning, success, hover, rollover, selection, toggle, slider, checkbox, radio, drag, drop, notification, subtle, minimal, digital, alert, popup, transition, window, typ",
+      "seconds": 1.167,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - System & UI Feedback Elements/Interface Deny Low Fat Dark.wav",
+      "description": "system, ui, feedback, interface, menu, button, navigation, confirmation, cancel, error, warning, success, hover, rollover, selection, toggle, slider, checkbox, radio, drag, drop, notification, subtle, minimal, digital, alert, popup, transition, window, typ",
+      "seconds": 0.743,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - System & UI Feedback Elements/Interface Sci-Fi Ping Down.wav",
+      "description": "system, ui, feedback, interface, menu, button, navigation, confirmation, cancel, error, warning, success, hover, rollover, selection, toggle, slider, checkbox, radio, drag, drop, notification, subtle, minimal, digital, alert, popup, transition, window, typ",
+      "seconds": 0.75,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - UI Interaction Elements/Accept Boing Crunch.wav",
+      "description": "ui, interface, interaction, button, click, tap, menu, toggle, switch, slider, select, confirm, cancel, notify, alert, feedback, input, navigation, panel, tab, scroll, hover, activate, trigger, prompt, highlight, focus, press, control, engage",
+      "seconds": 0.97,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - UI Interaction Elements/Deny Muted.wav",
+      "description": "ui, interface, interaction, button, click, tap, menu, toggle, switch, slider, select, confirm, cancel, notify, alert, feedback, input, navigation, panel, tab, scroll, hover, activate, trigger, prompt, highlight, focus, press, control, engage",
+      "seconds": 0.799,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - UI Interaction Elements/Ting Coins.wav",
+      "description": "ui, interface, interaction, button, click, tap, menu, toggle, switch, slider, select, confirm, cancel, notify, alert, feedback, input, navigation, panel, tab, scroll, hover, activate, trigger, prompt, highlight, focus, press, control, engage",
+      "seconds": 1.104,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Ultra Transitions & Impacts/Impact Hit Rapid Chord Reverb.wav",
+      "description": "ultra, transitions, impacts, cinematic, sound design, powerful, intense, dynamic, dramatic, high-energy, futuristic, effects, audio, motion, immersive, adrenaline, motion graphics, transition effects, impact sounds, futuristic soundscapes, explosive, thril",
+      "seconds": 3.206,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Ultra Transitions & Impacts/Transition Braam Slow Dark Creepy.wav",
+      "description": "ultra, transitions, impacts, cinematic, sound design, powerful, intense, dynamic, dramatic, high-energy, futuristic, effects, audio, motion, immersive, adrenaline, motion graphics, transition effects, impact sounds, futuristic soundscapes, explosive, thril",
+      "seconds": 4.5,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - Ultra Transitions & Impacts/Woosh Sweep Slide Infographics Basic.wav",
+      "description": "ultra, transitions, impacts, cinematic, sound design, powerful, intense, dynamic, dramatic, high-energy, futuristic, effects, audio, motion, immersive, adrenaline, motion graphics, transition effects, impact sounds, futuristic soundscapes, explosive, thril",
+      "seconds": 0.5,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Button Arp Twinkle.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 1.812,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Interface Plucks Happy.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 0.853,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Readout Thin Long.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 4.375,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/METLFric_SWING SCRAPE Swift Melee Weapon Swing With A Long Blade 14_DDUMAIS_MWP2.wav",
+      "description": "SWING SLASH – Swift Blade Arc – Quick, Clean Swing with Sharp Metallic Sweep",
+      "seconds": 2.353,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/METLImpt_METAL SWING HIT Weapon Swing To Metallic Body Impact And Resonant Tail 01_DDUMAIS_MWP2.wav",
+      "description": "SWORD STRIKE – Heavy Blade Impact – Low-End Thud, Sharp Metal Strike, Deep Body Contact, Dull Clang, Resonating Vibration",
+      "seconds": 2.933,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/SWSH_SWING IMPACTS Quick Heavy Weapon Swing To Thud Impact Var 01_DDUMAIS_MWP2.wav",
+      "description": "SWORD SWING – Subtle Whoosh – Mild Swing, Low Thud Impact, Rustling Clothing Debris",
+      "seconds": 61.818,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/WEAPWhip_WHIP Snap Crack 05_DDUMAIS_MWP2.wav",
+      "description": "WHIP – Snap and Crack – Leather Whip, Loud Snap, Sharp Crack, Long Reverb Tail, Echoing Decay",
+      "seconds": 1.471,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - AAA Game Character British Female Detective/HMNBrth_British Detective Breathing Vocal Female Idle Annoyed Breath Grunt_ESM_AAAGCBFD.wav",
+      "description": "inhale, exhale, sigh, breathe, air, hum, emotive, wind, expression, reaction",
+      "seconds": 1.038,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - AAA Game Character British Female Detective/VOXCry_British Detective Crying Vocal Female Low Energy Weep_ESM_AAAGCBFD.wav",
+      "description": "sad, cry, emotional, emote, defeat, mourning, reaction, weep, wail, fail, sniffling",
+      "seconds": 2.654,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - AAA Game Character British Female Detective/VOXFem_British Detective Custom Lines Vocal Female In A World Of Lies And Deception Im The One They Turn To When They Need The Truth B_ESM_AAAGCBFD.wav",
+      "description": "dialogue, spoken, sentence, speech, response, command, reaction, female, english, accent",
+      "seconds": 4.784,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - AAA Game Character British Female Detective/VOXReac_British Detective Pain Vocal Female Dying High Grunt Breath_ESM_AAAGCBFD.wav",
+      "description": "reaction, hit, injured, damaged, combat, fight, punched, kicked, groan, grunt",
+      "seconds": 2.077,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - AAA Game Character Police Officer/HMNBrth_Police Officer Gasp Vocal Male Shocked Alert 1.wav",
+      "description": "inhale, exhale, sigh, breathe, air, hum, emotive, wind, expression, reaction",
+      "seconds": 0.462,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - AAA Game Character Police Officer/HMNCough_Police Officer Cough Vocal Male 11.wav",
+      "description": "sick, cough, ill, choked, hack, struggle, strained, thoaty, clear, poisoned",
+      "seconds": 1.385,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - AAA Game Character Police Officer/VOXLaff_Police Officer Laugh Vocal Male 1.wav",
+      "description": "happy, joy, chuckle, lighthearted, bright, laughter, tickle, giggle, chuckle, hearty, positive",
+      "seconds": 1.731,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - AAA Game Character Police Officer/VOXMale_Police Officer Custom Lines Vocal Male Emergency Shots Fired Need Backup.wav",
+      "description": "dialogue, spoken, sentence, speech, response, command, reaction, man, male, guy, cop, security",
+      "seconds": 2.118,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/DSGNMisc_Misc Monster Tentacle Modulated Creature Shadow Abstract Swept Wobble Lfo 02_ESM_AG.wav",
+      "description": "intense, rapid, warble, full, frequency, layered, impact, crash, hit, full",
+      "seconds": 2.041,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/DSGNStngr_Power Up Bright Positive Successful Light Saturation Crash Shimmer 05_ESM_AG.wav",
+      "description": "intense, energetic, radiant, uplift, sweep, vintage, buff, dirty, whoosh, impact",
+      "seconds": 1.525,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/EXPLDsgn_Explosion Small Blast Enemy Death Crunchy Boom Cartoon Noisy Crash Impact Delay 03_ESM_AG.wav",
+      "description": "punchy, explosive, synth, bomb, sweep, analog, vintage, full, frequency, clear",
+      "seconds": 1.478,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/FGHTImpt_Combat Punch Impact Light Hit Delay Crunchy Vintage Quick Smack 05_ESM_AG.wav",
+      "description": "sharp, snappy, gritty, crisp, echoing, tight, synthetic, digital, crunch, smack",
+      "seconds": 1.057,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Board Game - Sound Set Kit for Tabletop and Digital Games/GAMEBoard_Event Board Reset Organic Multiple Pieces Wood Small 02_ESM_BG.wav",
+      "description": "notification, interaction, transition, next, round, tumble, clatter, movement",
+      "seconds": 1.113,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Board Game - Sound Set Kit for Tabletop and Digital Games/GAMEBoard_Game Play Piece Action Organic Connect Dots Fall Bounce 04_ESM_BG.wav",
+      "description": "interaction, movement, motion, active, selection, confirm, clatter, small, object",
+      "seconds": 0.215,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Board Game - Sound Set Kit for Tabletop and Digital Games/PAPRHndl_Game Play Cards Dry Show Flip Toss Disgard Near 12_ESM_BG.wav",
+      "description": "deck, handling, shuffle, movement, paper, friction, flip, motion, deal, pass, nearfield",
+      "seconds": 0.167,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Board Game - Sound Set Kit for Tabletop and Digital Games/UIClick_UI Button Analog Vintage Double Click Neutral Dry Press 11_ESM_BG.wav",
+      "description": "interaction, press, select, confirm, deny, open, close, tap, short, stab",
+      "seconds": 0.167,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/ELECMisc_Impact Electric Tonal Deep Movement Motion Hiss Glitch 01_ESM_EMWI.wav",
+      "description": "crackle, shock, arc, spark, blast, static, buzz, hum, crisp, hiss",
+      "seconds": 3.689,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/FIREWhsh_Whoosh Fire Deep Growl Monster Saturated Crisp 03_ESM_EMWI.wav",
+      "description": "blast, boom, fizzle, sizzle, crackle, flame, ripple, motion, spell",
+      "seconds": 2.484,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/GLASMvmt_Whoosh Glass Crystal Fragments Sharp Shards Dry 05_ESM_EMWI.wav",
+      "description": "ice, shatter, break, crash, thin, bright, clatter, crystal, shimmery",
+      "seconds": 2.633,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/WATRImpt_Impact Water Deep Submerge Bubble Drown Ship Hit 05_ESM_EMWI.wav",
+      "description": "splash, dunk, gurgle, slosh, ripple, bubble, droplet, smash, flow",
+      "seconds": 2.17,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Fake Advertisements and Radio Sound Effects Audio Construction Kit/COMStatic_Radio Ham Loop Static Hum Active Powered On Garbled Noise 01_ESM_FA.wav",
+      "description": "static, frequency, noise, static, movement, coms, radio, signal, intercept",
+      "seconds": 22.881,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Fake Advertisements and Radio Sound Effects Audio Construction Kit/VOXMale_Voice Wet Male Emergency Broadcast Announcement Dry War 01_ESM_FA.wav",
+      "description": "newscast, warning, alert, natural, disaster, danger, presenter, voice, over",
+      "seconds": 15.413,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/CLOTHFlp_Action Inventory Open Flip Cloth Canvas Bag Slide Light 02_ESM_FG2.wav",
+      "description": "abrupt, quick, friction, swish, sweep, flip, whip, sudden, short",
+      "seconds": 0.688,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/GAMEMisc_Source Card Tarot Deck Generic Neutral Dry Heavy Shuffle 01_ESM_FG2.wav",
+      "description": "card, game, fortune, telling, movement, slide, flip, single, deal, activate",
+      "seconds": 4.908,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/MAGAngl_Magic Light Spell Enchantment Potion Effect Tonal Bright 03_ESM_FG2.wav",
+      "description": "whimsical, shimmer, sparkle, enchant, dreamy, radiant, uplift, heal, fanfare, tonal",
+      "seconds": 5.2,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/UIAlert_Collect Scifi Futuristic Electronic Bass Burst Sweep Heavy 04_ESM_FG2.wav",
+      "description": "vibrant, shimmer, pop, unison, layered, mid, thump, riser, short",
+      "seconds": 0.31,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Halloween Game - Haunted House and Horror Audio Scare Kit/CREABeast_Creature Werewolf Growl Menacing Monstrous 06_ESM_HALG.wav",
+      "description": "designed, creature, aggressive, lycan, beast, canine, dog",
+      "seconds": 5.973,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Halloween Game - Haunted House and Horror Audio Scare Kit/DSGNEthr_Jumpscare Vocal Aggressive Whisper Harsh Distortion 02_ESM_HALG.wav",
+      "description": "sudden, tension, spooky, horror, swell, impact, intense, reverb",
+      "seconds": 3.013,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Halloween Game - Haunted House and Horror Audio Scare Kit/GORESplt_Gore Designed Transient Heavy Impact Smash 01_ESM_HALG.wav",
+      "description": "squelch, source, impact, injury, attack, blood, bone, crunchy",
+      "seconds": 1.801,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Halloween Game - Haunted House and Horror Audio Scare Kit/UIAlert_Alert Designed Transition Swell Creature Strange Alien Layered 01_ESM_HALG.wav",
+      "description": "alien swell, strange creature, eerie transition, sci-fi movement, organic morph, unsettling riser, otherworldly effect, layered",
+      "seconds": 6.138,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - HD Game Materials/ICEFric_Dry Ice High Metal Squeal Groan Bright Squeak Dissonant Short 13_ESM_HDGM.wav",
+      "description": "harsh, resonant, jarring, sustained, piercing, crisp, grating, hollow, shrill, dissonant",
+      "seconds": 3.921,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - HD Game Materials/ICEFric_Dry Ice Squeak Metal Animal Mouse Imitation Short 07_ESM_HDGM.wav",
+      "description": "harsh, resonant, jarring, sustained, piercing, crisp, grating, hollow, shrill, dissonant",
+      "seconds": 2.183,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - HD Game Materials/METLImpt_Metal Old File Impact Tap Against Tire Iron Metallic Hit 01_ESM_HDGM.wav",
+      "description": "metallic, resonant, smack, tap, impact, ring, solid, steel, percussive",
+      "seconds": 0.469,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - HD Game Materials/WOODFric_Wood Shaker Microphone Head Roll Table Alternate Grainy 05_ESM_HDGM.wav",
+      "description": "textured, round, object, smooth, friction, slide, spin, metal, container",
+      "seconds": 4.157,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MACHMech_Mechanism Counting Machine Interact Loose Container Short 01_ESM_HDLM.wav",
+      "description": "clang, click, gear, spline, metal, box, knock, industrial, handling, interaction, hollow, metallic",
+      "seconds": 0.271,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav",
+      "description": "heavy, metal, plastic, switch, trigger, electronics, action, press, touch, mechanical, bassy, percussive",
+      "seconds": 0.379,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHMisc_Tool Tape Measure Pull Retract Spring Slide Spin Long 07_ESM_HDLM.wav",
+      "description": "winding, mechanism, mechanical, stretch, movement, spring, motion, friction, winding, roller",
+      "seconds": 3.261,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/METLTonl_Item Spring Wire Impact Flick Top Clatter Light Tap Roll Handling Short 01_ESM_HDLM.wav",
+      "description": "knock, resonant, tonal, rattle, interference, dry, large, tonal, smack, clatter, metallic, percussive",
+      "seconds": 11.476,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "Epic Stock Media - Humanoid Creatures Vol 4 - Monstrous and Undead Creature Vocalization Sound Sets/CREAHmn_Designed Orc Male Attack Long Heavy Hit Charged Up 03_ESM_HC4.wav",
+      "description": "large, heavy, humanoid, creature, low, voice, combat, swing, bite, hit, throw, effort",
+      "seconds": 2.566,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Humanoid Creatures Vol 4 - Monstrous and Undead Creature Vocalization Sound Sets/CREAMnstr_Designed Sea Beast Creature Pain Intense Yell Long 04_ESM_HC4.wav",
+      "description": "cthulhu, deep, ocean, beast, large, heavy, injured, hurt, hit, distress, reaction, stabbed",
+      "seconds": 4.937,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Humanoid Creatures Vol 4 - Monstrous and Undead Creature Vocalization Sound Sets/HMNBrth_Construction Kit Male Screeching Breath Inhale Weak Squeal 05_ESM_HC4.wav",
+      "description": "nearfield, crisp, clean, vox, voice, base, air, wind, throat, respiration",
+      "seconds": 0.981,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Humanoid Creatures Vol 4 - Monstrous and Undead Creature Vocalization Sound Sets/VOXReac_Construction Kit Male Flutter Death Vocal Stuttered Long 05_ESM_HC4.wav",
+      "description": "nearfield, crisp, clean, vox, voice, base, demise, fade, defeated, killed, murder, fatality",
+      "seconds": 4.952,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Basic Transportation Sounds/AEROInt_Airplane Interior Small Plane Cruise Altitude Calm Flight 01_ESM_CPS.wav",
+      "description": "plane, jet, engine, noise, inside, cabin, walla, movement, travel, airline",
+      "seconds": 75.248,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Basic Transportation Sounds/AMBTraf_Downtown Construction Traffic Light Walla 03 Distant Beep_ESM_CPS.wav",
+      "description": "Downtown, Construction, Traffic, Sparse, Walla, Urban, City, Ambience",
+      "seconds": 120.208,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Basic Transportation Sounds/BOATMotr_Diesel Engine Boat Idle Steady Rpm Hum Motor Mic One 01_ESM_CPS.wav",
+      "description": "large, motor, boat, unmuffled, engine, loud, running, open, uncovered",
+      "seconds": 26.0,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Basic Transportation Sounds/TRNElec_Electric Train Passby 02 Long Subway Slow_ESM_CPS.wav",
+      "description": "Electric, Train, Passby, Transportation, Subway, Vehicle, Urban",
+      "seconds": 45.483,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Crowds Walla and Everyday Ambiences/AMBPubl_Cruise Ship Walla Distant Adults Children Laughing Screaming 4_ESM_CPS.wav",
+      "description": "interior, cruise ship, mall, public, space, kids in background, walla,",
+      "seconds": 140.629,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Crowds Walla and Everyday Ambiences/AMBPubl_Metro Station Entrance Hall Dings Walla Footsteps 01 Women Shopping_ESM_CPS.wav",
+      "description": "interior, crowd, group, people, walla, talking, ambience, inside, indoors",
+      "seconds": 83.653,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Crowds Walla and Everyday Ambiences/AMBWar_Paintball Match Firefight Shots Walla Nearfield Full 05_ESM_CPS.wav",
+      "description": "game, match, battle, physical, compressed, air, movement, shots, team, combat",
+      "seconds": 80.176,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Crowds Walla and Everyday Ambiences/CRWDChld_Walla Children Kids Daytime School Playing Laughing Playground 01_ESM_CPS.wav",
+      "description": "kids, childern, playing, playground, walla, conversations, school, recess, park, exterior",
+      "seconds": 147.333,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Storms Lakes Parks and Rural Nature Exteriors/AMBPark_Berlin City Humboldthain Park Strong Wind On Trees Foliage Traffic Wash 03_ESM_CPS.wav",
+      "description": "Park, Wind, Trees, Birds, Foliage, Suburban, Exterior, Ambience",
+      "seconds": 149.957,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Storms Lakes Parks and Rural Nature Exteriors/STORM_Texas Rain Thunder Initial Crash Boom Storm 01 Clap Lightning_ESM_CPS.wav",
+      "description": "storm, wind, quiet, street, little, traffic, heavy, downpour, rumble, lightening",
+      "seconds": 132.005,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Storms Lakes Parks and Rural Nature Exteriors/WATRLap_Summer Tennessee Lake Dock Water Ripples Wake Wave Gentle 05 Distant_ESM_CPS.wav",
+      "description": "lake, water, lap, splash, splat, suction, light, crash, spill, cam, EXT, gurgle, wet, slimy, next to boat dock,",
+      "seconds": 102.976,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Urban Life Exteriors/AMBCnst_Baltimore Construction Streetside Heavy Machinery And Jakchammers 01_ESM_CPS.wav",
+      "description": "Consturction, Ambience, Urban, Metal, Equipment, Building, Jackhammer",
+      "seconds": 109.835,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Urban Life Exteriors/AMBTown_City Courtyard Calm Street Distant Traffic Children Playing 03_ESM_CPS.wav",
+      "description": "city, street, people, walking, footsteps, walla, speech, traffic, outside",
+      "seconds": 172.459,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Urban Life Exteriors/AMBUrbn_City Nightlife Ext Street In Reutersplatz German Walla Traffic 01_ESM_CPS.wav",
+      "description": "Night, City, German, Walla, Traffic, Foreign, Ambience, Urban",
+      "seconds": 165.248,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Shooter Game Announcer Voice/VOXFutz_Announcer Vocal Male Wet Countdown Ten Kills Remaining 03_ESM_SGAV.wav",
+      "description": "wet, processed, deep, spoken word, dialouge, game character, announcer, FPS, shooter, god voice, NPC, Solider, Commando",
+      "seconds": 2.115,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Shooter Game Announcer Voice/VOXFutz_Announcer Vocal Male Wet Special Kill Laugh Monster Kill Hahaha 02_ESM_SGAV.wav",
+      "description": "wet, processed, deep, spoken word, dialouge, game character, announcer, FPS, shooter, god voice, NPC, Solider, Commando",
+      "seconds": 3.704,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Shooter Game Announcer Voice/VOXMale_Announcer Vocal Male Dry Game Statement Objective Completed 04_ESM_SGAV.wav",
+      "description": "dry, clean, crispy, spoken word, dialouge, game character, announcer, FPS, shooter, god voice, NPC, Solider, Commando",
+      "seconds": 1.269,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Shooter Game Announcer Voice/VOXMale_Announcer Vocal Male Dry Special Kill Headshot 01_ESM_SGAV.wav",
+      "description": "dry, clean, crispy, spoken word, dialouge, game character, announcer, FPS, shooter, god voice, NPC, Solider, Commando",
+      "seconds": 1.154,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Strange Game Ambient Loops 3/AMBRoom_Factory Loop Heavy Machinery Tonal Roomtone Dark Wind Vent_ESM_SGA3.wav",
+      "description": "enviornmental, ambience, scene, setting, industrial, designed, dark, tension",
+      "seconds": 58.819,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Strange Game Ambient Loops 3/DSGNSynth_Dark Loop Mystic Forest Tonal Steady Synth_ESM_SGA3.wav",
+      "description": "enviornmental, ambience, scene, setting, ominous, dissonant, drone, hypnotic",
+      "seconds": 59.657,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Strange Game Ambient Loops 3/DSGNSynth_Scifi Loop Ship Reactor Synth Layer Layered Saw Buzz_ESM_SGA3.wav",
+      "description": "enviornmental, ambience, scene, setting, futuristic, whispy, mechanism, spin, core",
+      "seconds": 59.974,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Strange Game Ambient Loops 3/MAGShim_Shimmer Loop Small Bell Metal Taps_ESM_SGA3.wav",
+      "description": "enviornmental, ambience, scene, setting, shine, metallic, bright, high, airy",
+      "seconds": 44.498,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Synthesized Nature Loops and Sounds/AMBTrop_Loop Ambience Jungle Night Humid Birds Bug Chirps 01_ESM_SNLS.wav",
+      "description": "wet, dense, overgrown, fuzzy, crisp, eerie, nature, subtle, calm, insects",
+      "seconds": 41.574,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Synthesized Nature Loops and Sounds/ANMLAmph_Animal Frog Echo Short Squished Frequency Formant 03_ESM_SNLS.wav",
+      "description": "bubbly, wobbly, guttural, saturated, tremolo, quick, delay, mid, wet, croak",
+      "seconds": 2.316,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Synthesized Nature Loops and Sounds/FIREBurn_Loop Elements Fire Crackling Crunchy Flame Burn 03_ESM_SNLS.wav",
+      "description": "smoke, volcanic, aftermath, sizzling, roaring, scorch, blaze, campfire",
+      "seconds": 12.35,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Synthesized Nature Loops and Sounds/WINDInt_Loop Weather Wind Whipping Constricted Flow Turbulent 01_ESM_SNLS.wav",
+      "description": "fierce, whirl, muffled, chaotic, gust, spin, howling, modulated, filter, resonance",
+      "seconds": 7.524,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Tower Defense Game/DSGNStngr_Action Deploy Units Sword Slice Special Move Layered Swish 04_ESM_TDG.wav",
+      "description": "percussive, clang, crisp, dynamic, complex, softened, impact, whoosh, tactical, sharp",
+      "seconds": 2.454,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Tower Defense Game/ICEBrk_Skill Freeze Whoosh Break Impact Layered Movement Shatter 03_ESM_TDG.wav",
+      "description": "powerful, deep, wind, air, swell, muffled, glassy, light, impact, shift",
+      "seconds": 2.509,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Tower Defense Game/ROBTMvmt_Tower Deploy Hitech Robot Motor Dark Thump Servo Whine 04_ESM_TDG.wav",
+      "description": "mechanical, hydraulic, crisp, lumbering, precise, clear, weighty, mechanized, robotic",
+      "seconds": 1.036,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Epic Stock Media - Tower Defense Game/WOODImpt_Hit Blood Spill Splat Wood Impact Light Hit Squelch Small Thump 03_ESM_TDG.wav",
+      "description": "gory, wet, sticky, sharp, thud, crunch, fleshy, stomp, heavy, liquid, splash",
+      "seconds": 0.332,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Federico Soler - Effective Trailer Alarms Vol. 2/EffectiveTrailer_Alarms_Vol2_HalfNotes_003.wav",
+      "description": "alarm, alarmed, alarms, alert, annoying, anxiety, attack, attention, breach, burglar, buzz, buzzing, caution, chaos, danger, detector, disaster, emergency, evacuate, evacuation, fire, fire alarm, game, industrial, intruder, loud, military, panic, red alert",
+      "seconds": 30.0,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Federico Soler - Effective Trailer Alarms Vol. 2/EffectiveTrailer_Alarms_Vol2_QuarterNotes_013.wav",
+      "description": "alarm, alarmed, alarms, alert, annoying, anxiety, attack, attention, breach, burglar, buzz, buzzing, caution, chaos, danger, detector, disaster, emergency, evacuate, evacuation, fire, fire alarm, game, industrial, intruder, loud, military, panic, red alert",
+      "seconds": 30.0,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Federico Soler - Effective Trailer Alarms Vol. 2/EffectiveTrailer_Alarms_Vol2_WholeNotes_011.wav",
+      "description": "alarm, alarmed, alarms, alert, annoying, anxiety, attack, attention, breach, burglar, buzz, buzzing, caution, chaos, danger, detector, disaster, emergency, evacuate, evacuation, fire, fire alarm, game, industrial, intruder, loud, military, panic, red alert",
+      "seconds": 30.0,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Federico Soler - Effective Trailer Booms Vol. 2/EffectiveTrailer_Booms_Vol2_011.wav",
+      "description": "boom, sub, impact, low, lowend, cinematic, bass, hit, film, dark, action, dramatic, horror, powerful, tension, epic, trailerCubase",
+      "seconds": 17.271,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Federico Soler - Effective Trailer Booms Vol. 2/EffectiveTrailer_Booms_Vol2_075.wav",
+      "description": "boom, sub, impact, low, lowend, cinematic, bass, hit, film, dark, action, dramatic, horror, powerful, tension, epic, trailerCubase",
+      "seconds": 15.46,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Federico Soler - Effective Trailer Booms Vol. 2/EffectiveTrailer_Booms_Vol2_214.wav",
+      "description": "boom, sub, impact, low, lowend, cinematic, bass, hit, film, dark, action, dramatic, horror, powerful, tension, epic, trailerCubase",
+      "seconds": 16.267,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECArc_ArcDesign15_InMotionAudio_Arc.wav",
+      "description": "ELECArc, Electricity, Electric, Elec, Electromagnetic, Electronic, Arc, Arcing, Jacobs ladder, Plasma, Plasma Ball, Plasma Globe, Plasma Lamp, Tesla, Tesla Ball, High Voltage, Voltage, Spark, Sparks, Zap, Zaps, Zapped, Static, Glitch, Crackle, Tase, Taser,",
+      "seconds": 1.04,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECArc_ArcPowerUpDesign04_InMotionAudio_Arc.wav",
+      "description": "ELECArc, Electricity, Electric, Elec, Electromagnetic, Electronic, Arc, Arcing, Jacobs ladder, Plasma, Plasma Ball, Plasma Globe, Plasma Lamp, Tesla, Tesla Ball, High Voltage, Voltage, Spark, Sparks, Zap, Zaps, Zapped, Static, Glitch, Crackle, Tase, Taser,",
+      "seconds": 7.484,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECBuzz_Buzz27_InMotionAudio_Arc.wav",
+      "description": "ELECBuzz, Electricity, Electric, Elec, Electromagnetic, Electronic, High Voltage, Voltage, Buzz, Buzzing, Hum, Hums, Humming, Ground Hum, Energy, Interference, Digital, Digital Elements, Technology, Computer, Experimental, Noise, Science Fiction, Sci-Fi, A",
+      "seconds": 9.8,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Back Garden Storm/STORM_StormAmbience11_InMotionAudio_BackGardenStorm.wav",
+      "description": "Storm, Storms, AMB, Storm Ambience, Ambience, Wind, Windy, Wind Rumble, Rumble, Gust, Strong Gust, Heavy Wind, Blustery, Gale, Rain, Raining, Rustle, Tree, Tree’s, Bushes, UK, United Kingdom, British, British Isles, Britain, Great Britain, England, Engli",
+      "seconds": 205.38,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Back Garden Storm/STORM_StormAmbience13_InMotionAudio_BackGardenStorm.wav",
+      "description": "Storm, Storms, AMB, Storm Ambience, Ambience, Wind, Windy, Wind Rumble, Rumble, Gust, Strong Gust, Heavy Wind, Blustery, Gale, Rain, Raining, Rustle, Tree, Tree’s, Bushes, UK, United Kingdom, British, British Isles, Britain, Great Britain, England, Engli",
+      "seconds": 150.64,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Car Interior Driving Ambience/VEHCar_TownDrivingAmbience06_InMotionAudio_CarInteriorDrivingAmbience.wav",
+      "description": "VEHCar, Vehicle, Vehicles, Car, Cars, Transport, Transportation, Driving, Drive, Driver, Engine, Car Engine, Machine, Machines, Rev,  AMB, Ambience, Interior, Car Interior, Car Ambience.",
+      "seconds": 51.462,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Car Interior Driving Ambience/VEHCar_TownDrivingAmbience13_InMotionAudio_CarInteriorDrivingAmbience.wav",
+      "description": "VEHCar, Vehicle, Vehicles, Car, Cars, Transport, Transportation, Driving, Drive, Driver, Engine, Car Engine, Machine, Machines, Rev,  AMB, Ambience, Interior, Car Interior, Car Ambience.",
+      "seconds": 55.978,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Chimney Wind/WINDInt_ChimneyWind05_InMotionAudio_ChimneyWind.wav",
+      "description": "WINDInt, Wind, Windy, Wind Rumble, Rumble, Gust, Strong Gust, Heavy Wind, Blustery, Gale, Blow, Internal, Interior, Chimney, Chimney Wind, Chimney Stack, Stack, Chimney Pot, Pot, Flue, Fireplace, Storm, Storms, AMB, Storm Ambience, Ambience.",
+      "seconds": 115.283,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Christmas Cracker/OBJMisc_Cracker_Grab02_InMotionAudio_ChristmasCracker.wav",
+      "description": "OBJMisc, Object, Objects, Misc, Cracker, Christmas Cracker, Christmas, Xmas, Festive, Cardboard, Foley, Grab, Grasp, Snatch, Touch.",
+      "seconds": 0.706,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Christmas Cracker/OBJMisc_CrackerHatMovement16_InMotionAudio_ChristmasCracker.wav",
+      "description": "OBJMisc, Object, Objects, Misc, Cracker, Christmas Cracker, Christmas, Xmas, Festive, Hat, Christmas Hat, Tissue Crown, Paper Crown, Paper, Tissue, Tissue Paper, Foley, Movement, Rustle.",
+      "seconds": 1.656,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Christmas Cracker/OBJMisc_CrackerPull_WithBang_Effected_03_InMotionAudio_ChristmasCracker.wav",
+      "description": "OBJMisc, Object, Objects, Misc, Cracker, Christmas Cracker, Christmas, Xmas, Festive, Cardboard, Foley, Movement, Rustle, Pull, Crack, Snap, Bang, Rip, Tear.",
+      "seconds": 0.53,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_ClothMovement24_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 2.275,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_ClothMovement29_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 1.501,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_SinglePats04_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 0.572,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Grand Central Station/AMBTran_MainHallAmbience03B_InMotionAudio_GrandCentralStation.wav",
+      "description": "AMBTran, Ambience, AMB, Transportation, Train, Train Station, USA Train Station, Public Place, Public Place Ambience, Environment, Background, Interior, Indoor, Room, Room Tone, Airy, Air, Dead Air, Quiet Air, White Noise, Announcement, Tannoy, Commuter, C",
+      "seconds": 194.32,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Grand Central Station/VOXFutz_TannoyAnnouncement_MainHall08_InMotionAudio_GrandCentralStation.wav",
+      "description": "VOXFutz, Futz, Vox, Voice, Announcement, Annouce, P.A. Speakers, Speaker, Tannoy, Public Address, Talking, Accents, Transportation, Train, Train Station, USA Train Station, Public Place, New York, USA, America, United States.",
+      "seconds": 13.52,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Instrument Case/OBJLug_Case_Closed06_InMotionAudio_InstrumentCase.wav",
+      "description": "OBJLug, Object, Objects, Luggage, Suitcase, Bag, Baggage, Case, Hard Case, Hard Shell, Instrument Case, Instrument, Music, Case, Carry Case, Equipment Case, Storage Case, Flight Case, One Hit, Hit, Impact, Bang, Slam, Close, Closed, Shut.",
+      "seconds": 0.984,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Instrument Case/OBJLug_CaseDown_Concrete12_InMotionAudio_InstrumentCase.wav",
+      "description": "OBJLug, Object, Objects, Luggage, Suitcase, Bag, Baggage, Case, Hard Case, Hard Shell, Instrument Case, Instrument, Music, Case, Carry Case, Equipment Case, Storage Case, Flight Case, One Hit, Hit, Impact, Bang, Slam, Drop, Dropped, Dropping, Put Down, Dow",
+      "seconds": 1.467,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Instrument Case/OBJLug_Handle_Movement15_InMotionAudio_InstrumentCase.wav",
+      "description": "OBJLug, Object, Objects, Luggage, Suitcase, Bag, Baggage, Case, Hard Case, Hard Shell, Instrument Case, Instrument, Music, Case, Carry Case, Equipment Case, Storage Case, Flight Case, Handle, Handles, One Hit, Hit, Impact, Bang, Slam, Knock, Knocked, Drop,",
+      "seconds": 1.036,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Medical Thermometer/BEEPMed_Thermometer_Beep11_InMotionAudio_MedicalThermometer.wav",
+      "description": "BEEPMed, Beep, Beeps, Beeped, Bleep, Bleeps, Bleeped, Tone, Med, Medical, Medical Equipment, Equipment, Medical Devices, Devices, Thermometer, Medical Thermometer, Heat Probe, Temp, Temperature, Warning, Alert, Alarm.",
+      "seconds": 0.239,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Medical Thermometer/ELECEmf_Thermometer02_InMotionAudio_MedicalThermometer.wav",
+      "description": "ELECEmf, Electromagnetic, Electronic, Electricity, Electric, Energy, Interference, Digital, Digital Elements, Technology, Computer, Experimental, Noise, Voltage, Interference, Static, Buzz, Buzzing, Buzzes, Glitch, Hiss, Crackle, Screeching.",
+      "seconds": 1.679,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Medical Thermometer/MACHMed_Thermometer_ButtonPress_Beep03_InMotionAudio_MedicalThermometer.wav",
+      "description": "MACHMed, Machine, Medical Machine, Med, Medical, Medical Equipment, Equipment, Medical Devices, Devices, Thermometer, Medical Thermometer, Heat Probe, Temp, Temperature, Button, Buttons, Click, Press, Pressed, Push, Pushed, Beep, Beeps, Beeped, Bleep, Blee",
+      "seconds": 1.354,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Saxophone/MUSCInst_Case_SaxPlace09_InMotionAudio_Saxophone.wav",
+      "description": "MUSCInst, Instrument, Instruments, Sax, Saxophone, Woodwind, Woodwind Instrument, Place, Placed, Hit, Bang, Move, Movement, Foley, Hit, Bang, Copper, Metal, Metal Alloy, Alloy.",
+      "seconds": 0.5,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Saxophone/MUSCInst_Grabandrelease30_InMotionAudio_Saxophone.wav",
+      "description": "MUSCInst, Instrument, Instruments, Sax, Saxophone, Woodwind, Woodwind Instrument, Grab, Grabs, Grabbed, Release, Released, One Hit, Hit, Touch, Touched, Foley, Foley Touch, Brass, Copper, Metal, Metal Alloy, Alloy.",
+      "seconds": 1.418,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Saxophone/MUSCInst_KeyPress64_InMotionAudio_Saxophone.wav",
+      "description": "MUSCInst, Instrument, Instruments, Sax, Saxophone, Woodwind, Woodwind Instrument, Button, Switch, Key, Key Press, Press, Pressed, Push, Pushed, Key Activation, Key Release, Release, Released, Brass, Copper, Metal, Metal Alloy, Alloy.",
+      "seconds": 0.459,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Scratch Card/OBJMisc_ScratchCard_CardMovement_09_InMotionAudio_ScratchCard.wav",
+      "description": "OBJMisc, Object, Objects, Scratch Card, Scratch, Scratch Off, Instant Win Card, Lotto, Lottery, Card, Cardboard, Card Movement, Movement, Touch, Rustling, Crinkling, Crumpling.",
+      "seconds": 2.59,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Scratch Card/OBJMisc_ScratchCard_CoinTapScratch_01_InMotionAudio_ScratchCard.wav",
+      "description": "OBJMisc, Object, Objects, Scratch Card, Scratch, Scratch Off, Scrape, Instant Win Card, Lotto, Lottery, Card, Cardboard, Taps, Coin, Coin Tap.",
+      "seconds": 1.137,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Scratch Card/OBJMisc_ScratchCard_SurfaceWipe_04_InMotionAudio_ScratchCard.wav",
+      "description": "OBJMisc, Object, Objects, Scratch Card, Scratch, Scratch Off, Scrape, Instant Win Card, Lotto, Lottery, Card, Cardboard, Wipe, Wiped, Dust, Clean, Remove.",
+      "seconds": 1.076,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Sinister Textures 4/DSGNErie_NoiseBoxHit_10_InMotionAudio_SinisterTextures4.wav",
+      "description": "DSGNErie, Design, Designed, Eerie, Haunted, Haunting, Horror, Evil, Nightmare, Mysterious, Thriller, Suspense, Fear, Scary, Dread, Terror, Creepy, Ominous, Noise Box, Noise, Perc, Percussion, Hit, Strike, Impact, Pluck, Plucked, Pling, Ding, Resonate, Ring",
+      "seconds": 15.057,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Sinister Textures 4/DSGNErie_NoiseBoxHit_36_InMotionAudio_SinisterTextures4.wav",
+      "description": "DSGNErie, Design, Designed, Eerie, Haunted, Haunting, Horror, Evil, Nightmare, Mysterious, Thriller, Suspense, Fear, Scary, Dread, Terror, Creepy, Ominous, Noise Box, Noise, Perc, Percussion, Hit, Strike, Impact, Pluck, Plucked, Pling, Ding, Resonate, Ring",
+      "seconds": 13.894,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Sinister Textures 5/GOREMisc_Cladding_NailScratch19_InMotionAudio_SinisterTextures5.wav",
+      "description": "GOREMisc, Gore, Scratch, Scratched, Scrape, Grating, Gouge, Drag, Claw, Nail, Nails, Finger Nails, Finger, Tear, Rip, Shred, Surface, Flooring, Floor, Cladding, Eerie, Haunted, Haunting, Horror, Evil, Nightmare, Mysterious, Fear, Scary, Dread, Terror, Cree",
+      "seconds": 0.961,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Sinister Textures 5/GOREMisc_Cladding_Scratch06_InMotionAudio_SinisterTextures5.wav",
+      "description": "GOREMisc, Gore, Scratch, Scratched, Scrape, Grating, Gouge, Drag, Claw, Nail, Nails, Finger Nails, Finger, Surface, Flooring, Floor, Cladding, Eerie, Haunted, Haunting, Horror, Evil, Nightmare, Mysterious, Fear, Scary, Dread, Terror, Creepy, Ominous.",
+      "seconds": 1.647,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Sinister Textures 5/GOREMisc_Concrete_MetalPipe02_InMotionAudio_SinisterTextures5.wav",
+      "description": "GOREMisc, Gore, Scratch, Scratched, Scrape, Grating, Gouge, Drag, Claw, Nail, Nails, Finger Nails, Finger, Surface, Flooring, Floor, Concrete, Asphalt, Metal, Metals, Metal Pipe, Eerie, Haunted, Haunting, Horror, Evil, Nightmare, Mysterious, Fear, Scary, D",
+      "seconds": 0.44,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - The Commute/AMBTran_TrainInterior09_InMotionAudio_UKTrainInteriorAmbience.wav",
+      "description": "AMBTran, AMB, Ambience, Environment, Background, Interior, Indoor, Train Ambience, Train Interior Ambience, UK Train Interior Ambience, Train, Trains, Transportation, Transport, Train Arrives, Arrival, Arriving, Train Departs, Depart, Departing, Boarding,",
+      "seconds": 64.182,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - The Commute/AMBTran_TrainInterior12_InMotionAudio_UKTrainInteriorAmbience.wav",
+      "description": "AMBTran, AMB, Ambience, Environment, Background, Interior, Indoor, Train Ambience, Train Interior Ambience, UK Train Interior Ambience, Train, Trains, Transportation, Transport, Train Arrives, Arrival, Arriving, Train Departs, Depart, Departing, Boarding,",
+      "seconds": 101.578,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - The Death Whistle/CREAEthr_Aztec Death Whistle Distortion_02_IMA_Death Whistle Samples.wav",
+      "description": "Scream, Crackle, Breath, Horror, Dark, Ghost, Wraith, Cry, Death, Haunted, Haunting, Evil, Nightmare, Mysterious, Thriller, Suspense, Tension, Fear, Scary, Eerie, Dread, Terror, Creepy, Ominous, Paranormal, Supernatural, Post Apocalyptic, Shrill, Intensity",
+      "seconds": 1.721,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - The Death Whistle/CREAEthr_Aztec Death Whistle Drone_05_IMA_Death Whistle Samples.wav",
+      "description": "Scream, Crackle, Breath, Horror, Dark, Ghost, Wraith, Cry, Death, Haunted, Haunting, Evil, Nightmare, Mysterious, Thriller, Suspense, Tension, Fear, Scary, Eerie, Dread, Terror, Creepy, Ominous, Paranormal, Supernatural, Post Apocalyptic, Aztec Death Whist",
+      "seconds": 19.333,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - The Death Whistle/CREAEthr_Aztec Death Whistle DryPitch12_IMA_Death Whistle Samples.wav",
+      "description": "Scream, Crackle, Breath, Horror, Dark, Ghost, Wraith, Cry, Death, Haunted, Haunting, Evil, Nightmare, Mysterious, Thriller, Suspense, Tension, Fear, Scary, Eerie, Dread, Terror, Creepy, Ominous, Paranormal, Supernatural, Post Apocalyptic, Shrill, Intensity",
+      "seconds": 1.607,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - USA Hotel/DOORMetl_StairWellDoor01_InMotionAudio_USAHotel.wav",
+      "description": "DOORMetl, Door, StairWell Door, Heavy, Metal, Metal Door, Exit, Exit Door, Emergency Door, Door Open, Open, Opened, Door Close, Close, Closed, Squeak, Squeaky, Hinge, Door Hinge, Hinge Squeak.",
+      "seconds": 6.54,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - USA Hotel/MECHClik_USALightSwitch_On05_InMotionAudio_USAHotel.wav",
+      "description": "MECHClik, Mechanism, Mechanical, Click, Clack, Switch, Light, Light Switch, On, Off, USA, America, United States.",
+      "seconds": 0.257,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - USA Hotel/WATRPlmb_ToiletFlush01_InMotionAudio_USAHotel.wav",
+      "description": "WATRPlmb, Water, H20, Hydro, Aqua, Fluid, Liquid, Plumbing, Toilet, Toilets, USA Toilet, Toilet Flush, Toilet Fill, Bathroom, Restroom, Flowing, Flow, Fast Flow, Fast, Splashes, Splash, Splosh, Sploshing, Drip, Drips, Drain, Draining, Fill, Filling, Moveme",
+      "seconds": 9.897,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Velcro/OBJTape_VelcroRip29_InMotionAudio_Velcro.wav",
+      "description": "OBJTape, Object, Tape, Tapes, Taped, Velcro, Crackle, Crackled, Rip, Ripped, Tear, Scrape, Scraped, Static.",
+      "seconds": 0.406,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Velcro/OBJTape_VelcroSqueeze01_InMotionAudio_Velcro.wav",
+      "description": "OBJTape, Object, Tape, Tapes, Taped, Velcro, Crackle, Crackled, Rip, Ripped, Tear, Scrape, Scraped, Static.",
+      "seconds": 6.673,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Washing Basket Foley/FOLYMisc_WashingBasket_Pats&Movement12_InMotionAudio_WashingBasketFoley.wav",
+      "description": "FOLYMisc, Foley, Miscellaneous, Miscellaneous Foley, Washing, Washing Basket, Basket, Cloth, Fabric, Textile, Material, Materials, Cotton, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 5.122,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "InMotionAudio - Washing Basket Foley/FOLYMisc_WashingBasket_Pats&Movement43_InMotionAudio_WashingBasketFoley.wav",
+      "description": "FOLYMisc, Foley, Miscellaneous, Miscellaneous Foley, Washing, Washing Basket, Basket, Cloth, Fabric, Textile, Material, Materials, Cotton, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 1.718,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Ivo Vicic - Campfire - Bonfire FX/24 Campfire, Dropping Fresh Pine Branches in Fire, Crackling, Sizzling Strong, Close 02.wav",
+      "description": "Fire Experiments - Campfire, Putting Fresh Pine Branches in Fire, Sizzling, 2m Away\r\nRec: NOS stereo; LOM Usi (Rycote BBG windshieldx2), Tascam DR-05X",
+      "seconds": 120.576,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Ivo Vicic - Campfire - Bonfire FX/42 Campfire, Putting Out Fire, Water from Bottle, Variation, Close.wav",
+      "description": "Fire Experiments - Campfire, Putting Out Fire, Watter from Bottle, Variation, Close\r\nRec: Sennheiser MKH 40/30, Rycote suspension, windjammer, Triton tripod, Mogami cables, Sound Devices 744T, MS stereo",
+      "seconds": 30.891,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Ivo Vicic - Campfire FX - Ambisonic/Camp fire, crackling, putting oil in fire, close, night_B-format, Ambix.wav",
+      "description": "Camp fire, crackling, putting oil in fire, close, night_B-format, Ambix\r\n\r\nRec: Sennheiser AMBEO, Rycote blimp (windjammer on), Sound Devices 744T recorder-all ch. matched with noise generator. Render: Reaper",
+      "seconds": 76.522,
+      "channels": 4,
+      "rate": 96000
+    },
+    {
+      "path": "Ivo Vicic - Church Bells/04 Church Bells, Near Distance, In Church Tower-3 Different Bell 02.wav",
+      "description": "Church Bells (early 19th century)_near distance-in church tower. 3x Bells stationary-bells with pneumatic/electric hammer device.\r\nRec: AKG C391B/CK94, Rycote blimp, Sound Devices MixPRe; tripod-isolated with rubber mat, Maudio Microtrack II, MS stereo",
+      "seconds": 70.147,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Ivo Vicic - Church Bells/25 Church Bells, Far Distance, Rural Soundscape Distant, Hills Ridge, Spring 02.wav",
+      "description": "Church Bells (mid 19 century), Far Distance, Rural Soundscape Distant, Hills Ridge, Spring.\r\nRec: Telinga DAT stereo;Sound Devices-Mix pre; Sony PCM-M10",
+      "seconds": 90.58,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Ivo Vicic - Fireworks FX/02 Fireworks_ explosions_dense_whistles.wav",
+      "description": "Fireworks_ explosions_dense_whistles.\r\nRec: Sennheiser MKH 40/30, Rycote suspension, windjammer,  tripod, Mogami cables, Sound Devices 744T, MS stereo \r\nRec by Ivo Vicic",
+      "seconds": 97.492,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Ivo Vicic - Fireworks FX/13 Fireworks_powerful explosions_multiples in a row_near.wav",
+      "description": "Fireworks_powerful explosions_multiples in a row_near.\r\nRec: NOS stereo; LOM Usi (Rycote BBG windshieldx2), Sony PCM-M10, \r\nRec by Ivo Vicic",
+      "seconds": 24.193,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Jake Fielding - British Walla and Crowd/CRWDWalla_Pub Walla Atmos, Restaurant, Liverpool, Scouse,_Jake Fielding_11.wav",
+      "description": "Pub Walla Atmos, Restaurant, Liverpool, Scouse, Crowd, Bar",
+      "seconds": 101.76,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Jake Fielding - British Walla and Crowd/CRWDWalla_Pub Walla, Crowd, Bar, _Jake Fielding_British Walla and Crowd_14.wav",
+      "description": "Pub Walla, Crowd, Bar,",
+      "seconds": 117.658,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Jake Fielding - Cinematic Horn Braams/DSGNBram____Cinematic Horn Braam, Epic, Cinematic, Dark, Instrument, Huge-32.wav",
+      "description": "Cinematic Horn Braam, Epic, Cinematic, Dark, Instrument, Huge",
+      "seconds": 16.498,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Jake Fielding - Cinematic Horn Braams/DSGNBram____Cinematic Horn Braam, Epic, Cinematic, Dark, Instrument, Huge-67.wav",
+      "description": "Cinematic Horn Braam, Epic, Cinematic, Dark, Instrument, Huge",
+      "seconds": 13.689,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Jake Fielding - Fridge Hums Vol.2/MACHAppl_Deep Fridge Hum, Buzz, Electric Tone, Deep_Jake Fielding_Fridge Hums Pt2.wav",
+      "description": "Deep Fridge Hum, Buzz, Electric Tone, Deep Rumble, Domestic, Appliance",
+      "seconds": 266.1,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "Jake Fielding - Fridge Hums Vol.2/MACHAppl_Rhythmic Electric Fridge Hum, Buzz, Static,_Jake Fielding_Fridge Hums Pt2.wav",
+      "description": "Rhythmic Electric Fridge Hum, Buzz, Static, Domestic, Appliance",
+      "seconds": 114.68,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Jake Fielding - Interior Wind Rain and Storms/HAIL_Hail on Door Window, UVPC_JF_INT Storm.wav",
+      "description": "Hail on Door Window, UVPC",
+      "seconds": 65.98,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Jake Fielding - Interior Wind Rain and Storms/RAINInt_Heavy Rain on Window,  Constant _JF_INT Storm.wav",
+      "description": "Heavy Rain on Window, Constant",
+      "seconds": 30.72,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Jake Fielding - Interior Wind Rain and Storms/THUN_Interior Thunder Rumble_JF_INT Storm_01.wav",
+      "description": "Interior Thunder Rumble",
+      "seconds": 18.624,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Just Sound Effects - Highlands of Norway/AMBSwmp_Meadow Pipits calling many Insects humming Wind blowing through Grass_JSE_HoN_Stereo.wav",
+      "description": "norway, scandinavia, nature, highlands, alpine, plateau, mountains, tundra, swamp, wetland, marsh, bog, wind, calm, meadow pipit, bird, anthus pratensis, insects, flies, humming, buzzing",
+      "seconds": 86.496,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Just Sound Effects - Highlands of Norway/WATRLap_Small Waves sloshing onto Rock Slabs at huge Glacial Lake _JSE_HoN_Quad.wav",
+      "description": "norway, scandinavia, nature, highlands, alpine, plateau, mountains, water, glacial lake, pond, waves, lapping, rippling, shore",
+      "seconds": 91.955,
+      "channels": 4,
+      "rate": 96000
+    },
+    {
+      "path": "Just Sound Effects - Rocky Coast of Norway/WATRWave_Medium Waves at Pebble Beach_JSE_RCoN_Stereo.wav",
+      "description": "ocean waves, distant, lapping, offshore, water, sea, ambience, natural soundscape, Rocky Coast of Norway, immersive, coastal, nature, pebbles",
+      "seconds": 187.58,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Just Sound Effects - Rocky Coast of Norway/WATRWave_Soft Waves Cliffs_JSE_RCoN_Stereo.wav",
+      "description": "ocean waves, distant, lapping, offshore, water, sea, ambience, natural soundscape, Rocky Coast of Norway, immersive, coastal, nature, soft, gentle",
+      "seconds": 243.375,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Bars & Restaurants Ambience/SBbra_Bar E 001.wav",
+      "description": "Busy cafe at lunch with lots of conversations happening and bar counter sound effects. Faint radio playing a variety talk show in the background",
+      "seconds": 623.0,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Bars & Restaurants Ambience/SBbra_Shopping Mall Food Court B 001.wav",
+      "description": "Medium-sized shopping mall food court with conversations happening all around, distant kitchen and cutlery sound effects. Very echoey",
+      "seconds": 679.874,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Fireworks Ambience/SBfa_Distant Fireworks 005.wav",
+      "description": "New Year's Eve celebrations with very distant fireworks. Medium take with faint people screaming in the background sporadically",
+      "seconds": 286.823,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Fireworks Ambience/SBfa_Fireworks 001.wav",
+      "description": "Constant stream of fireworks in close proximity",
+      "seconds": 44.907,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Music Boxes/SBmb_Music Box A 013.wav",
+      "description": "Single note from a small manual music box",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "Sonic Bat - Music Boxes/SBmb_Music Box B 028.wav",
+      "description": "Single note from a very old music box, creating occasional resonances on its wooden structure",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "Sonic Bat - Music Boxes/SBmb_Music Box C 059.wav",
+      "description": "Single note from a music box",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "Sonic Bat - Music Boxes/SBmb_Music Box C Wind Up 006.wav",
+      "description": "Wind up sound from a music box's key mechanism",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "Sonic Bat - Stormy Night Ambience/SBsna_City Block Square Storm 003.wav",
+      "description": "Short downpour take with wind gusts and distant thunders",
+      "seconds": 122.5,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Swimming Pool Ambience/SBspa_Water Polo Feminine League Match Presentation 001.wav",
+      "description": "Speaker presenting the teams and referees of a women's water polo match with clapping",
+      "seconds": 247.75,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Swimming Pool Ambience/SBspa_Water Polo Masculine League Break 001.wav",
+      "description": "Short take of a time-out on a men's water polo match",
+      "seconds": 110.377,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Vintage Radio/SBvr_AM EQ Sweeping 002.wav",
+      "description": "Long take of a line-in recording of a vintage radio switching between AM frequencies, with equalizer boosts and reductions",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "Sonic Bat - Vintage Radio/SBvr_Mode Select Wheel 006.wav",
+      "description": "Clicking sounds from mode selection wheels on the radio",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "Sonic Bat - Vintage Radio/SBvr_Power Button 003.wav",
+      "description": "Swithing power button on and off",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "Sonic Bat - Volleyball Match Ambience/SBvma_Feminine League Match 017.wav",
+      "description": "Short take of a women's volleyball match with speaker talking, crowd cheering and clapping; players incentivizing and cheering their team mates with very little background music",
+      "seconds": 169.25,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonic Bat - Volleyball Match Ambience/SBvma_Masculine Regional Match 005.wav",
+      "description": "Long take of a men's volleyball match with speaker talking, crowd cheering, clapping; players incentivizing and cheering their team mates",
+      "seconds": 388.624,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Sonik Sound Library - Spanish Crowds/CRWDCheer_Small Club, 50 People, Crowd, Spanish, Cheering and Applause-Surround_KSL_KS015.wav",
+      "description": "Small Club, 50 People, Crowd, Spanish, Cheering and Applause-Surround",
+      "seconds": 26.902,
+      "channels": 6,
+      "rate": 48000
+    },
+    {
+      "path": "Sonik Sound Library - Spanish Crowds/CRWDWalla_Crowd, Walla, Movement, 30 People Working Film Crew, Preparing a Movie Set in a Warehouse, Spanish Hum of Voice, Decor Mount, Ladders, Warning Alarm, Light Contruction-Stereo_KSL_KS015.wav",
+      "description": "Crowd, Walla, Movement, 30 People Working Film Crew, Preparing a Movie Set in a Warehouse, Spanish Hum of Voice, Decor Mount, Ladders, Warning Alarm, Light Contruction-Stereo",
+      "seconds": 298.52,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Sonik Sound Library - Spanish Wallas/CRWDWalla_Crowd, Walla, Dense Immersive Group of Adults, After or Befor a Show, Exterior, Spanish-Stereo_KSL_KS014.wav",
+      "description": "Crowd, Walla, Dense Immersive Group of Adults, After or Befor a Show, Exterior, Spanish-Stereo",
+      "seconds": 67.811,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Sonik Sound Library - Spanish Wallas/CRWDWalla_Dinner Party Crowd in Terrace, Walla, Toast with Pomada, Mixed Group of Adults, Men and Women, Spanish, Catalan Language, Menorcan Language-Atmos_KSL_KS014.wav",
+      "description": "Dinner Party Crowd in Terrace, Walla, Toast with Pomada, Mixed Group of Adults, Men and Women, Spanish, Catalan Language, Menorcan Language-Atmos",
+      "seconds": 77.313,
+      "channels": 10,
+      "rate": 48000
+    },
+    {
+      "path": "Sonik Sound Library - Toy Quadcopter/AERORadio_Quadcopter, Toy, Flying Sustained Close to Mic_KSL_KS013.wav",
+      "description": "Quadcopter, Toy, Flying Sustained Close to Mic",
+      "seconds": 22.283,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Sonik Sound Library - Toy Quadcopter/AERORadio_Quadcopter, Toy, Turn On, Turn Off, Syncing, Calibrate, Beeps_KSL_KS013.wav",
+      "description": "Quadcopter, Toy, Turn On, Turn Off, Syncing, Calibrate, Beeps",
+      "seconds": 12.006,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Sonik Sound Library - Urban Life/AMBTown_Ambience, Big Town, Streets, Valdemoro, Spain, Daytime, Brush Cutter, Far Traffica, Airplanes, People Activity, Spanish Voices-Stereo_KSL_KS016.wav",
+      "description": "Ambience, Big Town, Streets, Valdemoro, Spain, Daytime, Brush Cutter, Far Traffica, Airplanes, People Activity, Spanish Voices-Stereo",
+      "seconds": 138.174,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "Sonik Sound Library - Urban Life/AMBUrbn_Ambience, City, Madrid, Spain, Soft Traffic and Human Activity, Some Birds-Surround_KSL_KS016.wav",
+      "description": "Ambience, City, Madrid, Spain, Soft Traffic and Human Activity, Some Birds-Surround",
+      "seconds": 176.726,
+      "channels": 6,
+      "rate": 48000
+    },
+    {
+      "path": "SoundBits - Cars - Mad Mustang Mercury/VEHCar_Various Driving at Slow Speed 15 06_SNDBTS_CRS-MMM.wav",
+      "description": "Car, Muscle Car, Pony Car, Mustang Mercury, Various Driving at Slow Speed, Exterior, Wheel",
+      "seconds": 28.63,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Cars - Mad Mustang Mercury/VEHDoor_Car Foley Car Door Open and Close Exterior 04 Perspective A_SNDBTS_CRS-MMM.wav",
+      "description": "Car Foley, Muscle Car, Pony Car, Mustang Mercury, Car Door Open and Close, Exterior, Perspective 1",
+      "seconds": 2.951,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Cars - Mad Mustang Mercury/VEHMech_Car Foey Gas and Brakes Pedals 08 B_SNDBTS_CRS-MMM.wav",
+      "description": "Car Foley, Muscle Car, Pony Car, Mustang Mercury, Gas and Brakes Pedals, Push and Release, Interior, Driver's Cabin 2",
+      "seconds": 2.243,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Cars - Mad Mustang Mercury/VEHSkid_Tire Skids on Gravel 15 06_SNDBTS_CRS-MMM.wav",
+      "description": "Car, Muscle Car, Pony Car, Mustang Mercury, Driving, Tire Skids on Gravel, Exterior, Wheel",
+      "seconds": 33.154,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Motorcycles - Honda/MOVEMisc_Honda CB750 Hornet Get On Bike Helmet On 02_SNDBTS_MCH.wav",
+      "description": "Motorcycle, Honda CB750 Hornet, Get On Bike, Helmet On, Lock, Unlock, Get Off Bike 2",
+      "seconds": 13.702,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Motorcycles - Honda/VEHHorn_Honda CB500F Horn Long 02_SNDBTS_MCH.wav",
+      "description": "Motorcycle, Honda CB500F, Horn Long 2",
+      "seconds": 1.286,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Motorcycles - Honda/VEHMoto_Honda CB500F Approach Fast Engine Stop 04_SNDBTS_MCH.wav",
+      "description": "Motorcycle, Honda CB500F, Approach Fast, Engine Stop 4",
+      "seconds": 16.454,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Motorcycles - Honda/VEHSkid_Honda CB500F Engine Start Tires Skidding Stop 02_SNDBTS_MCH.wav",
+      "description": "Motorcycle, Honda CB500F, Engine Start, Tires Skidding, Stop 2",
+      "seconds": 16.122,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Motorcycles - Kawasaki/VEHBy_Kawasaki Ninja ZX 10R Pass By Fast 04 mono_SNDBTS_MCK.wav",
+      "description": "Motorcycle, Kawasaki Ninja ZX-10R, Pass By Fast 04 mono",
+      "seconds": 12.013,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Motorcycles - Kawasaki/VEHHorn_Kawasaki Ninja ZX 10R Horn Single 03_SNDBTS_MCK.wav",
+      "description": "Motorcycle, Kawasaki Ninja ZX-10R, Horn Single 3",
+      "seconds": 0.392,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Motorcycles - Kawasaki/VEHMech_Kawasaki Ninja ZX 10R Keys In Out 01_SNDBTS_MCK.wav",
+      "description": "Motorcycle, Kawasaki Ninja ZX-10R, Keys In, Out 1",
+      "seconds": 1.802,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Motorcycles - Kawasaki/VEHMoto_Kawasaki Ninja ZX 10R Engine Start Leave 06_SNDBTS_MCK.wav",
+      "description": "Motorcycle, Kawasaki Ninja ZX-10R, Engine Start, Leave Fast 4",
+      "seconds": 17.932,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Pass-By - Trains, Trucks & Cars 2/AMBTraf_Traffic Multiple Cars Passing By 25_SNDBTS_PB-TTC2.wav",
+      "description": "Multiple Cars and/or Trucks passing by, Drive By, Car, Automobile, Traffic",
+      "seconds": 18.282,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Pass-By - Trains, Trucks & Cars 2/TRNMisc_Pass By Train 41_SNDBTS_PB-TTC2.wav",
+      "description": "Train, Pass By, Transportation, Railroad, Exterior",
+      "seconds": 12.379,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Pass-By - Trains, Trucks & Cars 2/TRNTram_Generic Tram Pass Py 13_SNDBTS_PB-TTC2.wav",
+      "description": "Train, Tram, Pass By, Transportation, Railtracks, Squeaks",
+      "seconds": 18.319,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Pass-By - Trains, Trucks & Cars 2/VEHFrght_Freight Truck Pass By 22_SNDBTS_PB-TTC2.wav",
+      "description": "Truck, Freight Truck, Transportation, Pass-By, Passing by",
+      "seconds": 5.21,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Vox Bestiae - Source Elements/CREAAqua_Aquatic Creature Gurgling 2_SNDBTS_VB-SE.wav",
+      "description": "gurgling creature vocalization by human voice, source material for creature sound design",
+      "seconds": 4.174,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Vox Bestiae - Source Elements/CREAEthr_Ethereal Entity Grim Pain Long 4_SNDBTS_VB-SE.wav",
+      "description": "grim pain long creature vocalization by human voice, source material for creature sound design",
+      "seconds": 1.73,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Vox Bestiae - Source Elements/CREAHmn_Violent Humanoid Creature Exhale Short 4_SNDBTS_VB-SE.wav",
+      "description": "violent exhale short creature vocalization by human voice, source material for creature sound design",
+      "seconds": 0.43,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Vox Bestiae - Source Elements/CREAInsc_Insectoid Creature Tremble Attack Long 1_SNDBTS_VB-SE.wav",
+      "description": "tremble attack long creature vocalization by human voice, source material for creature sound design",
+      "seconds": 2.467,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Vox Hominis - Human Effort Voices/HMNBrth_Panting Male 02 04_SNDBTS_VH.wav",
+      "description": "male voice panting as breathing or inhale/exhale",
+      "seconds": 9.062,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Vox Hominis - Human Effort Voices/VOXCry_Crying Female 04 05_SNDBTS_VH.wav",
+      "description": "female voice crying as crying or sobbing",
+      "seconds": 4.272,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Vox Hominis - Human Effort Voices/VOXLaff_Laughing Female 02 06_SNDBTS_VH.wav",
+      "description": "female voice laughing as laughing",
+      "seconds": 0.71,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "SoundBits - Vox Hominis - Human Effort Voices/WHSTHmn_Whistle Male 06 09_SNDBTS_VH.wav",
+      "description": "male voice whistle as vocal performance",
+      "seconds": 2.442,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "The Noisery - City Rain/RAINConc_Rain Medium Exterior Splatter City Traffic 6_The Noisery_City Rain.wav",
+      "description": "Rain, Medium, Exterior, Splatter, City, Traffic",
+      "seconds": 157.497,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "The Noisery - City Rain/RAINInt_Rain Light Interior Hail Storm_The Noisery_City Rain.wav",
+      "description": "Rain, Light, Interior, Hail, Storm",
+      "seconds": 83.819,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "The Noisery - City Rain/WINDInt_Wind Strong Metal Rattle_The Noisery_City Rain.wav",
+      "description": "Wind, Strong, Metal, Rattle, Gusty, Tornado, Scary, Interior, Zoom H6, MS Capsule",
+      "seconds": 53.931,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "The Noisery - City Rain/WINDTonl_Wind Strong Gusts Hurricane Vents Rattle 06_The Noisery_City Rain.wav",
+      "description": "Wind, Strong, Gusts, Hurricane, Vents, Rattle, Traffic Distant",
+      "seconds": 162.293,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "The Noisery - Moaning Metal/DSGNImpt_Metal Hit Thud Thump Low Ring Geofon 1_The Noisery_Moaning Metal.wav",
+      "description": "",
+      "seconds": 5.171,
+      "channels": 1,
+      "rate": 192000
+    },
+    {
+      "path": "The Noisery - Moaning Metal/DSGNTonl_Designed Metal Bowed Screech Tonal Reverb 7_The Noisery_Moaning Metal.wav",
+      "description": "",
+      "seconds": 20.714,
+      "channels": 2,
+      "rate": 192000
+    },
+    {
+      "path": "The Noisery - Moaning Metal/DSGNTonl_Metal Scrape Low Tonal LFE 4_The Noisery_Moaning Metal.wav",
+      "description": "",
+      "seconds": 6.699,
+      "channels": 1,
+      "rate": 192000
+    },
+    {
+      "path": "The Noisery - Rich Glitch/UIGlitch_Designed_Glitch_Corrupted_Data Error_The Noisery_Rich Glitch_06.wav",
+      "description": "Designed, Glitch, Corrupted, Data, Error, Warble, Distortion, Damaged, Failure",
+      "seconds": 5.426,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "The Noisery - Rich Glitch/UIGlitch_User interface_Glitch_High_Electronic_The Noisery_Rich Glitch_05.wav",
+      "description": "User interface, Glitch, High, Electronic, Crickets, Telemetry, Technology, Malfunction, Interference, Beep, Click, Buzz, Tonal, Wireless Mouse, Stereo",
+      "seconds": 24.182,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "The Noisery - Transit Tunes - The German Train Collection/AMBTran_Ambience Platform Bahnhof Train Station Whistle_The Noisery_Transit Tunes_ The German Train Collection.wav",
+      "description": "Ambience Platform Bahnhof Train Station Whistle Doors Announcement Musical Train Away By Approach Eurosprinter Light Walla",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "The Noisery - Transit Tunes - The German Train Collection/TRNElec_Train Electric Passenger By Close Right To_The Noisery_Transit Tunes_ The German Train Collection_01.wav",
+      "description": "Train Electric Passenger By Close Right To Left Germany 1",
+      "seconds": null,
+      "channels": null,
+      "rate": null
+    },
+    {
+      "path": "TheWorkRoom - Flip Flops/FFG002.wav",
+      "description": "Flip Flops Grass Walk Mediium",
+      "seconds": 39.18,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "TheWorkRoom - Flip Flops/FFW003.wav",
+      "description": "Flip Flops Wood Walk Fast",
+      "seconds": 31.475,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "TheWorkRoom - Nigerian Walla/NIG015.wav",
+      "description": "Group C - Layer 4 - Three Males Conversation",
+      "seconds": 79.339,
+      "channels": 1,
+      "rate": 48000
+    },
+    {
+      "path": "TheWorkRoom - Nigerian Walla/NIG053.wav",
+      "description": "Group M - Layer 1 - Male Group Cheers Whooo's Shouts Excited",
+      "seconds": 10.543,
+      "channels": 1,
+      "rate": 48000
+    },
+    {
+      "path": "TheWorkRoom - Nigerian Walla/NIG065.wav",
+      "description": "Group P - Layer 1 - Mixed Group Celebrating Some Cheers And Shouts",
+      "seconds": 122.307,
+      "channels": 1,
+      "rate": 48000
+    },
+    {
+      "path": "TheWorkRoom - South African Walla/SAV004.wav",
+      "description": "Vernacular Speaking Mixed Crowd Medium Tone Layer 1",
+      "seconds": 144.435,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "TheWorkRoom - South African Walla/SAW002.wav",
+      "description": "English Speaking Mixed Crowd Hushed Tone Layer 2",
+      "seconds": 123.045,
+      "channels": 2,
+      "rate": 48000
+    },
+    {
+      "path": "TheWorkRoom - Wire Cars/WIR006.wav",
+      "description": "Wire Car Fabrication - Handling & Bending Wire With Pliers Various (Internal)",
+      "seconds": 65.623,
+      "channels": 1,
+      "rate": 96000
+    },
+    {
+      "path": "TheWorkRoom - Wire Cars/WIR028.wav",
+      "description": "Wire Car With Plastic Wheels - Driving Medium Asphalt Or Tar (External)",
+      "seconds": 50.251,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Victor Ermakov - Industrial Ambiences - Ship Repair Factory/AMBInd_Factory Hall Busy Alarm Machines Voices_CW.wav",
+      "description": "Factory interior ambience, busy, distant alarm, crane motors, heavy machinery running, echoing voices, industrial workshop environment",
+      "seconds": 68.603,
+      "channels": 2,
+      "rate": 96000
+    },
+    {
+      "path": "Victor Ermakov - Industrial Ambiences - Ship Repair Factory/MACHInd_Crane Onboard Ride Squeaks Motors_CW.wav",
+      "description": "Overhead crane onboard recording, moving, constant metal squeaking and scraping, electric motor humming, servo drive mechanisms",
+      "seconds": 99.467,
+      "channels": 2,
+      "rate": 96000
+    }
+  ]
+}

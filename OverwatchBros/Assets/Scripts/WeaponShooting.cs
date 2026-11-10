@@ -34,6 +34,34 @@ public class WeaponShooting : NetworkBehaviour
     public bool IsReloading => reloading;
 
     HeldWeapons held;
+    AudioSource reloadAudio;
+
+    void StopReloadAudio()
+    {
+        if (reloadAudio != null)
+        {
+            reloadAudio.Stop();
+            Destroy(reloadAudio.gameObject);
+        }
+        reloadAudio = null;
+    }
+
+    void PlayReloadAudio(float duration)
+    {
+        StopReloadAudio();
+        var clip = CollectedAudioBank.ForActor(this, CollectedAudioBank.WeaponCue(weapon) + "_reload", ProceduralSfx.Reload);
+        reloadAudio = ProceduralSfx.PlayTracked(clip, transform.position, 0.6f, 22f,
+            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip != null ? clip.length / Mathf.Max(0.05f, duration) : 1f);
+        if (reloadAudio != null) reloadAudio.transform.SetParent(transform, true);
+    }
+
+    void PlayMeleeSwing(Vector3 position)
+    {
+        // Preserve a hand-authored weapon recording if one is present.
+        var clip = weapon != null && weapon.fireSound != null ? weapon.fireSound
+            : CollectedAudioBank.ForActor(this, CollectedAudioBank.WeaponCue(weapon) + "_weapon.swing", ProceduralSfx.Dash);
+        ProceduralSfx.PlayForActor(this, clip, position, 0.6f, 25f);
+    }
 
     void Awake()
     {
@@ -60,6 +88,7 @@ public class WeaponShooting : NetworkBehaviour
         // Prebijeni, ktere zrovna bezi, se ukonci i vizualne (jinak by zbran zustala sklopena mimo obraz).
         if (reloading)
         {
+            StopReloadAudio();
             held.StopReload();
             StopReloadServerRpc();
         }
@@ -77,6 +106,7 @@ public class WeaponShooting : NetworkBehaviour
     [ClientRpc]
     void StopReloadClientRpc()
     {
+        StopReloadAudio();
         if (!IsOwner)
             held.StopReload();
     }
@@ -113,6 +143,7 @@ public class WeaponShooting : NetworkBehaviour
         currentAmmo = newWeapon.maxAmmo;
         ammoInitialized = true;
         reloading = false;
+        StopReloadAudio();
     }
 
     // Bot (BotBrain) misto mysi a klavesnice - jen na hostu.
@@ -128,11 +159,18 @@ public class WeaponShooting : NetworkBehaviour
         // Prebijeni dobehne, i kdyz hrac zrovna nemuze strilet (schopnost, blok).
         if (reloading)
         {
+            if (fpc != null && fpc.IsDead)
+            {
+                reloading = false;
+                StopReloadAudio();
+                held.StopReload();
+                StopReloadServerRpc();
+                return;
+            }
             if (Time.time < reloadEndTime) return;
 
             reloading = false;
             currentAmmo = MaxAmmo;
-            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.8f);
         }
 
         // Prazdny zasobnik se prebije sam.
@@ -208,7 +246,10 @@ public class WeaponShooting : NetworkBehaviour
 
     void UpdateScoped()
     {
+        float previousCharge = scopedCharge;
         scopedCharge = Mathf.Clamp01(scopedCharge + Time.deltaTime / Mathf.Max(0.05f, weapon.scopedChargeTime));
+        if (previousCharge < 1f && scopedCharge >= 1f)
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "kondulic_scope.ready"), transform.position, 0.35f);
 
         if (!FirePressed || Time.time < nextFireTime) return;
 
@@ -216,7 +257,7 @@ public class WeaponShooting : NetworkBehaviour
         if (weapon.HasAmmo && currentAmmo < cost)
         {
             nextFireTime = Time.time + 0.35f;
-            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.6f);
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "combat_empty", ProceduralSfx.Empty), transform.position, 0.6f);
             if (currentAmmo <= 0) Reload();
             return;
         }
@@ -289,7 +330,11 @@ public class WeaponShooting : NetworkBehaviour
         && (Bot != null || GameSettings.CursorLocked)
         && !(rapid != null && rapid.enabled && rapid.IsActive);
 
-    void OnDisable() => charging = false;
+    void OnDisable()
+    {
+        charging = false;
+        StopReloadAudio();
+    }
     float chargeStart;
     RapidFireAbility rapid;
 
@@ -389,7 +434,7 @@ public class WeaponShooting : NetworkBehaviour
             burstLeft = 0;
             if (burstShot) return;
             nextFireTime = Time.time + 0.35f;
-            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.6f);
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "combat_empty", ProceduralSfx.Empty), transform.position, 0.6f);
             return;
         }
 
@@ -406,7 +451,7 @@ public class WeaponShooting : NetworkBehaviour
         if (weapon.HasAmmo)
             currentAmmo--;
 
-        if (melee) ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, playerCamera.transform.position, 0.6f);
+        if (melee) PlayMeleeSwing(playerCamera.transform.position);
         else PlayShot(playerCamera.transform.position, false, 0.8f);
         ShotFxServerRpc(melee, false);
         held.Swing();
@@ -459,6 +504,14 @@ public class WeaponShooting : NetworkBehaviour
                 first = hit;
                 break;
             }
+        }
+
+        if (WaterFlow.RaycastSurface(shotOrigin, shotDirection, first.HasValue ? first.Value.distance : weapon.range, out var waterPoint))
+        {
+            PlaySurfaceImpact(weapon, waterPoint, AudioSurfaceKind.Water, false);
+            ImpactFxServerRpc(waterPoint, Vector3.up, 0.5f, true, false, false, 0f, (byte)AudioSurfaceKind.Water);
+            // Keep damage to a submerged player; avoid a second ground sound below the water.
+            if (!first.HasValue || first.Value.collider.GetComponentInParent<Health>() == null) return;
         }
 
         if (first.HasValue)
@@ -622,34 +675,43 @@ public class WeaponShooting : NetworkBehaviour
     void ShowImpact(Collider collider, Vector3 point, Vector3 normal, float fxScale)
     {
         bool bullet = weapon.fireMode == FireMode.Hitscan && normal.sqrMagnitude > 0.5f;
-        bool slash = weapon.IsMelee && normal.sqrMagnitude > 0.5f
+        bool slash = weapon.IsMelee
             && (weapon.heldModel == HeldModel.Scythe || weapon.heldModel == HeldModel.Axe);
-        bool hole = ((bullet && weapon.bulletHoles) || slash) && BulletHoleDecals.CanMark(collider);
+        bool hole = normal.sqrMagnitude > 0.5f && ((bullet && weapon.bulletHoles) || slash) && BulletHoleDecals.CanMark(collider);
         Fx.BulletImpact(point, weapon.projectileColor, fxScale);
-        if (bullet) PlayBulletImpact(weapon, point);
-        if (slash) ProceduralSfx.Play(ProceduralSfx.SurfaceSlash, point, 0.5f, 18f, spatial: true);
+        var surfaceKind = AudioSurface.Of(collider, point);
+        if (bullet || slash) PlaySurfaceImpact(weapon, point, surfaceKind, slash);
         if (hole) BulletHoleDecals.Place(collider, point, normal,
             slash ? SurfaceMarkKind.Slash : SurfaceMarkKind.Bullet, surfaceSlashAngle);
-        ImpactFxServerRpc(point, normal, fxScale, bullet, hole, slash, surfaceSlashAngle);
+        ImpactFxServerRpc(point, normal, fxScale, bullet, hole, slash, surfaceSlashAngle, (byte)surfaceKind);
     }
 
-    static void PlayBulletImpact(WeaponDefinition definition, Vector3 point)
+    static void PlaySurfaceImpact(WeaponDefinition definition, Vector3 point, AudioSurfaceKind surface, bool slash)
     {
-        var clip = definition != null && definition.bulletImpactSound != null
-            ? definition.bulletImpactSound : ProceduralSfx.BulletImpact;
+        var custom = definition != null ? definition.bulletImpactSound : null;
+        AudioClip clip = custom;
+        if (clip == null && slash && surface == AudioSurfaceKind.Body)
+            clip = CollectedAudioBank.Pick("combat_melee_body") ?? CollectedAudioBank.Pick("pova_weapon.impact.body")
+                ?? CollectedAudioBank.Pick("state_body_hit");
+        if (clip == null && slash && surface != AudioSurfaceKind.Body)
+            clip = CollectedAudioBank.Pick(CollectedAudioBank.WeaponCue(definition) + "_weapon.impact.surface");
+        if (clip == null && surface == AudioSurfaceKind.Water)
+            clip = CollectedAudioBank.Pick("combat_bullet_water") ?? CollectedAudioBank.Pick("world_splash");
+        if (clip == null) clip = CollectedAudioBank.Pick(AudioSurface.Impact(surface, slash),
+            slash ? ProceduralSfx.SurfaceSlash : ProceduralSfx.BulletImpact);
         float volume = definition != null ? definition.bulletImpactVolume : 0.5f;
         // Always spatial, including for the shooter: this sound comes from the hit, not the gun.
         ProceduralSfx.Play(clip, point, volume, 24f, spatial: true);
     }
 
     [ServerRpc]
-    void ImpactFxServerRpc(Vector3 point, Vector3 normal, float fxScale, bool bullet, bool hole, bool slash, float angle)
+    void ImpactFxServerRpc(Vector3 point, Vector3 normal, float fxScale, bool bullet, bool hole, bool slash, float angle, byte surfaceKind)
     {
-        ImpactFxClientRpc(point, normal, fxScale, bullet, hole, slash, angle);
+        ImpactFxClientRpc(point, normal, fxScale, bullet, hole, slash, angle, surfaceKind);
     }
 
     [ClientRpc]
-    void ImpactFxClientRpc(Vector3 point, Vector3 normal, float fxScale, bool bullet, bool hole, bool slash, float angle)
+    void ImpactFxClientRpc(Vector3 point, Vector3 normal, float fxScale, bool bullet, bool hole, bool slash, float angle, byte surfaceKind)
     {
         if (IsOwner) return;
 
@@ -658,10 +720,10 @@ public class WeaponShooting : NetworkBehaviour
             ? playerHero.Hero.weapon.projectileColor
             : Color.white;
         Fx.BulletImpact(point, tint, Mathf.Clamp(fxScale, 0.5f, 3f));
-        if (bullet)
-            PlayBulletImpact(playerHero != null && playerHero.Hero != null ? playerHero.Hero.weapon : null, point);
+        if (bullet || slash)
+            PlaySurfaceImpact(playerHero != null && playerHero.Hero != null ? playerHero.Hero.weapon : null, point,
+                (AudioSurfaceKind)surfaceKind, slash);
         // Resolve only the surface at the transmitted point; never attach marks to a nearby player.
-        if (slash) ProceduralSfx.Play(ProceduralSfx.SurfaceSlash, point, 0.5f, 18f, spatial: true);
         if (hole && BulletHoleDecals.TryResolveSurface(point, normal, out var surface))
             BulletHoleDecals.Place(surface.collider, surface.point, surface.normal,
                 slash ? SurfaceMarkKind.Slash : SurfaceMarkKind.Bullet, angle);
@@ -671,8 +733,16 @@ public class WeaponShooting : NetworkBehaviour
     void PlayShot(Vector3 position, bool scoped, float volume)
     {
         var clip = weapon != null ? weapon.ShotSound(scoped) : null;
+        if (clip == null || clip.name == "gun_viktor" || clip.name == "gun_anna" || clip.name == "gun_sindel"
+            || clip.name == "gun_sniper_smg" || clip.name == "gun_sniper_scoped")
+            clip = CollectedAudioBank.ForActor(this, CollectedAudioBank.WeaponCue(weapon)
+                + (scoped ? "_fire_scoped" : "_fire"), clip);
         if (clip != null)
+        {
+            if (CollectedAudioBank.WeaponCue(weapon) == "david" && CollectedAudioBank.Find(clip.name) == clip)
+                volume *= 0.6f;
             ProceduralSfx.PlayForActor(this, clip, position, volume, WeaponDefinition.FireSoundRange);
+        }
         else
             ProceduralSfx.PlayForActor(this, ProceduralSfx.Gunshot, position, volume * 0.85f);
     }
@@ -692,7 +762,7 @@ public class WeaponShooting : NetworkBehaviour
         held.Swing();
         if (melee && weapon != null && weapon.IsCharged)
             ProceduralSfx.PlayForActor(this, ProceduralSfx.BowRelease, transform.position, 0.6f);
-        else if (melee) ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
+        else if (melee) PlayMeleeSwing(transform.position);
         else PlayShot(transform.position, scoped, 0.9f);
     }
 
@@ -825,7 +895,7 @@ public class WeaponShooting : NetworkBehaviour
         reloading = true;
         reloadEndTime = Time.time + duration;
 
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Reload, transform.position, 0.6f);
+        PlayReloadAudio(duration);
         held.PlayReload(duration);
         ReloadFxServerRpc(duration);
     }
@@ -842,6 +912,6 @@ public class WeaponShooting : NetworkBehaviour
         if (IsOwner) return;
 
         held.PlayReload(Mathf.Clamp(duration, 0.05f, 10f));
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Reload, transform.position, 0.6f);
+        PlayReloadAudio(Mathf.Clamp(duration, 0.05f, 10f));
     }
 }

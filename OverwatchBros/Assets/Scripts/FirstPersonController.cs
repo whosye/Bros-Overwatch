@@ -41,6 +41,8 @@ public class FirstPersonController : NetworkBehaviour
     float cameraPitch;
     float stepAccumulator;
     float gaitSpeed;
+    bool audioWasGrounded = true, audioInWater, audioInitialized;
+    float audioAirTime, audioFallSpeed, ladderAudioDistance, wallAudioReady;
     float baseEyeHeight;
     float headBobOffset;
     bool crouching;
@@ -706,6 +708,7 @@ public class FirstPersonController : NetworkBehaviour
         if (Physics.CheckCapsule(top.point + Vector3.up * 0.45f, top.point + Vector3.up * 1.6f, 0.3f, ~0, QueryTriggerInteraction.Ignore)) return false;
 
         mantling = true;
+        EmitMovementAudio("move_ledge", 0.35f);
         grappleMantlePath = null;
         mantleTarget = top.point + Vector3.up * 0.05f;
         mantleTimeLeft = 0.6f;
@@ -750,6 +753,7 @@ public class FirstPersonController : NetworkBehaviour
             pulling = false;
             grappleAutoMantle = false;
             mantling = true;
+            EmitMovementAudio("move_ledge", 0.35f);
             mantleTarget = landing;
             grappleMantlePath = path;
             grappleMantleWaypoint = 0;
@@ -999,7 +1003,14 @@ public class FirstPersonController : NetworkBehaviour
         if (externalVelocity.sqrMagnitude > 0f)
         {
             if ((flags & CollisionFlags.Sides) != 0)
+            {
+                if (externalVelocity.sqrMagnitude > 36f && Time.time >= wallAudioReady)
+                {
+                    EmitMovementAudio("move_body_wall", 0.45f);
+                    wallAudioReady = Time.time + 0.45f;
+                }
                 externalVelocity *= 0.5f;
+            }
             externalVelocity = Vector3.MoveTowards(externalVelocity, Vector3.zero, (isGrounded && verticalVelocity <= 0f ? 28f : 5f) * Time.deltaTime);
         }
 
@@ -1010,6 +1021,7 @@ public class FirstPersonController : NetworkBehaviour
         {
             abilityFlight = false;
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * JumpGravity);
+            EmitMovementAudio("move_jump", 0.35f);
         }
         else if (jump && DoubleJump && !airJumpUsed)
         {
@@ -1017,7 +1029,7 @@ public class FirstPersonController : NetworkBehaviour
             airJumpUsed = true;
             abilityFlight = false;
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * JumpGravity);
-            ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.35f);
+            EmitMovementAudio("move_jump", 0.35f, ProceduralSfx.Dash);
         }
 
         // Ve vzduchu a s pohybem dopredu se hrdina chyti hrany a vytahne se na ni.
@@ -1043,12 +1055,44 @@ public class FirstPersonController : NetworkBehaviour
         }
         controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
 
+        bool groundedNow = controller.isGrounded;
+        if (!groundedNow && !onLadder)
+        {
+            audioAirTime += Time.deltaTime;
+            audioFallSpeed = Mathf.Max(audioFallSpeed, -verticalVelocity);
+        }
+        if (groundedNow && !audioWasGrounded && audioAirTime > 0.12f && audioFallSpeed > 2f && !IsDead)
+        {
+            string surface = AudioSurface.Steps(AudioSurface.AtFeet(this));
+            EmitMovementAudio(surface + ".land", Mathf.Clamp(0.25f + audioFallSpeed * 0.025f, 0.3f, 0.65f),
+                CollectedAudioBank.ForActor(this, surface + ".step"));
+            stepAccumulator = 0f;
+        }
+        if (groundedNow || onLadder) { audioAirTime = 0f; audioFallSpeed = 0f; }
+        audioWasGrounded = groundedNow;
+        if (onLadder && !frozen)
+        {
+            ladderAudioDistance += Vector3.Distance(beforeMove, transform.position);
+            if (ladderAudioDistance >= 0.9f)
+            {
+                ladderAudioDistance %= 0.9f;
+                EmitMovementAudio("move_ladder", 0.3f);
+            }
+        }
+        else ladderAudioDistance = 0f;
+
         // Skluzavka a proud v potoce hrace unasi (WaterCurrent); z toboganu se po vode jede rychleji.
         Vector3 current = WaterCurrent.PushAt(transform.position, ref waterRide, ref waterArmedUntil, out bool surfing);
         if (waterSurfing.Value != surfing) waterSurfing.Value = surfing;
         if (waterRiding.Value != waterRide) waterRiding.Value = waterRide;
         if (current.sqrMagnitude > 0.01f)
             controller.Move(current * Time.deltaTime);
+
+        bool inWaterNow = WaterCurrent.IsWater(transform.position);
+        if (audioInitialized && inWaterNow != audioInWater && !waterRide && !IsDead)
+            EmitMovementAudio(inWaterNow ? "steps_water.enter" : "steps_water.exit", 0.4f);
+        audioInWater = inWaterNow;
+        audioInitialized = true;
 
         // Kapsle se pri drepu zkracuje shora: spodek zustava u chodidel, jinak by se postava zaborila do zeme.
         float height = crouch ? crouchHeight : standHeight;
@@ -1060,7 +1104,7 @@ public class FirstPersonController : NetworkBehaviour
 
         // Sound and camera share distance-based timing, including collision-limited movement.
         if (isGrounded && controller.isGrounded && !jump && !onLadder && !waterRide
-            && current.sqrMagnitude <= 0.01f && move.sqrMagnitude > 0.01f && groundDistance > 0.001f)
+            && move.sqrMagnitude > 0.01f && groundDistance > 0.001f)
         {
             gaitSpeed = groundDistance / Mathf.Max(Time.deltaTime, 0.0001f);
             float stride = Mathf.Max(0.1f, footstepDistance);
@@ -1068,8 +1112,34 @@ public class FirstPersonController : NetworkBehaviour
             if (stepAccumulator >= stride)
             {
                 stepAccumulator %= stride;
-                ProceduralSfx.PlayForActor(this, ProceduralSfx.Footstep, transform.position, 0.3f);
+                EmitMovementAudio(AudioSurface.Steps(AudioSurface.AtFeet(this)) + ".step", crouch ? 0.16f : 0.3f, ProceduralSfx.Footstep);
             }
         }
+    }
+
+    void EmitMovementAudio(string cue, float volume, AudioClip fallback = null)
+    {
+        var clip = CollectedAudioBank.ForActor(this, cue, fallback);
+        if (clip == null) return;
+        ProceduralSfx.PlayForActor(this, clip, transform.position, volume, 18f);
+        if (IsSpawned && IsOwner && CollectedAudioBank.Find(clip.name) != null)
+            MovementSoundServerRpc(clip.name, volume);
+    }
+
+    float nextMovementRelay;
+    [ServerRpc]
+    void MovementSoundServerRpc(string clipName, float volume)
+    {
+        // Validate against the bank; no paths or arbitrary audio supplied by a client.
+        if (Time.time < nextMovementRelay || CollectedAudioBank.Find(clipName) == null) return;
+        nextMovementRelay = Time.time + 0.04f;
+        MovementSoundClientRpc(clipName, Mathf.Clamp(volume, 0f, 0.7f));
+    }
+
+    [ClientRpc]
+    void MovementSoundClientRpc(string clipName, float volume)
+    {
+        if (IsOwner) return;
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Find(clipName), transform.position, volume, 18f);
     }
 }

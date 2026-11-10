@@ -1,0 +1,1362 @@
+﻿CS2 – kandidáti k poslechu
+
+Výběr podle názvů, bez poslechového hodnocení.
+Původ: uživatelem dodaná složka C:\myDev_\audio\sounds\cs2\sounds
+Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.
+Přiřazení a fajfky dělej ve stávající Zvukové sbírce. Tato příprava evidenci výběru nemění.
+
+player/footsteps/wood_01.wav
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo a prkna: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/wood_02.wav
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo a prkna: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/wood_03.wav
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo a prkna: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/wood_04.wav
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo a prkna: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/wood_05.wav
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo a prkna: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/wood_06.wav
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo a prkna: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/wood_07.wav
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo a prkna: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/wood_08.wav
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo a prkna: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/concrete_ct_01.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/concrete_ct_02.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/concrete_ct_03.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/concrete_ct_04.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/concrete_ct_05.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/concrete_ct_06.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/concrete_ct_07.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/concrete_ct_08.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_concrete_01.wav
+  Použití: Kroky a dopady / Beton a kámen
+  Beton / tvrdý kámen: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/grass_01.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/grass_02.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/grass_03.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/grass_04.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/grass_05.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/grass_06.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/grass_07.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/grass_08.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_grass_01.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_grass_02.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_grass_03.wav
+  Použití: Kroky a dopady / Tráva
+  Tráva: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/gravel_01.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/gravel_02.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/gravel_03.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/gravel_04.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/gravel_05.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/gravel_06.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/gravel_07.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/gravel_08.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_gravel_01.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_gravel_02.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_gravel_03.wav
+  Použití: Kroky a dopady / Štěrk
+  Štěrk: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/dirt_01.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/dirt_02.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/dirt_03.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/dirt_04.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/dirt_05.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/dirt_06.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/dirt_07.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/dirt_08.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_dirt_01.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_dirt_02.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_dirt_03.wav
+  Použití: Kroky a dopady / Hlína
+  Hlína: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/sand_01.wav
+  Použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/sand_02.wav
+  Použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/sand_03.wav
+  Použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/sand_04.wav
+  Použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/sand_05.wav
+  Použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/sand_06.wav
+  Použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/sand_07.wav
+  Použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/sand_08.wav
+  Použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_sand_01.wav
+  Použití: Kroky a dopady / Písek
+  Písek: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_sand_02.wav
+  Použití: Kroky a dopady / Písek
+  Písek: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_sand_03.wav
+  Použití: Kroky a dopady / Písek
+  Písek: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/carpet_01.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/carpet_03.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/carpet_04.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/carpet_05.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/carpet_08.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/carpet_09.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/carpet_11.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/carpet_14.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_carpet_01.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_carpet_02.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_carpet_03.wav
+  Použití: Kroky a dopady / Koberec
+  Koberec: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/rubber_03.wav
+  Použití: Kroky a dopady / Guma
+  Guma: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/rubber_04.wav
+  Použití: Kroky a dopady / Guma
+  Guma: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/rubber_05.wav
+  Použití: Kroky a dopady / Guma
+  Guma: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/rubber_06.wav
+  Použití: Kroky a dopady / Guma
+  Guma: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/rubber_07.wav
+  Použití: Kroky a dopady / Guma
+  Guma: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/rubber_08.wav
+  Použití: Kroky a dopady / Guma
+  Guma: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/rubber_11.wav
+  Použití: Kroky a dopady / Guma
+  Guma: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/rubber_12.wav
+  Použití: Kroky a dopady / Guma
+  Guma: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_rubber_01.wav
+  Použití: Kroky a dopady / Guma
+  Guma: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_rubber_02.wav
+  Použití: Kroky a dopady / Guma
+  Guma: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_rubber_03.wav
+  Použití: Kroky a dopady / Guma
+  Guma: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/tile_01.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/tile_02.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/tile_03.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/tile_04.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/tile_05.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/tile_06.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/tile_07.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/tile_08.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_tile_01.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_tile_02.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_tile_03.wav
+  Použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/metal_solid_35.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/metal_solid_36.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/metal_solid_37.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/metal_solid_38.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/metal_solid_39.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/metal_solid_40.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/metal_solid_41.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/metal_solid_42.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: jednotlivé kroky. Porovnat varianty a hlasitost.
+
+player/footsteps/land_metal_solid_01.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_metal_solid_02.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: dopad po skoku, doplněk ke krokům.
+
+player/footsteps/land_metal_solid_03.wav
+  Použití: Kroky a dopady / Kovový plech
+  Pevný kov: dopad po skoku, doplněk ke krokům.
+
+player/land2.mp3
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo; Další pohyb / Odraz a dvojskok
+  Obecný dopad hráče; podklad pro dřevo, přesný materiál ověřit poslechem.
+
+player/land3.mp3
+  Použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo; Další pohyb / Odraz a dvojskok
+  Obecný dopad hráče; podklad pro dřevo, přesný materiál ověřit poslechem.
+
+player/footsteps/water_wade_01.wav
+  Použití: Kroky a dopady / Mělká voda
+  Brodění vodou, jednotlivé pohybové kontakty.
+
+player/footsteps/water_wade_02.wav
+  Použití: Kroky a dopady / Mělká voda
+  Brodění vodou, jednotlivé pohybové kontakty.
+
+player/footsteps/water_wade_03.wav
+  Použití: Kroky a dopady / Mělká voda
+  Brodění vodou, jednotlivé pohybové kontakty.
+
+player/footsteps/water_wade_04.wav
+  Použití: Kroky a dopady / Mělká voda
+  Brodění vodou, jednotlivé pohybové kontakty.
+
+player/footsteps/water_wade_05.wav
+  Použití: Kroky a dopady / Mělká voda
+  Brodění vodou, jednotlivé pohybové kontakty.
+
+player/footsteps/water_wade_06.wav
+  Použití: Kroky a dopady / Mělká voda
+  Brodění vodou, jednotlivé pohybové kontakty.
+
+player/footsteps/puddle_01.wav
+  Použití: Kroky a dopady / Mělká voda
+  Došlap do mělké louže; může doplnit brodění.
+
+player/footsteps/puddle_02.wav
+  Použití: Kroky a dopady / Mělká voda
+  Došlap do mělké louže; může doplnit brodění.
+
+player/footsteps/puddle_03.wav
+  Použití: Kroky a dopady / Mělká voda
+  Došlap do mělké louže; může doplnit brodění.
+
+player/footsteps/puddle_04.wav
+  Použití: Kroky a dopady / Mělká voda
+  Došlap do mělké louže; může doplnit brodění.
+
+player/footsteps/water_entry_01.wav
+  Použití: Kroky a dopady / Mělká voda; Malý a velký splash
+  Vstup do vody / výstup z vody; nepovažovat automaticky za velký splash.
+
+player/footsteps/water_entry_02.wav
+  Použití: Kroky a dopady / Mělká voda; Malý a velký splash
+  Vstup do vody / výstup z vody; nepovažovat automaticky za velký splash.
+
+player/footsteps/water_entry_03.wav
+  Použití: Kroky a dopady / Mělká voda; Malý a velký splash
+  Vstup do vody / výstup z vody; nepovažovat automaticky za velký splash.
+
+player/footsteps/water_exit_01.wav
+  Použití: Kroky a dopady / Mělká voda; Malý a velký splash
+  Vstup do vody / výstup z vody; nepovažovat automaticky za velký splash.
+
+player/footsteps/water_exit_02.wav
+  Použití: Kroky a dopady / Mělká voda; Malý a velký splash
+  Vstup do vody / výstup z vody; nepovažovat automaticky za velký splash.
+
+player/footsteps/water_exit_03.wav
+  Použití: Kroky a dopady / Mělká voda; Malý a velký splash
+  Vstup do vody / výstup z vody; nepovažovat automaticky za velký splash.
+
+player/footsteps/ladder_wood_01.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Dřevěný žebřík: kontakty při lezení.
+
+player/footsteps/ladder_wood_02.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Dřevěný žebřík: kontakty při lezení.
+
+player/footsteps/ladder_wood_03.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Dřevěný žebřík: kontakty při lezení.
+
+player/footsteps/ladder_wood_04.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Dřevěný žebřík: kontakty při lezení.
+
+player/footsteps/ladder_wood_05.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Dřevěný žebřík: kontakty při lezení.
+
+player/footsteps/ladder_wood_06.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Dřevěný žebřík: kontakty při lezení.
+
+player/footsteps/ladder_01.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Alternativa kontaktu příček žebříku; porovnat materiál.
+
+player/footsteps/ladder_02.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Alternativa kontaktu příček žebříku; porovnat materiál.
+
+player/footsteps/ladder_03.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Alternativa kontaktu příček žebříku; porovnat materiál.
+
+player/footsteps/ladder_04.wav
+  Použití: Další pohyb / Lezení po žebříku
+  Alternativa kontaktu příček žebříku; porovnat materiál.
+
+player/footsteps/jump_launch_01.wav
+  Použití: Další pohyb / Odraz a dvojskok
+  Odraz do skoku.
+
+player/footsteps/suit_ct_01.wav
+  Použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Pohyb výstroje: vrstva oblečení/šplhání, nikoli celá akce.
+
+player/footsteps/suit_ct_02.wav
+  Použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Pohyb výstroje: vrstva oblečení/šplhání, nikoli celá akce.
+
+player/footsteps/suit_ct_03.wav
+  Použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Pohyb výstroje: vrstva oblečení/šplhání, nikoli celá akce.
+
+player/footsteps/suit_ct_04.wav
+  Použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Pohyb výstroje: vrstva oblečení/šplhání, nikoli celá akce.
+
+physics/wood/wood_solid_impact_bullet1.wav
+  Použití: Společná knihovna / Kulka → dřevo
+  Zásah kulky do pevného dřeva.
+
+physics/wood/wood_solid_impact_bullet2.wav
+  Použití: Společná knihovna / Kulka → dřevo
+  Zásah kulky do pevného dřeva.
+
+physics/wood/wood_solid_impact_bullet3.wav
+  Použití: Společná knihovna / Kulka → dřevo
+  Zásah kulky do pevného dřeva.
+
+physics/wood/wood_solid_impact_bullet4.wav
+  Použití: Společná knihovna / Kulka → dřevo
+  Zásah kulky do pevného dřeva.
+
+physics/concrete/concrete_impact_bullet1.wav
+  Použití: Společná knihovna / Kulka → kámen, beton, omítka
+  Zásah kulky do betonu.
+
+physics/concrete/concrete_impact_bullet2.wav
+  Použití: Společná knihovna / Kulka → kámen, beton, omítka
+  Zásah kulky do betonu.
+
+physics/concrete/concrete_impact_bullet3.wav
+  Použití: Společná knihovna / Kulka → kámen, beton, omítka
+  Zásah kulky do betonu.
+
+physics/concrete/concrete_impact_bullet4.wav
+  Použití: Společná knihovna / Kulka → kámen, beton, omítka
+  Zásah kulky do betonu.
+
+physics/metal/metal_solid_impact_bullet1.wav
+  Použití: Společná knihovna / Kulka → kov
+  Zásah kulky do pevného kovu.
+
+physics/metal/metal_solid_impact_bullet2.wav
+  Použití: Společná knihovna / Kulka → kov
+  Zásah kulky do pevného kovu.
+
+physics/metal/metal_solid_impact_bullet3.wav
+  Použití: Společná knihovna / Kulka → kov
+  Zásah kulky do pevného kovu.
+
+physics/metal/metal_solid_impact_bullet4.wav
+  Použití: Společná knihovna / Kulka → kov
+  Zásah kulky do pevného kovu.
+
+physics/glass/glass_impact_bullet1.wav
+  Použití: Společná knihovna / Kulka → sklo
+  Zásah skla; bez zavádění rozbíjení oken.
+
+physics/glass/glass_impact_bullet2.wav
+  Použití: Společná knihovna / Kulka → sklo
+  Zásah skla; bez zavádění rozbíjení oken.
+
+physics/glass/glass_impact_bullet3.wav
+  Použití: Společná knihovna / Kulka → sklo
+  Zásah skla; bez zavádění rozbíjení oken.
+
+physics/glass/glass_impact_bullet4.wav
+  Použití: Společná knihovna / Kulka → sklo
+  Zásah skla; bez zavádění rozbíjení oken.
+
+physics/surfaces/dirt_impact_bullet_01.wav
+  Použití: Společná knihovna / Kulka → hlína, písek, štěrk
+  Kulka do hlíny.
+
+physics/surfaces/dirt_impact_bullet_02.wav
+  Použití: Společná knihovna / Kulka → hlína, písek, štěrk
+  Kulka do hlíny.
+
+physics/surfaces/dirt_impact_bullet_03.wav
+  Použití: Společná knihovna / Kulka → hlína, písek, štěrk
+  Kulka do hlíny.
+
+physics/surfaces/dirt_impact_bullet_04.wav
+  Použití: Společná knihovna / Kulka → hlína, písek, štěrk
+  Kulka do hlíny.
+
+physics/surfaces/sand_impact_bullet1.wav
+  Použití: Společná knihovna / Kulka → hlína, písek, štěrk
+  Kulka do písku; další materiálová varianta.
+
+physics/surfaces/sand_impact_bullet2.wav
+  Použití: Společná knihovna / Kulka → hlína, písek, štěrk
+  Kulka do písku; další materiálová varianta.
+
+physics/surfaces/sand_impact_bullet3.wav
+  Použití: Společná knihovna / Kulka → hlína, písek, štěrk
+  Kulka do písku; další materiálová varianta.
+
+physics/surfaces/sand_impact_bullet4.wav
+  Použití: Společná knihovna / Kulka → hlína, písek, štěrk
+  Kulka do písku; další materiálová varianta.
+
+physics/surfaces/grass_impact_bullet_01.wav
+  Použití: Společná knihovna / Kulka → tráva a listí
+  Kulka do trávy.
+
+physics/surfaces/grass_impact_bullet_02.wav
+  Použití: Společná knihovna / Kulka → tráva a listí
+  Kulka do trávy.
+
+physics/surfaces/grass_impact_bullet_03.wav
+  Použití: Společná knihovna / Kulka → tráva a listí
+  Kulka do trávy.
+
+physics/surfaces/grass_impact_bullet_04.wav
+  Použití: Společná knihovna / Kulka → tráva a listí
+  Kulka do trávy.
+
+physics/wood/foliage_impact_bullet_01.wav
+  Použití: Společná knihovna / Kulka → tráva a listí
+  Kulka do listí / vegetace.
+
+physics/wood/foliage_impact_bullet_02.wav
+  Použití: Společná knihovna / Kulka → tráva a listí
+  Kulka do listí / vegetace.
+
+physics/wood/foliage_impact_bullet_03.wav
+  Použití: Společná knihovna / Kulka → tráva a listí
+  Kulka do listí / vegetace.
+
+physics/wood/foliage_impact_bullet_04.wav
+  Použití: Společná knihovna / Kulka → tráva a listí
+  Kulka do listí / vegetace.
+
+physics/surfaces/carpet_impact_bullet_01.wav
+  Použití: Společná knihovna / Kulka → měkký povrch
+  Kulka do koberce, měkký kontakt.
+
+physics/surfaces/carpet_impact_bullet_02.wav
+  Použití: Společná knihovna / Kulka → měkký povrch
+  Kulka do koberce, měkký kontakt.
+
+physics/surfaces/carpet_impact_bullet_03.wav
+  Použití: Společná knihovna / Kulka → měkký povrch
+  Kulka do koberce, měkký kontakt.
+
+physics/surfaces/carpet_impact_bullet_04.wav
+  Použití: Společná knihovna / Kulka → měkký povrch
+  Kulka do koberce, měkký kontakt.
+
+physics/rubber/rubber_tire_impact_bullet1.wav
+  Použití: Společná knihovna / Kulka → měkký povrch
+  Kulka do pneumatiky, alternativa gumového kontaktu.
+
+physics/rubber/rubber_tire_impact_bullet2.wav
+  Použití: Společná knihovna / Kulka → měkký povrch
+  Kulka do pneumatiky, alternativa gumového kontaktu.
+
+physics/rubber/rubber_tire_impact_bullet3.wav
+  Použití: Společná knihovna / Kulka → měkký povrch
+  Kulka do pneumatiky, alternativa gumového kontaktu.
+
+physics/surfaces/underwater_impact_bullet1.wav
+  Použití: Společná knihovna / Kulka → voda
+  Zásah pod vodou; pro zásah hladiny posoudit a případně přidat splash.
+
+physics/surfaces/underwater_impact_bullet2.wav
+  Použití: Společná knihovna / Kulka → voda
+  Zásah pod vodou; pro zásah hladiny posoudit a případně přidat splash.
+
+physics/surfaces/underwater_impact_bullet3.wav
+  Použití: Společná knihovna / Kulka → voda
+  Zásah pod vodou; pro zásah hladiny posoudit a případně přidat splash.
+
+physics/wood/wood_plank_impact_hard1.wav
+  Použití: Společná knihovna / Sekera / kosa → dřevo
+  Tvrdý kontakt prkna. Pro sekeru/kosu kombinovat se švihem.
+
+physics/wood/wood_plank_impact_hard2.wav
+  Použití: Společná knihovna / Sekera / kosa → dřevo
+  Tvrdý kontakt prkna. Pro sekeru/kosu kombinovat se švihem.
+
+physics/wood/wood_plank_impact_hard3.wav
+  Použití: Společná knihovna / Sekera / kosa → dřevo
+  Tvrdý kontakt prkna. Pro sekeru/kosu kombinovat se švihem.
+
+physics/metal/metal_box_impact_hard1.wav
+  Použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Tvrdý kontakt kovové bedny; základ zásahu či bloku, charakter dutého kovu posoudit.
+
+physics/metal/metal_box_impact_hard2.wav
+  Použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Tvrdý kontakt kovové bedny; základ zásahu či bloku, charakter dutého kovu posoudit.
+
+physics/metal/metal_box_impact_hard3.wav
+  Použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Tvrdý kontakt kovové bedny; základ zásahu či bloku, charakter dutého kovu posoudit.
+
+physics/metal/chain_impact_hard1.wav
+  Použití: Pova / Sekera na řetězu · E; Honza / Past na medvědy · E
+  Úder řetězu; detail přitažení nebo pasti, ne celý pohyb řetězu.
+
+physics/metal/chain_impact_hard2.wav
+  Použití: Pova / Sekera na řetězu · E; Honza / Past na medvědy · E
+  Úder řetězu; detail přitažení nebo pasti, ne celý pohyb řetězu.
+
+physics/concrete/rock_impact_hard1.wav
+  Použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Honza / Balvan · Q
+  Náraz kamene: balvan nebo vrstva tvrdého kontaktu. Není to valení.
+
+physics/concrete/rock_impact_hard2.wav
+  Použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Honza / Balvan · Q
+  Náraz kamene: balvan nebo vrstva tvrdého kontaktu. Není to valení.
+
+physics/concrete/rock_impact_hard3.wav
+  Použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Honza / Balvan · Q
+  Náraz kamene: balvan nebo vrstva tvrdého kontaktu. Není to valení.
+
+physics/concrete/rock_impact_hard4.wav
+  Použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Honza / Balvan · Q
+  Náraz kamene: balvan nebo vrstva tvrdého kontaktu. Není to valení.
+
+physics/concrete/boulder_impact_hard4.wav
+  Použití: Honza / Balvan · Q
+  Těžký náraz balvanu, doplnit valení a fáze ultimátky.
+
+physics/body/body_impact_ct_01.wav
+  Použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Zásahy do těla; Zpětná vazba a stavy / Smrt a pád těla
+  Tělesný náraz hráče; posoudit pro stěnu nebo dopad těla.
+
+physics/body/body_impact_ct_02.wav
+  Použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Zásahy do těla; Zpětná vazba a stavy / Smrt a pád těla
+  Tělesný náraz hráče; posoudit pro stěnu nebo dopad těla.
+
+physics/body/body_impact_ct_03.wav
+  Použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Zásahy do těla; Zpětná vazba a stavy / Smrt a pád těla
+  Tělesný náraz hráče; posoudit pro stěnu nebo dopad těla.
+
+physics/body/body_impact_ct_04.wav
+  Použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Zásahy do těla; Zpětná vazba a stavy / Smrt a pád těla
+  Tělesný náraz hráče; posoudit pro stěnu nebo dopad těla.
+
+physics/body/body_impact_fists_01.wav
+  Použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Úder do těla; kandidát pro odkopnutí.
+
+physics/body/body_impact_fists_02.wav
+  Použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Úder do těla; kandidát pro odkopnutí.
+
+physics/body/body_impact_fists_03.wav
+  Použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Úder do těla; kandidát pro odkopnutí.
+
+weapons/knife/knife_hit_light_flesh_01.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný lehký sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/knife_hit_light_flesh_02.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný lehký sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/knife_hit_light_flesh_03.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný lehký sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/knife_hit_light_flesh_04.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný lehký sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/knife_hit_light_flesh_05.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný lehký sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/knife_hit_light_flesh_06.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný lehký sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/heavy_hit_flesh_01.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný těžší sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/heavy_hit_flesh_04.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný těžší sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/heavy_hit_flesh_06.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný těžší sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/heavy_hit_flesh_08.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný těžší sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/heavy_hit_flesh_09.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný těžší sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/heavy_hit_flesh_10.mp3
+  Použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Společný těžší sečný zásah do hráče. Ne do zdi a ne při švihu vzduchem.
+
+weapons/knife/knife_slash1.wav
+  Použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih / seknutí nožem; kandidát pro pohyb sekery a kosy. Posoudit charakter a případně přidat těžší vrstvu.
+
+weapons/knife/knife_slash2.wav
+  Použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih / seknutí nožem; kandidát pro pohyb sekery a kosy. Posoudit charakter a případně přidat těžší vrstvu.
+
+weapons/knife/knife_hit1.wav
+  Použití: Pova / Sekyrky; Max / Kosa
+  Zásah nožem. Zvuk kontaktu; materiál a vhodnost pro sekeru/kosu ověřit poslechem.
+
+weapons/knife/knife_hit2.wav
+  Použití: Pova / Sekyrky; Max / Kosa
+  Zásah nožem. Zvuk kontaktu; materiál a vhodnost pro sekeru/kosu ověřit poslechem.
+
+weapons/knife/knife_stab.wav
+  Použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift; Společná knihovna / Sekera / kosa → hráč (společná sada)
+  Bodnutí nožem; alternativa či vrstva silného kontaktu, nikoli automaticky zvuk švihu. Delší bodnutí / zásah hráče; alternativa pro společnou sadu po poslechu.
+
+weapons/knife/knife_hit_01.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Zásah nožem; konkrétní materiál ověřit poslechem.
+
+weapons/knife/knife_hit_02.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Zásah nožem; konkrétní materiál ověřit poslechem.
+
+weapons/knife/knife_hit_03.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Zásah nožem; konkrétní materiál ověřit poslechem.
+
+weapons/knife/knife_hit_04.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Zásah nožem; konkrétní materiál ověřit poslechem.
+
+weapons/knife/knife_hit_light_01.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Lehký zásah nožem; kandidát pro kontakt sekery/kosy, materiál ověřit poslechem.
+
+weapons/knife/knife_hit_light_02.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Lehký zásah nožem; kandidát pro kontakt sekery/kosy, materiál ověřit poslechem.
+
+weapons/knife/knife_hit_light_03.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Lehký zásah nožem; kandidát pro kontakt sekery/kosy, materiál ověřit poslechem.
+
+weapons/knife/knife_hit_light_04.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Lehký zásah nožem; kandidát pro kontakt sekery/kosy, materiál ověřit poslechem.
+
+weapons/knife/knife_hit_heavy_01.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Těžký zásah nožem; kandidát pro silnější kontakt sekery/kosy, materiál ověřit poslechem.
+
+weapons/knife/knife_hit_heavy_03.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Těžký zásah nožem; kandidát pro silnější kontakt sekery/kosy, materiál ověřit poslechem.
+
+weapons/knife/knife_hit_heavy_04.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Těžký zásah nožem; kandidát pro silnější kontakt sekery/kosy, materiál ověřit poslechem.
+
+weapons/knife/knife_hit_heavy_05.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Těžký zásah nožem; kandidát pro silnější kontakt sekery/kosy, materiál ověřit poslechem.
+
+weapons/knife/knife_hit_light_thud_01.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Tupá složka kontaktu nože; možná vrstva úderu sekery/kosy. Není to čistý švih.
+
+weapons/knife/knife_hit_light_thud_02.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Tupá složka kontaktu nože; možná vrstva úderu sekery/kosy. Není to čistý švih.
+
+weapons/knife/knife_hit_light_thud_03.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Tupá složka kontaktu nože; možná vrstva úderu sekery/kosy. Není to čistý švih.
+
+weapons/knife/knife_swish_light_01.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Lehký švih nože; pro větší sekeru/kosu může vyžadovat zesílení nebo jinou vrstvu.
+
+weapons/knife/knife_swish_light_02.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Lehký švih nože; pro větší sekeru/kosu může vyžadovat zesílení nebo jinou vrstvu.
+
+weapons/knife/knife_swish_light_03.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Lehký švih nože; pro větší sekeru/kosu může vyžadovat zesílení nebo jinou vrstvu.
+
+weapons/knife/knife_swish_light_04.mp3
+  Použití: Pova / Sekyrky; Max / Kosa
+  Lehký švih nože; pro větší sekeru/kosu může vyžadovat zesílení nebo jinou vrstvu.
+
+weapons/knife/knife_swish_heavy_01.mp3
+  Použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Těžší švih nože; kandidát pro velkou zbraň po poslechu a případné úpravě.
+
+weapons/knife/knife_swish_heavy_02.mp3
+  Použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Těžší švih nože; kandidát pro velkou zbraň po poslechu a případné úpravě.
+
+weapons/knife/knife_swish_heavy_03.mp3
+  Použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Těžší švih nože; kandidát pro velkou zbraň po poslechu a případné úpravě.
+
+weapons/m4a1/m4a1_01.wav
+  Použití: Viktor · výstřel
+  Alternativa dosavadní generované rány Viktora.
+
+weapons/m4a1/m4a1_02.wav
+  Použití: Viktor · výstřel
+  Alternativa dosavadní generované rány Viktora.
+
+weapons/m4a1/m4a1_03.wav
+  Použití: Viktor · výstřel
+  Alternativa dosavadní generované rány Viktora.
+
+weapons/m4a1/m4a1_04.wav
+  Použití: Viktor · výstřel
+  Alternativa dosavadní generované rány Viktora.
+
+weapons/awp/awp_01.wav
+  Použití: Kondulič · oba režimy střelby
+  Kondulič: výstřel AWP při střelbě přes optiku.
+
+weapons/awp/awp_02.wav
+  Použití: Kondulič · oba režimy střelby
+  Kondulič: výstřel AWP při střelbě přes optiku.
+
+weapons/m4a1/m4a1_silencer_01.wav
+  Použití: David · výstřel
+  David: tichý tlumený výstřel M4A1-S.
+
+weapons/revolver/revolver-1_01.wav
+  Použití: Šindel · výstřel
+  Šindel: výstřel revolveru R8.
+
+weapons/mp5/mp5_01.wav
+  Použití: Kondulič · oba režimy střelby
+  Kondulič: MP5 při rychlé střelbě bez optiky.
+
+weapons/nova/nova_insertshell_01.mp3
+  Použití: Honza / Přebití granátometu
+  Vložení jednoho náboje; Honza přehraje pětkrát za sebou během přebíjení.
+
+weapons/nova/nova_insertshell_02.mp3
+  Použití: Honza / Přebití granátometu
+  Vložení jednoho náboje; Honza přehraje pětkrát za sebou během přebíjení.
+
+weapons/nova/nova_insertshell_03.mp3
+  Použití: Honza / Přebití granátometu
+  Vložení jednoho náboje; Honza přehraje pětkrát za sebou během přebíjení.
+
+weapons/c4/c4_thump_01.mp3
+  Použití: Mošino / Zvukomet · výstřel
+  Kandidát podle názvu: tlakový/basový úder jako základ pulsu. Poslechem ověřit charakter; případně zkombinovat s krátkou elektrickou vrstvou.
+
+weapons/c4/c4_shockwave_01.mp3
+  Použití: Mošino / Zvukomet · výstřel
+  Kandidát podle názvu: tlaková vlna. Pro běžný výstřel může potřebovat krátký výřez a potlačení explozivního charakteru.
+
+ui/chickens/photobooth_fx_beam_01.wav
+  Použití: Mošino / Zvukomet · výstřel
+  Kandidát podle názvu: efekt beam. Porovnat jako energetickou složku zvukometu; výšku a ostrost ověřit poslechem.
+
+ui/chickens/photobooth_fx_laser_01.wav
+  Použití: Mošino / Zvukomet · výstřel
+  Kandidát podle názvu: laserový efekt. Pro porovnání, pokud nebude příliš vysoký či komický.
+
+weapons/taser/taser_shoot.wav
+  Použití: Mošino / Zvukomet · výstřel
+  Výstřel taseru: kandidát elektrického pulsu. Posoudit ostrost; pro Mošina může potřebovat ztišení vysokých frekvencí.
+
+weapons/taser/taser_hit.wav
+  Použití: Mošino / Zvukomet · výstřel; Viktor / Pulzní granát · RMB; Zpětná vazba a stavy / Omráčení
+  Elektrický kontakt taseru: možná krátká elektrická vrstva, ne automaticky hotový výstřel. Elektrický zásah; jedna vrstva pulzu nebo omráčení.
+
+weapons/fx/nearmiss/bulletby_subsonic_01.wav
+  Použití: Mošino / Zvukomet · výstřel
+  Průlet podzvukové střely: možná vzdušná složka zvukové vlny. Samotný nebude nutně tvořit plný výstřel.
+
+player/footsteps/bass_01.wav
+  Použití: Mošino / Zvukomet · výstřel
+  Basová vrstva z knihovny kroků: zkusit jen jako spodní úder, nikoli jako hotovou zbraň.
+
+ambient/common/energy/zap1.mp3
+  Použití: Mošino / Zvukomet · výstřel
+  Elektrický zap: doplňková vrstva k posouzení. Může být ostrý nebo vyžadovat výřez, proto až jako další možnost.
+
+physics/water/water_splash_01.wav
+  Použití: Malý a velký splash; Kroky a dopady / Mělká voda; Společná knihovna / Kulka → voda
+  Přirozený vodní splash; vybrat velikost podle poslechu.
+
+physics/water/water_splash_02.wav
+  Použití: Malý a velký splash; Kroky a dopady / Mělká voda; Společná knihovna / Kulka → voda
+  Přirozený vodní splash; vybrat velikost podle poslechu.
+
+physics/water/water_splash_03.wav
+  Použití: Malý a velký splash; Kroky a dopady / Mělká voda; Společná knihovna / Kulka → voda
+  Přirozený vodní splash; vybrat velikost podle poslechu.
+
+weapons/hegrenade/hegrenade_detonate_02.wav
+  Použití: Společná knihovna / Malý výbuch; Honza / Nálož · Shift / RMB; Honza / Granáty po smrti; Šindel / Svatý granát · E
+  Výbuch granátu; pro svatý granát jen fyzická vrstva.
+
+weapons/hegrenade/hegrenade_detonate_03.wav
+  Použití: Společná knihovna / Malý výbuch; Honza / Nálož · Shift / RMB; Honza / Granáty po smrti; Šindel / Svatý granát · E
+  Výbuch granátu; pro svatý granát jen fyzická vrstva.
+
+weapons/hegrenade/he_bounce-1.wav
+  Použití: Společná knihovna / Odraz granátu; Honza / Granáty po smrti
+  Odraz granátu.
+
+physics/weapons/weapon_hegrenade_impact_03.wav
+  Použití: Společná knihovna / Odraz granátu; Honza / Nálož · Shift / RMB
+  Kontakt granátu s povrchem; další varianty odrazu.
+
+physics/weapons/weapon_hegrenade_impact_04.wav
+  Použití: Společná knihovna / Odraz granátu; Honza / Nálož · Shift / RMB
+  Kontakt granátu s povrchem; další varianty odrazu.
+
+physics/weapons/weapon_hegrenade_impact_05.wav
+  Použití: Společná knihovna / Odraz granátu; Honza / Nálož · Shift / RMB
+  Kontakt granátu s povrchem; další varianty odrazu.
+
+weapons/hegrenade/grenade_throw.wav
+  Použití: Honza / Nálož · Shift / RMB; Šindel / Svatý granát · E; David / Biotický granát · E
+  Hod granátu; sdílená pohybová vrstva.
+
+weapons/hegrenade/pinpull.wav
+  Použití: Honza / Nálož · Shift / RMB; Šindel / Svatý granát · E
+  Vytažení pojistky. Použít jen pokud sedí k vizuálu schopnosti.
+
+weapons/hegrenade/pinpull_start.wav
+  Použití: Honza / Nálož · Shift / RMB; Šindel / Svatý granát · E
+  Vytažení pojistky. Použít jen pokud sedí k vizuálu schopnosti.
+
+weapons/flashbang/flashbang_explode1.wav
+  Použití: Viktor / Pulzní granát · RMB; Zpětná vazba a stavy / Omráčení
+  Výbuch flashbangu, kandidát pro pulzní granát/omráčení.
+
+weapons/flashbang/flashbang_explode2.wav
+  Použití: Viktor / Pulzní granát · RMB; Zpětná vazba a stavy / Omráčení
+  Výbuch flashbangu, kandidát pro pulzní granát/omráčení.
+
+weapons/c4/c4_explode1.wav
+  Použití: Společná knihovna / Velký výbuch / úder; Honza / Balvan · Q
+  Velká exploze; pro balvan jen koncový výbuch.
+
+weapons/taser/taser_charge_ready.wav
+  Použití: Zpětná vazba a stavy / Ultimátka / náboj připravený; Kondulič / Optika a nabití rány
+  Elektronické potvrzení připravenosti / nabití.
+
+weapons/taser/taser_charging.wav
+  Použití: Kondulič / Optika a nabití rány; Viktor / Taktický zaměřovač · Q
+  Nabíjení elektroniky; posoudit pro zaměřování.
+
+weapons/clipempty_pistol.wav
+  Použití: Společná knihovna / Prázdná zbraň; Zpětná vazba a stavy / Neplatná akce / žádný cíl
+  Cvaknutí prázdné zbraně.
+
+weapons/clipempty_rifle.wav
+  Použití: Společná knihovna / Prázdná zbraň; Zpětná vazba a stavy / Neplatná akce / žádný cíl
+  Cvaknutí prázdné zbraně.
+
+weapons/m4a1/m4a1_clipout.mp3
+  Použití: Viktor / Přebití zbraně
+  M4A1: část přebíjení. Z klipů je potřeba sestavit celek podle délky animace.
+
+weapons/m4a1/m4a1_clipin.mp3
+  Použití: Viktor / Přebití zbraně
+  M4A1: část přebíjení. Z klipů je potřeba sestavit celek podle délky animace.
+
+weapons/m4a1/m4a1_boltback.mp3
+  Použití: Viktor / Přebití zbraně
+  M4A1: část přebíjení. Z klipů je potřeba sestavit celek podle délky animace.
+
+weapons/m4a1/m4a1_boltforward.mp3
+  Použití: Viktor / Přebití zbraně
+  M4A1: část přebíjení. Z klipů je potřeba sestavit celek podle délky animace.
+
+weapons/awp/awp_clipout.mp3
+  Použití: Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  AWP: část přebíjení. Pro Davidovu pušku posoudit charakter; nejde o hotový synchronizovaný celek.
+
+weapons/awp/awp_clipin.mp3
+  Použití: Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  AWP: část přebíjení. Pro Davidovu pušku posoudit charakter; nejde o hotový synchronizovaný celek.
+
+weapons/awp/awp_cliphit.mp3
+  Použití: Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  AWP: část přebíjení. Pro Davidovu pušku posoudit charakter; nejde o hotový synchronizovaný celek.
+
+weapons/awp/awp_boltback.wav
+  Použití: Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  AWP: část přebíjení. Pro Davidovu pušku posoudit charakter; nejde o hotový synchronizovaný celek.
+
+weapons/awp/awp_boltforward.wav
+  Použití: Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  AWP: část přebíjení. Pro Davidovu pušku posoudit charakter; nejde o hotový synchronizovaný celek.
+
+weapons/p90/p90_cliprelease.wav
+  Použití: Mošino / Přebití zvukometu
+  P90: mechanická vrstva přebíjení zvukometu; doplnit stylizaci a časování.
+
+weapons/p90/p90_clipout.wav
+  Použití: Mošino / Přebití zvukometu
+  P90: mechanická vrstva přebíjení zvukometu; doplnit stylizaci a časování.
+
+weapons/p90/p90_clipin.wav
+  Použití: Mošino / Přebití zvukometu
+  P90: mechanická vrstva přebíjení zvukometu; doplnit stylizaci a časování.
+
+weapons/p90/p90_boltback.wav
+  Použití: Mošino / Přebití zvukometu
+  P90: mechanická vrstva přebíjení zvukometu; doplnit stylizaci a časování.
+
+weapons/p90/p90_boltforward.wav
+  Použití: Mošino / Přebití zvukometu
+  P90: mechanická vrstva přebíjení zvukometu; doplnit stylizaci a časování.
+
+weapons/glock18/glock_clipout.wav
+  Použití: Šindel / Přebití Devítky
+  Glock: jednotlivá fáze přebití pistole, sestavit podle animace.
+
+weapons/glock18/glock_clipin.wav
+  Použití: Šindel / Přebití Devítky
+  Glock: jednotlivá fáze přebití pistole, sestavit podle animace.
+
+weapons/glock18/glock_slideback.wav
+  Použití: Šindel / Přebití Devítky
+  Glock: jednotlivá fáze přebití pistole, sestavit podle animace.
+
+weapons/glock18/glock_sliderelease.wav
+  Použití: Šindel / Přebití Devítky
+  Glock: jednotlivá fáze přebití pistole, sestavit podle animace.
+
+weapons/deagle/de_clipout.wav
+  Použití: Šindel / Přebití Devítky
+  Šindel: přebití z Deaglu, vyjmutí/vložení zásobníku a pohyb závěru. Výstřel zůstává R8.
+
+weapons/deagle/de_clipin.mp3
+  Použití: Šindel / Přebití Devítky
+  Šindel: přebití z Deaglu, vyjmutí/vložení zásobníku a pohyb závěru. Výstřel zůstává R8.
+
+weapons/deagle/de_slideback.wav
+  Použití: Šindel / Přebití Devítky
+  Šindel: přebití z Deaglu, vyjmutí/vložení zásobníku a pohyb závěru. Výstřel zůstává R8.
+
+weapons/deagle/de_slideforward.wav
+  Použití: Šindel / Přebití Devítky
+  Šindel: přebití z Deaglu, vyjmutí/vložení zásobníku a pohyb závěru. Výstřel zůstává R8.
+
+weapons/mag7/mag7_insertshell.wav
+  Použití: Honza / Přebití granátometu
+  Brokovnice: nouzový mechanický podklad pro granátomet. Není to skutečné přebití granátometu.
+
+weapons/mag7/mag7_pump_back.mp3
+  Použití: Honza / Přebití granátometu
+  Brokovnice: nouzový mechanický podklad pro granátomet. Není to skutečné přebití granátometu.
+
+weapons/mag7/mag7_pump_forward.wav
+  Použití: Honza / Přebití granátometu
+  Brokovnice: nouzový mechanický podklad pro granátomet. Není to skutečné přebití granátometu.
+
+weapons/awp/zoom.wav
+  Použití: Kondulič / Optika a nabití rány; David / Přebití biotické pušky
+  Krátká optika pušky. Pro Davida samostatný detail k přebití/optice.
+
+weapons/awp/awp_zoom_out.wav
+  Použití: Kondulič / Optika a nabití rány
+  Odchod z optiky.
+
+player/damage1.wav
+  Použití: Zpětná vazba a stavy / Přijetí poškození
+  Obecná mužská reakce na zásah; nenahrazuje osobní českou hlášku.
+
+player/damage2.wav
+  Použití: Zpětná vazba a stavy / Přijetí poškození
+  Obecná mužská reakce na zásah; nenahrazuje osobní českou hlášku.
+
+player/damage3.wav
+  Použití: Zpětná vazba a stavy / Přijetí poškození
+  Obecná mužská reakce na zásah; nenahrazuje osobní českou hlášku.
+
+player/death1.wav
+  Použití: Zpětná vazba a stavy / Smrt a pád těla
+  Obecná reakce smrti, pouze kandidát společného ruchu.
+
+player/death2.wav
+  Použití: Zpětná vazba a stavy / Smrt a pád těla
+  Obecná reakce smrti, pouze kandidát společného ruchu.
+
+player/death3.wav
+  Použití: Zpětná vazba a stavy / Smrt a pád těla
+  Obecná reakce smrti, pouze kandidát společného ruchu.
+
+items/healthshot_success_01.wav
+  Použití: Lékárnička; Velká lékárnička; Zpětná vazba a stavy / Léčení a zesílení
+  Léčivé potvrzení / sebrání zdraví.
+
+items/healthshot_prepare_01.wav
+  Použití: Tramal; Viktor / Léčivé pole · E
+  Příprava léčivého předmětu, mechanický detail.
+
+items/nvg_on.wav
+  Použití: Kondulič / Infravize · Q; Viktor / Taktický zaměřovač · Q
+  Zapnutí elektronického vidění.
+
+items/pickup_ammo_01.wav
+  Použití: Honzův karburátor
+  Sebrání munice, kandidát pro kovovou součástku po poslechu.
+
+items/pickup_ammo_02.wav
+  Použití: Honzův karburátor
+  Sebrání munice, kandidát pro kovovou součástku po poslechu.
+
+items/rush_terminal_no_01.mp3
+  Použití: Zpětná vazba a stavy / Neplatná akce / žádný cíl; Tlačítka a výběr hrdiny
+  Zamítnutí v UI.
+
+items/rush_terminal_yes_01.mp3
+  Použití: Tlačítka a výběr hrdiny; Odemčení bodu
+  Pozitivní potvrzení / odemčení.
+
+items/rush_terminal_timer_beep.mp3
+  Použití: Tik zabírání; Odpočet a start
+  Tik časovače nebo zabírání.
+
+items/rush_captured_team_01.mp3
+  Použití: Zabrání bodu
+  Získání cíle vlastním týmem.
+
+items/rush_captured_enemy_01.mp3
+  Použití: Sporný bod / bod soupeře
+  Získání cíle soupeřem, odlišná znělka.
+
+physics/metal/soda_can_impact_hard1.wav
+  Použití: David / Posílení · Q
+  Kontakt plechovky Monsteru; pouze fyzická vrstva posílení.
+
+physics/metal/soda_can_impact_hard2.wav
+  Použití: David / Posílení · Q
+  Kontakt plechovky Monsteru; pouze fyzická vrstva posílení.
+
+physics/metal/soda_can_impact_hard3.wav
+  Použití: David / Posílení · Q
+  Kontakt plechovky Monsteru; pouze fyzická vrstva posílení.
+
+physics/glass/glass_bottle_impact_hard1.wav
+  Použití: Pivo · rychlost; Slivovice · síla; Dědova slivovice
+  Kontakt lahve; ne zvuk otevření nebo pití.
+
+physics/glass/glass_bottle_impact_hard2.wav
+  Použití: Pivo · rychlost; Slivovice · síla; Dědova slivovice
+  Kontakt lahve; ne zvuk otevření nebo pití.
+
+physics/glass/glass_bottle_impact_hard3.wav
+  Použití: Pivo · rychlost; Slivovice · síla; Dědova slivovice
+  Kontakt lahve; ne zvuk otevření nebo pití.
+
+ambient/common/fire/fire_med_loop1.mp3
+  Použití: Kotel · oheň a přehřátí; Krb a gril; Pova / Modrý plamen · Shift
+  Smyčka ohně; posoudit pro kotel, krb nebo plamen.
+
+ambient/common/gas/steam_loop1.mp3
+  Použití: Kotel · oheň a přehřátí; Kotel · varování v patře
+  Smyčka páry; syčení přehřátého kotle, ne vlastní hoření.
+
+ambient/inferno/water_stream_01.wav
+  Použití: Potok
+  Potok / tekoucí voda.
+
+ambient/common/water/water_streamloop3.mp3
+  Použití: Potok; Jízda proudem
+  Smyčka proudu vody; intenzitu ověřit poslechem.
+
+ambient/anubis/anubis_riverlap.wav
+  Použití: Potok
+  Voda u břehu; pro jezírko, ne automaticky tekoucí potok.
+
+ambient/common/vehicles/car_idle_01.mp3
+  Použití: Yaris · motor a pneumatiky
+  Motor auta na volnoběh; konkrétní charakter Yarisu neposouzen.
+
+ambient/common/vehicles/csgo_dust_car_driveby_01.mp3
+  Použití: Yaris · motor a pneumatiky
+  Průjezd auta, alternativa pro Yaris.
+
+ambient/common/backgrounds/engine_room.mp3
+  Použití: Rolba · motor
+  Motorový prostor, jen možná hlubší vrstva rolby, nikoli celá sada motoru.
+
+ambient/anubis/wind_low_amb.wav
+  Použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Jemný vítr jako podkres.
+
+ambient/survival/outside_forest_low_01.wav
+  Použití: Chaty · další ambientové vrstvy
+  Lesní ambient; porovnat s hotovým vesnickým podkresem.
+
+ambient/cache/cache_outside_birds_lp_02.mp3
+  Použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Ptáci venku; doplněk zahrady.

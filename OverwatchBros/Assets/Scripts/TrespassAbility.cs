@@ -59,7 +59,7 @@ public class TrespassAbility : NetworkBehaviour
         var target = FindTarget();
         if (target == null)
         {
-            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.6f);   // nikdo na dosah
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "state_denied", ProceduralSfx.Empty), transform.position, 0.6f);   // nikdo na dosah
             return;
         }
 

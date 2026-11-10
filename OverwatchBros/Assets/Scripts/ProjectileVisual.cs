@@ -12,6 +12,7 @@ public class ProjectileVisual : MonoBehaviour
     float lifetime;
     int id;
     float bounce;
+    float nextBounceSound;
     float radius;
     AudioSource flightAudio;
 
@@ -120,7 +121,7 @@ public class ProjectileVisual : MonoBehaviour
         if (kind == ProjectileSim.KindExplosion)
         {
             Fx.Explosion(position, weapon.explosionRadius);
-            ProceduralSfx.Play(ProceduralSfx.Explosion, position, 0.9f);
+            ProceduralSfx.Play(CollectedAudioBank.SmallExplosion(), position, 0.9f, 60f);
         }
         else if (kind == ProjectileSim.KindHit)
         {
@@ -133,7 +134,7 @@ public class ProjectileVisual : MonoBehaviour
             if (weapon.explosionRadius > 0f)
             {
                 Fx.Explosion(position, weapon.explosionRadius * 0.5f);
-                ProceduralSfx.Play(ProceduralSfx.Explosion, position, 0.5f);
+                ProceduralSfx.Play(CollectedAudioBank.SmallExplosion(), position, 0.5f, 60f);
             }
             else
             {
@@ -254,6 +255,11 @@ public class ProjectileVisual : MonoBehaviour
                 // vlastni dily vizualu (koule, pruh) nejsou prekazka - granat by se odrazil sam od sebe a spadl
                 if (hit.collider.transform.IsChildOf(transform)) continue;
 
+                if (velocity.sqrMagnitude > 2.25f && Time.time >= nextBounceSound)
+                {
+                    ProceduralSfx.Play(CollectedAudioBank.Pick("combat_grenade_bounce"), hit.point, 0.4f, 18f);
+                    nextBounceSound = Time.time + 0.12f;
+                }
                 ProjectileSim.Bounce(ref velocity, hit.distance > 0f ? hit.normal : Vector3.up, bounce);
                 step = step / distance * Mathf.Max(0f, hit.distance - 0.01f);
                 break;

@@ -38,7 +38,7 @@ public class BioticGrenadeAbility : NetworkBehaviour
         nextUseTime = Time.time + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "david_grenade", ProceduralSfx.Dash), transform.position, 0.5f);
         GetComponent<PlayerHero>().SayAbility(ability);
         ThrowServerRpc(eye.position, eye.forward);
     }
@@ -111,6 +111,8 @@ public class BioticGrenadeAbility : NetworkBehaviour
     [ClientRpc]
     void ThrownClientRpc(Vector3 from, Vector3 to, float seconds)
     {
+        if (!IsOwner)
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "david_grenade", ProceduralSfx.Dash), from, 0.5f);
         var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         DestroyImmediate(ball.GetComponent<Collider>());
         ball.name = "BioticGrenade";

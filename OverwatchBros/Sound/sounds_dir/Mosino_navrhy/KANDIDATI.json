@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "source": {
+    "id": "mosino_design",
+    "label": "Mošino – pulsy",
+    "url": "",
+    "author": "Úpravy nahrávek z uživatelem dodané knihovny CS2",
+    "license": "Zdroj CS2; licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená."
+  },
+  "files": [
+    {
+      "file": "mosino_pulse_01.wav",
+      "path": "c4_thump_01.mp3 + c4_shockwave_01.mp3",
+      "item_ids": [
+        "mosino_fire"
+      ],
+      "section": "B",
+      "seconds": 0.46,
+      "note": "Hutnější puls. Thump pitch 2.5×, shockwave pitch 6×; shockwave -14.4 dB pod úderem. Krátká obálka a potlačené ostré výšky. Smíchaný návrh k poslechu.",
+      "sources": [
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_thump_01.mp3",
+          "sha256": "479ec1c4c02544dc84280895e27406eaff590970124630c26a67515158ccac46"
+        },
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_shockwave_01.mp3",
+          "sha256": "76737f209dbc829d5a8d603af55f65e686a7752f03d05a85f1843c9c444c2b81"
+        }
+      ],
+      "status": "candidate_not_auditioned",
+      "sha256": "ae99ad390afc423635cf93af3a9c42b5d1634bec19325dd8d2c0bf1640d0e457",
+      "mix": {
+        "thump_pitch_factor": 2.5,
+        "shockwave_pitch_factor": 6.0,
+        "shockwave_gain": 0.13,
+        "thump_gain": 0.68,
+        "duration": 0.46,
+        "beam_pitch_factor": null,
+        "beam_gain": 0,
+        "peak": 0.6399756821027036
+      }
+    },
+    {
+      "file": "mosino_pulse_02.wav",
+      "path": "c4_thump_01.mp3 + c4_shockwave_01.mp3",
+      "item_ids": [
+        "mosino_fire"
+      ],
+      "section": "B",
+      "seconds": 0.34,
+      "note": "Krátký energetický puls. Thump pitch 4×, shockwave pitch 9×; shockwave -16.7 dB pod úderem. Krátká obálka a potlačené ostré výšky. Smíchaný návrh k poslechu.",
+      "sources": [
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_thump_01.mp3",
+          "sha256": "479ec1c4c02544dc84280895e27406eaff590970124630c26a67515158ccac46"
+        },
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_shockwave_01.mp3",
+          "sha256": "76737f209dbc829d5a8d603af55f65e686a7752f03d05a85f1843c9c444c2b81"
+        }
+      ],
+      "status": "candidate_not_auditioned",
+      "sha256": "4e2c25ab4c1404716139a30a22dfdfc87407f9116c01a5849f49b4234fccd083",
+      "mix": {
+        "thump_pitch_factor": 4.0,
+        "shockwave_pitch_factor": 9.0,
+        "shockwave_gain": 0.1,
+        "thump_gain": 0.68,
+        "duration": 0.34,
+        "beam_pitch_factor": null,
+        "beam_gain": 0,
+        "peak": 0.6253102191033107
+      }
+    },
+    {
+      "file": "mosino_pulse_03.wav",
+      "path": "c4_thump_01.mp3 + c4_shockwave_01.mp3",
+      "item_ids": [
+        "mosino_fire"
+      ],
+      "section": "B",
+      "seconds": 0.25,
+      "note": "Lehký rychlý puls. Thump pitch 5×, shockwave pitch 12×; shockwave -19.7 dB pod úderem. Krátká obálka a potlačené ostré výšky. Smíchaný návrh k poslechu.",
+      "sources": [
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_thump_01.mp3",
+          "sha256": "479ec1c4c02544dc84280895e27406eaff590970124630c26a67515158ccac46"
+        },
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_shockwave_01.mp3",
+          "sha256": "76737f209dbc829d5a8d603af55f65e686a7752f03d05a85f1843c9c444c2b81"
+        }
+      ],
+      "status": "candidate_not_auditioned",
+      "sha256": "9a9dbdfbfacad6ab863cf882c58081c6cb2c5b210e62a0f2305db64bf832a7a6",
+      "mix": {
+        "thump_pitch_factor": 5.0,
+        "shockwave_pitch_factor": 12.0,
+        "shockwave_gain": 0.07,
+        "thump_gain": 0.68,
+        "duration": 0.25,
+        "beam_pitch_factor": null,
+        "beam_gain": 0,
+        "peak": 0.6497215140826332
+      }
+    },
+    {
+      "file": "mosino_pulse_04.wav",
+      "path": "c4_thump_01.mp3 + c4_shockwave_01.mp3 + photobooth_fx_beam_01.wav",
+      "item_ids": [
+        "mosino_fire"
+      ],
+      "section": "B",
+      "seconds": 0.3,
+      "note": "Beam puls – kratší a méně dutý. Thump pitch 8×, shockwave pitch 16×; shockwave -13.1 dB pod úderem. Hlavní vrstva je krátký Photo Booth FX Beam (pitch 1×); dutý spodek úderu je odfiltrovaný. Krátká obálka a potlačené ostré výšky. Smíchaný návrh k poslechu.",
+      "sources": [
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_thump_01.mp3",
+          "sha256": "479ec1c4c02544dc84280895e27406eaff590970124630c26a67515158ccac46"
+        },
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_shockwave_01.mp3",
+          "sha256": "76737f209dbc829d5a8d603af55f65e686a7752f03d05a85f1843c9c444c2b81"
+        },
+        {
+          "file": "CS2_kandidati/ui/chickens/photobooth_fx_beam_01.wav",
+          "sha256": "4a18ea384c3dcb47900b52c29f92160f47eceb7d1794cd5eaeccbac4c5bff575"
+        }
+      ],
+      "status": "candidate_not_auditioned",
+      "sha256": "ee4c01863bfcba016ef0950f86f6a324de37715bf5de511c22f6e7736efb9169",
+      "mix": {
+        "thump_pitch_factor": 8.0,
+        "shockwave_pitch_factor": 16.0,
+        "shockwave_gain": 0.04,
+        "thump_gain": 0.18,
+        "duration": 0.3,
+        "beam_pitch_factor": 1.0,
+        "beam_gain": 0.72,
+        "peak": 0.65
+      }
+    },
+    {
+      "file": "mosino_pulse_05.wav",
+      "path": "c4_thump_01.mp3 + c4_shockwave_01.mp3 + photobooth_fx_beam_01.wav",
+      "item_ids": [
+        "mosino_fire"
+      ],
+      "section": "B",
+      "seconds": 0.23,
+      "note": "Beam puls – extra vysoký a rychlý. Thump pitch 12×, shockwave pitch 20×; shockwave -17.1 dB pod úderem. Hlavní vrstva je krátký Photo Booth FX Beam (pitch 1.4×); dutý spodek úderu je odfiltrovaný. Krátká obálka a potlačené ostré výšky. Smíchaný návrh k poslechu.",
+      "sources": [
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_thump_01.mp3",
+          "sha256": "479ec1c4c02544dc84280895e27406eaff590970124630c26a67515158ccac46"
+        },
+        {
+          "file": "CS2_kandidati/weapons/c4/c4_shockwave_01.mp3",
+          "sha256": "76737f209dbc829d5a8d603af55f65e686a7752f03d05a85f1843c9c444c2b81"
+        },
+        {
+          "file": "CS2_kandidati/ui/chickens/photobooth_fx_beam_01.wav",
+          "sha256": "4a18ea384c3dcb47900b52c29f92160f47eceb7d1794cd5eaeccbac4c5bff575"
+        }
+      ],
+      "status": "candidate_not_auditioned",
+      "sha256": "2567bb31a5cb336d6e91a43ada0191743c5dc109f4f086ff4cb102bb5f59ccd2",
+      "mix": {
+        "thump_pitch_factor": 12.0,
+        "shockwave_pitch_factor": 20.0,
+        "shockwave_gain": 0.025,
+        "thump_gain": 0.18,
+        "duration": 0.23,
+        "beam_pitch_factor": 1.4,
+        "beam_gain": 0.72,
+        "peak": 0.6499999999999999
+      }
+    }
+  ]
+}

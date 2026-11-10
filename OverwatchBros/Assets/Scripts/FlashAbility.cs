@@ -139,7 +139,7 @@ public class FlashAbility : NetworkBehaviour
         Fx.Explosion(point, (ability != null ? ability.radius : 3f) * 0.6f);
         Fx.BulletImpact(point, PulseColor, 4f);
         Fx.Sparks(point, Color.white);
-        ProceduralSfx.Play(ProceduralSfx.Explosion, point, 0.7f);
+        ProceduralSfx.Play(CollectedAudioBank.Ability(ability, "viktor_grenade", ProceduralSfx.Explosion), point, 0.7f);
         ProceduralSfx.Play(ProceduralSfx.Hit, point, 1f);
 
         // Bily zablesk.

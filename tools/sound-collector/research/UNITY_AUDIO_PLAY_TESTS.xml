@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-10 18:59:08Z" end-time="2026-11-10 18:59:09Z" duration="0,9240639">
+  <test-suite type="TestSuite" id="1000" name="OverwatchBros" fullname="OverwatchBros" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-10 18:59:08Z" end-time="2026-11-10 18:59:09Z" duration="0.924064" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1003" name="Assembly-CSharp-Editor.dll" fullname="C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-10 18:59:08Z" end-time="2026-11-10 18:59:09Z" duration="0.754268" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10368" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestFixture" id="1001" name="CollectedAudioPlayChecks" fullname="CollectedAudioPlayChecks" classname="CollectedAudioPlayChecks" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-10 18:59:08Z" end-time="2026-11-10 18:59:09Z" duration="0.749410" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1002" name="SelectedAudioPlaybackAndReloadCancellation" fullname="CollectedAudioPlayChecks.SelectedAudioPlaybackAndReloadCancellation" methodname="SelectedAudioPlaybackAndReloadCancellation" classname="CollectedAudioPlayChecks" runstate="Runnable" seed="1394865308" result="Passed" start-time="2026-11-10 18:59:04Z" end-time="2026-11-10 18:59:09Z" duration="5.442273" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[Music] Hudba v menu a lobby pripravena. Uloz scenu (Ctrl+S).
+Saving results to: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\tools\sound-collector\research\UNITY_AUDIO_PLAY_TESTS.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -616,7 +616,10 @@ public class ReplayPlayer : MonoBehaviour
                 break;
             case ReplayEventType.SpatialSound: Fx.PlaySpatial(FindSound(e.name), e.p0, e.f0, e.f1, e.f2); break;
             case ReplayEventType.GlobalSound: Fx.PlayGlobal(FindSound(e.name), e.f0); break;
-            case ReplayEventType.Sfx: ProceduralSfx.Play(FindSound(e.name), e.p0, e.f0); break;
+            case ReplayEventType.Sfx:
+                ProceduralSfx.PlayTracked(FindSound(e.name), e.p0, e.f0, e.f1 > 0f ? e.f1 : 30f,
+                    spatial: true, pitch: e.f2 > 0f ? e.f2 : 1f);
+                break;
             case ReplayEventType.ProjectileSpawn:
                 var weapon = FindWeapon(e.name);
                 if (weapon != null) ProjectileVisual.Spawn(e.id + ProjectileIdOffset, e.p0, e.p1, weapon, e.p2);
@@ -673,7 +676,7 @@ public class ReplayPlayer : MonoBehaviour
 
     AudioClip FindSound(string name)
     {
-        return !string.IsNullOrEmpty(name) && sounds.TryGetValue(name, out var clipValue) ? clipValue : null;
+        return !string.IsNullOrEmpty(name) && sounds.TryGetValue(name, out var clipValue) ? clipValue : CollectedAudioBank.Find(name);
     }
 
     static WeaponDefinition FindWeapon(string name)

@@ -79,11 +79,11 @@ public static class ProceduralSfx
 
     public static AudioClip Explosion => explosion ??= MakeFiltered("explosion", 1.6f, 0.05f, 3.2f, 1f, 55f);
 
-    public static AudioClip Death => death ??= Make("death", 0.7f, (t, r) =>
+    public static AudioClip Death => CollectedAudioBank.Pick("state_death") ?? (death ??= Make("death", 0.7f, (t, r) =>
     {
         float f = Mathf.Lerp(320f, 70f, t / 0.7f);
         return Mathf.Sin(2f * Mathf.PI * f * t) * 0.5f * (1f - t / 0.7f);
-    });
+    }));
 
     public static AudioClip Spawn => spawn ??= Make("spawn", 0.35f, (t, r) =>
     {
@@ -98,9 +98,9 @@ public static class ProceduralSfx
     });
 
     // Omraceni: prasknuti a doznivajici piskani v usich (slysi vsichni kolem omraceneho).
-    public static AudioClip Stun => stun ??= Make("stun", 0.9f, (t, r) =>
+    public static AudioClip Stun => CollectedAudioBank.Pick("state_stun") ?? (stun ??= Make("stun", 0.9f, (t, r) =>
         Noise(r) * 0.7f * Mathf.Exp(-t * 45f)
-        + (Mathf.Sin(2f * Mathf.PI * 2900f * t) * 0.30f + Mathf.Sin(2f * Mathf.PI * 3350f * t) * 0.22f) * Mathf.Exp(-t * 3.2f));
+        + (Mathf.Sin(2f * Mathf.PI * 2900f * t) * 0.30f + Mathf.Sin(2f * Mathf.PI * 3350f * t) * 0.22f) * Mathf.Exp(-t * 3.2f)));
 
     // Potvrzeni pro toho, kdo omracil: dva stoupajici tony.
     public static AudioClip StunConfirm => stunConfirm ??= Make("stunConfirm", 0.22f, (t, r) =>
@@ -154,10 +154,10 @@ public static class ProceduralSfx
     });
 
     // Splouchnuti (dopad do vody z toboganu): sumivy sum s hlubokym zbuchnutim.
-    public static AudioClip Splash => splash ??= MakeFiltered("splash", 0.9f, 0.3f, 4.5f, 0.7f, 70f);
+    public static AudioClip Splash => CollectedAudioBank.Pick("world_splash") ?? (splash ??= MakeFiltered("splash", 0.9f, 0.3f, 4.5f, 0.7f, 70f));
 
     // Velky splouch (dopad do jezirka): delsi a hlubsi.
-    public static AudioClip BigSplash => bigSplash ??= MakeFiltered("bigSplash", 1.8f, 0.22f, 2.4f, 0.9f, 45f);
+    public static AudioClip BigSplash => CollectedAudioBank.Pick("steps_water.land") ?? CollectedAudioBank.Pick("world_splash") ?? (bigSplash ??= MakeFiltered("bigSplash", 1.8f, 0.22f, 2.4f, 0.9f, 45f));
 
     // Zastupna znelka buffu Respin Joker: vyherni automat - vzestupne arpeggio, cinkani minci a zaverecny akord.
     public static AudioClip JokerJingle => jokerJingle ??= MakeJingle();
@@ -263,8 +263,14 @@ public static class ProceduralSfx
 
     public static void Play(AudioClip clip, Vector3 position, float volume, float maxDistance, bool spatial = true)
     {
-        if (clip == null) return;
-        ReplayLog.Sfx(clip, position, volume);
+        PlayTracked(clip, position, volume, maxDistance, spatial);
+    }
+
+    // Reloads retain the source so interruptions can stop the complete assembled sequence.
+    public static AudioSource PlayTracked(AudioClip clip, Vector3 position, float volume, float maxDistance, bool spatial = true, float pitch = 1f)
+    {
+        if (clip == null) return null;
+        ReplayLog.Sfx(clip, position, volume, maxDistance, pitch);
 
         var go = new GameObject("SFX_" + clip.name);
         go.transform.position = position;
@@ -277,8 +283,10 @@ public static class ProceduralSfx
         source.minDistance = 3f;
         source.maxDistance = maxDistance;
         source.dopplerLevel = 0f;
+        source.pitch = Mathf.Clamp(pitch, 0.25f, 4f);
         source.Play();
-        UnityEngine.Object.Destroy(go, clip.length + 0.1f);
+        UnityEngine.Object.Destroy(go, clip.length / source.pitch + 0.1f);
+        return source;
     }
 
     static float Noise(System.Random r) => (float)(r.NextDouble() * 2.0 - 1.0);

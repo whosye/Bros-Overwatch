@@ -114,7 +114,7 @@ public class MineAbility : NetworkBehaviour
 
             // Bez naboje: cvaknuti, at je jasne, ze stisk prosel, jen neni cim hazet.
             if (charges <= 0 && !fpc.InputBlocked)
-                ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.7f);
+                ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "state_denied", ProceduralSfx.Empty), transform.position, 0.7f);
         }
 
         if (Time.time > bufferedUntil || fpc.InputBlocked || charges <= 0) return;
@@ -267,7 +267,7 @@ public class MineAbility : NetworkBehaviour
         visual.flying = false;
         visual.root.transform.position = position;
         visual.root.transform.rotation = Quaternion.FromToRotation(Vector3.up, normal);
-        ProceduralSfx.Play(ProceduralSfx.Hit, position, 0.35f);
+        ProceduralSfx.Play(CollectedAudioBank.Pick("honza_mine.impact", ProceduralSfx.Hit), position, 0.35f);
     }
 
     [ClientRpc]
@@ -286,7 +286,7 @@ public class MineAbility : NetworkBehaviour
         if (!exploded || ability == null) return;
 
         Fx.Explosion(position, ability.radius);
-        ProceduralSfx.Play(ProceduralSfx.Explosion, position, 0.9f);
+        ProceduralSfx.Play(CollectedAudioBank.Pick("honza_mine.explode", ProceduralSfx.Explosion), position, 0.9f);
     }
 
     void UpdateVisuals()

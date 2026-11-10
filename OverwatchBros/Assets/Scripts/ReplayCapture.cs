@@ -550,10 +550,10 @@ public static class ReplayLog
             Add(new ReplayEvent { type = ReplayEventType.GlobalSound, name = clip.name, f0 = volume });
     }
 
-    public static void Sfx(AudioClip clip, Vector3 p, float volume)
+    public static void Sfx(AudioClip clip, Vector3 p, float volume, float range = 30f, float pitch = 1f)
     {
         if (Recording && clip != null)
-            Add(new ReplayEvent { type = ReplayEventType.Sfx, name = clip.name, p0 = p, f0 = volume });
+            Add(new ReplayEvent { type = ReplayEventType.Sfx, name = clip.name, p0 = p, f0 = volume, f1 = range, f2 = pitch });
     }
 
     public static void ProjectileSpawn(int id, Vector3 p, Vector3 v, WeaponDefinition weapon, Vector3 offset)

@@ -46,7 +46,7 @@ public class NanoBoostAbility : NetworkBehaviour
             if (Time.time >= nextHint)
             {
                 nextHint = Time.time + 0.5f;
-                ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.6f);
+                ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "state_denied", ProceduralSfx.Empty), transform.position, 0.6f);
             }
             return;
         }

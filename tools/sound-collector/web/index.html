@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172c2b">
+  <title>Zvuková sbírka · Bros Overwatch</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/integration.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div id="error-banner" class="error-banner" role="alert" hidden></div>
+  <div class="workspace">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Zvuková sbírka, úvod">
+        <svg class="brand-mark" width="32" height="28" viewBox="0 0 32 28" fill="currentColor" aria-hidden="true"><rect x="0" y="10" width="4" height="8" rx="1"/><rect x="7" y="4" width="4" height="20" rx="1"/><rect x="14" y="0" width="4" height="28" rx="1"/><rect x="21" y="6" width="4" height="16" rx="1"/><rect x="28" y="11" width="4" height="6" rx="1"/></svg>
+        <span>BROS<br><strong>OVERWATCH</strong></span>
+      </a>
+      <div class="sidebar-heading">ZVUKOVÁ SBÍRKA</div>
+      <nav id="groups" aria-label="Skupiny zvuků"></nav>
+      <button id="browse-candidates" class="sidebar-audition"><span aria-hidden="true">♫</span> Poslech kandidátů <span id="gdc-count">0</span></button>
+      <div class="sidebar-bottom">
+        <span class="local-dot"></span> Jen na tvém počítači
+        <button id="help-button" class="sidebar-help">Jak to funguje <span>↗</span></button>
+      </div>
+    </aside>
+    <main>
+      <header class="page-header">
+        <div><div class="eyebrow">POSBÍRAT. POSLECHNOUT. VYBRAT.</div><h1>Zvuková sbírka<span>.</span></h1>
+          <p>Vyber, co ve hře chybí. Poslechni doporučení. Přiřaď svůj výběr.</p></div>
+        <div class="header-actions"><span id="save-status" role="status">Načítám…</span>
+          <button id="backup-button" class="button quiet">↓ Záloha</button>
+          <button id="library-button" class="button quiet">Další soubory <span id="inbox-count">0</span></button>
+        </div>
+      </header>
+      <section class="overview" aria-label="Průběh sbírání">
+        <div class="progress-block"><div class="progress-label"><span>Tvůj výběr</span><strong id="progress-text">0 / 0 hotovo</strong></div><progress id="progress" value="0" max="1"></progress><small id="progress-subtitle">Načítání katalogu…</small></div>
+        <div class="metric"><strong id="candidate-count">0</strong><span>Přiřazených položek</span></div>
+        <button id="gdc-metric" class="metric metric-button"><strong id="unassigned-count">0</strong><span>Kandidátů k poslechu ↗</span></button>
+        <button id="folder-button" class="folder-card" title="Otevřít zvukovou složku"><span aria-hidden="true">▱</span><span><strong>sounds_dir</strong><small id="folder-caption">Složka se kontroluje automaticky</small></span><span aria-hidden="true">↗</span></button>
+      </section>
+      <section class="quick-guide" aria-label="Jak začít">
+        <div class="guide-step"><span>1</span><div><strong>Vlevo vyber, co chybí</strong><small>Třeba Pova → Sekyrky.</small></div></div>
+        <div class="guide-step"><span>2</span><div><strong>Vpravo si přehraj doporučení</strong><small>Kandidáti z knihoven už jsou propojení.</small></div></div>
+        <div class="guide-step"><span>3</span><div><strong>Přiřaď a pak potvrď Hotovo</strong><small>Tvůj výběr se automaticky uloží.</small></div></div>
+        <button id="start-example" class="button primary">Začít na Sekyrkách →</button>
+      </section>
+      <div class="desk">
+        <section class="checklist-pane" aria-label="Checklist zvuků">
+          <div class="list-heading"><div><span class="eyebrow">CHECKLIST</span><h2 id="group-title">Všechny zvuky</h2></div><span id="visible-count" class="count-pill">0</span></div>
+          <label class="search-box"><span aria-hidden="true">⌕</span><input id="item-search" type="search" placeholder="Hledat zvuk, postavu, povrch…" aria-label="Hledat v checklistu"><kbd>/</kbd></label>
+          <div class="list-filters"><div id="status-filters" class="segments" role="group" aria-label="Filtrovat stav">
+            <button data-filter="suggested" class="active" aria-pressed="true">Doporučené</button><button data-filter="remaining" aria-pressed="false">Zbývá</button><button data-filter="candidate" aria-pressed="false">Přiřazeno</button><button data-filter="done" aria-pressed="false">Hotovo</button><button data-filter="all" aria-pressed="false">Vše</button>
+          </div><label class="optional-toggle"><input id="optional-toggle" type="checkbox"> I doplňky</label></div>
+          <div id="task-list" class="task-list"><div class="empty-state">Načítám seznam zvuků…</div></div>
+        </section>
+        <section id="detail" class="detail-pane" aria-label="Vybraná položka"><div class="empty-state">Za chvíli tu bude tvůj první zvuk.</div></section>
+      </div>
+      <footer><span id="folder-path"></span><span>Automatická kontrola každých 5 s · žádné nahrávání na internet</span></footer>
+    </main>
+  </div>
+  <dialog id="candidate-dialog" aria-labelledby="candidate-dialog-title">
+    <div class="dialog-header"><div><span class="eyebrow">POSLECH A PŘIŘAZENÍ NA JEDNOM MÍSTĚ</span><h2 id="candidate-dialog-title">Kandidáti k poslechu</h2><p>Poslechni si zvuk a pod ním klikni, k čemu ho chceš přiřadit. Každou nahrávku můžeš použít víckrát.</p></div><button class="icon-button" data-close="candidate-dialog" aria-label="Zavřít poslech kandidátů">✕</button></div>
+    <div class="file-tools"><label class="search-box"><span aria-hidden="true">⌕</span><input id="candidate-search" type="search" placeholder="Hledat postavu, zvuk nebo použití…" aria-label="Hledat v kandidátech"></label><select id="candidate-source" aria-label="Knihovna zvuků"><option value="">Všechny knihovny</option></select><select id="candidate-tier" aria-label="Skupina kandidátů"><option value="">Všichni kandidáti</option><option value="A">A · Začít tady</option><option value="B">B · K úpravě a vrstvení</option><option value="C">C · Doplňky</option></select></div>
+    <p class="dialog-note" id="candidate-count-label"></p><div id="candidate-list" class="file-list candidate-library"></div>
+    <div class="dialog-footer"><span>„Přiřadit“ uloží kandidáta. „Hotovo“ potvrdíš až u dané položky.</span><button class="button quiet" data-close="candidate-dialog">Zavřít</button></div>
+  </dialog>
+  <dialog id="file-dialog" aria-labelledby="file-dialog-title">
+    <div class="dialog-header"><div><span class="eyebrow">TVOJE NAHRÁVKY</span><h2 id="file-dialog-title">Vyber zvuky</h2><p id="file-dialog-subtitle"></p></div><button class="icon-button" data-close="file-dialog" aria-label="Zavřít výběr souborů">✕</button></div>
+    <div class="file-tools"><label class="search-box"><span aria-hidden="true">⌕</span><input id="file-search" type="search" placeholder="Najít podle názvu souboru…" aria-label="Hledat soubor"></label><select id="file-filter" aria-label="Zobrazované soubory"><option value="inbox">Vše ze sounds_dir</option><option value="unassigned">Jen nepřiřazené</option><option value="existing">Nahrávky, které už máme</option></select><button id="rescan-button" class="button quiet">↻ Obnovit</button></div>
+    <p class="dialog-note">Vyber jeden nebo více souborů. Jeden zvuk můžeš přiřadit k více položkám.</p>
+    <div id="file-list" class="file-list"></div>
+    <div class="dialog-footer"><span id="selection-count">0 vybraných</span><button class="button quiet" data-close="file-dialog">Zrušit</button><button id="attach-button" class="button primary" disabled>Přiřadit vybrané</button></div>
+  </dialog>
+  <dialog id="help-dialog" aria-labelledby="help-title">
+    <div class="dialog-header"><div><span class="eyebrow">BEZ TABULEK A CHAOSU</span><h2 id="help-title">Tři kroky. A máš přehled.</h2></div><button class="icon-button" data-close="help-dialog" aria-label="Zavřít nápovědu">✕</button></div>
+    <div class="help-content">
+      <ol><li><strong>Vlevo vyber zvuk, který chybí.</strong><p>Začni třeba v Postavách na Pova → Sekyrky. Filtr Doporučené ukazuje položky, ke kterým už máš doporučení z knihoven.</p></li><li><strong>Vpravo přehraj doporučené nahrávky a klikni Přiřadit.</strong><p>Zvuky už jsou ve správné složce. Nic nepřesouváš a nemusíš dohledávat názvy. U položky můžeš mít více variant. V Poslechu kandidátů můžeš postupovat i opačně: od nahrávky k jejímu použití.</p></li><li><strong>Až máš výběr hotový, zaškrtni Hotovo.</strong><p>To znamená „tyto nahrávky chci použít“. Přiřazení je zatím kandidát. Fajfka potvrzuje tvůj finální výběr; zapojení do Unity přijde později.</p></li></ol>
+      <p>Další zvuky můžeš dál stahovat do sounds_dir a přiřazovat přes tlačítko Další soubory. Podporované jsou i podsložky. ZIP balíčky nejdřív rozbal.</p>
+      <div class="help-note"><strong>Nic se neztratí zavřením prohlížeče.</strong><p>Přiřazení, fajfky, poznámky a zdroje se ukládají do <code>tools/sound-collector/collection.json</code>. Předchozí verze má automatickou zálohu. Tlačítkem Záloha si stáhneš další kopii.</p></div>
+      <p id="help-folder"></p><p>Po přejmenování nebo přesunutí nahrávky ji přiřaď znovu. Přehled ti chybějící soubor označí. Původní nahrávky nástroj nepřejmenovává ani nemaže.</p>
+      <div class="restore-row"><span>Máš dřívější export přehledu?</span><button id="restore-button" class="button quiet">Obnovit ze zálohy</button><input id="restore-input" type="file" accept="application/json,.json" hidden></div>
+    </div>
+  </dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

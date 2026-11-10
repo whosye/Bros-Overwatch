@@ -1,0 +1,865 @@
+{
+  "root": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026",
+  "status": "candidate_not_auditioned",
+  "files": [
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/METLFric_SWING SCRAPE Swift Melee Weapon Swing With A Long Blade 14_DDUMAIS_MWP2.wav",
+      "description": "SWING SLASH – Swift Blade Arc – Quick, Clean Swing with Sharp Metallic Sweep",
+      "seconds": 2.353,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pova_weapon",
+        "max_weapon"
+      ],
+      "note": "Švih dlouhé čepele pro sekerky/kosu.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/METLImpt_METAL SWING HIT Weapon Swing To Metallic Body Impact And Resonant Tail 01_DDUMAIS_MWP2.wav",
+      "description": "SWORD STRIKE – Heavy Blade Impact – Low-End Thud, Sharp Metal Strike, Deep Body Contact, Dull Clang, Resonating Vibration",
+      "seconds": 2.933,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_slash_metal",
+        "pova_block"
+      ],
+      "note": "Švih s kovovým kontaktem a dozvukem; pro zásah, ne minutí.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/SWSH_SWING IMPACTS Quick Heavy Weapon Swing To Thud Impact Var 01_DDUMAIS_MWP2.wav",
+      "description": "SWORD SWING – Subtle Whoosh – Mild Swing, Low Thud Impact, Rustling Clothing Debris",
+      "seconds": 61.818,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pova_weapon",
+        "max_reap",
+        "move_body_wall",
+        "kondulic_kick"
+      ],
+      "note": "Asi 62 sekund; vystřihnout jednotlivé varianty těžkých švihů/úderů.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPBlnt_Spear And Stick Impact, Wooden MKH 2_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 11.294,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "combat_slash_wood"
+      ],
+      "note": "Dřevěný kontakt, posoudit pro sečný zásah.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPSwrd_Sword Slide Cuts, Metallic, Impact CM4 2_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 12.96,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "combat_slash_metal",
+        "pova_block"
+      ],
+      "note": "Kovový kontakt historické zbraně.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/FIREWhsh_Whoosh Fire Deep Growl Monster Saturated Crisp 03_ESM_EMWI.wav",
+      "description": "blast, boom, fizzle, sizzle, crackle, flame, ripple, motion, spell",
+      "seconds": 2.484,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pova_rush",
+        "pova_ult"
+      ],
+      "note": "Hotový ohnivý švih/nástup. Není to smyčka hoření.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Synthesized Nature Loops and Sounds/FIREBurn_Loop Elements Fire Crackling Crunchy Flame Burn 03_ESM_SNLS.wav",
+      "description": "smoke, volcanic, aftermath, sizzling, roaring, scorch, blaze, campfire",
+      "seconds": 12.35,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "world_boiler_fire",
+        "world_fireplace",
+        "pova_rush"
+      ],
+      "note": "Smyčka ohně, mono; základ pro kotel/krb. Přidat hučení podle poslechu.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECArc_ArcDesign15_InMotionAudio_Arc.wav",
+      "description": "ELECArc, Electricity, Electric, Elec, Electromagnetic, Electronic, Arc, Arcing, Jacobs ladder, Plasma, Plasma Ball, Plasma Globe, Plasma Lamp, Tesla, Tesla Ball, High Voltage, Voltage, Spark, Sparks, Zap, Zaps, Zapped, Static, Glitch, Crackle, Tase, Taser,",
+      "seconds": 1.04,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "viktor_grenade",
+        "state_stun"
+      ],
+      "note": "Krátký elektrický zásah; pro granát vrstvit s výbuchem.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECArc_ArcPowerUpDesign04_InMotionAudio_Arc.wav",
+      "description": "ELECArc, Electricity, Electric, Elec, Electromagnetic, Electronic, Arc, Arcing, Jacobs ladder, Plasma, Plasma Ball, Plasma Globe, Plasma Lamp, Tesla, Tesla Ball, High Voltage, Voltage, Spark, Sparks, Zap, Zaps, Zapped, Static, Glitch, Crackle, Tase, Taser,",
+      "seconds": 7.484,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "viktor_ult",
+        "kondulic_ult",
+        "david_ult"
+      ],
+      "note": "Delší elektronické nabíjení, pro aktivaci zkrátit.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/ELECMisc_Impact Electric Tonal Deep Movement Motion Hiss Glitch 01_ESM_EMWI.wav",
+      "description": "crackle, shock, arc, spark, blast, static, buzz, hum, crisp, hiss",
+      "seconds": 3.689,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "viktor_grenade",
+        "mosino_impact"
+      ],
+      "note": "Hlubší elektrický kontakt.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 1/DSGNBass_Bass Drop & Downer Fast 16_344 Audio_Bass Drops & Downers.wav",
+      "description": "Bass, Sub, Subsonic, Low End, Drop, Trailer, Epic, Cineamatic, Rumble, Subwoofer, Downer, Stinger, Analogue, Synth, Movement, Low End",
+      "seconds": 2.125,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "mosino_wave"
+      ],
+      "note": "Krátký basový drop; pro častý RMB vybrat úderný začátek.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 3/DSGNBass_Jump Start Drop 3_344 Audio_Bass Drops and Downers Vol 3.wav",
+      "description": "Bass, Drop, Drops, Down, Downers, SFX, Low Frequency, Frequencies, Sub, Woofer, Analog, Synth, Trailer, Cinematic",
+      "seconds": 3.702,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "mosino_ult"
+      ],
+      "note": "Basový nástup/dopad, nenahrazuje taneční hudbu.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/WINDDsgn_Wind, Rush, Whoosh, Long x5 01_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Wind, Howling, Whoosh, Whistle, Rustle, Wailing, Vehicle, Spaceship, Movement, Rush, Drift, Ambience, \nFantasy, Sci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.049,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "mirek_ult",
+        "move_jump"
+      ],
+      "note": "Více variant x5 v souboru, rozstříhat. Není automaticky hotová smyčka víru.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/MAGAngl_Magic Light Spell Enchantment Potion Effect Tonal Bright 03_ESM_FG2.wav",
+      "description": "whimsical, shimmer, sparkle, enchant, dreamy, radiant, uplift, heal, fanfare, tonal",
+      "seconds": 5.2,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "david_impact",
+        "state_heal_buff",
+        "sindel_jump"
+      ],
+      "note": "Světlá léčivá/magická vrstva; podle akce zkrátit.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/DSGNStngr_Power Up Bright Positive Successful Light Saturation Crash Shimmer 05_ESM_AG.wav",
+      "description": "intense, energetic, radiant, uplift, sweep, vintage, buff, dirty, whoosh, impact",
+      "seconds": 1.525,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "david_ult",
+        "state_heal_buff"
+      ],
+      "note": "Krátký pozitivní power-up.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/EXPLDsgn_Explosion Small Blast Enemy Death Crunchy Boom Cartoon Noisy Crash Impact Delay 03_ESM_AG.wav",
+      "description": "punchy, explosive, synth, bomb, sweep, analog, vintage, full, frequency, clear",
+      "seconds": 1.478,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_explosion_small"
+      ],
+      "note": "Stylizovaný malý výbuch s delay; ověřit cartoon charakter.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Cinematic Fight Vol. 1/FGHTImpt_4 x Punch, Body 02_344 Audio_Cinematic Fight Vol 1.wav",
+      "description": "Fight, Combat, Fists, Gritty, Cinematic, Hollywood, Epic, Action, Brawl, Melee, Physical, Confict,\nImpact,  Punch, Fist, Leg, Swing, Hard, Hit",
+      "seconds": 3.913,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "state_body_hit",
+        "move_body_wall",
+        "kondulic_kick"
+      ],
+      "note": "Čtyři tělesné údery; rozstříhat.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - HD Game Materials/METLImpt_Metal Old File Impact Tap Against Tire Iron Metallic Hit 01_ESM_HDGM.wav",
+      "description": "metallic, resonant, smack, tap, impact, ring, solid, steel, percussive",
+      "seconds": 0.469,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_bullet_metal",
+        "world_boiler_lever"
+      ],
+      "note": "Krátký kovový úder, pro kulku možná přidat ostrou počáteční vrstvu.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav",
+      "description": "heavy, metal, plastic, switch, trigger, electronics, action, press, touch, mechanical, bassy, percussive",
+      "seconds": 0.379,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "world_boiler_lever",
+        "honza_trap",
+        "combat_empty"
+      ],
+      "note": "Krátké cvaknutí západky, základ pro páku/past.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - Interface & Infographics/Interface Accept Glassy Snap.wav",
+      "description": "interface, infographics, design, user-friendly, interactive, technology, digital, modern, sleek, visuals, graphical, interface design, data, information, user interface, digital design, graphics, user experience, UX, UI, interactive design, innovative, in",
+      "seconds": 0.438,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_buttons",
+        "state_hit"
+      ],
+      "note": "Krátké potvrzení; jako hitmarker posoudit délku.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - Interface & Infographics/Interface Pop High Short.wav",
+      "description": "interface, infographics, design, user-friendly, interactive, technology, digital, modern, sleek, visuals, graphical, interface design, data, information, user interface, digital design, graphics, user experience, UX, UI, interactive design, innovative, in",
+      "seconds": 0.646,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_capture_tick"
+      ],
+      "note": "Kandidát na jemný tik zabírání.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - UI Interaction Elements/Deny Muted.wav",
+      "description": "ui, interface, interaction, button, click, tap, menu, toggle, switch, slider, select, confirm, cancel, notify, alert, feedback, input, navigation, panel, tab, scroll, hover, activate, trigger, prompt, highlight, focus, press, control, engage",
+      "seconds": 0.799,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "state_denied",
+        "ui_buttons"
+      ],
+      "note": "Krátké zamítnutí akce.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Button Arp Twinkle.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 1.812,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "state_ready",
+        "ui_capture_unlock"
+      ],
+      "note": "Připravená ultimátka nebo odemčení bodu.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - Hybrid Game & UI Elements/Game Entry Happy Short.wav",
+      "description": "ui, system, click, button, menu, confirm, approve, error, alert, fail, success, notification, ding, ping, beep, bell, chime, sparkle, pop, swoosh, reward, bonus, coin, game, level, collect, foley, paper, door, zipper, crack",
+      "seconds": 0.875,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_capture_won",
+        "state_respawn"
+      ],
+      "note": "Pozitivní znělka, kandidát na získání bodu/respawn.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/UIAlert_Collect Scifi Futuristic Electronic Bass Burst Sweep Heavy 04_ESM_FG2.wav",
+      "description": "vibrant, shimmer, pop, unison, layered, mid, thump, riser, short",
+      "seconds": 0.31,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pickup_health",
+        "pickup_carburetor"
+      ],
+      "note": "Velmi krátké sebrání; fyzickou vrstvu předmětu lze přidat.",
+      "section": "A",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "TheWorkRoom - Flip Flops/FFG002.wav",
+      "description": "Flip Flops Grass Walk Mediium",
+      "seconds": 39.18,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "steps_grass"
+      ],
+      "note": "Metadata: Flip Flops Grass Walk Medium. Žabky na trávě, rozstříhat cca 39 s; ne hotová sada bot.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "TheWorkRoom - Flip Flops/FFW003.wav",
+      "description": "Flip Flops Wood Walk Fast",
+      "seconds": 31.475,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "steps_wood"
+      ],
+      "note": "Metadata: Flip Flops Wood Walk Fast. Žabky na dřevě, rozstříhat cca 31 s; dopady po skoku chybí.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHMisc_Tool Tape Measure Pull Retract Spring Slide Spin Long 07_ESM_HDLM.wav",
+      "description": "winding, mechanism, mechanical, stretch, movement, spring, motion, friction, winding, roller",
+      "seconds": 3.261,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "pova_hook",
+        "kondulic_hook",
+        "honza_trap"
+      ],
+      "note": "Svinovací metr: materiál pro návrat háku/pružinu, není to skutečný řetěz.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MACHMech_Mechanism Counting Machine Interact Loose Container Short 01_ESM_HDLM.wav",
+      "description": "clang, click, gear, spline, metal, box, knock, industrial, handling, interaction, hollow, metallic",
+      "seconds": 0.271,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "viktor_reload",
+        "kondulic_reload",
+        "david_reload"
+      ],
+      "note": "Krátká mechanická vrstva. Kompletní přebití zbraně to není.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/METLTonl_Item Spring Wire Impact Flick Top Clatter Light Tap Roll Handling Short 01_ESM_HDLM.wav",
+      "description": "knock, resonant, tonal, rattle, interference, dry, large, tonal, smack, clatter, metallic, percussive",
+      "seconds": 11.476,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "honza_trap"
+      ],
+      "note": "Manipulace s pružinou/drátem, vybrat jednotlivé kontakty.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPArmr_Metal Shield Spin On Floor, Buckler MKH_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 36.25,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "pova_block",
+        "honza_trap"
+      ],
+      "note": "Rotující štít na zemi: kovové chvění a odrazy.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/METLMisc_Metal, Slow Whoosh, Rattle, Pass By x4 01_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Metal, Mech, Armour, Swords, Weapons, Medieval, Clang, Strike, Attack, Impact, Crush, Battle, Fight, \nAmbience, Fantasy, Sci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.214,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pova_hook",
+        "honza_trap"
+      ],
+      "note": "Kovové prosvištění a rachot x4, vystřihnout varianty.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Climbing Gear Foley Vol. 1/EQUISprt_Climbing Gear, Flicking Carabiner On Rope_344 Audio_Climbing Gear Foley Vol 1.wav",
+      "description": "Climbing, Athlete, Sport, Belay, Rope, Rock Climbing, Gear, Tools, Kit, Equipment, Metal, Clips, Carabiner, Quickdraw, Harness, Rappelling, Abseiling, Outdoor, Gym, Excursion, Adventure, Athletic, Mountaineering, Foley, Lead Climbing, Leading",
+      "seconds": 6.232,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "kondulic_hook",
+        "move_ladder"
+      ],
+      "note": "Karabina na laně: detail háku nebo lezení.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, action gesture, evil presence, onslaught-004.wav",
+      "description": "magic, action gesture, evil presence, onslaught",
+      "seconds": 38.215,
+      "channels": 2,
+      "rate": 48000,
+      "item_ids": [
+        "max_shadow",
+        "max_ult"
+      ],
+      "note": "Temná magie asi 38 s; vystřihnout krátký nástup.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, drone, tension, spellbound, evanescence-002.wav",
+      "description": "magic, drone, tension, spellbound, evanescence",
+      "seconds": 63.978,
+      "channels": 2,
+      "rate": 48000,
+      "item_ids": [
+        "max_shadow",
+        "max_ult"
+      ],
+      "note": "Temná plocha asi 64 s; pro smyčku ověřit šev.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, energy flow, astral travel-015.wav",
+      "description": "magic, energy flow, astral travel",
+      "seconds": 61.03,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "max_shadow",
+        "max_ult"
+      ],
+      "note": "Magický pohyb asi 61 s; materiál pro přechod/zhmotnění.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/DSGNMisc_Misc Monster Tentacle Modulated Creature Shadow Abstract Swept Wobble Lfo 02_ESM_AG.wav",
+      "description": "intense, rapid, warble, full, frequency, layered, impact, crash, hit, full",
+      "seconds": 2.041,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "max_slash",
+        "max_ult"
+      ],
+      "note": "Krátký modulovaný stínový efekt.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - Colossal Impacts/Impact Cut Sweep.wav",
+      "description": "impact, collision, explosion, smash, boom, crash, thud, cinematic, epic, massive, intense, heavy, powerful, action, game audio, trailer, movie, blockbuster, destruction, shockwave, tremor, bass, deep, dramatic, explosion, design, tension, energy,  epic, hi",
+      "seconds": 2.792,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_explosion_large",
+        "pova_ult",
+        "sindel_ult"
+      ],
+      "note": "Velký designovaný úder, základ pro odlišné ultimátky.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Federico Soler - Effective Trailer Booms Vol. 2/EffectiveTrailer_Booms_Vol2_011.wav",
+      "description": "boom, sub, impact, low, lowend, cinematic, bass, hit, film, dark, action, dramatic, horror, powerful, tension, epic, trailerCubase",
+      "seconds": 17.271,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_explosion_large",
+        "honza_ult"
+      ],
+      "note": "Trailerový basový úder; ne skutečné valení kamene.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/WATRImpt_Impact Water Deep Submerge Bubble Drown Ship Hit 05_ESM_EMWI.wav",
+      "description": "splash, dunk, gurgle, slosh, ripple, bubble, droplet, smash, flow",
+      "seconds": 2.17,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "david_grenade"
+      ],
+      "note": "Stylizovaný hluboký vodní kontakt, ne automaticky přirozený splash.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/WATRMisc_Water, Liquid Impact, Bubble, Sci Fi, Hit 04_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Water, Bubbles, Splash, Ripple, Gush, Wave, Gurgle, Surge, Plasma, Pulse, Glitch, Ambience, Fantasy, \nSci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.213,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "david_grenade",
+        "mosino_impact"
+      ],
+      "note": "Tekutý/sci-fi zásah, další kandidát na biotický granát.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon Bloopers/Arrow Hit Rattle.wav",
+      "description": "cartoon, comedy, funny, silly, goofy, blooper, gag, pratfall, slip, trip, stumble, clumsy, accident, mishap, fumble, laugh, humor, animated, childish, playful, wacky, absurd, exaggeration, lighthearted",
+      "seconds": 1.083,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_arrow_impact"
+      ],
+      "note": "Komický dopad šípu. Napínání a vypuštění luku chybí.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Basic Transportation Sounds/BOATMotr_Diesel Engine Boat Idle Steady Rpm Hum Motor Mic One 01_ESM_CPS.wav",
+      "description": "large, motor, boat, unmuffled, engine, loud, running, open, uncovered",
+      "seconds": 26.0,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_groomer_engine"
+      ],
+      "note": "Lodní diesel volnoběh, nouzový základ rolby; start, zátěž, vypnutí a pásy chybí.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "TheWorkRoom - Wire Cars/WIR006.wav",
+      "description": "Wire Car Fabrication - Handling & Bending Wire With Pliers Various (Internal)",
+      "seconds": 65.623,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "honza_trap",
+        "pova_hook"
+      ],
+      "note": "Metadata: ohýbání drátu kleštěmi. Není to motor auta.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_SinglePats04_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 0.572,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_bullet_soft"
+      ],
+      "note": "Lehké kontakty s látkou; pro zásah nutno vrstvit.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Readout Thin Long.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 4.375,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "kondulic_scope",
+        "viktor_ult",
+        "kondulic_ult"
+      ],
+      "note": "Elektronické čtení jako materiál pro optiku/sken.",
+      "section": "B",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_ClothMovement24_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 2.275,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "move_clothes",
+        "move_ledge"
+      ],
+      "note": "Pohyb trička, tichá tělesná vrstva.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_ClothMovement29_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 1.501,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "move_clothes",
+        "move_ledge"
+      ],
+      "note": "Další varianta oblečení.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "SoundBits - Cars - Mad Mustang Mercury/VEHCar_Various Driving at Slow Speed 15 06_SNDBTS_CRS-MMM.wav",
+      "description": "Car, Muscle Car, Pony Car, Mustang Mercury, Various Driving at Slow Speed, Exterior, Wheel",
+      "seconds": 28.63,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "world_yaris"
+      ],
+      "note": "Jízda jiného auta než Yaris, posoudit a případně upravit charakter motoru.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "SoundBits - Cars - Mad Mustang Mercury/VEHSkid_Tire Skids on Gravel 15 06_SNDBTS_CRS-MMM.wav",
+      "description": "Car, Muscle Car, Pony Car, Mustang Mercury, Driving, Tire Skids on Gravel, Exterior, Wheel",
+      "seconds": 33.154,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "world_yaris"
+      ],
+      "note": "Smyk na štěrku, ne klidné odvalování pneumatik.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECBuzz_Buzz27_InMotionAudio_Arc.wav",
+      "description": "ELECBuzz, Electricity, Electric, Elec, Electromagnetic, Electronic, High Voltage, Voltage, Buzz, Buzzing, Hum, Hums, Humming, Ground Hum, Energy, Interference, Digital, Digital Elements, Technology, Computer, Experimental, Noise, Science Fiction, Sci-Fi, A",
+      "seconds": 9.8,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_workshop_pc",
+        "world_tunnel"
+      ],
+      "note": "Elektrické bzučení; pro smyčku nejdřív posoudit.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Jake Fielding - Fridge Hums Vol.2/MACHAppl_Deep Fridge Hum, Buzz, Electric Tone, Deep_Jake Fielding_Fridge Hums Pt2.wav",
+      "description": "Deep Fridge Hum, Buzz, Electric Tone, Deep Rumble, Domestic, Appliance",
+      "seconds": 266.1,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "world_workshop_pc",
+        "world_tunnel"
+      ],
+      "note": "Hučení lednice jako možný místní technický podkres.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Just Sound Effects - Highlands of Norway/AMBSwmp_Meadow Pipits calling many Insects humming Wind blowing through Grass_JSE_HoN_Stereo.wav",
+      "description": "norway, scandinavia, nature, highlands, alpine, plateau, mountains, tundra, swamp, wetland, marsh, bog, wind, calm, meadow pipit, bird, anthus pratensis, insects, flies, humming, buzzing",
+      "seconds": 86.496,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_hanamura",
+        "world_outdoor_layers"
+      ],
+      "note": "Stereo: ptáci, hmyz a vítr v trávě.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "344 Audio - East Coast America Vol. 1/AMBSubn_Ambience, Forest Crickets, Birds, Connecticut 02_344 Audio_East Coast America.wav",
+      "description": "Ambience, Atmos, America, USA,  Insect, Nature, Water, Crickets, Birds",
+      "seconds": 52.302,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_outdoor_layers"
+      ],
+      "note": "Lesní cvrčci a ptáci; ověřit vhodnost prostředí.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Storms Lakes Parks and Rural Nature Exteriors/WATRLap_Summer Tennessee Lake Dock Water Ripples Wake Wave Gentle 05 Distant_ESM_CPS.wav",
+      "description": "lake, water, lap, splash, splat, suction, light, crash, spill, cam, EXT, gurgle, wet, slimy, next to boat dock,",
+      "seconds": 102.976,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_stream"
+      ],
+      "note": "Jemné vlnění jezera: pro jezírko, nikoli věrný proudící potok.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Ivo Vicic - Campfire - Bonfire FX/24 Campfire, Dropping Fresh Pine Branches in Fire, Crackling, Sizzling Strong, Close 02.wav",
+      "description": "Fire Experiments - Campfire, Putting Fresh Pine Branches in Fire, Sizzling, 2m Away\r\nRec: NOS stereo; LOM Usi (Rycote BBG windshieldx2), Tascam DR-05X",
+      "seconds": 120.576,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_fireplace",
+        "world_boiler_fire"
+      ],
+      "note": "Přidávání větví, praskání a syčení; ne nutně čistá klidná smyčka.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Ivo Vicic - Campfire - Bonfire FX/42 Campfire, Putting Out Fire, Water from Bottle, Variation, Close.wav",
+      "description": "Fire Experiments - Campfire, Putting Out Fire, Watter from Bottle, Variation, Close\r\nRec: Sennheiser MKH 40/30, Rycote suspension, windjammer, Triton tripod, Mogami cables, Sound Devices 744T, MS stereo",
+      "seconds": 30.891,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_boiler_fire"
+      ],
+      "note": "Hašení vodou: sykavý konec jen pokud odpovídá dění.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - UI Interaction Elements/Ting Coins.wav",
+      "description": "ui, interface, interaction, button, click, tap, menu, toggle, switch, slider, select, confirm, cancel, notify, alert, feedback, input, navigation, panel, tab, scroll, hover, activate, trigger, prompt, highlight, focus, press, control, engage",
+      "seconds": 1.104,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_joker"
+      ],
+      "note": "Cinknutí mincí jako část Joker výhry; celou znělku je třeba složit.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Interface Plucks Happy.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 0.853,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_buttons",
+        "ui_capture_won"
+      ],
+      "note": "Další pozitivní UI varianta.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Cinematic Sound Design - System & UI Feedback Elements/Interface Deny Low Fat Dark.wav",
+      "description": "system, ui, feedback, interface, menu, button, navigation, confirmation, cancel, error, warning, success, hover, rollover, selection, toggle, slider, checkbox, radio, drag, drop, notification, subtle, minimal, digital, alert, popup, transition, window, typ",
+      "seconds": 0.743,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "state_denied",
+        "ui_buttons"
+      ],
+      "note": "Alternativa zamítnutí.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Shooter Game Announcer Voice/VOXMale_Announcer Vocal Male Dry Special Kill Headshot 01_ESM_SGAV.wav",
+      "description": "dry, clean, crispy, spoken word, dialouge, game character, announcer, FPS, shooter, god voice, NPC, Solider, Commando",
+      "seconds": 1.154,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "state_headshot_kill"
+      ],
+      "note": "Anglický announcer Headshot je volitelný, nenahrazuje vlastní hlášky postav.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    },
+    {
+      "path": "Epic Stock Media - Shooter Game Announcer Voice/VOXMale_Announcer Vocal Male Dry Game Statement Objective Completed 04_ESM_SGAV.wav",
+      "description": "dry, clean, crispy, spoken word, dialouge, game character, announcer, FPS, shooter, god voice, NPC, Solider, Commando",
+      "seconds": 1.269,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_capture_won"
+      ],
+      "note": "Anglický announcer Objective Completed, jen pokud ho chcete používat.",
+      "section": "C",
+      "status": "candidate_not_auditioned"
+    }
+  ]
+}

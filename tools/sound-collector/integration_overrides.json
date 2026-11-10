@@ -1,0 +1,38 @@
+{
+  "reason": "User choices: Sindel R8 shots with Deagle reload, David suppressed M4A1, Kondulic AWP scoped / MP5 unscoped, Honza five shell insertions within the reload animation.",
+  "defaults": {
+    "viktor_fire": [
+      "inbox:CS2_kandidati/weapons/m4a1/m4a1_01.wav",
+      "inbox:CS2_kandidati/weapons/m4a1/m4a1_02.wav",
+      "inbox:CS2_kandidati/weapons/m4a1/m4a1_03.wav",
+      "inbox:CS2_kandidati/weapons/m4a1/m4a1_04.wav"
+    ],
+    "david_fire": [
+      "inbox:CS2_kandidati/weapons/m4a1/m4a1_silencer_01.wav"
+    ],
+    "sindel_fire": [
+      "inbox:CS2_kandidati/weapons/revolver/revolver-1_01.wav"
+    ],
+    "kondulic_fire_scoped": [
+      "inbox:CS2_kandidati/weapons/awp/awp_01.wav",
+      "inbox:CS2_kandidati/weapons/awp/awp_02.wav"
+    ],
+    "kondulic_fire": [
+      "inbox:CS2_kandidati/weapons/mp5/mp5_01.wav"
+    ]
+  },
+  "reload_sequences": {
+    "sindel_reload": [
+      "inbox:CS2_kandidati/weapons/deagle/de_clipout.wav",
+      "inbox:CS2_kandidati/weapons/deagle/de_clipin.mp3",
+      "inbox:CS2_kandidati/weapons/deagle/de_slideback.wav",
+      "inbox:CS2_kandidati/weapons/deagle/de_slideforward.wav"
+    ]
+  },
+  "reload_shells": {
+    "honza_reload": {
+      "source": "inbox:CS2_kandidati/weapons/nova/nova_insertshell_01.mp3",
+      "repeats": 5
+    }
+  }
+}

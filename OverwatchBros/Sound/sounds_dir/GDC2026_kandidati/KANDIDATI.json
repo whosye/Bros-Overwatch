@@ -1,0 +1,1353 @@
+{
+  "version": 1,
+  "source_root": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026",
+  "candidate_status": "not_auditioned",
+  "files": [
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/METLFric_SWING SCRAPE Swift Melee Weapon Swing With A Long Blade 14_DDUMAIS_MWP2.wav",
+      "description": "SWING SLASH – Swift Blade Arc – Quick, Clean Swing with Sharp Metallic Sweep",
+      "seconds": 2.353,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pova_weapon",
+        "max_weapon"
+      ],
+      "note": "Švih dlouhé čepele pro sekerky/kosu.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "01_A_Pova_Sekyrky.wav",
+      "targets": [
+        "Pova / Sekyrky",
+        "Max / Kosa"
+      ],
+      "sha256": "5af061af596532feef49c83274c98f26e4994aa2f4f47f573e59e075065df70b",
+      "bytes": 5655626,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\David Dumais Audio - Melee Weapons Sound Effects Pack 2\\METLFric_SWING SCRAPE Swift Melee Weapon Swing With A Long Blade 14_DDUMAIS_MWP2.wav"
+    },
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/METLImpt_METAL SWING HIT Weapon Swing To Metallic Body Impact And Resonant Tail 01_DDUMAIS_MWP2.wav",
+      "description": "SWORD STRIKE – Heavy Blade Impact – Low-End Thud, Sharp Metal Strike, Deep Body Contact, Dull Clang, Resonating Vibration",
+      "seconds": 2.933,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_slash_metal",
+        "pova_block"
+      ],
+      "note": "Švih s kovovým kontaktem a dozvukem; pro zásah, ne minutí.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "02_A_Spolecna_knihovna_Sekera_kosa_kov.wav",
+      "targets": [
+        "Společná knihovna / Sekera / kosa → kov",
+        "Pova / Zkřížené sekyry · RMB"
+      ],
+      "sha256": "ec264e08985af53e1ec0a8e232fc93848c451a961a16c5630c2250afd375c1c4",
+      "bytes": 5990378,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\David Dumais Audio - Melee Weapons Sound Effects Pack 2\\METLImpt_METAL SWING HIT Weapon Swing To Metallic Body Impact And Resonant Tail 01_DDUMAIS_MWP2.wav"
+    },
+    {
+      "path": "David Dumais Audio - Melee Weapons Sound Effects Pack 2/SWSH_SWING IMPACTS Quick Heavy Weapon Swing To Thud Impact Var 01_DDUMAIS_MWP2.wav",
+      "description": "SWORD SWING – Subtle Whoosh – Mild Swing, Low Thud Impact, Rustling Clothing Debris",
+      "seconds": 61.818,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pova_weapon",
+        "max_reap",
+        "move_body_wall",
+        "kondulic_kick"
+      ],
+      "note": "Asi 62 sekund; vystřihnout jednotlivé varianty těžkých švihů/úderů.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "03_A_Pova_Sekyrky.wav",
+      "targets": [
+        "Pova / Sekyrky",
+        "Max / Rozpolcení · Shift",
+        "Další pohyb / Náraz hráče do stěny",
+        "Kondulič / Odkopnutí · E"
+      ],
+      "sha256": "d75988b9eab8e10dfbef9dc8f6297eec5c57b91e50fb09bc8b72273356a2e681",
+      "bytes": 39908232,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\David Dumais Audio - Melee Weapons Sound Effects Pack 2\\SWSH_SWING IMPACTS Quick Heavy Weapon Swing To Thud Impact Var 01_DDUMAIS_MWP2.wav"
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPBlnt_Spear And Stick Impact, Wooden MKH 2_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 11.294,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "combat_slash_wood"
+      ],
+      "note": "Dřevěný kontakt, posoudit pro sečný zásah.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "04_A_Spolecna_knihovna_Sekera_kosa_drevo.wav",
+      "targets": [
+        "Společná knihovna / Sekera / kosa → dřevo"
+      ],
+      "sha256": "ab2cd18aaac93afa77b48b74edf82257815ee16817bb2bb9bd5ba134e4cc1466",
+      "bytes": 13081382,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Historical Weapons Vol. 2\\WEAPBlnt_Spear And Stick Impact, Wooden MKH 2_344 Audio_Medieval Weapons Vol 2.wav"
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPSwrd_Sword Slide Cuts, Metallic, Impact CM4 2_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 12.96,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "combat_slash_metal",
+        "pova_block"
+      ],
+      "note": "Kovový kontakt historické zbraně.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "05_A_Spolecna_knihovna_Sekera_kosa_kov.wav",
+      "targets": [
+        "Společná knihovna / Sekera / kosa → kov",
+        "Pova / Zkřížené sekyry · RMB"
+      ],
+      "sha256": "adbe3d9d5da0a987de3d4d845b62a4231862febf9ca673f8d1067fc1787eee00",
+      "bytes": 15011226,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Historical Weapons Vol. 2\\WEAPSwrd_Sword Slide Cuts, Metallic, Impact CM4 2_344 Audio_Medieval Weapons Vol 2.wav"
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/FIREWhsh_Whoosh Fire Deep Growl Monster Saturated Crisp 03_ESM_EMWI.wav",
+      "description": "blast, boom, fizzle, sizzle, crackle, flame, ripple, motion, spell",
+      "seconds": 2.484,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pova_rush",
+        "pova_ult"
+      ],
+      "note": "Hotový ohnivý švih/nástup. Není to smyčka hoření.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "06_A_Pova_Modry_plamen_Shift.wav",
+      "targets": [
+        "Pova / Modrý plamen · Shift",
+        "Pova / Ohnivý dopad · Q"
+      ],
+      "sha256": "344c8a9a31205fd5842feea827a491d89528f7db1ee5b1ffd4a3a018e23395ef",
+      "bytes": 1819142,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Elemental Mutation Whooshes and Impacts\\FIREWhsh_Whoosh Fire Deep Growl Monster Saturated Crisp 03_ESM_EMWI.wav"
+    },
+    {
+      "path": "Epic Stock Media - Synthesized Nature Loops and Sounds/FIREBurn_Loop Elements Fire Crackling Crunchy Flame Burn 03_ESM_SNLS.wav",
+      "description": "smoke, volcanic, aftermath, sizzling, roaring, scorch, blaze, campfire",
+      "seconds": 12.35,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "world_boiler_fire",
+        "world_fireplace",
+        "pova_rush"
+      ],
+      "note": "Smyčka ohně, mono; základ pro kotel/krb. Přidat hučení podle poslechu.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "07_A_Kotel_ohen_a_prehrati.wav",
+      "targets": [
+        "Kotel · oheň a přehřátí",
+        "Krb a gril",
+        "Pova / Modrý plamen · Shift"
+      ],
+      "sha256": "a3eeb0718c55fc276b0785c1b23da242ed329d4f764c6540719f471c20ef5763",
+      "bytes": 3913062,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Synthesized Nature Loops and Sounds\\FIREBurn_Loop Elements Fire Crackling Crunchy Flame Burn 03_ESM_SNLS.wav"
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECArc_ArcDesign15_InMotionAudio_Arc.wav",
+      "description": "ELECArc, Electricity, Electric, Elec, Electromagnetic, Electronic, Arc, Arcing, Jacobs ladder, Plasma, Plasma Ball, Plasma Globe, Plasma Lamp, Tesla, Tesla Ball, High Voltage, Voltage, Spark, Sparks, Zap, Zaps, Zapped, Static, Glitch, Crackle, Tase, Taser,",
+      "seconds": 1.04,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "viktor_grenade",
+        "state_stun"
+      ],
+      "note": "Krátký elektrický zásah; pro granát vrstvit s výbuchem.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "08_A_Viktor_Pulzni_granat_RMB.wav",
+      "targets": [
+        "Viktor / Pulzní granát · RMB",
+        "Zpětná vazba a stavy / Omráčení"
+      ],
+      "sha256": "87c709fed078cfea7447e1e13b50715c59d7d78f2589d7bba9382ed3fafbef69",
+      "bytes": 604778,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\InMotionAudio - Arc\\ELECArc_ArcDesign15_InMotionAudio_Arc.wav"
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECArc_ArcPowerUpDesign04_InMotionAudio_Arc.wav",
+      "description": "ELECArc, Electricity, Electric, Elec, Electromagnetic, Electronic, Arc, Arcing, Jacobs ladder, Plasma, Plasma Ball, Plasma Globe, Plasma Lamp, Tesla, Tesla Ball, High Voltage, Voltage, Spark, Sparks, Zap, Zaps, Zapped, Static, Glitch, Crackle, Tase, Taser,",
+      "seconds": 7.484,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "viktor_ult",
+        "kondulic_ult",
+        "david_ult"
+      ],
+      "note": "Delší elektronické nabíjení, pro aktivaci zkrátit.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "09_A_Viktor_Takticky_zamerovac_Q.wav",
+      "targets": [
+        "Viktor / Taktický zaměřovač · Q",
+        "Kondulič / Infravize · Q",
+        "David / Posílení · Q"
+      ],
+      "sha256": "9a34b314daf711dfe998d0823136bd2ae5342bdadd12c8c58d585ea8293266db",
+      "bytes": 4335934,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\InMotionAudio - Arc\\ELECArc_ArcPowerUpDesign04_InMotionAudio_Arc.wav"
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/ELECMisc_Impact Electric Tonal Deep Movement Motion Hiss Glitch 01_ESM_EMWI.wav",
+      "description": "crackle, shock, arc, spark, blast, static, buzz, hum, crisp, hiss",
+      "seconds": 3.689,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "viktor_grenade",
+        "mosino_impact"
+      ],
+      "note": "Hlubší elektrický kontakt.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "10_A_Viktor_Pulzni_granat_RMB.wav",
+      "targets": [
+        "Viktor / Pulzní granát · RMB",
+        "Mošino / Dopad zvukového projektilu"
+      ],
+      "sha256": "0335965a164090995413897e71b87f04501d519222873a4301e928bf8940de38",
+      "bytes": 2513360,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Elemental Mutation Whooshes and Impacts\\ELECMisc_Impact Electric Tonal Deep Movement Motion Hiss Glitch 01_ESM_EMWI.wav"
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 1/DSGNBass_Bass Drop & Downer Fast 16_344 Audio_Bass Drops & Downers.wav",
+      "description": "Bass, Sub, Subsonic, Low End, Drop, Trailer, Epic, Cineamatic, Rumble, Subwoofer, Downer, Stinger, Analogue, Synth, Movement, Low End",
+      "seconds": 2.125,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "mosino_wave"
+      ],
+      "note": "Krátký basový drop; pro častý RMB vybrat úderný začátek.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "11_A_Mosino_Basovy_uder_RMB.wav",
+      "targets": [
+        "Mošino / Basový úder · RMB"
+      ],
+      "sha256": "cb393ea3e0482ee339c072e1f16b9fddd74b0dead254fde4ac39b9521723aeb0",
+      "bytes": 2489510,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Bass Drops & Downers Vol. 1\\DSGNBass_Bass Drop & Downer Fast 16_344 Audio_Bass Drops & Downers.wav"
+    },
+    {
+      "path": "344 Audio - Bass Drops & Downers Vol. 3/DSGNBass_Jump Start Drop 3_344 Audio_Bass Drops and Downers Vol 3.wav",
+      "description": "Bass, Drop, Drops, Down, Downers, SFX, Low Frequency, Frequencies, Sub, Woofer, Analog, Synth, Trailer, Cinematic",
+      "seconds": 3.702,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "mosino_ult"
+      ],
+      "note": "Basový nástup/dopad, nenahrazuje taneční hudbu.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "12_A_Mosino_Drop_the_Beat_Q.wav",
+      "targets": [
+        "Mošino / Drop the Beat · Q"
+      ],
+      "sha256": "a5ede67beed6cb518db1961b330bdc1f1905dcdf31c6df1d90e8251b3f97aaf1",
+      "bytes": 4289666,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Bass Drops & Downers Vol. 3\\DSGNBass_Jump Start Drop 3_344 Audio_Bass Drops and Downers Vol 3.wav"
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/WINDDsgn_Wind, Rush, Whoosh, Long x5 01_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Wind, Howling, Whoosh, Whistle, Rustle, Wailing, Vehicle, Spaceship, Movement, Rush, Drift, Ambience, \nFantasy, Sci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.049,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "mirek_ult",
+        "move_jump"
+      ],
+      "note": "Více variant x5 v souboru, rozstříhat. Není automaticky hotová smyčka víru.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "13_A_Mirek_Smrst_Q.wav",
+      "targets": [
+        "Mirek / Smršť · Q",
+        "Další pohyb / Odraz a dvojskok"
+      ],
+      "sha256": "81bc00b7592a0bc7cf34023cead68586e5a924743c294477820418590d4b1d6d",
+      "bytes": 609592,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Elemental Palette Designed Vol. 1\\WINDDsgn_Wind, Rush, Whoosh, Long x5 01_344 Audio_Elemental Palette Designed Vol 1.wav"
+    },
+    {
+      "path": "Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/MAGAngl_Magic Light Spell Enchantment Potion Effect Tonal Bright 03_ESM_FG2.wav",
+      "description": "whimsical, shimmer, sparkle, enchant, dreamy, radiant, uplift, heal, fanfare, tonal",
+      "seconds": 5.2,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "david_impact",
+        "state_heal_buff",
+        "sindel_jump"
+      ],
+      "note": "Světlá léčivá/magická vrstva; podle akce zkrátit.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "14_A_David_Bioticka_strela_kontakt.wav",
+      "targets": [
+        "David / Biotická střela · kontakt",
+        "Zpětná vazba a stavy / Léčení a zesílení",
+        "Šindel / Spravedlivý skok · Shift"
+      ],
+      "sha256": "66fd5c33f2b5e221dce96ba2e24a172683c8c696621d8567ef895627d981d869",
+      "bytes": 3599350,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms\\MAGAngl_Magic Light Spell Enchantment Potion Effect Tonal Bright 03_ESM_FG2.wav"
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/DSGNStngr_Power Up Bright Positive Successful Light Saturation Crash Shimmer 05_ESM_AG.wav",
+      "description": "intense, energetic, radiant, uplift, sweep, vintage, buff, dirty, whoosh, impact",
+      "seconds": 1.525,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "david_ult",
+        "state_heal_buff"
+      ],
+      "note": "Krátký pozitivní power-up.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "15_A_David_Posileni_Q.wav",
+      "targets": [
+        "David / Posílení · Q",
+        "Zpětná vazba a stavy / Léčení a zesílení"
+      ],
+      "sha256": "3bf090678bb55da7d38f2bf76ac6a8d826f5245452a36d54666d2597c0be0299",
+      "bytes": 1428656,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Anime Game\\DSGNStngr_Power Up Bright Positive Successful Light Saturation Crash Shimmer 05_ESM_AG.wav"
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/EXPLDsgn_Explosion Small Blast Enemy Death Crunchy Boom Cartoon Noisy Crash Impact Delay 03_ESM_AG.wav",
+      "description": "punchy, explosive, synth, bomb, sweep, analog, vintage, full, frequency, clear",
+      "seconds": 1.478,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_explosion_small"
+      ],
+      "note": "Stylizovaný malý výbuch s delay; ověřit cartoon charakter.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "16_A_Spolecna_knihovna_Maly_vybuch.wav",
+      "targets": [
+        "Společná knihovna / Malý výbuch"
+      ],
+      "sha256": "0fdfac62d1c0b80a9db28e41c878562ab67825202cb863e8a0a600c35c333dc4",
+      "bytes": 1402002,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Anime Game\\EXPLDsgn_Explosion Small Blast Enemy Death Crunchy Boom Cartoon Noisy Crash Impact Delay 03_ESM_AG.wav"
+    },
+    {
+      "path": "344 Audio - Cinematic Fight Vol. 1/FGHTImpt_4 x Punch, Body 02_344 Audio_Cinematic Fight Vol 1.wav",
+      "description": "Fight, Combat, Fists, Gritty, Cinematic, Hollywood, Epic, Action, Brawl, Melee, Physical, Confict,\nImpact,  Punch, Fist, Leg, Swing, Hard, Hit",
+      "seconds": 3.913,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "state_body_hit",
+        "move_body_wall",
+        "kondulic_kick"
+      ],
+      "note": "Čtyři tělesné údery; rozstříhat.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "17_A_Zpetna_vazba_a_stavy_Zasahy_do_tela.wav",
+      "targets": [
+        "Zpětná vazba a stavy / Zásahy do těla",
+        "Další pohyb / Náraz hráče do stěny",
+        "Kondulič / Odkopnutí · E"
+      ],
+      "sha256": "606f7d8bdca261f6fee6a30e19fc8a760c469e599dc0747ecb272a24d4821a31",
+      "bytes": 4534202,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Cinematic Fight Vol. 1\\FGHTImpt_4 x Punch, Body 02_344 Audio_Cinematic Fight Vol 1.wav"
+    },
+    {
+      "path": "Epic Stock Media - HD Game Materials/METLImpt_Metal Old File Impact Tap Against Tire Iron Metallic Hit 01_ESM_HDGM.wav",
+      "description": "metallic, resonant, smack, tap, impact, ring, solid, steel, percussive",
+      "seconds": 0.469,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_bullet_metal",
+        "world_boiler_lever"
+      ],
+      "note": "Krátký kovový úder, pro kulku možná přidat ostrou počáteční vrstvu.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "18_A_Spolecna_knihovna_Kulka_kov.wav",
+      "targets": [
+        "Společná knihovna / Kulka → kov",
+        "Kotel · páka"
+      ],
+      "sha256": "c60d03117c3e00aa38a121941c5f1beefd4bc195eba8b887af1bdbadbac00124",
+      "bytes": 695688,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - HD Game Materials\\METLImpt_Metal Old File Impact Tap Against Tire Iron Metallic Hit 01_ESM_HDGM.wav"
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav",
+      "description": "heavy, metal, plastic, switch, trigger, electronics, action, press, touch, mechanical, bassy, percussive",
+      "seconds": 0.379,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "world_boiler_lever",
+        "honza_trap",
+        "combat_empty"
+      ],
+      "note": "Krátké cvaknutí západky, základ pro páku/past.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "19_A_Kotel_paka.wav",
+      "targets": [
+        "Kotel · páka",
+        "Honza / Past na medvědy · E",
+        "Společná knihovna / Prázdná zbraň"
+      ],
+      "sha256": "5f356988a83acf9f320e72ad31f08a80668f9bf0474658fb50f76d5cc3b8ca10",
+      "bytes": 588596,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - HD Lock And Mechanism Sound Design Kit\\MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - Interface & Infographics/Interface Accept Glassy Snap.wav",
+      "description": "interface, infographics, design, user-friendly, interactive, technology, digital, modern, sleek, visuals, graphical, interface design, data, information, user interface, digital design, graphics, user experience, UX, UI, interactive design, innovative, in",
+      "seconds": 0.438,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_buttons",
+        "state_hit"
+      ],
+      "note": "Krátké potvrzení; jako hitmarker posoudit délku.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "20_A_Tlacitka_a_vyber_hrdiny.wav",
+      "targets": [
+        "Tlačítka a výběr hrdiny",
+        "Zpětná vazba a stavy / Potvrzení zásahu"
+      ],
+      "sha256": "7c4337c429b72efa3731e2fb970f32e87ca39a6dd62adce1a6779f9e809a3444",
+      "bytes": 253766,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - Interface & Infographics\\Interface Accept Glassy Snap.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - Interface & Infographics/Interface Pop High Short.wav",
+      "description": "interface, infographics, design, user-friendly, interactive, technology, digital, modern, sleek, visuals, graphical, interface design, data, information, user interface, digital design, graphics, user experience, UX, UI, interactive design, innovative, in",
+      "seconds": 0.646,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_capture_tick"
+      ],
+      "note": "Kandidát na jemný tik zabírání.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "21_A_Tik_zabirani.wav",
+      "targets": [
+        "Tik zabírání"
+      ],
+      "sha256": "8ac9cb88514baf7b59031e1eacf9a1866daa2470f6b72fefdb75df2871032546",
+      "bytes": 374222,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - Interface & Infographics\\Interface Pop High Short.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - UI Interaction Elements/Deny Muted.wav",
+      "description": "ui, interface, interaction, button, click, tap, menu, toggle, switch, slider, select, confirm, cancel, notify, alert, feedback, input, navigation, panel, tab, scroll, hover, activate, trigger, prompt, highlight, focus, press, control, engage",
+      "seconds": 0.799,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "state_denied",
+        "ui_buttons"
+      ],
+      "note": "Krátké zamítnutí akce.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "22_A_Zpetna_vazba_a_stavy_Neplatna_akce_zadny_cil.wav",
+      "targets": [
+        "Zpětná vazba a stavy / Neplatná akce / žádný cíl",
+        "Tlačítka a výběr hrdiny"
+      ],
+      "sha256": "619233bd4af5cc3d329a0e69e50836923175d986f8a4742c1f36f9bd5f174e5f",
+      "bytes": 461708,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - UI Interaction Elements\\Deny Muted.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Button Arp Twinkle.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 1.812,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "state_ready",
+        "ui_capture_unlock"
+      ],
+      "note": "Připravená ultimátka nebo odemčení bodu.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "23_A_Zpetna_vazba_a_stavy_Ultimatka_naboj_pripraveny.wav",
+      "targets": [
+        "Zpětná vazba a stavy / Ultimátka / náboj připravený",
+        "Odemčení bodu"
+      ],
+      "sha256": "867cc48998eb387da8492c0a6ef8b5a42ebf2db5ffca2fb28c27aa985769fe4f",
+      "bytes": 1046414,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - User Interface\\Button Arp Twinkle.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - Hybrid Game & UI Elements/Game Entry Happy Short.wav",
+      "description": "ui, system, click, button, menu, confirm, approve, error, alert, fail, success, notification, ding, ping, beep, bell, chime, sparkle, pop, swoosh, reward, bonus, coin, game, level, collect, foley, paper, door, zipper, crack",
+      "seconds": 0.875,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_capture_won",
+        "state_respawn"
+      ],
+      "note": "Pozitivní znělka, kandidát na získání bodu/respawn.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "24_A_Zabrani_bodu.wav",
+      "targets": [
+        "Zabrání bodu",
+        "Zpětná vazba a stavy / Oživení"
+      ],
+      "sha256": "8ccca44905900169d322f1a0cb4afac4be4afa372c4242bf6484cb081b42f94b",
+      "bytes": 505876,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - Hybrid Game & UI Elements\\Game Entry Happy Short.wav"
+    },
+    {
+      "path": "Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms/UIAlert_Collect Scifi Futuristic Electronic Bass Burst Sweep Heavy 04_ESM_FG2.wav",
+      "description": "vibrant, shimmer, pop, unison, layered, mid, thump, riser, short",
+      "seconds": 0.31,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pickup_health",
+        "pickup_carburetor"
+      ],
+      "note": "Velmi krátké sebrání; fyzickou vrstvu předmětu lze přidat.",
+      "section": "A",
+      "status": "candidate_not_auditioned",
+      "file": "25_A_Lekarnicka.wav",
+      "targets": [
+        "Lékárnička",
+        "Honzův karburátor"
+      ],
+      "sha256": "98c50fe281d7709223a25ba4ad06bfa4de75426e0b69f831ba75b64d69f759ec",
+      "bytes": 782516,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Fantasy Game 2 - Sound Kit for Enchanted Realms\\UIAlert_Collect Scifi Futuristic Electronic Bass Burst Sweep Heavy 04_ESM_FG2.wav"
+    },
+    {
+      "path": "TheWorkRoom - Flip Flops/FFG002.wav",
+      "description": "Flip Flops Grass Walk Mediium",
+      "seconds": 39.18,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "steps_grass"
+      ],
+      "note": "Metadata: Flip Flops Grass Walk Medium. Žabky na trávě, rozstříhat cca 39 s; ne hotová sada bot.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "26_B_Kroky_a_dopady_Trava.wav",
+      "targets": [
+        "Kroky a dopady / Tráva"
+      ],
+      "sha256": "8df357efde5e4c1cca10cc2739b86a1b3ba15201c34b6a0551cd27ec33d0a9d3",
+      "bytes": 23629630,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\TheWorkRoom - Flip Flops\\FFG002.wav"
+    },
+    {
+      "path": "TheWorkRoom - Flip Flops/FFW003.wav",
+      "description": "Flip Flops Wood Walk Fast",
+      "seconds": 31.475,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "steps_wood"
+      ],
+      "note": "Metadata: Flip Flops Wood Walk Fast. Žabky na dřevě, rozstříhat cca 31 s; dopady po skoku chybí.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "27_B_Kroky_a_dopady_Drevena_podlaha.wav",
+      "targets": [
+        "Kroky a dopady / Dřevěná podlaha"
+      ],
+      "sha256": "b41692ebd9d83e72502c84c376fb3773ea7bf3480103e416c5b2ce426c3b3d5d",
+      "bytes": 19191090,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\TheWorkRoom - Flip Flops\\FFW003.wav"
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHMisc_Tool Tape Measure Pull Retract Spring Slide Spin Long 07_ESM_HDLM.wav",
+      "description": "winding, mechanism, mechanical, stretch, movement, spring, motion, friction, winding, roller",
+      "seconds": 3.261,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "pova_hook",
+        "kondulic_hook",
+        "honza_trap"
+      ],
+      "note": "Svinovací metr: materiál pro návrat háku/pružinu, není to skutečný řetěz.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "28_B_Pova_Sekera_na_retezu_E.wav",
+      "targets": [
+        "Pova / Sekera na řetězu · E",
+        "Kondulič / Hák · Shift",
+        "Honza / Past na medvědy · E"
+      ],
+      "sha256": "98ca9a8955b69cbe6844614bb0de2973014f9845314d17aa5f02a8f44cdfbfff",
+      "bytes": 3908402,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - HD Lock And Mechanism Sound Design Kit\\MECHMisc_Tool Tape Measure Pull Retract Spring Slide Spin Long 07_ESM_HDLM.wav"
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MACHMech_Mechanism Counting Machine Interact Loose Container Short 01_ESM_HDLM.wav",
+      "description": "clang, click, gear, spline, metal, box, knock, industrial, handling, interaction, hollow, metallic",
+      "seconds": 0.271,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "viktor_reload",
+        "kondulic_reload",
+        "david_reload"
+      ],
+      "note": "Krátká mechanická vrstva. Kompletní přebití zbraně to není.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "29_B_Viktor_Prebiti_zbrane.wav",
+      "targets": [
+        "Viktor / Přebití zbraně",
+        "Kondulič / Přebití odstřelovačky",
+        "David / Přebití biotické pušky"
+      ],
+      "sha256": "22a02e08af147649519a9081ac77e13e711387944a13bb8688ae5997c6efd968",
+      "bytes": 464010,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - HD Lock And Mechanism Sound Design Kit\\MACHMech_Mechanism Counting Machine Interact Loose Container Short 01_ESM_HDLM.wav"
+    },
+    {
+      "path": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit/METLTonl_Item Spring Wire Impact Flick Top Clatter Light Tap Roll Handling Short 01_ESM_HDLM.wav",
+      "description": "knock, resonant, tonal, rattle, interference, dry, large, tonal, smack, clatter, metallic, percussive",
+      "seconds": 11.476,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "honza_trap"
+      ],
+      "note": "Manipulace s pružinou/drátem, vybrat jednotlivé kontakty.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "30_B_Honza_Past_na_medvedy_E.wav",
+      "targets": [
+        "Honza / Past na medvědy · E"
+      ],
+      "sha256": "f778f19350bb2f77ba0e156148d8fce855adf74d5990a901e5384f8008658b9c",
+      "bytes": 13373428,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - HD Lock And Mechanism Sound Design Kit\\METLTonl_Item Spring Wire Impact Flick Top Clatter Light Tap Roll Handling Short 01_ESM_HDLM.wav"
+    },
+    {
+      "path": "344 Audio - Historical Weapons Vol. 2/WEAPArmr_Metal Shield Spin On Floor, Buckler MKH_344 Audio_Medieval Weapons Vol 2.wav",
+      "description": "Sword, Shield, Axe, Spear, Wooden, Stick, Metal, Metallic, War, Warzone, Battle, Army, Fight, Combat, Melee, Impact, Clash, Clang, Clink, Block, Boss",
+      "seconds": 36.25,
+      "channels": 2,
+      "rate": 192000,
+      "item_ids": [
+        "pova_block",
+        "honza_trap"
+      ],
+      "note": "Rotující štít na zemi: kovové chvění a odrazy.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "31_B_Pova_Zkrizene_sekyry_RMB.wav",
+      "targets": [
+        "Pova / Zkřížené sekyry · RMB",
+        "Honza / Past na medvědy · E"
+      ],
+      "sha256": "b2d1b6aa9d4eafb1b1bb0f50530b129b5d14e9e54961d8077fc9fad70f6fbf2f",
+      "bytes": 41983234,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Historical Weapons Vol. 2\\WEAPArmr_Metal Shield Spin On Floor, Buckler MKH_344 Audio_Medieval Weapons Vol 2.wav"
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/METLMisc_Metal, Slow Whoosh, Rattle, Pass By x4 01_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Metal, Mech, Armour, Swords, Weapons, Medieval, Clang, Strike, Attack, Impact, Crush, Battle, Fight, \nAmbience, Fantasy, Sci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.214,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "pova_hook",
+        "honza_trap"
+      ],
+      "note": "Kovové prosvištění a rachot x4, vystřihnout varianty.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "32_B_Pova_Sekera_na_retezu_E.wav",
+      "targets": [
+        "Pova / Sekera na řetězu · E",
+        "Honza / Past na medvědy · E"
+      ],
+      "sha256": "951f88dbd29e0ae00588469c83e68b0940a9fc887f59678a366decdac665198e",
+      "bytes": 705550,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Elemental Palette Designed Vol. 1\\METLMisc_Metal, Slow Whoosh, Rattle, Pass By x4 01_344 Audio_Elemental Palette Designed Vol 1.wav"
+    },
+    {
+      "path": "344 Audio - Climbing Gear Foley Vol. 1/EQUISprt_Climbing Gear, Flicking Carabiner On Rope_344 Audio_Climbing Gear Foley Vol 1.wav",
+      "description": "Climbing, Athlete, Sport, Belay, Rope, Rock Climbing, Gear, Tools, Kit, Equipment, Metal, Clips, Carabiner, Quickdraw, Harness, Rappelling, Abseiling, Outdoor, Gym, Excursion, Adventure, Athletic, Mountaineering, Foley, Lead Climbing, Leading",
+      "seconds": 6.232,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "kondulic_hook",
+        "move_ladder"
+      ],
+      "note": "Karabina na laně: detail háku nebo lezení.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "33_B_Kondulic_Hak_Shift.wav",
+      "targets": [
+        "Kondulič / Hák · Shift",
+        "Další pohyb / Lezení po žebříku"
+      ],
+      "sha256": "4d544403029dd351c92c065abf7fb00049b5c61630dd849a06267223f65d6655",
+      "bytes": 3611038,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Climbing Gear Foley Vol. 1\\EQUISprt_Climbing Gear, Flicking Carabiner On Rope_344 Audio_Climbing Gear Foley Vol 1.wav"
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, action gesture, evil presence, onslaught-004.wav",
+      "description": "magic, action gesture, evil presence, onslaught",
+      "seconds": 38.215,
+      "channels": 2,
+      "rate": 48000,
+      "item_ids": [
+        "max_shadow",
+        "max_ult"
+      ],
+      "note": "Temná magie asi 38 s; vystřihnout krátký nástup.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "34_B_Max_Stinova_forma_E.wav",
+      "targets": [
+        "Max / Stínová forma · E",
+        "Max / Vpád do stínu · Q"
+      ],
+      "sha256": "f8d7cc6f50bfc9bf4efa79882aa5229ebe5f49ff35cb577a41529978b0d2af65",
+      "bytes": 11012742,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Alexander Kopeikin - Emotion and Magic\\magic, action gesture, evil presence, onslaught-004.wav"
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, drone, tension, spellbound, evanescence-002.wav",
+      "description": "magic, drone, tension, spellbound, evanescence",
+      "seconds": 63.978,
+      "channels": 2,
+      "rate": 48000,
+      "item_ids": [
+        "max_shadow",
+        "max_ult"
+      ],
+      "note": "Temná plocha asi 64 s; pro smyčku ověřit šev.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "35_B_Max_Stinova_forma_E.wav",
+      "targets": [
+        "Max / Stínová forma · E",
+        "Max / Vpád do stínu · Q"
+      ],
+      "sha256": "87d1bf169f1947d8468b0a9f7da917053159e6bd01113cf829eec6b6ed16fd1d",
+      "bytes": 18426736,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Alexander Kopeikin - Emotion and Magic\\magic, drone, tension, spellbound, evanescence-002.wav"
+    },
+    {
+      "path": "Alexander Kopeikin - Emotion and Magic/magic, energy flow, astral travel-015.wav",
+      "description": "magic, energy flow, astral travel",
+      "seconds": 61.03,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "max_shadow",
+        "max_ult"
+      ],
+      "note": "Magický pohyb asi 61 s; materiál pro přechod/zhmotnění.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "36_B_Max_Stinova_forma_E.wav",
+      "targets": [
+        "Max / Stínová forma · E",
+        "Max / Vpád do stínu · Q"
+      ],
+      "sha256": "5fb913d984e53e3ca9f2e386a06ce056770666a7fee41c4ee78fa39163ab2151",
+      "bytes": 35160876,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Alexander Kopeikin - Emotion and Magic\\magic, energy flow, astral travel-015.wav"
+    },
+    {
+      "path": "Epic Stock Media - Anime Game/DSGNMisc_Misc Monster Tentacle Modulated Creature Shadow Abstract Swept Wobble Lfo 02_ESM_AG.wav",
+      "description": "intense, rapid, warble, full, frequency, layered, impact, crash, hit, full",
+      "seconds": 2.041,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "max_slash",
+        "max_ult"
+      ],
+      "note": "Krátký modulovaný stínový efekt.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "37_B_Max_Dlouhy_rez_RMB.wav",
+      "targets": [
+        "Max / Dlouhý řez · RMB",
+        "Max / Vpád do stínu · Q"
+      ],
+      "sha256": "d10c51599a12fbf9bcd9e73bc44bddd040029265fd33a514ff145396d7aebc2c",
+      "bytes": 1726032,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Anime Game\\DSGNMisc_Misc Monster Tentacle Modulated Creature Shadow Abstract Swept Wobble Lfo 02_ESM_AG.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - Colossal Impacts/Impact Cut Sweep.wav",
+      "description": "impact, collision, explosion, smash, boom, crash, thud, cinematic, epic, massive, intense, heavy, powerful, action, game audio, trailer, movie, blockbuster, destruction, shockwave, tremor, bass, deep, dramatic, explosion, design, tension, energy,  epic, hi",
+      "seconds": 2.792,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_explosion_large",
+        "pova_ult",
+        "sindel_ult"
+      ],
+      "note": "Velký designovaný úder, základ pro odlišné ultimátky.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "38_B_Spolecna_knihovna_Velky_vybuch_uder.wav",
+      "targets": [
+        "Společná knihovna / Velký výbuch / úder",
+        "Pova / Ohnivý dopad · Q",
+        "Šindel / Ezechiel 25:17 · Q"
+      ],
+      "sha256": "e6b918055aa5ed53917ad217ed9077b0bfff5b0c7bcf97d07ba48be492b61b21",
+      "bytes": 1612464,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - Colossal Impacts\\Impact Cut Sweep.wav"
+    },
+    {
+      "path": "Federico Soler - Effective Trailer Booms Vol. 2/EffectiveTrailer_Booms_Vol2_011.wav",
+      "description": "boom, sub, impact, low, lowend, cinematic, bass, hit, film, dark, action, dramatic, horror, powerful, tension, epic, trailerCubase",
+      "seconds": 17.271,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_explosion_large",
+        "honza_ult"
+      ],
+      "note": "Trailerový basový úder; ne skutečné valení kamene.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "39_B_Spolecna_knihovna_Velky_vybuch_uder.wav",
+      "targets": [
+        "Společná knihovna / Velký výbuch / úder",
+        "Honza / Balvan · Q"
+      ],
+      "sha256": "f3a4426e9cf9f50a8ebb4a33a095be5522abc48a7e1f9b484fdcee082d9b70d6",
+      "bytes": 9949324,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Federico Soler - Effective Trailer Booms Vol. 2\\EffectiveTrailer_Booms_Vol2_011.wav"
+    },
+    {
+      "path": "Epic Stock Media - Elemental Mutation Whooshes and Impacts/WATRImpt_Impact Water Deep Submerge Bubble Drown Ship Hit 05_ESM_EMWI.wav",
+      "description": "splash, dunk, gurgle, slosh, ripple, bubble, droplet, smash, flow",
+      "seconds": 2.17,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "david_grenade"
+      ],
+      "note": "Stylizovaný hluboký vodní kontakt, ne automaticky přirozený splash.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "40_B_David_Bioticky_granat_E.wav",
+      "targets": [
+        "David / Biotický granát · E"
+      ],
+      "sha256": "c1e1a20e310e259427889692846b2d561cd12d61ab4cf255fb8be6cfc5f82dae",
+      "bytes": 1638358,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Elemental Mutation Whooshes and Impacts\\WATRImpt_Impact Water Deep Submerge Bubble Drown Ship Hit 05_ESM_EMWI.wav"
+    },
+    {
+      "path": "344 Audio - Elemental Palette Designed Vol. 1/WATRMisc_Water, Liquid Impact, Bubble, Sci Fi, Hit 04_344 Audio_Elemental Palette Designed Vol 1.wav",
+      "description": "Water, Bubbles, Splash, Ripple, Gush, Wave, Gurgle, Surge, Plasma, Pulse, Glitch, Ambience, Fantasy, \nSci-Fi, Action, Adventure, Games, Attack, UI",
+      "seconds": 1.213,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "david_grenade",
+        "mosino_impact"
+      ],
+      "note": "Tekutý/sci-fi zásah, další kandidát na biotický granát.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "41_B_David_Bioticky_granat_E.wav",
+      "targets": [
+        "David / Biotický granát · E",
+        "Mošino / Dopad zvukového projektilu"
+      ],
+      "sha256": "340b715686ea94acd273c878b8b54b864bfa802c07700eedb2c1f24cedc7932f",
+      "bytes": 704692,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - Elemental Palette Designed Vol. 1\\WATRMisc_Water, Liquid Impact, Bubble, Sci Fi, Hit 04_344 Audio_Elemental Palette Designed Vol 1.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - Cartoon Bloopers/Arrow Hit Rattle.wav",
+      "description": "cartoon, comedy, funny, silly, goofy, blooper, gag, pratfall, slip, trip, stumble, clumsy, accident, mishap, fumble, laugh, humor, animated, childish, playful, wacky, absurd, exaggeration, lighthearted",
+      "seconds": 1.083,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_arrow_impact"
+      ],
+      "note": "Komický dopad šípu. Napínání a vypuštění luku chybí.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "42_B_Spolecna_knihovna_Dopady_sipu.wav",
+      "targets": [
+        "Společná knihovna / Dopady šípů"
+      ],
+      "sha256": "1f9359e4ef457626bca33e9ed3cb948462209771b6328164173a6a35018c5f45",
+      "bytes": 625998,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - Cartoon Bloopers\\Arrow Hit Rattle.wav"
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Basic Transportation Sounds/BOATMotr_Diesel Engine Boat Idle Steady Rpm Hum Motor Mic One 01_ESM_CPS.wav",
+      "description": "large, motor, boat, unmuffled, engine, loud, running, open, uncovered",
+      "seconds": 26.0,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_groomer_engine"
+      ],
+      "note": "Lodní diesel volnoběh, nouzový základ rolby; start, zátěž, vypnutí a pásy chybí.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "43_B_Rolba_motor.wav",
+      "targets": [
+        "Rolba · motor"
+      ],
+      "sha256": "c79d2c3436bfbc5eee8398a1111369fa3de82237914a5839e8a051a67019ef7c",
+      "bytes": 15148428,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Public Spaces - Basic Transportation Sounds\\BOATMotr_Diesel Engine Boat Idle Steady Rpm Hum Motor Mic One 01_ESM_CPS.wav"
+    },
+    {
+      "path": "TheWorkRoom - Wire Cars/WIR006.wav",
+      "description": "Wire Car Fabrication - Handling & Bending Wire With Pliers Various (Internal)",
+      "seconds": 65.623,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "honza_trap",
+        "pova_hook"
+      ],
+      "note": "Metadata: ohýbání drátu kleštěmi. Není to motor auta.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "44_B_Honza_Past_na_medvedy_E.wav",
+      "targets": [
+        "Honza / Past na medvědy · E",
+        "Pova / Sekera na řetězu · E"
+      ],
+      "sha256": "adccd883fb5daefee29f1ddbf6984e4f85f87d702a34990d244f002117e9699b",
+      "bytes": 19831042,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\TheWorkRoom - Wire Cars\\WIR006.wav"
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_SinglePats04_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 0.572,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "combat_bullet_soft"
+      ],
+      "note": "Lehké kontakty s látkou; pro zásah nutno vrstvit.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "45_B_Spolecna_knihovna_Kulka_mekky_povrch.wav",
+      "targets": [
+        "Společná knihovna / Kulka → měkký povrch"
+      ],
+      "sha256": "f723badf49fb5d2902efb259008c23cb2edc96b6ce59bf20448827f51a44e4ea",
+      "bytes": 333406,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\InMotionAudio - Foley T-Shirt\\FOLYClth_SinglePats04_InMotionAudio_FoleyT-Shirt.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Readout Thin Long.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 4.375,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "kondulic_scope",
+        "viktor_ult",
+        "kondulic_ult"
+      ],
+      "note": "Elektronické čtení jako materiál pro optiku/sken.",
+      "section": "B",
+      "status": "candidate_not_auditioned",
+      "file": "46_B_Kondulic_Optika_a_nabiti_rany.wav",
+      "targets": [
+        "Kondulič / Optika a nabití rány",
+        "Viktor / Taktický zaměřovač · Q",
+        "Kondulič / Infravize · Q"
+      ],
+      "sha256": "69e0297d18f356e36116f797d59a4509f03ec2478a70712c5ff937cb3152d28d",
+      "bytes": 2524336,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - User Interface\\Readout Thin Long.wav"
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_ClothMovement24_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 2.275,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "move_clothes",
+        "move_ledge"
+      ],
+      "note": "Pohyb trička, tichá tělesná vrstva.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "47_C_Dalsi_pohyb_Pohyb_obleceni.wav",
+      "targets": [
+        "Další pohyb / Pohyb oblečení",
+        "Další pohyb / Vytažení na hranu"
+      ],
+      "sha256": "6f25057d539906f4f589ea8c9d98081bc6896737d2a5c9486d8c9cce587f7f96",
+      "bytes": 1319446,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\InMotionAudio - Foley T-Shirt\\FOLYClth_ClothMovement24_InMotionAudio_FoleyT-Shirt.wav"
+    },
+    {
+      "path": "InMotionAudio - Foley T-Shirt/FOLYClth_ClothMovement29_InMotionAudio_FoleyT-Shirt.wav",
+      "description": "Cloth, Clothes, Fabric, Textile, Material, Materials, Cotton, T-Shirt, FOLYClth, Foley, Movement, Moving, Rustle, Rubbing, Rub, Patting, Pat, Pats, Hit, Hits, Stroking, Stoke, Touching, Touch, Handling.",
+      "seconds": 1.501,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "move_clothes",
+        "move_ledge"
+      ],
+      "note": "Další varianta oblečení.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "48_C_Dalsi_pohyb_Pohyb_obleceni.wav",
+      "targets": [
+        "Další pohyb / Pohyb oblečení",
+        "Další pohyb / Vytažení na hranu"
+      ],
+      "sha256": "1846b563bf07a534a580dab0848d6c6d59b8f3d697bac328ad7d04e9dc6cdb30",
+      "bytes": 871798,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\InMotionAudio - Foley T-Shirt\\FOLYClth_ClothMovement29_InMotionAudio_FoleyT-Shirt.wav"
+    },
+    {
+      "path": "SoundBits - Cars - Mad Mustang Mercury/VEHCar_Various Driving at Slow Speed 15 06_SNDBTS_CRS-MMM.wav",
+      "description": "Car, Muscle Car, Pony Car, Mustang Mercury, Various Driving at Slow Speed, Exterior, Wheel",
+      "seconds": 28.63,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "world_yaris"
+      ],
+      "note": "Jízda jiného auta než Yaris, posoudit a případně upravit charakter motoru.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "49_C_Yaris_motor_a_pneumatiky.wav",
+      "targets": [
+        "Yaris · motor a pneumatiky"
+      ],
+      "sha256": "7513db2c7127de13d4022924f5214b441584bf6e62b740bb03fa431e8f2325c3",
+      "bytes": 8246704,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\SoundBits - Cars - Mad Mustang Mercury\\VEHCar_Various Driving at Slow Speed 15 06_SNDBTS_CRS-MMM.wav"
+    },
+    {
+      "path": "SoundBits - Cars - Mad Mustang Mercury/VEHSkid_Tire Skids on Gravel 15 06_SNDBTS_CRS-MMM.wav",
+      "description": "Car, Muscle Car, Pony Car, Mustang Mercury, Driving, Tire Skids on Gravel, Exterior, Wheel",
+      "seconds": 33.154,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "world_yaris"
+      ],
+      "note": "Smyk na štěrku, ne klidné odvalování pneumatik.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "50_C_Yaris_motor_a_pneumatiky.wav",
+      "targets": [
+        "Yaris · motor a pneumatiky"
+      ],
+      "sha256": "bb5010f26d4e8395053f90d0d645b9dbdfa75107eddb1667d48924fd8091f4ab",
+      "bytes": 9549576,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\SoundBits - Cars - Mad Mustang Mercury\\VEHSkid_Tire Skids on Gravel 15 06_SNDBTS_CRS-MMM.wav"
+    },
+    {
+      "path": "InMotionAudio - Arc/ELECBuzz_Buzz27_InMotionAudio_Arc.wav",
+      "description": "ELECBuzz, Electricity, Electric, Elec, Electromagnetic, Electronic, High Voltage, Voltage, Buzz, Buzzing, Hum, Hums, Humming, Ground Hum, Energy, Interference, Digital, Digital Elements, Technology, Computer, Experimental, Noise, Science Fiction, Sci-Fi, A",
+      "seconds": 9.8,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_workshop_pc",
+        "world_tunnel"
+      ],
+      "note": "Elektrické bzučení; pro smyčku nejdřív posoudit.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "51_C_Workshop_pocitac.wav",
+      "targets": [
+        "Workshop · počítač",
+        "Tunel · atmosféra"
+      ],
+      "sha256": "79449b8d5cc8bc35eb37e1de70a1933a60d8988e5c1d2ccf6f312542ae8e0a53",
+      "bytes": 5677412,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\InMotionAudio - Arc\\ELECBuzz_Buzz27_InMotionAudio_Arc.wav"
+    },
+    {
+      "path": "Jake Fielding - Fridge Hums Vol.2/MACHAppl_Deep Fridge Hum, Buzz, Electric Tone, Deep_Jake Fielding_Fridge Hums Pt2.wav",
+      "description": "Deep Fridge Hum, Buzz, Electric Tone, Deep Rumble, Domestic, Appliance",
+      "seconds": 266.1,
+      "channels": 1,
+      "rate": 96000,
+      "item_ids": [
+        "world_workshop_pc",
+        "world_tunnel"
+      ],
+      "note": "Hučení lednice jako možný místní technický podkres.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "52_C_Workshop_pocitac.wav",
+      "targets": [
+        "Workshop · počítač",
+        "Tunel · atmosféra"
+      ],
+      "sha256": "d5c4cbb90d2bb6856077c55161f9e4522ae34116c67b8078d80cb5cad663daa8",
+      "bytes": 77044372,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Jake Fielding - Fridge Hums Vol.2\\MACHAppl_Deep Fridge Hum, Buzz, Electric Tone, Deep_Jake Fielding_Fridge Hums Pt2.wav"
+    },
+    {
+      "path": "Just Sound Effects - Highlands of Norway/AMBSwmp_Meadow Pipits calling many Insects humming Wind blowing through Grass_JSE_HoN_Stereo.wav",
+      "description": "norway, scandinavia, nature, highlands, alpine, plateau, mountains, tundra, swamp, wetland, marsh, bog, wind, calm, meadow pipit, bird, anthus pratensis, insects, flies, humming, buzzing",
+      "seconds": 86.496,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_hanamura",
+        "world_outdoor_layers"
+      ],
+      "note": "Stereo: ptáci, hmyz a vítr v trávě.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "53_C_Hanamura_atmosfera.wav",
+      "targets": [
+        "Hanamura · atmosféra",
+        "Chaty · další ambientové vrstvy"
+      ],
+      "sha256": "b47ac8ae869b52760bfd41e195e37a319c822ad04a734aec0c869bc4a5eee280",
+      "bytes": 50565614,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Just Sound Effects - Highlands of Norway\\AMBSwmp_Meadow Pipits calling many Insects humming Wind blowing through Grass_JSE_HoN_Stereo.wav"
+    },
+    {
+      "path": "344 Audio - East Coast America Vol. 1/AMBSubn_Ambience, Forest Crickets, Birds, Connecticut 02_344 Audio_East Coast America.wav",
+      "description": "Ambience, Atmos, America, USA,  Insect, Nature, Water, Crickets, Birds",
+      "seconds": 52.302,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_outdoor_layers"
+      ],
+      "note": "Lesní cvrčci a ptáci; ověřit vhodnost prostředí.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "54_C_Chaty_dalsi_ambientove_vrstvy.wav",
+      "targets": [
+        "Chaty · další ambientové vrstvy"
+      ],
+      "sha256": "d227b21d2df0f329acd490ad1c4ecaddfef4e19f295880a40116a60112da147f",
+      "bytes": 30287980,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\344 Audio - East Coast America Vol. 1\\AMBSubn_Ambience, Forest Crickets, Birds, Connecticut 02_344 Audio_East Coast America.wav"
+    },
+    {
+      "path": "Epic Stock Media - Public Spaces - Storms Lakes Parks and Rural Nature Exteriors/WATRLap_Summer Tennessee Lake Dock Water Ripples Wake Wave Gentle 05 Distant_ESM_CPS.wav",
+      "description": "lake, water, lap, splash, splat, suction, light, crash, spill, cam, EXT, gurgle, wet, slimy, next to boat dock,",
+      "seconds": 102.976,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_stream"
+      ],
+      "note": "Jemné vlnění jezera: pro jezírko, nikoli věrný proudící potok.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "55_C_Potok.wav",
+      "targets": [
+        "Potok"
+      ],
+      "sha256": "b9b8e2401a6a66825d97abefff1d89321eba67799a549db66ca4fef14d9749de",
+      "bytes": 59457730,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Public Spaces - Storms Lakes Parks and Rural Nature Exteriors\\WATRLap_Summer Tennessee Lake Dock Water Ripples Wake Wave Gentle 05 Distant_ESM_CPS.wav"
+    },
+    {
+      "path": "Ivo Vicic - Campfire - Bonfire FX/24 Campfire, Dropping Fresh Pine Branches in Fire, Crackling, Sizzling Strong, Close 02.wav",
+      "description": "Fire Experiments - Campfire, Putting Fresh Pine Branches in Fire, Sizzling, 2m Away\r\nRec: NOS stereo; LOM Usi (Rycote BBG windshieldx2), Tascam DR-05X",
+      "seconds": 120.576,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_fireplace",
+        "world_boiler_fire"
+      ],
+      "note": "Přidávání větví, praskání a syčení; ne nutně čistá klidná smyčka.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "56_C_Krb_a_gril.wav",
+      "targets": [
+        "Krb a gril",
+        "Kotel · oheň a přehřátí"
+      ],
+      "sha256": "291f6ca6fd5f00a57d445dabedaa766f7ca6b4738bb68d6063bcbd90c6071f5d",
+      "bytes": 69464022,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Ivo Vicic - Campfire - Bonfire FX\\24 Campfire, Dropping Fresh Pine Branches in Fire, Crackling, Sizzling Strong, Close 02.wav"
+    },
+    {
+      "path": "Ivo Vicic - Campfire - Bonfire FX/42 Campfire, Putting Out Fire, Water from Bottle, Variation, Close.wav",
+      "description": "Fire Experiments - Campfire, Putting Out Fire, Watter from Bottle, Variation, Close\r\nRec: Sennheiser MKH 40/30, Rycote suspension, windjammer, Triton tripod, Mogami cables, Sound Devices 744T, MS stereo",
+      "seconds": 30.891,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_boiler_fire"
+      ],
+      "note": "Hašení vodou: sykavý konec jen pokud odpovídá dění.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "57_C_Kotel_ohen_a_prehrati.wav",
+      "targets": [
+        "Kotel · oheň a přehřátí"
+      ],
+      "sha256": "233cfc69c50a72097b07e9ab2e8d49ecd10791ec589b061cc8aaea9030e4575f",
+      "bytes": 17806148,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Ivo Vicic - Campfire - Bonfire FX\\42 Campfire, Putting Out Fire, Water from Bottle, Variation, Close.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - UI Interaction Elements/Ting Coins.wav",
+      "description": "ui, interface, interaction, button, click, tap, menu, toggle, switch, slider, select, confirm, cancel, notify, alert, feedback, input, navigation, panel, tab, scroll, hover, activate, trigger, prompt, highlight, focus, press, control, engage",
+      "seconds": 1.104,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "world_joker"
+      ],
+      "note": "Cinknutí mincí jako část Joker výhry; celou znělku je třeba složit.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "58_C_Respin_Joker_vyhra.wav",
+      "targets": [
+        "Respin Joker · výhra"
+      ],
+      "sha256": "7467e2687c5b9bf3cedebd0fcb3af58f7eaeffdd7201a97790daf3c87c42f1a1",
+      "bytes": 637214,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - UI Interaction Elements\\Ting Coins.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - User Interface/Interface Plucks Happy.wav",
+      "description": "interface, button, app, accept, deny, request, confirmation, click, button, verification, acceptance, denial, menu, header, quest, interface click, button click, button, sound, ringtone, chimes, ding, hint, notification, request, tapping, popup, notify",
+      "seconds": 0.853,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_buttons",
+        "ui_capture_won"
+      ],
+      "note": "Další pozitivní UI varianta.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "59_C_Tlacitka_a_vyber_hrdiny.wav",
+      "targets": [
+        "Tlačítka a výběr hrdiny",
+        "Zabrání bodu"
+      ],
+      "sha256": "a6866b6e04580d6f4007c59514a5530c7699f785beb27b2eda6a2b4579478ded",
+      "bytes": 493094,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - User Interface\\Interface Plucks Happy.wav"
+    },
+    {
+      "path": "Cinematic Sound Design - System & UI Feedback Elements/Interface Deny Low Fat Dark.wav",
+      "description": "system, ui, feedback, interface, menu, button, navigation, confirmation, cancel, error, warning, success, hover, rollover, selection, toggle, slider, checkbox, radio, drag, drop, notification, subtle, minimal, digital, alert, popup, transition, window, typ",
+      "seconds": 0.743,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "state_denied",
+        "ui_buttons"
+      ],
+      "note": "Alternativa zamítnutí.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "60_C_Zpetna_vazba_a_stavy_Neplatna_akce_zadny_cil.wav",
+      "targets": [
+        "Zpětná vazba a stavy / Neplatná akce / žádný cíl",
+        "Tlačítka a výběr hrdiny"
+      ],
+      "sha256": "b63554a4791b9d7c034e2e49e2383971870394d4a70d9e3c2bc6f99fb2fcc101",
+      "bytes": 429698,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Cinematic Sound Design - System & UI Feedback Elements\\Interface Deny Low Fat Dark.wav"
+    },
+    {
+      "path": "Epic Stock Media - Shooter Game Announcer Voice/VOXMale_Announcer Vocal Male Dry Special Kill Headshot 01_ESM_SGAV.wav",
+      "description": "dry, clean, crispy, spoken word, dialouge, game character, announcer, FPS, shooter, god voice, NPC, Solider, Commando",
+      "seconds": 1.154,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "state_headshot_kill"
+      ],
+      "note": "Anglický announcer Headshot je volitelný, nenahrazuje vlastní hlášky postav.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "61_C_Zpetna_vazba_a_stavy_Headshot_a_zabiti.wav",
+      "targets": [
+        "Zpětná vazba a stavy / Headshot a zabití"
+      ],
+      "sha256": "4f6916ef504c398de680193e28cddd3eb6f1ed771479b57270099144d0d1aed6",
+      "bytes": 821168,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Shooter Game Announcer Voice\\VOXMale_Announcer Vocal Male Dry Special Kill Headshot 01_ESM_SGAV.wav"
+    },
+    {
+      "path": "Epic Stock Media - Shooter Game Announcer Voice/VOXMale_Announcer Vocal Male Dry Game Statement Objective Completed 04_ESM_SGAV.wav",
+      "description": "dry, clean, crispy, spoken word, dialouge, game character, announcer, FPS, shooter, god voice, NPC, Solider, Commando",
+      "seconds": 1.269,
+      "channels": 2,
+      "rate": 96000,
+      "item_ids": [
+        "ui_capture_won"
+      ],
+      "note": "Anglický announcer Objective Completed, jen pokud ho chcete používat.",
+      "section": "C",
+      "status": "candidate_not_auditioned",
+      "file": "62_C_Zabrani_bodu.wav",
+      "targets": [
+        "Zabrání bodu"
+      ],
+      "sha256": "9b119e0da589e8c5e0d6201c27c9acdd449ab040f25b693b65c252ff1bb3389c",
+      "bytes": 887878,
+      "source_absolute": "C:\\myDev_\\audio\\sounds\\sounds\\GameAudioBundle2026\\Epic Stock Media - Shooter Game Announcer Voice\\VOXMale_Announcer Vocal Male Dry Game Statement Objective Completed 04_ESM_SGAV.wav"
+    }
+  ]
+}

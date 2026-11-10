@@ -25,6 +25,13 @@ public class WaterCurrent : MonoBehaviour
     void OnEnable() { if (!all.Contains(this)) all.Add(this); }
     void OnDisable() => all.Remove(this);
 
+    public static bool IsWater(Vector3 feet)
+    {
+        foreach (var zone in all)
+            if (zone != null && !zone.slide && !zone.start && zone.Contains(feet)) return true;
+        return WaterFlow.RaycastSurface(feet + Vector3.up * 0.4f, Vector3.down, 0.9f, out _);
+    }
+
     // Rychlost unaseni v miste chodidel (nulova mimo vsechny oblasti). 'riding' = hrac prijel z toboganu:
     // zapne se na skluzu, plati po vode a vypne se, jakmile hrac ze vsech oblasti vystoupi.
     // 'surfing' = jede z toboganu po vode (ne na skluzu) - podle toho se kresli splouchani.

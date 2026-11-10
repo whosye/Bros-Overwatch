@@ -36,7 +36,7 @@ public class GrappleAbility : NetworkBehaviour
         var eye = fpc.playerCamera.transform;
         if (!TryFindAnchor(eye.position, eye.forward, out Vector3 anchor, out Vector3 normal))
         {
-            ProceduralSfx.PlayForActor(this, ProceduralSfx.Empty, transform.position, 0.5f);
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "state_denied", ProceduralSfx.Empty), transform.position, 0.5f);
             return;
         }
 

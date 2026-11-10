@@ -431,9 +431,15 @@ public class SindelAbility : NetworkBehaviour
         blast.transform.position = point;
         blast.AddComponent<HolyBlast>().Init(radius);
 
-        ProceduralSfx.Play(ProceduralSfx.Explosion, point, 1f, 70f);
-        ProceduralSfx.Play(ProceduralSfx.Explosion, point + Vector3.up, 0.8f, 70f);
-        ProceduralSfx.Play(ProceduralSfx.Gunshot, point, 0.9f, 70f);
+        var selectedBlast = CollectedAudioBank.Pick("sindel_grenade");
+        if (selectedBlast != null)
+            ProceduralSfx.Play(selectedBlast, point, 1f, 70f);
+        else
+        {
+            ProceduralSfx.Play(ProceduralSfx.Explosion, point, 1f, 70f);
+            ProceduralSfx.Play(ProceduralSfx.Explosion, point + Vector3.up, 0.8f, 70f);
+            ProceduralSfx.Play(ProceduralSfx.Gunshot, point, 0.9f, 70f);
+        }
     }
 }
 

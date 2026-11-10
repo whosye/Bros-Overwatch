@@ -292,6 +292,8 @@ public class Tractor : MonoBehaviour
     {
         get
         {
+            var collected = CollectedAudioBank.Pick("world_groomer_engine");
+            if (collected != null) return collected;
             if (engineClip != null) return engineClip;
             const int rate = 44100;
             const float seconds = 1f;

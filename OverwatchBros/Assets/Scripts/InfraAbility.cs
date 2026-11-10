@@ -70,7 +70,7 @@ public class InfraAbility : NetworkBehaviour
     void RevealedClientRpc(float seconds)
     {
         // Ultimatka je slyset pres celou mapu; sniperuv tym dostane cervenou "infra" barvu na chvili.
-        Fx.PlayGlobal(ProceduralSfx.UltCharge, 0.5f);
+        Fx.PlayGlobal(CollectedAudioBank.Ability(ability, "kondulic_ult", ProceduralSfx.UltCharge), 0.5f);
 
         var local = NetworkManager.Singleton != null ? NetworkManager.Singleton.LocalClient?.PlayerObject : null;
         if (local != null && Combat.SameTeam(gameObject, local.gameObject))

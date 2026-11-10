@@ -26,6 +26,9 @@ public class BoulderAbility : NetworkBehaviour
     float elapsed;
     float nextUseTime;
     float verticalSpeed;
+    bool airJumpUsed, wasGrounded;
+    float airborneSeconds, fallSpeed, wallClimbDistance, nextLandingSound;
+    AudioSource rollAudio;
     Vector3 savedCameraLocalPosition;
     CharacterController roller;
 
@@ -178,6 +181,9 @@ public class BoulderAbility : NetworkBehaviour
         hero.SpendUlt();
         elapsed = 0f;
         verticalSpeed = 0f;
+        airJumpUsed = false;
+        wasGrounded = true;
+        airborneSeconds = fallSpeed = wallClimbDistance = 0f;
         savedCameraLocalPosition = playerCamera.transform.localPosition;
 
         fpc.AbilityActive = true;
@@ -213,15 +219,39 @@ public class BoulderAbility : NetworkBehaviour
     {
         elapsed += Time.deltaTime;
 
-        if (roller.isGrounded && verticalSpeed < 0f)
-            verticalSpeed = -2f;
-        if (roller.isGrounded && HeroInput.Pressed(this, HeroInput.Key.Space))
+        bool grounded = roller.isGrounded;
+        if (grounded)
+        {
+            if (verticalSpeed < 0f) verticalSpeed = -2f;
+            airJumpUsed = false;
+            wallClimbDistance = 0f;
+        }
+        if (HeroInput.Pressed(this, HeroInput.Key.Space) && (grounded || !airJumpUsed))
+        {
+            if (!grounded) airJumpUsed = true;
             verticalSpeed = jumpSpeed;
+        }
         verticalSpeed -= gravity * Time.deltaTime;
 
         // Vali se porad dopredu smerem, kam se hrac diva.
         Vector3 forward = transform.forward;
-        roller.Move((forward * ability.speed + Vector3.up * verticalSpeed) * Time.deltaTime);
+        Vector3 velocity = forward * ability.speed + Vector3.up * verticalSpeed;
+        if (HeroInput.Held(this, HeroInput.Key.Space) && wallClimbDistance < 2.5f && AgainstWall(forward))
+        {
+            verticalSpeed = 0f;
+            velocity = forward * (ability.speed * 0.3f) + Vector3.up * 6f;
+            wallClimbDistance += 6f * Time.deltaTime;
+        }
+        roller.Move(velocity * Time.deltaTime);
+        bool groundedAfter = roller.isGrounded;
+        if (!groundedAfter) { airborneSeconds += Time.deltaTime; fallSpeed = Mathf.Max(fallSpeed, -verticalSpeed); }
+        if (groundedAfter && !wasGrounded && airborneSeconds > 0.1f && fallSpeed > 2f && Time.time >= nextLandingSound)
+        {
+            LandingSoundServerRpc(boulder.transform.position, Mathf.Clamp01(0.6f + fallSpeed * 0.03f));
+            nextLandingSound = Time.time + 0.2f;
+        }
+        if (groundedAfter) { airborneSeconds = fallSpeed = 0f; }
+        wasGrounded = groundedAfter;
         Spin();
         position.Value = boulder.transform.position;
 
@@ -240,6 +270,29 @@ public class BoulderAbility : NetworkBehaviour
 
         if (boulder.transform.position.y < -40f)
             End();
+    }
+
+    bool AgainstWall(Vector3 forward)
+    {
+        foreach (var hit in Physics.SphereCastAll(boulder.transform.position + Vector3.up * boulderRadius,
+            boulderRadius * 0.8f, forward, boulderRadius * 0.6f + 0.2f, ~0, QueryTriggerInteraction.Ignore))
+            if (Mathf.Abs(hit.normal.y) < 0.3f && !hit.collider.transform.IsChildOf(boulder.transform)
+                && hit.collider.GetComponentInParent<NetworkObject>() != NetworkObject
+                && hit.collider.GetComponentInParent<PlayerHero>() == null) return true;
+        return false;
+    }
+
+    [ServerRpc]
+    void LandingSoundServerRpc(Vector3 point, float volume)
+    {
+        if ((point - position.Value).sqrMagnitude < 25f)
+            LandingSoundClientRpc(point, Mathf.Clamp(volume, 0.6f, 1f));
+    }
+
+    [ClientRpc]
+    void LandingSoundClientRpc(Vector3 point, float volume)
+    {
+        ProceduralSfx.Play(CollectedAudioBank.Pick("honza_ult.land"), point, volume, 35f);
     }
 
     // Kamera za balvanem, ale ne za zdi.
@@ -323,7 +376,7 @@ public class BoulderAbility : NetworkBehaviour
     void ExplodeFxClientRpc(Vector3 center)
     {
         Fx.Explosion(center, ability != null ? ability.radius : 6f);
-        ProceduralSfx.Play(ProceduralSfx.Explosion, center, 1f);
+        ProceduralSfx.Play(CollectedAudioBank.SmallExplosion(), center, 1f, 60f);
     }
 
     // Balvan dostal zasah (jen server). Vlastni tym ho neposkodi.
@@ -342,7 +395,7 @@ public class BoulderAbility : NetworkBehaviour
     {
         Fx.Sparks(point + Vector3.up * boulderRadius, Rock);
         Fx.BulletImpact(point + Vector3.up * boulderRadius, Rock, 2.5f);
-        ProceduralSfx.Play(ProceduralSfx.Hit, point, 1f);
+        ProceduralSfx.Play(CollectedAudioBank.Pick("honza_ult.land", ProceduralSfx.Hit), point, 0.8f);
 
         if (IsOwner)
             End();
@@ -362,6 +415,14 @@ public class BoulderAbility : NetworkBehaviour
         Vector3 moved = boulder.transform.position - lastPosition;
         lastPosition = boulder.transform.position;
         moved.y = 0f;
+        if (rollAudio != null)
+        {
+            bool onGround = Physics.Raycast(boulder.transform.position + Vector3.up * 0.15f, Vector3.down, 0.35f, ~0, QueryTriggerInteraction.Ignore);
+            float speed = moved.magnitude / Mathf.Max(Time.deltaTime, 0.001f);
+            float load = Mathf.Clamp01(speed / Mathf.Max(1f, ability != null ? ability.speed : 10f));
+            rollAudio.volume = Mathf.MoveTowards(rollAudio.volume, onGround ? load * 0.3f : 0f, Time.deltaTime * 2f);
+            rollAudio.pitch = Mathf.Lerp(0.75f, 1.25f, load);
+        }
         if (moved.sqrMagnitude < 1e-8f) return;
 
         Vector3 axis = Vector3.Cross(Vector3.up, moved.normalized);
@@ -375,6 +436,7 @@ public class BoulderAbility : NetworkBehaviour
 
         boulder = new GameObject("Boulder");
         boulder.transform.position = at;
+        rollAudio = CollectedWorldAudio.AddLoop(boulder.transform, "honza_ult.roll", 0f, 28f);
         lastPosition = at;
         boulder.AddComponent<BoulderHitbox>().Owner = this;
 

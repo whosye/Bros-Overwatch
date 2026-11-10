@@ -93,7 +93,7 @@ public class VisorAbility : NetworkBehaviour
                 // Priprava: Viktor zvedne zbran a ozve se hlaska, zamerovac nabehne az po ni.
                 windup.Begin(fpc, WindupSeconds);
                 GetComponent<PlayerHero>().SayAbility(ability);
-                Fx.PlayGlobal(ProceduralSfx.UltCharge, 0.5f);
+                Fx.PlayGlobal(CollectedAudioBank.Ability(ability, "viktor_ult", ProceduralSfx.UltCharge), 0.5f);
                 WindupServerRpc();
             }
             return;
@@ -140,7 +140,7 @@ public class VisorAbility : NetworkBehaviour
     void WindupClientRpc()
     {
         if (!IsOwner)
-            Fx.PlayGlobal(ProceduralSfx.UltCharge, 0.5f);
+            Fx.PlayGlobal(CollectedAudioBank.Ability(ability, "viktor_ult", ProceduralSfx.UltCharge), 0.5f);
     }
 
     void End(bool startCooldown)

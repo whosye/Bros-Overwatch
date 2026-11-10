@@ -139,9 +139,9 @@ public class Boiler : MonoBehaviour
         {
             // huceni ohne: zpomalene huceni vody
             roar = gameObject.AddComponent<AudioSource>();
-            roar.clip = ProceduralSfx.WaterRush;
+            roar.clip = CollectedAudioBank.Pick("world_boiler_fire", ProceduralSfx.WaterRush);
             roar.loop = true;
-            roar.pitch = 0.35f;
+            roar.pitch = roar.clip == ProceduralSfx.WaterRush ? 0.35f : 1f;
             roar.spatialBlend = 1f;
             roar.rolloffMode = AudioRolloffMode.Linear;
             roar.minDistance = 4f;

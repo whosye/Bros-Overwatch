@@ -1,0 +1,15 @@
+PASS
+Assertions: 2814
+Cues: 74
+Clip references: 251
+Selection revision: 341
+Scene surface audit:
+Stone: 424
+Tile: 71
+Wood: 108
+SolidWood: 267
+Grass: 77
+Gravel: 137
+Metal: 16
+Rubber: 2
+Glass: 1

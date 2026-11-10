@@ -65,6 +65,10 @@ public class ScopeZoom : MonoBehaviour
         // pri priblizeni obcas hlaska (David)
         if (Zoomed && !wasZoomed)
             hero.SayOccasionally(VoiceKind.Scope, 0.35f, 15f, 30f);
+        if (Zoomed != wasZoomed && definition != null && definition.weapon != null
+            && CollectedAudioBank.WeaponCue(definition.weapon) == "kondulic")
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this,
+                Zoomed ? "kondulic_scope.enter" : "kondulic_scope.exit"), transform.position, 0.45f);
         wasZoomed = Zoomed;
 
         // Sniper pri nabijeni rany chodi pomaleji.

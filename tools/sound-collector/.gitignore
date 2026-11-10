@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+collection.tmp
+collection.json.bak
+backups/
+.test-*/
+.qa/
+.feedback-build/

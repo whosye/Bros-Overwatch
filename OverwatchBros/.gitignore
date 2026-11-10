@@ -124,4 +124,22 @@ Thumbs.db
 Thumbs.db.meta
 Desktop.ini
 Desktop.ini.meta
+
+# Local audition/source cache. Keep manifests and collection choices, ship Assets audio only.
+/Sound/sounds_dir/**/*.wav
+/Sound/sounds_dir/**/*.mp3
+/Sound/sounds_dir/**/*.ogg
+/Sound/sounds_dir/**/*.flac
+/Sound/sounds_dir/**/*.aif
+/Sound/sounds_dir/**/*.aiff
+/Sound/sounds_dir/**/*.m4a
+/Sound/sounds_dir/**/*.opus
+/Sound/sounds_dir/**/*.wav.meta
+/Sound/sounds_dir/**/*.mp3.meta
+/Sound/sounds_dir/**/*.ogg.meta
+/Sound/sounds_dir/**/*.flac.meta
+/Sound/sounds_dir/**/*.aif.meta
+/Sound/sounds_dir/**/*.aiff.meta
+/Sound/sounds_dir/**/*.m4a.meta
+/Sound/sounds_dir/**/*.opus.meta
 $RECYCLE.BIN/
