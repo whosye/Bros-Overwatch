@@ -15,6 +15,7 @@ MonoBehaviour:
   heroName: David
   color: {r: 0.35, g: 0.75, b: 0.85, a: 1}
   maxHealth: 100
+  healingScale: 0.75
   weapon: {fileID: 11400000, guid: 5d1389603058e184d9c129fe5cb47786, type: 2}
   abilityKind: 16
   ability: {fileID: 11400000, guid: edf8718c252397d48893cfc0ecf69db2, type: 2}
@@ -33,11 +34,11 @@ MonoBehaviour:
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
-  characterPrefab: {fileID: 693659113271320055, guid: de5aa578852683048bc2a888bc218a13, type: 3}
-  tintCharacter: 1
+  characterPrefab: {fileID: 1954741295348994690, guid: 303f60cf9a6c6a74ea4f6b91d3438090, type: 3}
+  tintCharacter: 0
   animations: {fileID: 0}
-  sleeveColor: {r: 0.25, g: 0.33, b: 0.4, a: 1}
-  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
+  sleeveColor: {r: 0.09, g: 0.09, b: 0.1, a: 1}
+  skinColor: {r: 0.83, g: 0.63, b: 0.52, a: 1}
   spawnLines:
   - {fileID: 8300000, guid: 0463c7f3cf7a69f4880f6357fb08a234, type: 3}
   killLines:
@@ -61,3 +62,4 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 474d7e55f1abafb418706d042ccd672f, type: 3}
   scopeLines:
   - {fileID: 8300000, guid: 5ffb361e977b20240870961284bae431, type: 3}
+  ultVoiceEcho: 1

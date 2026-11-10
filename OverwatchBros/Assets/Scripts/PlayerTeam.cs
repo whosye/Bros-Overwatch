@@ -49,5 +49,6 @@ public class PlayerTeam : NetworkBehaviour
         if (!joining && MatchManager.Instance != null && !MatchManager.Instance.IsLobby) return;
 
         teamId.Value = Mathf.Clamp(team, 0, TeamCount - 1);
+        if (hero != null) hero.ServerEnsureUniqueHero();   // hrdina uz v novem tymu je -> volny
     }
 }

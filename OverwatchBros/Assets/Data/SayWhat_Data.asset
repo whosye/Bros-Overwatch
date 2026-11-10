@@ -23,7 +23,8 @@ MonoBehaviour:
   knockback: 4
   charges: 1
   sound: {fileID: 0}
-  voiceLines: []
+  voiceLines:
+  - {fileID: 8300000, guid: 2d54e1095f74e5b4a89aae2829c4f42f, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

@@ -24,6 +24,8 @@ public partial class MatchManager
     public NetworkVariable<float> tractorLeft = new NetworkVariable<float>(0f);   // kolik jizdy zbyva
     public NetworkVariable<bool> tractorMoved = new NetworkVariable<bool>(false);
     public NetworkVariable<Vector4> tractorPose = new NetworkVariable<Vector4>();
+    // vrata garaze rolby (RolbaGate) prorazila rolba
+    public NetworkVariable<bool> rolbaGateBroken = new NetworkVariable<bool>(false);
 
     float carburetorEnd;
     float tractorEnd, nextTractorSync;
@@ -59,6 +61,7 @@ public partial class MatchManager
         tractorPassenger.Value = Nobody;
         tractorLeft.Value = 0f;
         tractorMoved.Value = false;
+        rolbaGateBroken.Value = false;
         hasLastTractorPos = false;
         runOverAt.Clear();
     }
@@ -93,6 +96,9 @@ public partial class MatchManager
             tractorPassenger.Value = Nobody;
             return;
         }
+
+        // utok a obrana: rolba se da pouzit az od bodu B
+        if (IsAttackMode && pointIndex.Value == 0) return;
 
         var tractor = Tractor.Instance;
         var health = player.GetComponent<Health>();
@@ -221,6 +227,10 @@ public partial class MatchManager
             if (passengerHealth == null || passengerHealth.currentHealth.Value <= 0f) tractorPassenger.Value = Nobody;
             else passengerHealth.ServerInvulnerable(0.3f);
         }
+
+        // vrata garaze: rolba je prorazi, jakmile se jich dotkne
+        if (!rolbaGateBroken.Value && RolbaGate.Instance != null && RolbaGate.Instance.TouchedBy(tractor))
+            rolbaGateBroken.Value = true;
 
         // prejeti: kdo je v obrysu traktoru (s vlekem), kdyz jede
         Vector3 pos = tractor.transform.position;

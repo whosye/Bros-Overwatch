@@ -15,8 +15,12 @@ public class CaptureUI
     TextMeshProUGUI header, timeText, status, target;
     Image barFill;
 
-    TextMeshProUGUI banner;
-    float bannerUntil;
+    // Velke oznameni pres stred (ve stylu OW): tmavy pas, barevne linky se roztahnou ze stredu, titulek "vyskoci".
+    GameObject bannerGroup;
+    Image bannerBand, lineTop, lineBottom;
+    TextMeshProUGUI banner, bannerSub;
+    float bannerUntil, bannerStart, bannerLength;
+    int lastPhase = -1;
 
     // zvuky: tikani pri zabirani, znelka pri odemceni
     float nextTick;
@@ -28,11 +32,24 @@ public class CaptureUI
     Image markerIcon;
     TextMeshProUGUI markerText;
 
-    public static void Announce(string text, Color color, float seconds = 3.2f)
+    public static void Announce(string text, Color color, float seconds = 3.2f) => Show(text, "", color, seconds, false);
+
+    // Velke oznameni zapasu (bod zabran, utok, prodlouzeni, konec kola) s podtitulkem.
+    public static void Headline(string title, string subtitle, Color color, float seconds = 3.5f) => Show(title, subtitle, color, seconds, true);
+
+    static void Show(string title, string subtitle, Color color, float seconds, bool big)
     {
         if (instance == null || instance.banner == null) return;
-        instance.banner.text = text;
-        instance.banner.color = color;
+        instance.banner.text = title;
+        instance.banner.color = big ? Color.white : color;
+        instance.banner.fontSize = big ? 62f : 40f;
+        instance.bannerSub.text = subtitle;
+        instance.bannerSub.color = color;
+        instance.lineTop.color = color;
+        instance.lineBottom.color = color;
+        instance.bannerBand.rectTransform.sizeDelta = new Vector2(2600f, big ? 120f : 78f);
+        instance.bannerStart = Time.unscaledTime;
+        instance.bannerLength = seconds;
         instance.bannerUntil = Time.unscaledTime + seconds;
     }
 
@@ -43,7 +60,8 @@ public class CaptureUI
         var top = new Vector2(0.5f, 1f);
         var center = new Vector2(0.5f, 0.5f);
 
-        var panelImage = UiKit.MakeImage(canvas, "AttackPanel", new Color(0f, 0f, 0f, 0f), top, new Vector2(0f, -86f), new Vector2(900f, 150f));
+        // (cas a kolo ukazuje horni lista TopBarUI; tady jen pruh zabirani, stav a cil druheho kola - pod listou)
+        var panelImage = UiKit.MakeImage(canvas, "AttackPanel", new Color(0f, 0f, 0f, 0f), top, new Vector2(0f, -160f), new Vector2(900f, 150f));
         panel = panelImage.gameObject;
 
         header = UiKit.MakeText(panel.transform, "Header", "", 22, TextAlignmentOptions.Center, top, new Vector2(0f, 0f), new Vector2(900f, 28f));
@@ -64,8 +82,20 @@ public class CaptureUI
         target = UiKit.MakeText(panel.transform, "Target", "", 19, TextAlignmentOptions.Center, top, new Vector2(0f, -126f), new Vector2(900f, 24f),
             new Color(0.85f, 0.87f, 0.92f));
 
-        banner = UiKit.MakeText(canvas, "AttackBanner", "", 46, TextAlignmentOptions.Center, center, new Vector2(0f, 150f), new Vector2(1400f, 60f));
-        banner.gameObject.SetActive(false);
+        header.gameObject.SetActive(false);
+        timeText.gameObject.SetActive(false);
+
+        bannerBand = UiKit.MakeImage(canvas, "AttackBanner", new Color(0f, 0f, 0f, 0.5f), center, new Vector2(0f, 170f), new Vector2(2600f, 120f));
+        bannerGroup = bannerBand.gameObject;
+        lineTop = UiKit.MakeImage(bannerBand.transform, "LinkaNahore", Color.white, new Vector2(0.5f, 1f), Vector2.zero, new Vector2(0f, 4f));
+        lineBottom = UiKit.MakeImage(bannerBand.transform, "LinkaDole", Color.white, new Vector2(0.5f, 0f), Vector2.zero, new Vector2(0f, 4f));
+        banner = UiKit.MakeText(bannerBand.transform, "Titulek", "", 62, TextAlignmentOptions.Center, center, new Vector2(0f, 10f), new Vector2(1600f, 76f));
+        banner.fontStyle = FontStyles.Bold | FontStyles.Italic;
+        banner.outlineWidth = 0.15f;
+        banner.outlineColor = new Color32(0, 0, 0, 200);
+        bannerSub = UiKit.MakeText(bannerBand.transform, "Podtitulek", "", 26, TextAlignmentOptions.Center, center, new Vector2(0f, -36f), new Vector2(1600f, 32f));
+        bannerSub.fontStyle = FontStyles.Bold;
+        bannerGroup.SetActive(false);
 
         // Znacka bodu ve svete.
         var markerObject = new GameObject("CaptureMarker", typeof(RectTransform));
@@ -88,10 +118,23 @@ public class CaptureUI
         if (panel == null) return;
 
         bool bannerOn = Time.unscaledTime < bannerUntil;
-        if (banner.gameObject.activeSelf != bannerOn)
-            banner.gameObject.SetActive(bannerOn);
+        if (bannerGroup.activeSelf != bannerOn)
+            bannerGroup.SetActive(bannerOn);
         if (bannerOn)
-            banner.alpha = Mathf.Clamp01((bannerUntil - Time.unscaledTime) / 0.5f);
+        {
+            float age = Time.unscaledTime - bannerStart;
+            float fade = Mathf.Clamp01((bannerUntil - Time.unscaledTime) / 0.45f);
+            float grow = 1f - Mathf.Pow(1f - Mathf.Clamp01(age / 0.3f), 3f);
+            float pop = Mathf.Lerp(1.3f, 1f, Mathf.Clamp01(age / 0.18f));
+            banner.rectTransform.localScale = new Vector3(pop, pop, 1f);
+            banner.alpha = fade * Mathf.Clamp01(age / 0.1f);
+            bannerSub.alpha = fade * Mathf.Clamp01((age - 0.15f) / 0.2f);
+            float lineWidth = 1150f * grow;
+            lineTop.rectTransform.sizeDelta = new Vector2(lineWidth, 4f);
+            lineBottom.rectTransform.sizeDelta = new Vector2(lineWidth, 4f);
+            var c = lineTop.color; c.a = fade; lineTop.color = c; lineBottom.color = c;
+            bannerBand.color = new Color(0f, 0f, 0f, 0.5f * fade * grow);
+        }
 
         bool show = playing && match != null && match.IsAttackMode && !match.IsOver;
         if (panel.activeSelf != show)
@@ -113,6 +156,13 @@ public class CaptureUI
 
         int phase = match.roundPhase.Value;
         int state = match.pointState.Value;
+        // prodlouzeni prave zacalo
+        if (lastPhase >= 0 && phase == MatchManager.RoundOvertime && lastPhase != MatchManager.RoundOvertime)
+        {
+            Headline("PRODLOUŽENÍ", localTeam == attackers ? "Udržte se na bodě!" : localTeam >= 0 ? "Vyžeňte je z bodu!" : "", new Color(1f, 0.62f, 0.12f), 2.8f);
+            ProceduralSfx.Play(ProceduralSfx.CaptureUnlock, match.pointPosition.Value, 0.6f);
+        }
+        lastPhase = phase;
         int seconds = match.secondsLeft.Value;
         switch (phase)
         {
@@ -154,8 +204,8 @@ public class CaptureUI
         if (match.round.Value == 2 && match.firstPoints.Value >= 0)
         {
             int points = match.firstPoints.Value;
-            string taken = points switch { 1 => "bod A a ", 2 => "body A, B a ", _ => "" };
-            target.text = points >= MatchManager.CapturePointCount
+            string taken = points switch { 1 => "bod A a ", 2 => "body A, B a ", 3 => "body A, B, C a ", _ => "" };
+            target.text = points >= match.CapturePointCount
                 ? $"Cíl: všechny body rychleji než za {Clock(Mathf.CeilToInt(match.firstTime.Value))}"
                 : $"Cíl: {taken}na bodě {MatchManager.PointNames[points]} víc než {Mathf.FloorToInt(match.firstProgress.Value * 100f)} %";
         }

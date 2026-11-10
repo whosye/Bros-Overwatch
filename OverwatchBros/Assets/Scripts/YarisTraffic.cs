@@ -256,10 +256,16 @@ public sealed class YarisTraffic : MonoBehaviour
         var network = NetworkManager.Singleton;
         bool networked = network != null && network.IsListening;
         double time = networked ? network.ServerTime.Time : Time.timeAsDouble;
+        // Utok a obrana: u bodu A auto stoji na zacatku trasy (mimo mapu), od bodu B jezdi od chvile uvolneni.
+        var match = MatchManager.Instance;
+        bool attack = match != null && match.IsSpawned && match.IsAttackMode && !match.IsLobby;
+        bool parked = attack && match.pointIndex.Value == 0;
+        if (attack && !parked) time -= match.trafficReleaseTime.Value;
         float driveDuration = length / speed;
         double cycle = driveDuration + pauseSeconds;
         double phase = time % cycle;
-        float distance = phase < pauseSeconds ? 0f : (float)((phase - pauseSeconds) * speed);
+        if (phase < 0) phase += cycle;
+        float distance = parked || phase < pauseSeconds ? 0f : (float)((phase - pauseSeconds) * speed);
         Evaluate(distance, out Vector3 position, out Vector3 forward);
         Quaternion rotation = Quaternion.LookRotation(forward, Vector3.up) * Quaternion.Euler(0f, modelYawOffset, 0f);
         if (!positioned || wasNetworked != networked)
@@ -271,7 +277,7 @@ public sealed class YarisTraffic : MonoBehaviour
             previousTime = time;
             return; // Joining a session must not sweep an impact across the map.
         }
-        if (horn != null && time >= previousTime && time - previousTime < 1f)
+        if (horn != null && !parked && time >= previousTime && time - previousTime < 1f)
             foreach (float entry in entries)
             {
                 double cue = pauseSeconds + entry / speed - hornLeadSeconds;
@@ -279,7 +285,7 @@ public sealed class YarisTraffic : MonoBehaviour
                 { horn.Play(); break; }
             }
         previousTime = time;
-        if (networked && network.IsServer) HitPlayers(position, rotation);
+        if (networked && network.IsServer && !parked) HitPlayers(position, rotation);
         body.MovePosition(position);
         body.MoveRotation(rotation);
     }

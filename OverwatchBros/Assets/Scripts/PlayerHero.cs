@@ -198,6 +198,18 @@ public class PlayerHero : NetworkBehaviour
     public bool IsBoosted => boosted.Value;
     float boostUntil;
 
+    // Docasne vetsi poskozeni (pivo z vycepu) - jen server, nasobi se v Combat.DamagePlayer.
+    float damageBuffUntil, damageBuffScale = 1f;
+    public float ServerDamageScale => Time.time < damageBuffUntil ? damageBuffScale : 1f;
+
+    public void ServerDamageBuff(float scale, float seconds)
+    {
+        if (!IsServer) return;
+        // (pivo a bila latka se neprebiji: plati silnejsi, do konce delsiho)
+        damageBuffScale = Time.time < damageBuffUntil ? Mathf.Max(damageBuffScale, scale) : scale;
+        damageBuffUntil = Mathf.Max(damageBuffUntil, Time.time + seconds);
+    }
+
     public void ServerBoost(float seconds)
     {
         if (!IsServer) return;
@@ -421,6 +433,48 @@ public class PlayerHero : NetworkBehaviour
         playerName.Value = new FixedString32Bytes(name);
     }
 
+    // ---------------- kazdy hrdina jen jednou v tymu ----------------
+
+    int TeamIndex
+    {
+        get
+        {
+            var t = GetComponent<PlayerTeam>();
+            return t != null ? t.teamId.Value : 0;
+        }
+    }
+
+    // Kdo v tymu 'team' uz hraje hrdinu 'heroIndex' (krome 'except'); null = volny.
+    public static PlayerHero TeamHolder(int heroIndex, int team, PlayerHero except)
+    {
+        foreach (var p in FindObjectsByType<PlayerHero>())
+        {
+            if (p == null || p == except || !p.IsSpawned || p.heroId.Value != heroIndex) continue;
+            var t = p.GetComponent<PlayerTeam>();
+            if (t != null && t.teamId.Value == team) return p;
+        }
+        return null;
+    }
+
+    public static bool TakenInTeam(int heroIndex, int team, PlayerHero except) => TeamHolder(heroIndex, team, except) != null;
+
+    // Volny hrdina pro tym: 'preferred', kdyz je volny, jinak prvni volny (kdyz jsou obsazeni vsichni, -1).
+    public static int FreeHero(int team, int preferred, PlayerHero except)
+    {
+        if (HeroRegistry.Get(preferred) != null && !TakenInTeam(preferred, team, except)) return preferred;
+        for (int i = 0; i < HeroRegistry.All.Length; i++)
+            if (!TakenInTeam(i, team, except)) return i;
+        return -1;
+    }
+
+    // (server) Po zmene tymu: kdyz ma hrdinu, ktereho uz novy tym ma, dostane volneho.
+    public void ServerEnsureUniqueHero()
+    {
+        if (!IsServer || heroId.Value < 0 || !TakenInTeam(heroId.Value, TeamIndex, this)) return;
+        int free = FreeHero(TeamIndex, heroId.Value, this);
+        if (free >= 0) heroId.Value = free;
+    }
+
     // Zmena hrdiny behem zapasu (F1): skore zustava, nabiti ultimatky se nuluje, hrac se objevi na zakladne.
     public void SwapHero(int index)
     {
@@ -434,6 +488,7 @@ public class PlayerHero : NetworkBehaviour
         var match = MatchManager.Instance;
         if (match == null || match.IsLobby || match.IsOver || joining.Value) return;
         if (HeroRegistry.Get(index) == null || index == heroId.Value) return;
+        if (TakenInTeam(index, TeamIndex, this)) return;   // toho uz ma nekdo z tymu
 
         // Zivy hrac musi stat na zakladne sveho tymu (mrtvy ceka na oziveni, ten muze).
         var team = GetComponent<PlayerTeam>();
@@ -472,6 +527,15 @@ public class PlayerHero : NetworkBehaviour
 
         if (HeroRegistry.Get(index) == null)
             index = 0;
+
+        // kazdy hrdina jen jednou v tymu: obsazeny se nevybere (prvni vyber dostane volneho)
+        if (TakenInTeam(index, TeamIndex, this))
+        {
+            if (alreadyChosen) return;
+            int free = FreeHero(TeamIndex, index, this);
+            if (free < 0) free = index;   // (vic hracu nez hrdinu)
+            index = free;
+        }
 
         heroId.Value = index;
     }

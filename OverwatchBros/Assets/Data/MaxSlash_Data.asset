@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
   m_Name: MaxSlash_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
-  abilityName: "Dlouh\xFD \u0159ez"
+  abilityName: "Otočka kosou"
   icon: {fileID: 2800000, guid: 67927d79bede65b49918642c819e5e20, type: 3}
   cooldown: 7
   ultCost: 0
   power: 50
   duration: 0.4
-  radius: 6
-  range: 10
+  radius: 3.6
+  range: 3.6
   knockback: 0
   charges: 1
   sound: {fileID: 0}

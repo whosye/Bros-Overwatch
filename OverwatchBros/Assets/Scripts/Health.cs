@@ -32,6 +32,15 @@ public class Health : NetworkBehaviour
         shieldDecay = shield.Value / 0.4f;
     }
 
+    // Stit navic (klokani kuze): pricte se k dosavadnimu (do 'max') a drzi, dokud ho poskozeni nezbori.
+    public void ServerGrantShield(float amount, float max)
+    {
+        if (!IsServer || currentHealth.Value <= 0f || amount <= 0f) return;
+        shield.Value = Mathf.Min(shield.Value + amount, Mathf.Max(max, shield.Value));
+        shieldHoldUntil = float.MaxValue;
+        shieldDecay = 0f;
+    }
+
     public void ServerClearShield()
     {
         if (IsServer) shield.Value = 0f;
@@ -51,9 +60,11 @@ public class Health : NetworkBehaviour
             shield.Value = Mathf.Max(0f, shield.Value - shieldDecay * Time.deltaTime);
 
         float hp = currentHealth.Value;
-        if (hp > 0f && hp < maxHealth && Time.time - lastHurtTime >= RegenDelay && !HealBlocked
+        // ve stodole u spawnu 2x rychleji (i drive zacne)
+        float regenScale = hp > 0f && hp < maxHealth ? SpawnBarn.RegenScale(transform.position) : 1f;
+        if (hp > 0f && hp < maxHealth && Time.time - lastHurtTime >= RegenDelay / regenScale && !HealBlocked
             && (MatchManager.Instance == null || !MatchManager.Instance.IsLobby))
-            currentHealth.Value = Mathf.Min(maxHealth, hp + RegenPerSecond * Time.deltaTime);
+            currentHealth.Value = Mathf.Min(maxHealth, hp + RegenPerSecond * regenScale * Time.deltaTime);
     }
 
     public event Action OnDeath;

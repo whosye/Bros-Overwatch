@@ -42,6 +42,10 @@ public static class SpawnZone
     {
         if (!TryGetCenter(team, out Vector3 center)) return false;
 
+        // Spawn ve stodole: zakladnou je cela stodola (kruh se nekresli, hranici ukazuji zlute dvere).
+        var barn = SpawnBarn.AtSpawn(center);
+        if (barn != null) return barn.Contains(position);
+
         Vector3 offset = position - center;
         float height = offset.y;
         offset.y = 0f;
@@ -54,7 +58,7 @@ public static class SpawnZone
         bool show = match != null && match.IsSpawned;
         for (int team = 0; team < PlayerTeam.TeamCount; team++)
         {
-            bool visible = show && TryGetCenter(team, out Vector3 center);
+            bool visible = show && TryGetCenter(team, out Vector3 center) && SpawnBarn.AtSpawn(center) == null;
             if (!visible)
             {
                 if (rings[team] != null && rings[team].activeSelf)

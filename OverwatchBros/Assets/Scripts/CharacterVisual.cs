@@ -287,6 +287,8 @@ public class CharacterVisual : MonoBehaviour
         layers.SetInputWeight(2, 0f);
         layers.SetInputWeight(3, 0f);
         layers.SetInputWeight(4, 0f);
+        for (int i = 0; i < AbilityAnimCount; i++)
+            layers.SetInputWeight(AbilityLayer + i, 0f);
         graph.Evaluate(0f);
     }
 
@@ -296,6 +298,8 @@ public class CharacterVisual : MonoBehaviour
     // Zbran stale namirena: horni polovina tela drzi prvni snimek animace strelby (mezi vystrely),
     // vystrel prehraje celou animaci (recoil). Nastavuje HeldWeapons (Viktor - puska obema rukama).
     public bool HoldShootPose;
+    // Zbran namirena jen pri mireni dalekohledem (FirstPersonController.scoped) a chvili po vystrelu - ne pri staní (Kondulic).
+    public bool AimOnScope;
 
     // Poza strelby (prvni snimek), podle ni se usadi zbran do ruky.
     public void EvaluateShootPose()
@@ -360,7 +364,7 @@ public class CharacterVisual : MonoBehaviour
             upperBody.SetHumanoidBodyPartActive(part, active);
         }
 
-        layers = AnimationLayerMixerPlayable.Create(graph, 7);
+        layers = AnimationLayerMixerPlayable.Create(graph, AbilityLayer + AbilityAnimCount);
         graph.Connect(locomotion, 0, layers, 0);
         layers.SetInputWeight(0, 1f);
 
@@ -411,6 +415,18 @@ public class CharacterVisual : MonoBehaviour
         ultimateWeight = 0f;
         ultimateUntil = -1f;
 
+        // Schopnosti pres cele telo (Maxuv skok s uderem, otocka): jednorazove, jen usek klipu; bez klipu se nepouziva.
+        for (int i = 0; i < AbilityAnimCount; i++)
+        {
+            var anim = abilityAnims[i];
+            anim.clip = Pick(i == (int)AbilityAnim.Shift ? s => s.shiftAbility : i == (int)AbilityAnim.RightMouse ? s => s.rmbAbility : s => s.eAbility);
+            anim.playable = AnimationClipPlayable.Create(graph, anim.clip ?? idle);
+            anim.playable.SetSpeed(0);
+            graph.Connect(anim.playable, 0, layers, AbilityLayer + i);
+            layers.SetInputWeight(AbilityLayer + i, 0f);
+            anim.time = -1f;
+        }
+
         output.SetSourcePlayable(layers);
         graph.Play();
         graph.Evaluate(0f);
@@ -451,6 +467,31 @@ public class CharacterVisual : MonoBehaviour
         ultimateTime = 0f;
     }
 
+    // Libovolna animace pres cele telo ve smycce (vrstva ultimatky) na 'seconds' s - napr. sezeni v uvodni scence.
+    // 'instant' = hned naplno (bez prolnuti).
+    public void PlayFullBody(AnimationClip clip, float seconds, bool instant = false)
+    {
+        if (!graph.IsValid() || clip == null) return;
+        if (clip != ultimateClip)
+        {
+            graph.Disconnect(layers, 6);
+            if (ultimatePlayable.IsValid()) ultimatePlayable.Destroy();
+            ultimatePlayable = AnimationClipPlayable.Create(graph, clip);
+            ultimatePlayable.SetSpeed(0);
+            graph.Connect(ultimatePlayable, 0, layers, 6);
+            ultimateClip = clip;
+        }
+        ultimateUntil = Time.time + seconds;
+        ultimateTime = 0f;
+        if (instant)
+        {
+            ultimateWeight = 1f;
+            ultimatePlayable.SetTime(0f);
+            layers.SetInputWeight(6, 1f);
+            graph.Evaluate(0f);
+        }
+    }
+
     public void StopUltimate()
     {
         if (!IsGhost && ultimateUntil > Time.time)
@@ -468,6 +509,59 @@ public class CharacterVisual : MonoBehaviour
             ultimatePlayable.SetTime(ultimateTime);
         }
         layers.SetInputWeight(6, ultimateWeight);
+    }
+
+    // ---------------- schopnosti pres cele telo (Maxuv skok s uderem na Shift, otocka na PTM) ----------------
+
+    public enum AbilityAnim { Shift, RightMouse, E }
+    const int AbilityLayer = 7, AbilityAnimCount = 3;
+
+    class OneShot
+    {
+        public AnimationClip clip;
+        public AnimationClipPlayable playable;
+        public float time = -1f, from, to, duration = 1f;
+    }
+    readonly OneShot[] abilityAnims = { new OneShot(), new OneShot(), new OneShot() };
+
+    public bool HasAbilityAnimation(AbilityAnim which) => abilityAnims[(int)which].clip != null;
+    public float AbilityClipLength(AbilityAnim which) => abilityAnims[(int)which].clip != null ? abilityAnims[(int)which].clip.length : 0f;
+
+    // Prehraje usek klipu od 'from' do 'to' (sekundy klipu) za 'duration' sekund.
+    public void PlayAbility(AbilityAnim which, float from, float to, float duration)
+    {
+        if (!IsGhost)
+            ReplayLog.Ability(this, (int)which, from, to, duration);
+        var anim = abilityAnims[(int)which];
+        if (!graph.IsValid() || anim.clip == null) return;
+        anim.from = from;
+        anim.to = Mathf.Min(to, anim.clip.length);
+        anim.duration = Mathf.Max(0.05f, duration);
+        anim.time = 0f;
+    }
+
+    void UpdateAbilities(float dt, bool dead)
+    {
+        for (int i = 0; i < AbilityAnimCount; i++)
+        {
+            var anim = abilityAnims[i];
+            float weight = 0f;
+            if (anim.time >= 0f && !dead)
+            {
+                anim.time += dt;
+                float t = anim.time / anim.duration;
+                if (t >= 1f)
+                    anim.time = -1f;
+                else
+                {
+                    weight = Mathf.Clamp01(t / 0.08f) * Mathf.Clamp01((1f - t) / 0.2f);
+                    anim.playable.SetTime(Mathf.Lerp(anim.from, anim.to, t));
+                }
+            }
+            else
+                anim.time = -1f;
+            layers.SetInputWeight(AbilityLayer + i, weight);
+        }
     }
 
     public void PlayReload(float duration)
@@ -726,6 +820,7 @@ public class CharacterVisual : MonoBehaviour
 
         layers.SetInputWeight(5, reloadWeight);
         UpdateUltimate(dt, dead);
+        UpdateAbilities(dt, dead);
     }
 
     // Ktery okamzik animace uderu se pouzije jako poza vypadu (0-1) a naklon tela ve stupnich.
@@ -744,7 +839,10 @@ public class CharacterVisual : MonoBehaviour
         float melee = 0f, shoot = 0f;
         bool hold = HoldShootPose && !dead && !frenzy;
         if (attackTime >= 0f && !attackMelee) lastShotAt = Time.time;
-        bool aiming = hold && (smoothedSpeed < 0.4f || Time.time - lastShotAt < AimAfterShot);
+        bool recentShot = Time.time - lastShotAt < AimAfterShot;
+        bool aiming = hold && (AimOnScope
+            ? recentShot || (fpc != null && fpc.IsSpawned && fpc.scoped.Value)
+            : smoothedSpeed < 0.4f || recentShot);
         aimWeight = Mathf.MoveTowards(aimWeight, aiming ? 1f : 0f, dt * (aiming ? 8f : 3f));
 
         if (frenzy)

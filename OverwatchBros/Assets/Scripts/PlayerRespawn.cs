@@ -71,6 +71,10 @@ public class PlayerRespawn : NetworkBehaviour
     // Vola MatchManager pri restartu zapasu (na vlastniku hrace).
     public void ResetToSpawn()
     {
+        // Mrtvy, ktery na oziveni teprve ceka (napr. presun na dalsi bod): oziveni nerusit - ozivi se uz na novem spawnu.
+        // (Driv se oziveni zrusilo a mrtvola zustala lezet na spawnu navzdy.)
+        if (health != null && health.currentHealth.Value <= 0f && IsInvoking(nameof(Respawn)))
+            return;
         CancelInvoke(nameof(Respawn));
         Teleport();
     }

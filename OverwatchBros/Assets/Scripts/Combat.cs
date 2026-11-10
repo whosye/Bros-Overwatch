@@ -51,6 +51,8 @@ public static class Combat
         var boostedAttacker = attacker != null ? attacker.GetComponent<PlayerHero>() : null;
         if (boostedAttacker != null && boostedAttacker.IsBoosted)
             amount *= NanoBoostAbility.DamageMultiplier;
+        if (boostedAttacker != null)
+            amount *= boostedAttacker.ServerDamageScale;   // pivo z vycepu
         // Mosinuv tanec (ultimatka): spoluhraci v jeho okruhu davaji dvojnasobne poskozeni
         amount *= BardAbility.DamageScaleFor(attacker);
         var boostedTarget = target.GetComponent<PlayerHero>();
@@ -101,6 +103,13 @@ public static class Combat
     }
 
     // Leceni spoluhrace (jen server): lecitel dostane potvrzeni zasahu a nabiti ultimatky za vylecene HP.
+    // Nasobek leceni od hrdiny lecitele (HeroDefinition.healingScale; David a Mosino 0,75).
+    public static float HealingScale(GameObject healer)
+    {
+        var hero = healer != null ? healer.GetComponent<PlayerHero>() : null;
+        return hero != null && hero.Hero != null ? hero.Hero.healingScale : 1f;
+    }
+
     public static float HealPlayer(GameObject healer, Health target, float amount)
     {
         var network = NetworkManager.Singleton;
@@ -109,6 +118,7 @@ public static class Combat
         var match = MatchManager.Instance;
         if (match != null && (match.IsOver || match.IsLobby)) return 0f;
 
+        amount *= HealingScale(healer);
         float healed = target.Heal(amount);
         if (healer != null && healed > 0f && healer != target.gameObject)
         {

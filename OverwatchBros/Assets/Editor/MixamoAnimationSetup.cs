@@ -5,7 +5,7 @@ using UnityEngine;
 
 // Animace z Mixama pro jednotlive hrdiny: FBX staci ulozit do Assets/Models/Animations/Mixamo/<Hrdina>/<Hrdina>_<Policko>.fbx
 // (<Hrdina> = nazev assetu v Resources/Heroes, napr. Viktor, Anna pro Davida; <Policko> = policko sady animaci:
-// Idle, Walk, Jog, Sprint, Jump, Death, MeleeAttack, Shoot, Reload, BlockPose, DashPose).
+// Idle, Walk, Jog, Sprint, Jump, Death, MeleeAttack, Shoot, Reload, BlockPose, DashPose, Ultimate, ShiftAbility, RmbAbility, EAbility).
 // Import se nastavi sam (Humanoid, bez materialu, smycky u chuze/behu/klidu) a klip se priradi do sady
 // <Hrdina>_Animations.asset ve stejne slozce; sada se priradi hrdinovi (HeroDefinition.animations), kdyz zadnou nema.
 public class MixamoAnimationSetup : AssetPostprocessor
@@ -14,6 +14,12 @@ public class MixamoAnimationSetup : AssetPostprocessor
     const string HeroDir = "Assets/Resources/Heroes";
 
     static readonly string[] Looping = { "idle", "walk", "jog", "sprint", "jump" };
+    // Animace se skokem dopredu (skok s uderem): posun dopredu i vyska skoku se z pozy vyjmou (chodidla zustanou
+    // u zeme, skok i pohyb ridi hra), drep a skrceni nohou ve vzduchu zustanou.
+    static readonly string[] InPlace = { "shiftability" };
+    // Chuze a beh: posun dopredu se do pozy NEzapeka (jinak klip bez "In Place" postavu po krocich posouva
+    // dopredu a na konci smycky ji cukne zpet - sekany pohyb). Posun jde do root motion, ktery hra zahazuje.
+    static readonly string[] Locomotion = { "walk", "jog", "sprint" };
 
     static bool InRoot(string path) => path.StartsWith(Root + "/") && path.EndsWith(".fbx", System.StringComparison.OrdinalIgnoreCase);
 
@@ -40,6 +46,8 @@ public class MixamoAnimationSetup : AssetPostprocessor
         if (!InRoot(assetPath)) return;
         var importer = (ModelImporter)assetImporter;
         bool loop = System.Array.IndexOf(Looping, Slot(assetPath).ToLowerInvariant()) >= 0;
+        bool inPlace = System.Array.IndexOf(InPlace, Slot(assetPath).ToLowerInvariant()) >= 0;
+        bool locomotion = System.Array.IndexOf(Locomotion, Slot(assetPath).ToLowerInvariant()) >= 0;
         string clipName = Path.GetFileNameWithoutExtension(assetPath);
 
         var clips = importer.clipAnimations.Length > 0 ? importer.clipAnimations : importer.defaultClipAnimations;
@@ -49,10 +57,11 @@ public class MixamoAnimationSetup : AssetPostprocessor
             clip.loopTime = loop;
             // postava stoji na miste a nenataci se (pohyb ridi hra)
             clip.lockRootRotation = true;
-            clip.lockRootHeightY = true;
-            clip.lockRootPositionXZ = true;
+            clip.lockRootHeightY = !inPlace;
+            clip.lockRootPositionXZ = !inPlace && !locomotion;
             clip.keepOriginalOrientation = true;
-            clip.keepOriginalPositionY = true;
+            clip.keepOriginalPositionY = !inPlace;
+            clip.heightFromFeet = inPlace;
             clip.keepOriginalPositionXZ = true;
         }
         importer.clipAnimations = clips;
@@ -68,6 +77,32 @@ public class MixamoAnimationSetup : AssetPostprocessor
                     EditorApplication.delayCall += Apply;
                     return;
                 }
+    }
+
+    // Chuze/beh importovane driv (se zapecenym posunem): jednou znovu naimportovat s novym nastavenim.
+    [UnityEditor.Callbacks.DidReloadScripts]
+    static void ReimportLocomotion()
+    {
+        if (!AssetDatabase.IsValidFolder(Root)) return;
+        foreach (var guid in AssetDatabase.FindAssets("t:Model", new[] { Root }))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            if (!InRoot(path) || System.Array.IndexOf(Locomotion, Slot(path).ToLowerInvariant()) < 0) continue;
+            if (!(AssetImporter.GetAtPath(path) is ModelImporter importer)) continue;
+            bool baked = false;
+            foreach (var clip in importer.clipAnimations) baked |= clip.lockRootPositionXZ;
+            if (!baked) continue;
+            Debug.Log($"[Mixamo] {path}: chuze/beh bez zapeceneho posunu (plynuly pohyb) - znovu import.");
+            importer.SaveAndReimport();
+        }
+    }
+
+    // Po prekompilovani znovu (nove policko sady se jinak nevyplni, kdyz se FBX naimportovalo driv nez skripty).
+    [UnityEditor.Callbacks.DidReloadScripts]
+    static void AfterScriptsReload()
+    {
+        EditorApplication.delayCall -= Apply;
+        EditorApplication.delayCall += Apply;
     }
 
     [MenuItem("BrosOverwatch/Přiřadit animace z Mixama")]

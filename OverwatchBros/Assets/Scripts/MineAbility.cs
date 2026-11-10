@@ -51,6 +51,12 @@ public class MineAbility : NetworkBehaviour
     public int Charges => charges;
     public int MinesOut => minesOut;
     public bool IsActive => minesOut > 0;
+    // (server) polohy polozenych nalozi a polomer vybuchu - pro boty (drzet se dal)
+    public float BlastRadius => ability != null ? ability.radius : 0f;
+    public void MinePositions(System.Collections.Generic.List<Vector3> into)
+    {
+        foreach (var mine in serverMines) into.Add(mine.position);
+    }
     public float CooldownRemaining => charges > 0 ? 0f : Mathf.Max(0f, rechargeAt - Time.time);
 
     public void Configure(AbilityDefinition definition)

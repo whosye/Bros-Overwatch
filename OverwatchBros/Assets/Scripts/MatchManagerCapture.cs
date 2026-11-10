@@ -23,14 +23,20 @@ public partial class MatchManager
     // faze kola
     public const int RoundSetup = 0, RoundAttack = 1, RoundOvertime = 2, RoundIntermission = 3, RoundDone = 4;
 
-    public const int CapturePointCount = 3;
-    public static readonly string[] PointNames = { "A", "B", "C" };
+    // Pocet bodu podle mapy (CapturePoint_1..N ve scene, nejvic MaxCapturePoints): chaty 4, Hanamura 3.
+    public const int MaxCapturePoints = 4;
+    public static readonly string[] PointNames = { "A", "B", "C", "D" };
+    public NetworkVariable<int> pointCount = new NetworkVariable<int>(3);
+    public int CapturePointCount => Mathf.Clamp(pointCount.Value, 1, MaxCapturePoints);
+    // Kdy se pustilo auto (po dobyti bodu A) - u bodu A stoji zaparkovane (YarisTraffic).
+    public NetworkVariable<double> trafficReleaseTime = new NetworkVariable<double>(0);
     public static readonly Vector2 CaptureSize = new Vector2(10f, 7f);
 
     const float SetupSeconds = 20f;
     const float UnlockNextSeconds = 10f;
     const float AttackSeconds = 180f;
     const float BonusSeconds = 120f;
+    const float LateBonusSeconds = 90f;
     const float IntermissionSeconds = 8f;
     const float DecayDelay = 2f;
     const float OvertimeGrace = 1.2f;
@@ -63,11 +69,11 @@ public partial class MatchManager
     readonly Vector3[] customSpawn = new Vector3[2];
 
     // server
-    readonly Vector3[] points = new Vector3[CapturePointCount];
-    readonly float[] pointYaws = new float[CapturePointCount];
-    readonly Vector2[] pointSizes = new Vector2[CapturePointCount];
-    readonly Vector3[] attackSpawns = new Vector3[CapturePointCount];
-    readonly Vector3[] defendSpawns = new Vector3[CapturePointCount];
+    readonly Vector3[] points = new Vector3[MaxCapturePoints];
+    readonly float[] pointYaws = new float[MaxCapturePoints];
+    readonly Vector2[] pointSizes = new Vector2[MaxCapturePoints];
+    readonly Vector3[] attackSpawns = new Vector3[MaxCapturePoints];
+    readonly Vector3[] defendSpawns = new Vector3[MaxCapturePoints];
     float timer;          // cas utoku
     float lockTimer;      // priprava / odemykani bodu
     float phaseTimer;     // mezihra
@@ -194,7 +200,9 @@ public partial class MatchManager
             var player = client.PlayerObject;
             var team = player != null ? player.GetComponent<PlayerTeam>() : null;
             var movement = player != null ? player.GetComponent<FirstPersonController>() : null;
-            if (team != null && movement != null && team.teamId.Value == attackTeam.Value)
+            // spawn ve stodole: drzi je zavrene dvere (uvnitr se muzou hybat); bez stodoly stoji na miste
+            if (team != null && movement != null && team.teamId.Value == attackTeam.Value
+                && SpawnBarn.AtSpawn(customSpawn[Mathf.Clamp(team.teamId.Value, 0, 1)]) == null)
                 movement.ServerHold(seconds);
         }
     }
@@ -202,6 +210,9 @@ public partial class MatchManager
     void ServerApplyPoint(int index, float lockSeconds)
     {
         pointIndex.Value = index;
+        // auto se pusti po dobyti prvniho bodu (u bodu A stoji)
+        if (index == 1 && NetworkManager != null)
+            trafficReleaseTime.Value = NetworkManager.ServerTime.Time;
         pointPosition.Value = points[index];
         pointYaw.Value = pointYaws[index];
         pointSize.Value = pointSizes[index];
@@ -219,6 +230,7 @@ public partial class MatchManager
     void ServerAttackTick()
     {
         if (!IsAttackMode || IsLobby || IsOver) return;
+        ServerCutsceneTick();
 
         if (roundPhase.Value == RoundIntermission)
         {
@@ -325,6 +337,8 @@ public partial class MatchManager
             var hero = player.GetComponent<PlayerHero>();
             var team = player.GetComponent<PlayerTeam>();
             if (health == null || team == null || health.currentHealth.Value <= 0f || (hero != null && hero.IsJoining)) continue;
+            // kdo sedi ve snezne rolbe, bod nezabira ani neblokuje
+            if (IsDriving(player.NetworkObjectId) || IsRiding(player.NetworkObjectId)) continue;
 
             Vector3 local = toLocal * (player.transform.position - pointPosition.Value);
             if (Mathf.Abs(local.x) > pointSize.Value.x * 0.5f || Mathf.Abs(local.z) > pointSize.Value.y * 0.5f) continue;
@@ -339,6 +353,39 @@ public partial class MatchManager
     {
         int shown = Mathf.Max(0, Mathf.CeilToInt(seconds));
         if (variable.Value != shown) variable.Value = shown;
+    }
+
+    // Filmova scena po dobyti bodu (sklopna podlaha s visici postavickou, FoldingFloor s unlockAfter = dalsi bod):
+    // vsichni zmrazeni a nesmrtelni, dokud bezi, bod se odemyka o jeji delku dele; po ni vsichni zpet na spawny.
+    float cutsceneTeleportAt = -1f;
+
+    float ServerStartCutscene(int nextPoint)
+    {
+        float film = 0f;
+        foreach (var floor in FindObjectsByType<FoldingFloor>())
+            if (floor.unlockAfter == nextPoint && floor.HasCutscene)
+                film = Mathf.Max(film, floor.CutsceneSeconds);
+        if (film <= 0f) return 0f;
+        float hold = film + 0.4f;
+        foreach (var client in PlayerSlots())
+        {
+            var player = client.PlayerObject;
+            if (player == null) continue;
+            var movement = player.GetComponent<FirstPersonController>();
+            var health = player.GetComponent<Health>();
+            if (movement != null) movement.ServerHold(hold);
+            if (health != null) health.ServerInvulnerable(hold);
+        }
+        cutsceneTeleportAt = Time.time + hold;
+        return hold;
+    }
+
+    void ServerCutsceneTick()
+    {
+        if (cutsceneTeleportAt < 0f || Time.time < cutsceneTeleportAt) return;
+        cutsceneTeleportAt = -1f;
+        ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);   // vsichni na spawny dalsiho bodu
+        ServerHoldUntilUnlock();
     }
 
     void ServerPointCaptured()
@@ -362,11 +409,35 @@ public partial class MatchManager
             return;
         }
 
-        // Dalsi bod: cas navic, oba tymy se presunou, bod se chvili odemyka.
-        timer += BonusSeconds;
+        // Dalsi bod: cas navic (za A a B plny, za dalsi mensi), oba tymy se presunou, bod se chvili odemyka.
+        timer += pointIndex.Value < 2 ? BonusSeconds : LateBonusSeconds;
         if (roundPhase.Value == RoundOvertime) roundPhase.Value = RoundAttack;
         overtimeEmpty = 0f;
-        ServerApplyPoint(next, UnlockNextSeconds);
+        float film = ServerStartCutscene(next);
+        ServerApplyPoint(next, UnlockNextSeconds + film);
+        // vsichni hned na spawny dalsiho bodu a cekaji tam, nez se bod odemkne (s filmem az po nem - ServerCutsceneTick)
+        if (film <= 0f)
+        {
+            ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
+            ServerHoldUntilUnlock();
+        }
+    }
+
+    // Do odemceni bodu: hraci se spawnem ve stodole cekaji za zavrenymi dvermi (SpawnBarn), ostatni stoji na spawnu.
+    void ServerHoldUntilUnlock()
+    {
+        float seconds = Mathf.Max(0f, lockTimer);
+        if (seconds <= 0f) return;
+        foreach (var client in PlayerSlots())
+        {
+            var player = client.PlayerObject;
+            if (player == null) continue;
+            var team = player.GetComponent<PlayerTeam>();
+            var movement = player.GetComponent<FirstPersonController>();
+            if (team == null || movement == null) continue;
+            Vector3 spawn = customSpawn[Mathf.Clamp(team.teamId.Value, 0, 1)];
+            if (SpawnBarn.AtSpawn(spawn) == null) movement.ServerHold(seconds);
+        }
     }
 
     void ServerEndRound(int pointsTaken, float progressOnNext)
@@ -405,6 +476,7 @@ public partial class MatchManager
     void ServerBeginSecondRound()
     {
         round.Value = 2;
+        cutsceneTeleportAt = -1f;
         attackTeam.Value = 1 - attackTeam.Value;
         ServerResetPickups();
         ServerResetBoiler();
@@ -431,7 +503,8 @@ public partial class MatchManager
         ProceduralSfx.Play(ProceduralSfx.CaptureWon, listener, 1f);
         Fx.Sparks(position + Vector3.up, UiKit.TeamColor(team));
         Fx.Sparks(position + Vector3.up * 2f, UiKit.TeamColor(team));
-        CaptureUI.Announce($"BOD {PointNames[Mathf.Clamp(index, 0, PointNames.Length - 1)]} ZABRÁN", UiKit.TeamColor(team));
+        CaptureUI.Headline($"BOD {PointNames[Mathf.Clamp(index, 0, PointNames.Length - 1)]} DOBYT",
+            index + 1 < CapturePointCount ? $"další cíl: bod {PointNames[index + 1]}" : "všechny body dobyty", UiKit.TeamColor(team));
     }
 
     [ClientRpc]
@@ -439,13 +512,13 @@ public partial class MatchManager
     {
         var listener = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
         ProceduralSfx.Play(ProceduralSfx.CaptureUnlock, listener, 1f);
-        CaptureUI.Announce($"ÚTOK! · TÝM {attackers} ÚTOČÍ", UiKit.TeamColor(attackers));
+        CaptureUI.Headline("ÚTOK ZAČAL", $"útočí tým {attackers}", UiKit.TeamColor(attackers));
     }
 
     [ClientRpc]
     void RoundOverClientRpc(int attackers, int pointsTaken)
     {
-        CaptureUI.Announce($"KONEC 1. KOLA · TÝM {attackers}: {pointsTaken} {(pointsTaken == 1 ? "BOD" : "BODY")} · VÝMĚNA STRAN", UiKit.TeamColor(attackers));
+        CaptureUI.Headline("KONEC 1. KOLA", $"tým {attackers}: {pointsTaken} {(pointsTaken == 1 ? "bod" : pointsTaken >= 2 && pointsTaken <= 4 ? "body" : "bodů")}  ·  výměna stran", UiKit.TeamColor(attackers), 4.5f);
     }
 
     // Pozde pripojeny hrac si mista oziveni vyzada.
@@ -474,6 +547,11 @@ public partial class MatchManager
         var base1 = GameObject.Find("SpawnPoint_Team1");
         Vector3 a = base0 != null ? base0.transform.position : Vector3.zero;
         Vector3 b = base1 != null ? base1.transform.position : new Vector3(40f, 0f, 0f);
+
+        // kolik bodu mapa ma (CapturePoint_1, _2... po sobe); zadny = 3 body mezi zakladnami
+        int count = 0;
+        while (count < MaxCapturePoints && GameObject.Find($"CapturePoint_{count + 1}") != null) count++;
+        pointCount.Value = count > 0 ? count : 3;
 
         for (int i = 0; i < CapturePointCount; i++)
         {

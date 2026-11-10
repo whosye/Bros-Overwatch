@@ -219,6 +219,7 @@ public class ReplayCapture : MonoBehaviour
 
         var match = MatchManager.Instance;
         frame.pickupMask = match != null ? match.pickupMask.Value : ulong.MaxValue;
+        frame.matchPoint = match != null && match.IsSpawned && match.IsAttackMode && !match.IsLobby ? (sbyte)match.pointIndex.Value : (sbyte)-1;
         frame.buffFastCooldown = Mathf.Max(0f, AbilityDefinition.FastCooldownUntil - Time.time);
         frame.buffInvulnerable = Mathf.Max(0f, PickupBuffs.InvulnerableUntil - Time.time);
         frame.buffTramal = Mathf.Max(0f, PickupBuffs.TramalUntil - Time.time);
@@ -487,7 +488,7 @@ public class ReplayCapture : MonoBehaviour
             thirdPerson = f.thirdPerson, ultCasting = f.ultCasting, blocking = f.blocking, ultWindup = f.ultWindup, charge = f.charge,
             hudHero = f.hudHero, hudTeam = f.hudTeam, health = f.health, maxHealth = f.maxHealth, slots = f.slots,
             ammo = f.ammo, maxAmmo = f.maxAmmo, reloading = f.reloading, locked = f.locked, lockPoint = f.lockPoint,
-            pickupMask = f.pickupMask, buffFastCooldown = f.buffFastCooldown, buffInvulnerable = f.buffInvulnerable, buffTramal = f.buffTramal,
+            pickupMask = f.pickupMask, matchPoint = f.matchPoint, buffFastCooldown = f.buffFastCooldown, buffInvulnerable = f.buffInvulnerable, buffTramal = f.buffTramal,
             objects = f.objects,
         };
     }
@@ -586,6 +587,7 @@ public static class ReplayLog
     public static void FirstPersonKick() { if (Recording) Add(new ReplayEvent { type = ReplayEventType.FirstPersonKick }); }
     // animace ultimatky pres cele telo (Mosinuv tanec); 0 = konec
     public static void Ultimate(Component player, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Ultimate, player = PlayerOf(player), f0 = seconds }); }
+    public static void Ability(Component player, int which, float from, float to, float duration) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Ability, player = PlayerOf(player), a = which, f0 = from, f1 = to, f2 = duration }); }
 
     public static void HudHit(bool kill) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudHit, flag = kill }); }
     public static void HudFlash(float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudFlash, f0 = seconds }); }

@@ -126,6 +126,13 @@ public class WeaponDefinition : ScriptableObject
     [Tooltip("Treti uder komba nepritele odhodi (rychlost m/s).")]
     public float comboFinisherKnockback = 0f;
 
+    [Header("Posileny vystrel (Sindel)")]
+    [Tooltip("Kazdy N-ty vystrel ze zasobniku je posileny: zbran pred nim zrudne, vic poskozeni, silnejsi rana. 0 = vypnuto.")]
+    public int powerShotEvery = 0;
+    [Tooltip("Nasobek poskozeni posileneho vystrelu (1,25 = o 25 % vic).")]
+    public float powerShotDamageScale = 1.25f;
+    public Color powerShotColor = new Color(1f, 0.12f, 0.06f, 1f);
+
     [Header("Zbran v ruce")]
     [Tooltip("Auto = sekyrka pro melee, jinak pistole (u projektilu raketomet).")]
     public HeldModel heldModel = HeldModel.Auto;

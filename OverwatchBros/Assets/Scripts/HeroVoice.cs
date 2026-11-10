@@ -55,10 +55,18 @@ public class HeroVoice : MonoBehaviour
     static float duck = 1f;
     static int duckFrame = -1;
     VoiceGain gain;
+    AudioEchoFilter echo;
     bool playingOwn;   // hraje hlas postavy, za kterou tento hrac hraje (v zaznamu: postava, z jejiz pohledu se prehrava)
+
+    float normalPitchFrom = -1f;   // zrychlena ultimatka: od tohoto mista v nahravce zase normalni rychlost
 
     void Update()
     {
+        if (normalPitchFrom >= 0f && source != null)
+        {
+            if (!source.isPlaying || source.clip == null) normalPitchFrom = -1f;
+            else if (source.time >= normalPitchFrom) { source.pitch = 1f; normalPitchFrom = -1f; }
+        }
         if (duckFrame == Time.frameCount) return;   // (jednou za snimek pro vsechny hlasy)
         duckFrame = Time.frameCount;
 
@@ -244,9 +252,13 @@ public class HeroVoice : MonoBehaviour
         EnsureSource();
         source.Stop();
         source.clip = clip;
+        source.pitch = 1f;
+        normalPitchFrom = -1f;
         source.volume = volume;
         // Vlastni hlas je vystredeny; cizi hlasy jsou prostorove, ultimatky globalni.
         source.spatialBlend = ult || ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        SetEcho(ult && hero.ultVoiceEcho);
+        StartAt(ult ? hero : null, clip, 0f);
         source.Play();
         playingPriority = priority;
         playingUlt = ult;
@@ -263,8 +275,11 @@ public class HeroVoice : MonoBehaviour
         EnsureSource();
         source.Stop();
         source.clip = clip;
+        source.pitch = 1f;
+        normalPitchFrom = -1f;
         source.volume = volume;
         source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        SetEcho(false);
         source.Play();
         playingPriority = priority;
         playingUlt = false;
@@ -279,15 +294,18 @@ public class HeroVoice : MonoBehaviour
         var lines = Lines(hero, kind, slot);
         if (lines == null || lines.Length == 0) return;
         var clip = Pick(lines, pick);
-        if (clip == null || offset >= clip.length - 0.05f) return;
-
         bool ult = kind == VoiceKind.Ability && slot == 0;
+        if (clip == null || offset >= (ult ? hero.UltVoiceDuration(clip) : clip.length) - 0.05f) return;
+
         EnsureSource();
         source.Stop();
         source.clip = clip;
+        source.pitch = 1f;
+        normalPitchFrom = -1f;
         source.volume = volume;
         source.spatialBlend = ult || pov ? 0f : 1f;
-        source.time = offset;
+        SetEcho(ult && hero.ultVoiceEcho);
+        StartAt(ult ? hero : null, clip, offset);
         source.Play();
         playingPriority = Priority(kind);
         playingUlt = ult;
@@ -303,8 +321,11 @@ public class HeroVoice : MonoBehaviour
         EnsureSource();
         source.Stop();
         source.clip = clip;
+        source.pitch = 1f;
+        normalPitchFrom = -1f;
         source.volume = 1f;
         source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        SetEcho(false);
         source.Play();
         playingPriority = 99;
         playingUlt = false;
@@ -317,6 +338,28 @@ public class HeroVoice : MonoBehaviour
         if (playingRide && source != null && source.isPlaying)
             source.Stop();
         playingRide = false;
+    }
+
+    // Ozvena hlasky k ultimatce (zni "vic epicky"); ostatni hlasky bez ni.
+    void SetEcho(bool on)
+    {
+        if (echo != null) echo.enabled = on;
+    }
+
+    // Nastavi misto a rychlost prehravani: ultimatka muze byt zkracena/zrychlena (HeroDefinition), ostatni normalne.
+    void StartAt(HeroDefinition ultHero, AudioClip clip, float seconds)
+    {
+        normalPitchFrom = -1f;
+        if (ultHero == null)
+        {
+            source.pitch = 1f;
+            source.time = Mathf.Min(seconds, Mathf.Max(0f, clip.length - 0.05f));
+            return;
+        }
+        ultHero.UltVoiceAt(clip, seconds, out float clipTime, out float pitch);
+        source.pitch = pitch;
+        source.time = Mathf.Min(clipTime, Mathf.Max(0f, clip.length - 0.05f));
+        if (pitch != 1f) normalPitchFrom = ultHero.UltVoiceNormalFrom(clip);
     }
 
     void EnsureSource()
@@ -336,6 +379,12 @@ public class HeroVoice : MonoBehaviour
             source.maxDistance = 30f;
             source.playOnAwake = false;
             gain = go.AddComponent<VoiceGain>();   // (ultimatka nad ztlumenym zbytkem)
+            echo = go.AddComponent<AudioEchoFilter>();
+            echo.delay = 230f;
+            echo.decayRatio = 0.35f;
+            echo.wetMix = 0.35f;
+            echo.dryMix = 1f;
+            echo.enabled = false;
         }
     }
 }

@@ -70,6 +70,38 @@ public class HeldWeapons : MonoBehaviour
     System.Collections.Generic.List<Material> stormMaterials;
     bool stormShown;
 
+    // Posileny vystrel (Sindel): zbran v ruce rudne, kdyz je dalsi vystrel posileny (majitel), nebo kratce
+    // pri posilenem vystrelu (ostatni hraci).
+    System.Collections.Generic.List<Material> powerMaterials;
+    bool powerShown;
+
+    void UpdatePowerGlow()
+    {
+        var weapon = CurrentWeapon;
+        if (weapon == null || weapon.powerShotEvery <= 0 || ghost) { powerShown = false; return; }
+        bool on = Time.time < powerFlashUntil || (shooting != null && shooting.IsOwner && shooting.Bot == null && shooting.PowerShotReady);
+        if (!on && !powerShown) return;
+        if (powerMaterials == null)
+        {
+            powerMaterials = new System.Collections.Generic.List<Material>();
+            foreach (var group in new[] { hands, bodyHands })
+                foreach (var hand in group)
+                    if (hand.holder != null)
+                        foreach (var renderer in hand.holder.GetComponentsInChildren<Renderer>(true))
+                            if (!(renderer is ParticleSystemRenderer))
+                                foreach (var material in renderer.materials)
+                                {
+                                    material.EnableKeyword("_EMISSION");
+                                    powerMaterials.Add(material);
+                                }
+        }
+        float pulse = 0.75f + 0.25f * Mathf.Sin(Time.time * 18f);
+        Color emission = on ? weapon.powerShotColor * (1.6f * pulse) : Color.black;
+        foreach (var material in powerMaterials)
+            if (material != null) material.SetColor("_EmissionColor", emission);
+        powerShown = on;
+    }
+
     void UpdateStorm()
     {
         if (builtModel != HeldModel.Bow || hands.Length == 0 || hands[0].holder == null) return;
@@ -418,8 +450,28 @@ public class HeldWeapons : MonoBehaviour
         }
     }
 
-    public void Swing()
+    float swingStrength = 1f;
+
+    // Posileny vystrel: ostatni hraci vidi rude zablesknuti zbrane (majitel ji vidi rudou uz pred vystrelem).
+    float powerFlashUntil;
+    public void FlashPower() => powerFlashUntil = Time.time + 0.25f;
+
+    // Zbrane pryc z rukou (uvodni scenka: Viktor odlozi pusku a pije pivo). Ruce pak ridi jen animace.
+    public void HideWeapons()
     {
+        foreach (var hand in hands) if (hand != null && hand.holder != null) hand.holder.gameObject.SetActive(false);
+        foreach (var hand in bodyHands) if (hand != null && hand.holder != null) hand.holder.gameObject.SetActive(false);
+        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; visual.AimOnScope = false; }
+        bodySupportArm = null;
+        bodyMainArm = null;
+        enabled = false;
+    }
+
+    public void Swing() => Swing(1f);
+
+    public void Swing(float strength)
+    {
+        swingStrength = strength;
         lastShotTime = Time.time;   // (puska obema rukama: poza strelby)
         if (!ghost)
             ReplayLog.Swing(this);
@@ -436,8 +488,6 @@ public class HeldWeapons : MonoBehaviour
         var hand = hands[nextHand % hands.Length];
         hand.swingTime = 0f;
         nextHand++;
-        // kosa: kazdy sek z druhe strany (zprava doleva, zleva doprava, ...)
-        if (builtModel == HeldModel.Scythe) slashDir = -slashDir;
 
         PlayBodyAttack(weapon);
     }
@@ -519,6 +569,7 @@ public class HeldWeapons : MonoBehaviour
             UpdateArrows();
             UpdateStorm();
         }
+        UpdatePowerGlow();
 
         // Zbrane u kamery (majitel v 1. osobe) a zbrane v rukou postavy (ostatni, majitel ve 3. osobe).
         // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
@@ -799,9 +850,7 @@ public class HeldWeapons : MonoBehaviour
         }
     }
 
-    int slashDir = -1;
-
-    // Maxuv Dlouhy rez (jako Kaynovo W): napraah dozadu nahoru po dobu 'windup', mohutny sek dopredu a dolu, navrat.
+    // Maxuv skok s uderem (Shift): napraah dozadu nahoru po dobu 'windup', mohutny sek dopredu a dolu, navrat.
     float reachStart = -100f, reachWindup = 0.4f;
     const float ReachStrike = 0.15f, ReachRecover = 0.3f;
 
@@ -811,18 +860,7 @@ public class HeldWeapons : MonoBehaviour
         reachWindup = Mathf.Max(0.05f, windup);
     }
 
-    // Nabijeni (drzeni PTM): kosa se zvedne do napraahu a zustane, dokud se nepusti (ReleaseReach = sek).
-    const float ReachRaise = 0.3f;
-    public void BeginReachHold()
-    {
-        reachStart = Time.time;
-        reachWindup = 999f;
-    }
-
-    public void ReleaseReach()
-    {
-        reachWindup = Mathf.Max(0.05f, Time.time - reachStart);
-    }
+    const float ReachRaise = 0.3f;   // jak rychle se kosa zvedne do napraahu
 
     void AnimateReach(float t, ref Vector3 position, ref Vector3 euler)
     {
@@ -851,29 +889,42 @@ public class HeldWeapons : MonoBehaviour
         euler += de;
     }
 
-    // Kosa: vodorovny sek pred sebou. Kosa se polozi na bok (cepel naplocho dopredu) a cela se otoci kolem hrace
-    // z jedne strany na druhou; strany se stridaji.
+    // Kosa: vodorovny sek pred sebou podle Maxovy animace utoku (Mixamo): napraah nahoru dozadu pres prave rameno,
+    // rychly sek zprava doleva s mirnym klesanim, chvile dotazeni vlevo a navrat. Kosa se polozi na bok
+    // (cepel naplocho dopredu) a cela se otoci kolem hrace.
     static readonly Vector3 SlashPivot = new Vector3(0f, -0.3f, 0f);
 
-    static void SlashPose(int dir, float angle, out Vector3 position, out Vector3 euler)
+    static void SlashPose(float angle, float lift, out Vector3 position, out Vector3 euler)
     {
-        Vector3 start = new Vector3(0.30f * dir, -0.18f, 0.42f);
+        Vector3 start = new Vector3(0.30f, -0.18f + lift, 0.42f);
         position = SlashPivot + Quaternion.Euler(0f, angle, 0f) * (start - SlashPivot);
-        euler = new Vector3(5f, angle, 90f * dir);
+        euler = new Vector3(5f - lift * 120f, angle, 90f);   // nahore cepel spickou nahoru, dole naplocho
     }
 
     void Animate(float t, ref Vector3 position, ref Vector3 euler)
     {
         if (builtModel == HeldModel.Scythe)
         {
-            int dir = slashDir;
-            float from = 60f * dir, to = -60f * dir;
-            float angle, blend;
-            if (t < 0.15f) { blend = Mathf.SmoothStep(0f, 1f, t / 0.15f); angle = from; }
-            else if (t < 0.6f) { blend = 1f; angle = Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, (t - 0.15f) / 0.45f)); }
-            else { blend = 1f - Mathf.SmoothStep(0f, 1f, (t - 0.6f) / 0.4f); angle = to; }
+            const float Windup = 0.18f, Strike = 0.5f, Hold = 0.62f;
+            float angle, lift, blend;
+            if (t < Windup)
+            {
+                float u = Mathf.SmoothStep(0f, 1f, t / Windup);
+                blend = u; angle = Mathf.Lerp(60f, 80f, u); lift = 0.10f * u;
+            }
+            else if (t < Strike)
+            {
+                // zrychluje do stredu, dobrzdi vlevo
+                float u = Mathf.SmoothStep(0f, 1f, (t - Windup) / (Strike - Windup));
+                blend = 1f; angle = Mathf.Lerp(80f, -75f, u); lift = Mathf.Lerp(0.10f, -0.04f, u);
+            }
+            else
+            {
+                blend = t < Hold ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (t - Hold) / (1f - Hold));
+                angle = -75f; lift = -0.04f;
+            }
 
-            SlashPose(dir, angle, out Vector3 slashPosition, out Vector3 slashEuler);
+            SlashPose(angle, lift, out Vector3 slashPosition, out Vector3 slashEuler);
             position = Vector3.Lerp(position, slashPosition, blend);
             euler = new Vector3(Mathf.LerpAngle(euler.x, slashEuler.x, blend), Mathf.LerpAngle(euler.y, slashEuler.y, blend),
                 Mathf.LerpAngle(euler.z, slashEuler.z, blend));
@@ -893,7 +944,7 @@ public class HeldWeapons : MonoBehaviour
         }
         else
         {
-            float kick = Mathf.Sin(t * Mathf.PI);
+            float kick = Mathf.Sin(t * Mathf.PI) * swingStrength;
             position += new Vector3(0f, 0.01f, -0.1f) * kick;
             euler.x -= 9f * kick;
         }
@@ -943,9 +994,11 @@ public class HeldWeapons : MonoBehaviour
         if (dartPistol != null) { Destroy(dartPistol.gameObject); dartPistol = null; }
         bodySupportArm = null;
         bodyMainArm = null;
-        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; }
+        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; visual.AimOnScope = false; }
         stormMaterials = null;
         stormShown = false;
+        powerMaterials = null;
+        powerShown = false;
         built = true;
         builtVersion = visual != null ? visual.Version : 0;
         builtWeapon = CurrentWeapon;
@@ -1071,8 +1124,10 @@ public class HeldWeapons : MonoBehaviour
                 // zbran obema rukama s vlastni animaci strelby hrdiny (napr. z Mixama): postava drzi zbran stale namirenou
                 // (prvni snimek animace), vystrel prehraje celou animaci; puska v prave ruce srovnana podle pozy strelby,
                 // leva ruka na predpazbi (IK po animaci, viz LateUpdate)
-                if (weapon.twoHanded && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && visual.HasHeroShoot)
+                bool scopeAim = CurrentHero != null && CurrentHero.scopeAimPose;
+                if ((weapon.twoHanded || scopeAim) && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && visual.HasHeroShoot)
                 {
+                    visual.AimOnScope = scopeAim && !weapon.twoHanded;   // namiri jen pri mireni dalekohledem (a chvili po vystrelu)
                     hand.twoHanded = true;
                     hand.grip = GripInWeapon(weapon, model);
                     hand.foregrip = ForegripInWeapon(holder, hand.grip, 0.42f, 0.38f);

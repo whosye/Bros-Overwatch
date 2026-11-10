@@ -33,6 +33,11 @@ public class WeaponShooting : NetworkBehaviour
     }
     public bool IsReloading => reloading;
 
+    // Posileny vystrel (Sindel): kazdy N-ty vystrel ze zasobniku (3., 6., 9.). Zbran pred nim zrudne (HeldWeapons).
+    public bool PowerShotReady => weapon != null && weapon.powerShotEvery > 0 && weapon.HasAmmo && !reloading
+        && currentAmmo > 0 && (MaxAmmo - currentAmmo + 1) % weapon.powerShotEvery == 0;
+    public const float PowerShotKick = 3.5f;   // zvednuti kamery (stupne) - bezny vystrel nehazi
+
     HeldWeapons held;
     AudioSource reloadAudio;
 
@@ -270,7 +275,7 @@ public class WeaponShooting : NetworkBehaviour
             currentAmmo -= cost;
 
         PlayShot(playerCamera.transform.position, true, 1f);
-        ShotFxServerRpc(false, true);
+        ShotFxServerRpc(false, true, false);
         held.Swing();
 
         Vector3 origin = playerCamera.transform.position;
@@ -418,7 +423,7 @@ public class WeaponShooting : NetworkBehaviour
     {
         ProceduralSfx.PlayForActor(this, ProceduralSfx.BowRelease, playerCamera.transform.position,
             0.45f + 0.3f * charge, 30f);
-        ShotFxServerRpc(true, false);
+        ShotFxServerRpc(true, false, false);
         held.Swing();
 
         Vector3 direction = playerCamera.transform.forward;
@@ -448,13 +453,19 @@ public class WeaponShooting : NetworkBehaviour
             if (burstOnBeat && Bot == null)
                 BardAbility.NoteLocalBeatShot(transform.position);
         }
+        bool power = !melee && PowerShotReady;
         if (weapon.HasAmmo)
             currentAmmo--;
 
         if (melee) PlayMeleeSwing(playerCamera.transform.position);
         else PlayShot(playerCamera.transform.position, false, 0.8f);
-        ShotFxServerRpc(melee, false);
-        held.Swing();
+        if (power)
+        {
+            PlayPowerShot(playerCamera.transform.position);
+            if (fpc != null && Bot == null) fpc.AddRecoil(PowerShotKick);
+        }
+        ShotFxServerRpc(melee, false, power);
+        held.Swing(power ? 2.4f : 1f);
 
         if (weapon.IsProjectile)
         {
@@ -522,10 +533,12 @@ public class WeaponShooting : NetworkBehaviour
             if (weapon.headshotMultiplier > 1f && !weapon.HasScopedShot && hit.collider.GetComponentInParent<Health>() != null
                 && hit.point.y >= hit.collider.bounds.max.y - HeadHeight)
             {
-                float body = DamageFor(hit.collider, hit.point);
+                float body = DamageFor(hit.collider, hit.point) * (power ? weapon.powerShotDamageScale : 1f);
                 ProceduralSfx.PlayForActor(this, ProceduralSfx.StunConfirm, playerCamera.transform.position, 0.8f);
-                ApplyHit(hit.collider, hit.point, 1.3f, body * weapon.headshotMultiplier, hit.normal);
+                ApplyHit(hit.collider, hit.point, power ? 2.4f : 1.3f, body * weapon.headshotMultiplier, hit.normal, power);
             }
+            else if (power)
+                ApplyHit(hit.collider, hit.point, 2.2f, DamageFor(hit.collider, hit.point) * weapon.powerShotDamageScale, hit.normal, true);
             else
                 ApplyHit(hit.collider, hit.point, 1f, normal: hit.normal);
         }
@@ -626,8 +639,9 @@ public class WeaponShooting : NetworkBehaviour
 
     // Spolecny zasah pro hitscan i melee: damage, zvuk zasahu a maly vybuch v miste dopadu.
     // damageOverride >= 0: pevne poskozeni (odstrel s pribliseni), jinak podle zbrane a vzdalenosti.
-    void ApplyHit(Collider collider, Vector3 point, float fxScale, float damageOverride = -1f, Vector3 normal = default)
+    void ApplyHit(Collider collider, Vector3 point, float fxScale, float damageOverride = -1f, Vector3 normal = default, bool power = false)
     {
+        impactPower = power;
         // Strelba na dalku je slabsi (jen zbrane s nastavenym poklesem poskozeni).
         float damage = damageOverride >= 0f ? damageOverride : DamageFor(collider, point);
 
@@ -672,13 +686,24 @@ public class WeaponShooting : NetworkBehaviour
         ShowImpact(collider, point, normal, fxScale);
     }
 
+    bool impactPower;   // zasah posileneho vystrelu (cervena jiskra)
+
+    // Posileny vystrel: k bezne rane hlubsi tresk navic, slysi ho i ostatni.
+    void PlayPowerShot(Vector3 position)
+    {
+        var clip = ShotClip(false);
+        ProceduralSfx.PlayForActor(this, clip != null ? clip : ProceduralSfx.Gunshot,
+            position, 1f, WeaponDefinition.FireSoundRange * 1.5f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.SmallExplosion(), position, 0.35f, 50f);
+    }
+
     void ShowImpact(Collider collider, Vector3 point, Vector3 normal, float fxScale)
     {
         bool bullet = weapon.fireMode == FireMode.Hitscan && normal.sqrMagnitude > 0.5f;
         bool slash = weapon.IsMelee
             && (weapon.heldModel == HeldModel.Scythe || weapon.heldModel == HeldModel.Axe);
         bool hole = normal.sqrMagnitude > 0.5f && ((bullet && weapon.bulletHoles) || slash) && BulletHoleDecals.CanMark(collider);
-        Fx.BulletImpact(point, weapon.projectileColor, fxScale);
+        Fx.BulletImpact(point, impactPower ? weapon.powerShotColor : weapon.projectileColor, fxScale);
         var surfaceKind = AudioSurface.Of(collider, point);
         if (bullet || slash) PlaySurfaceImpact(weapon, point, surfaceKind, slash);
         if (hole) BulletHoleDecals.Place(collider, point, normal,
@@ -729,14 +754,21 @@ public class WeaponShooting : NetworkBehaviour
                 slash ? SurfaceMarkKind.Slash : SurfaceMarkKind.Bullet, angle);
     }
 
-    // Zvuk vystrelu: vlastni nahravka zbrane (WeaponDefinition.fireSound), jinak generovany zastupny.
-    void PlayShot(Vector3 position, bool scoped, float volume)
+    // Normal and empowered shots share the same recording/custom-sound priority.
+    AudioClip ShotClip(bool scoped)
     {
         var clip = weapon != null ? weapon.ShotSound(scoped) : null;
         if (clip == null || clip.name == "gun_viktor" || clip.name == "gun_anna" || clip.name == "gun_sindel"
             || clip.name == "gun_sniper_smg" || clip.name == "gun_sniper_scoped")
             clip = CollectedAudioBank.ForActor(this, CollectedAudioBank.WeaponCue(weapon)
                 + (scoped ? "_fire_scoped" : "_fire"), clip);
+        return clip;
+    }
+
+    // Zvuk vystrelu: vlastni nahravka zbrane (WeaponDefinition.fireSound), jinak generovany zastupny.
+    void PlayShot(Vector3 position, bool scoped, float volume)
+    {
+        var clip = ShotClip(scoped);
         if (clip != null)
         {
             if (CollectedAudioBank.WeaponCue(weapon) == "david" && CollectedAudioBank.Find(clip.name) == clip)
@@ -748,18 +780,23 @@ public class WeaponShooting : NetworkBehaviour
     }
 
     [ServerRpc]
-    void ShotFxServerRpc(bool melee, bool scoped)
+    void ShotFxServerRpc(bool melee, bool scoped, bool power)
     {
         if (!melee) BotBrain.HearShot(transform.position, gameObject);   // boti v okoli strelbu slysi
-        ShotFxClientRpc(melee, scoped);
+        ShotFxClientRpc(melee, scoped, power);
     }
 
     [ClientRpc]
-    void ShotFxClientRpc(bool melee, bool scoped)
+    void ShotFxClientRpc(bool melee, bool scoped, bool power)
     {
         if (IsOwner) return;
         remoteDrawStart = -1f;   // (sip vyletel - tetiva povolena)
-        held.Swing();
+        held.Swing(power ? 2.4f : 1f);
+        if (power)
+        {
+            PlayPowerShot(transform.position);
+            held.FlashPower();
+        }
         if (melee && weapon != null && weapon.IsCharged)
             ProceduralSfx.PlayForActor(this, ProceduralSfx.BowRelease, transform.position, 0.6f);
         else if (melee) PlayMeleeSwing(transform.position);

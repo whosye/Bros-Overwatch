@@ -17,7 +17,7 @@ MonoBehaviour:
   cooldown: 30
   ultCost: 450
   power: 220
-  duration: 7
+  duration: 3
   radius: 5
   range: 120
   knockback: 0

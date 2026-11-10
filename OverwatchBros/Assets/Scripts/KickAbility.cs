@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Sniperovo odkopnuti (E): rychly kop pred sebe. Nepratele v dosahu 'range' m (v kuzelu pred hracem) zrani o 'power',
-// odhodi je (sila 'knockback', asi 6 m) a na 'duration' sekund zpomali na polovinu. Zachrana na blizko:
+// odhodi je (sila 'knockback' 14 = asi 10 m po rovine) a na 'duration' sekund zpomali na polovinu. Zachrana na blizko:
 // odkopne dotireneho rvace, aby sniper mel cas utect hakem.
 // Animace: z pohledu prvni osoby vykopne do obrazu noha s botou, ostatni vidi kop na modelu postavy.
 public class KickAbility : NetworkBehaviour
@@ -37,7 +37,10 @@ public class KickAbility : NetworkBehaviour
 
         nextUseTime = Time.time + ability.Cooldown;
 
-        FirstPersonKick.Play(fpc.playerCamera);
+        if (HasKickAnimation && fpc.Bot == null)
+            BeginKickCamera();          // kamera se oddali, hrac vidi svuj kop (jako Maxova otocka)
+        else
+            FirstPersonKick.Play(fpc.playerCamera);
         PlayBodyKick();
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
@@ -46,11 +49,77 @@ public class KickAbility : NetworkBehaviour
         KickServerRpc(transform.position, eye.forward);
     }
 
+    // Animace kopu z Mixama (sada animaci hrdiny, policko eAbility) - bez ni se natoci noha (CharacterVisual.PlayKick).
+    bool HasKickAnimation
+    {
+        get
+        {
+            var visual = GetComponent<CharacterVisual>();
+            return visual != null && visual.HasAbilityAnimation(CharacterVisual.AbilityAnim.E);
+        }
+    }
+
+    // Cely klip, o chlup rychleji (kop ma byt svizny), nejvys 1,6 s.
+    float KickAnimSeconds
+    {
+        get
+        {
+            var visual = GetComponent<CharacterVisual>();
+            float length = visual != null ? visual.AbilityClipLength(CharacterVisual.AbilityAnim.E) : 0f;
+            return Mathf.Clamp(length / KickAnimSpeed, 0.4f, 1.6f);
+        }
+    }
+
     void PlayBodyKick()
     {
         var visual = GetComponent<CharacterVisual>();
-        if (visual != null)
+        if (visual == null) return;
+        if (visual.HasAbilityAnimation(CharacterVisual.AbilityAnim.E))
+        {
+            float length = visual.AbilityClipLength(CharacterVisual.AbilityAnim.E);
+            visual.PlayAbility(CharacterVisual.AbilityAnim.E, 0f, length, KickAnimSeconds);
+        }
+        else
             visual.PlayKick(KickSeconds);
+    }
+
+    // ---------------- kamera za hracem behem kopu ----------------
+
+    const float KickAnimSpeed = 1.2f;
+    // kamera za hracem a trochu vpravo, at je kopajici noha videt
+    static readonly Vector3 KickCameraOffset = new Vector3(1.3f, 1.9f, -3.8f);
+    Vector3 kickCameraLocal;
+    float kickCameraUntil = -1f;
+
+    void BeginKickCamera()
+    {
+        if (kickCameraUntil < 0f) kickCameraLocal = fpc.playerCamera.transform.localPosition;
+        kickCameraUntil = Time.time + KickAnimSeconds;
+        fpc.ThirdPersonView = true;
+    }
+
+    void LateUpdate()
+    {
+        if (kickCameraUntil < 0f) return;
+        if (Time.time >= kickCameraUntil || fpc.IsDead || fpc.CannotAct)
+        {
+            EndKickCamera();
+            return;
+        }
+        ThirdPersonCamera.Place(transform, NetworkObject, fpc.playerCamera, kickCameraLocal, KickCameraOffset);
+    }
+
+    void EndKickCamera()
+    {
+        if (kickCameraUntil < 0f) return;
+        kickCameraUntil = -1f;
+        fpc.ThirdPersonView = false;
+        if (fpc.playerCamera != null) fpc.playerCamera.transform.localPosition = kickCameraLocal;
+    }
+
+    void OnDisable()
+    {
+        if (fpc != null) EndKickCamera();
     }
 
     // ---------------- server ----------------

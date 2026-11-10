@@ -34,7 +34,7 @@ public enum AbilityKind
     Ezekiel,       // Sindel: Ezechiel 25:17 - kazani ve vzduchu a uder svetla (Q)
     MaxReap,       // Max: Rozpolceni - vypad a otocka kosou (Shift)
     ShadowStep,    // Max: Stinovy krok - pruchod zdi (E)
-    MaxSlash,      // Max: Dlouhy rez - pruh pred sebou se zpomalenim (prave tlacitko)
+    MaxSlash,      // Max: Otocka kosou - 360 st. kolem sebe (prave tlacitko)
     Trespass,      // Max: Vpad do stinu - zmizi v nepriteli a vyrazi ven (Q)
     SayWhat        // Sindel: "Say what again?!" - vykrik do kuzele, nepratele zpomali a umlci (prave tlacitko)
 }
@@ -45,6 +45,10 @@ public class HeroDefinition : ScriptableObject
     public string heroName;
     public Color color = Color.white;
     public float maxHealth = 100f;
+    [Tooltip("Nasobek veskereho leceni, ktere hrdina dava (1 = plne, 0.75 = o 25 % mene).")]
+    public float healingScale = 1f;
+    [Tooltip("Pri mireni dalekohledem (prave tlacitko) postava drzi zbran namirenou obema rukama v poze z animace strelby (jako Viktor). Potrebuje animaci Shoot v sade animaci.")]
+    public bool scopeAimPose;
     public WeaponDefinition weapon;
     public AbilityKind abilityKind = AbilityKind.Dash;
     public AbilityDefinition ability;
@@ -117,4 +121,40 @@ public class HeroDefinition : ScriptableObject
     public AudioClip[] missLines;
     [Tooltip("Kdyz priblizi zamerovacem - prave tlacitko (obcas).")]
     public AudioClip[] scopeLines;
+    [Tooltip("Hlaska k ultimatce (Q) dostane ozvenu. Vypnout, kdyz ji uz ma nahravka sama (Mirek, Sindel).")]
+    public bool ultVoiceEcho = true;
+    [Tooltip("Hlaska k ultimatce se prehraje jen poslednich N sekund (0 = cela). U Sindela urcuje i delku ultimatky - uder prijde na konci hlasky.")]
+    public float ultVoiceMaxSeconds = 0f;
+
+    [Tooltip("Rychlost hlasky k ultimatce (1 = normalne, 1.5 = o polovinu rychleji a vys). Konec (Ult Voice Normal Tail) hraje normalne.")]
+    public float ultVoiceSpeed = 1f;
+    [Tooltip("Kolik poslednich sekund hlasky k ultimatce hraje normalni rychlosti (zaverecne \"buuh\").")]
+    public float ultVoiceNormalTail = 0f;
+
+    // Od kolikate sekundy hrat nahravku ultimatky (zbytek = poslednich ultVoiceMaxSeconds).
+    public float UltVoiceSkip(AudioClip clip) =>
+        clip != null && ultVoiceMaxSeconds > 0.5f && clip.length > ultVoiceMaxSeconds ? clip.length - ultVoiceMaxSeconds : 0f;
+
+    float Speed => Mathf.Clamp(ultVoiceSpeed, 0.5f, 3f);
+
+    // Kde v nahravce se prepina ze zrychlene na normalni rychlost.
+    public float UltVoiceNormalFrom(AudioClip clip) =>
+        clip == null ? 0f : Mathf.Max(UltVoiceSkip(clip), clip.length - Mathf.Max(0f, ultVoiceNormalTail));
+
+    // Jak dlouho hlaska k ultimatce skutecne hraje (se zkracenim a zrychlenim).
+    public float UltVoiceDuration(AudioClip clip)
+    {
+        if (clip == null) return 0f;
+        float start = UltVoiceSkip(clip), normalFrom = UltVoiceNormalFrom(clip);
+        return (normalFrom - start) / Speed + (clip.length - normalFrom);
+    }
+
+    // 'seconds' od zacatku hlasky -> misto v nahravce a rychlost prehravani.
+    public void UltVoiceAt(AudioClip clip, float seconds, out float clipTime, out float pitch)
+    {
+        float start = UltVoiceSkip(clip), normalFrom = UltVoiceNormalFrom(clip);
+        float fastPart = (normalFrom - start) / Speed;
+        if (seconds < fastPart) { clipTime = start + seconds * Speed; pitch = Speed; }
+        else { clipTime = normalFrom + (seconds - fastPart); pitch = 1f; }
+    }
 }

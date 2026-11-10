@@ -11,6 +11,11 @@ public enum PickupKind
     Invulnerable, // dedova slivovice (spiz velke chaty): nesmrtelnost
     Tramal,       // Tramal ve skrince pod diplomem MUDr. Tomaska: plne zdravi + kratce mensi poskozeni
     Carburetor,   // Honzuv karburator: minutu u sebe, s nim jde nastartovat sneznou rolbu u chaty (R)
+    Coffee,       // kava z kavovaru: kratsi cooldowny schopnosti + rychlejsi pohyb
+    Beer,         // pivo z vycepu: vetsi poskozeni
+    Lasagne,      // lasagne: plne zdravi + stit, ktery chvili drzi
+    WhitePowder,  // cara bileho prasku na podtacku: kratce o 50 % vetsi poskozeni
+    KangarooSkin, // klokani kuze: hned +100 stitu (drzi, dokud ho poskozeni nezbori)
 }
 
 // Buffy z balicku, ktere zobrazuje HUD mistniho hrace (BuffUI). Nastavuje je MatchManager, kdyz balicek sebere
@@ -24,11 +29,40 @@ public static class PickupBuffs
     public const float TramalDamageTaken = 0.8f;   // o 20 % mensi poskozeni
     public static float TramalUntil;
 
+    // Kava: cooldowny schopnosti o 30 % kratsi (hlida vlastnik, jako Respin Joker) a o 15 % rychlejsi pohyb.
+    public const float CoffeeSeconds = 20f;
+    public const float CoffeeCooldownScale = 0.7f;
+    public const float CoffeeSpeed = 1.15f;
+    public static float CoffeeUntil;
+
+    // Pivo z vycepu: o 15 % vetsi poskozeni (hlida server).
+    public const float BeerSeconds = 25f;
+    public const float BeerDamage = 1.15f;
+    public static float BeerUntil;
+
+    // Lasagne: plne zdravi a stit 100 (overhealth), ktery 15 s drzi naplno.
+    public const float LasagneSeconds = 15f;
+    public const float LasagneShield = 100f;
+    public static float LasagneUntil;
+
+    // Bila latka: 12 s o 50 % vetsi poskozeni (hlida server).
+    public const float PowderSeconds = 12f;
+    public const float PowderDamage = 1.5f;
+    public static float PowderUntil;
+
+    // Klokani kuze: okamzite +100 stitu navic (secte se s dosavadnim, max 200). Nevyprcha - zmizi jen poskozenim nebo smrti.
+    public const float KangarooShield = 100f;
+    public const float KangarooShieldMax = 200f;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
     {
         InvulnerableUntil = 0f;
         TramalUntil = 0f;
+        CoffeeUntil = 0f;
+        BeerUntil = 0f;
+        LasagneUntil = 0f;
+        PowderUntil = 0f;
     }
 }
 
@@ -43,7 +77,8 @@ public class PickupSpot : MonoBehaviour
     public float healAmount = 0f;
 
     // Balicek polozeny na nabytku (zachod, skrinka): maly podstavec, predmet nizko nad nim.
-    bool OnFurniture => kind == PickupKind.Tramal || reachBelow > 0.6f;
+    bool OnFurniture => kind == PickupKind.Tramal || kind == PickupKind.Coffee || kind == PickupKind.Beer
+        || kind == PickupKind.Lasagne || kind == PickupKind.WhitePowder || kind == PickupKind.KangarooSkin || reachBelow > 0.6f;
 
     public static readonly List<PickupSpot> All = new List<PickupSpot>();
     static bool sorted;
@@ -74,6 +109,11 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Invulnerable => 60f,
         PickupKind.Tramal => 30f,
         PickupKind.Carburetor => 90f,
+        PickupKind.Coffee => 35f,
+        PickupKind.Beer => 35f,
+        PickupKind.Lasagne => 45f,
+        PickupKind.WhitePowder => 60f,
+        PickupKind.KangarooSkin => 40f,
         _ => 30f,
     };
 
@@ -88,6 +128,11 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Invulnerable => new Color(1f, 0.72f, 0.25f),
         PickupKind.Tramal => new Color(0.35f, 0.75f, 0.55f),
         PickupKind.Carburetor => new Color(0.95f, 0.45f, 0.15f),
+        PickupKind.Coffee => new Color(0.72f, 0.48f, 0.28f),
+        PickupKind.Beer => new Color(1f, 0.86f, 0.3f),
+        PickupKind.Lasagne => new Color(0.95f, 0.38f, 0.2f),
+        PickupKind.WhitePowder => new Color(0.92f, 0.95f, 1f),
+        PickupKind.KangarooSkin => new Color(0.8f, 0.55f, 0.32f),
         _ => new Color(0.45f, 0.85f, 1f),
     };
 
@@ -100,6 +145,11 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Invulnerable => "Dědova slivovice",
         PickupKind.Tramal => "Tramal",
         PickupKind.Carburetor => "Honzův karburátor",
+        PickupKind.Coffee => "Káva",
+        PickupKind.Beer => "Pivo z výčepu",
+        PickupKind.Lasagne => "Lasagne",
+        PickupKind.WhitePowder => "Bílá látka",
+        PickupKind.KangarooSkin => "Klokaní kůže",
         _ => "Štít",
     };
 
@@ -229,6 +279,48 @@ public class PickupSpot : MonoBehaviour
                 intake.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
                 Part(PrimitiveType.Cube, item, new Vector3(0f, 0f, 0.105f), new Vector3(0.12f, 0.1f, 0.01f), color, 1.2f);
                 Part(PrimitiveType.Cube, item, new Vector3(-0.11f, 0.06f, 0f), new Vector3(0.03f, 0.03f, 0.16f), new Color(0.75f, 0.6f, 0.2f));
+                break;
+            case PickupKind.Coffee:
+                // Salek kavy s podsalkem: bily salek, tmava kava, ucho.
+                Part(PrimitiveType.Cylinder, item, new Vector3(0f, -0.05f, 0f), new Vector3(0.2f, 0.008f, 0.2f), Color.white);
+                Part(PrimitiveType.Cylinder, item, Vector3.zero, new Vector3(0.11f, 0.05f, 0.11f), Color.white);
+                Part(PrimitiveType.Cylinder, item, new Vector3(0f, 0.046f, 0f), new Vector3(0.095f, 0.006f, 0.095f), new Color(0.25f, 0.13f, 0.06f));
+                Part(PrimitiveType.Cube, item, new Vector3(0.068f, 0.005f, 0f), new Vector3(0.02f, 0.05f, 0.012f), Color.white);
+                break;
+            case PickupKind.Beer:
+                // Vycepovany pullitr: zlate pivo, hustá pena pres okraj, ucho.
+                Part(PrimitiveType.Cylinder, item, new Vector3(0f, 0.02f, 0f), new Vector3(0.13f, 0.1f, 0.13f), new Color(0.95f, 0.65f, 0.12f), 0.5f);
+                Part(PrimitiveType.Cylinder, item, new Vector3(0f, 0.135f, 0f), new Vector3(0.14f, 0.025f, 0.14f), new Color(0.99f, 0.98f, 0.93f));
+                Part(PrimitiveType.Cube, item, new Vector3(0.09f, 0.03f, 0f), new Vector3(0.025f, 0.12f, 0.025f), new Color(0.85f, 0.9f, 0.9f));
+                break;
+            case PickupKind.KangarooSkin:
+                // Srolovana klokani kuze: rezava srst, svetlejsi bricho, ocas a dve usi trci z rolky.
+                var roll = Part(PrimitiveType.Cylinder, item, Vector3.zero, new Vector3(0.16f, 0.17f, 0.16f), new Color(0.72f, 0.45f, 0.24f));
+                roll.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                var belly = Part(PrimitiveType.Cylinder, item, new Vector3(0f, 0.004f, 0.004f), new Vector3(0.12f, 0.175f, 0.12f), new Color(0.9f, 0.76f, 0.58f));
+                belly.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                var tail = Part(PrimitiveType.Cube, item, new Vector3(0.24f, -0.06f, 0.03f), new Vector3(0.2f, 0.025f, 0.05f), new Color(0.66f, 0.4f, 0.21f));
+                tail.transform.localRotation = Quaternion.Euler(0f, 15f, -12f);
+                foreach (float s in new[] { -1f, 1f })
+                {
+                    var ear = Part(PrimitiveType.Cube, item, new Vector3(-0.19f, 0.07f, s * 0.04f), new Vector3(0.025f, 0.09f, 0.035f), new Color(0.7f, 0.43f, 0.23f));
+                    ear.transform.localRotation = Quaternion.Euler(s * 12f, 0f, 20f);
+                }
+                Part(PrimitiveType.Cube, item, new Vector3(0f, 0f, 0f), new Vector3(0.025f, 0.165f, 0.165f), new Color(0.35f, 0.22f, 0.12f));   // remen
+                break;
+            case PickupKind.Lasagne:
+                // Alobalova vanicka s lasagnemi a lopatkou.
+                Part(PrimitiveType.Cube, item, Vector3.zero, new Vector3(0.3f, 0.06f, 0.2f), new Color(0.78f, 0.8f, 0.83f));
+                Part(PrimitiveType.Cube, item, new Vector3(0f, 0.031f, 0f), new Vector3(0.27f, 0.006f, 0.17f), new Color(0.85f, 0.4f, 0.15f), 0.3f);
+                Part(PrimitiveType.Cube, item, new Vector3(0.05f, 0.036f, 0.02f), new Vector3(0.08f, 0.006f, 0.06f), new Color(0.98f, 0.85f, 0.45f));
+                Part(PrimitiveType.Cube, item, new Vector3(0.14f, 0.05f, 0.03f), new Vector3(0.2f, 0.008f, 0.04f), new Color(0.12f, 0.12f, 0.13f));
+                break;
+            case PickupKind.WhitePowder:
+                // Podtacek (tmave sklo) s carou bileho prasku a srolovanou bankovkou.
+                Part(PrimitiveType.Cylinder, item, Vector3.zero, new Vector3(0.22f, 0.006f, 0.22f), new Color(0.12f, 0.12f, 0.14f));
+                Part(PrimitiveType.Cube, item, new Vector3(0f, 0.01f, 0f), new Vector3(0.14f, 0.008f, 0.012f), Color.white, 0.6f);
+                var note = Part(PrimitiveType.Cylinder, item, new Vector3(0.02f, 0.012f, 0.05f), new Vector3(0.012f, 0.045f, 0.012f), new Color(0.55f, 0.7f, 0.5f));
+                note.transform.localRotation = Quaternion.Euler(0f, 30f, 90f);
                 break;
             default:
                 // Modry sestiuhelnikovy stit.

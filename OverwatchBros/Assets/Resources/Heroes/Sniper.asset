@@ -15,6 +15,8 @@ MonoBehaviour:
   heroName: "Konduli\u010D"
   color: {r: 0.75, g: 0.3, b: 0.35, a: 1}
   maxHealth: 90
+  scopeAimPose: 1
+  healingScale: 1
   weapon: {fileID: 11400000, guid: 0e445e55f8bb1334a8b95911d17091c9, type: 2}
   abilityKind: 19
   ability: {fileID: 11400000, guid: e57acb6473729244c9c80dbfeaa86ab5, type: 2}
@@ -33,11 +35,11 @@ MonoBehaviour:
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
-  characterPrefab: {fileID: 5910829736394420469, guid: 7de1140a1a4f4a3499ad84de0507cfe4, type: 3}
-  tintCharacter: 1
-  animations: {fileID: 0}
-  sleeveColor: {r: 0.2, g: 0.18, b: 0.22, a: 1}
-  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
+  characterPrefab: {fileID: 5691248826724965408, guid: bbeacc305979c4d4b8eccd553fd32141, type: 3}
+  tintCharacter: 0
+  animations: {fileID: 11400000, guid: d1ccdcaff98a7d343b1c6926e88c71f5, type: 2}
+  sleeveColor: {r: 0.15, g: 0.15, b: 0.16, a: 1}
+  skinColor: {r: 0.86, g: 0.71, b: 0.64, a: 1}
   spawnLines:
   - {fileID: 8300000, guid: d0c8c5f107246604cbfee8d4b4ccc255, type: 3}
   - {fileID: 8300000, guid: 7a67efd2de264af499f24de20df4a229, type: 3}
@@ -71,3 +73,7 @@ MonoBehaviour:
   headshotLines: []
   missLines: []
   scopeLines: []
+  ultVoiceEcho: 1
+  ultVoiceMaxSeconds: 0
+  ultVoiceSpeed: 1
+  ultVoiceNormalTail: 0

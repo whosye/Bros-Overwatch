@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: "Dev\xEDtka"
   damage: 38
   fireRate: 2.4
-  maxAmmo: 10
+  maxAmmo: 9
   reloadTime: 1.5
   reloadAnimation: 0
   range: 120
@@ -49,6 +49,9 @@ MonoBehaviour:
   projectileTrail: 1
   projectilePrefab: {fileID: 0}
   meleeRadius: 0.6
+  powerShotEvery: 3
+  powerShotDamageScale: 1.25
+  powerShotColor: {r: 1, g: 0.12, b: 0.06, a: 1}
   heldModel: 2
   dualWield: 0
   heldPrefab: {fileID: 1089338439108150065, guid: bfc2c4c036df15142822d8d8a476dac7, type: 3}

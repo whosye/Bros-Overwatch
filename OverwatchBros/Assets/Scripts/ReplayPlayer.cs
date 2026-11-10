@@ -18,6 +18,10 @@ public class ReplayPlayer : MonoBehaviour
     public static bool Finished => instance == null || instance.clip == null || instance.time >= instance.clip.duration;
     public static ReplayFrame Frame => instance != null ? instance.current : null;
 
+    // Bod, o ktery se v zaznamu prave hralo (-1 = jiny rezim); null = neprehrava se.
+    // (jen POTG / zaznam po zapase; killcam je par sekund stary a host by si jim prepinal kolize uprostred hry)
+    public static int? RecordedPoint => Active && !IsKillcam && Frame != null ? Frame.matchPoint : (int?)null;
+
     // Stav ze zaznamu pro mapu a HUD: balicky k sebrani a buffy hrace, z jehoz pohledu se prehrava.
     public static bool PickupAvailable(int index)
     {
@@ -640,6 +644,7 @@ public class ReplayPlayer : MonoBehaviour
             case ReplayEventType.StopReload: if (g != null) g.held.StopReload(); break;
             case ReplayEventType.Kick: if (g != null) g.visual.PlayKick(e.f0); break;
             case ReplayEventType.Ultimate: if (g != null) { if (e.f0 > 0f) g.visual.PlayUltimate(e.f0); else g.visual.StopUltimate(); } break;
+            case ReplayEventType.Ability: if (g != null) g.visual.PlayAbility((CharacterVisual.AbilityAnim)e.a, e.f0, e.f1, e.f2); break;
             case ReplayEventType.FirstPersonKick: if (view != null) FirstPersonKick.Play(view); break;
             case ReplayEventType.HudHit: HudUI.NotifyHit(e.flag); break;
             case ReplayEventType.HudFlash: HudUI.NotifyFlash(e.f0); break;

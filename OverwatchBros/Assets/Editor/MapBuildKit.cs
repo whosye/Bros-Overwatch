@@ -98,6 +98,10 @@ public static class MapBuildKit
     // Vraci, o kolik je zed v otevrene scene posunuta (kdyz rozhlednu nekdo presune, tunel a zahrada se posunou s ni).
     public static Vector3 TowerShift(Transform map)
     {
+        // Rozhledna byla presunuta (ChataNovaCast) - tunel a zahrada zustavaji, kde byly.
+        var pin = map.Find("_TowerShiftPin");
+        if (pin != null) return pin.localPosition;
+
         var wall = map.Find("Rozhledna/Cube (5)");
         var renderer = wall != null ? wall.GetComponent<Renderer>() : null;
         if (renderer == null) return Vector3.zero;

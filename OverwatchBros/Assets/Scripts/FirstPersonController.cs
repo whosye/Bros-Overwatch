@@ -39,6 +39,9 @@ public class FirstPersonController : NetworkBehaviour
     float abilityRiseScale = 1f;
     float JumpGravity => gravity * Mathf.Max(1f, movementGravityScale);
     float cameraPitch;
+
+    // Zpetny raz (Sindeluv posileny vystrel): kamera poskoci nahoru o dany pocet stupnu.
+    public void AddRecoil(float degrees) => cameraPitch = Mathf.Clamp(cameraPitch - degrees, -80f, 80f);
     float stepAccumulator;
     float gaitSpeed;
     bool audioWasGrounded = true, audioInWater, audioInitialized;
@@ -53,6 +56,9 @@ public class FirstPersonController : NetworkBehaviour
     // Schopnost, u ktere se dá normalne ovladat pohyb (Modry plamen): kamera ve 3. osobe, zrychleni, Shift neni sprint.
     public bool RushActive { get; set; }
 
+    // Kamera ve 3. osobe jen na ukazku animace schopnosti (Maxova otocka): pohyb i rozhlizeni zustavaji normalni.
+    public bool ThirdPersonView { get; set; }
+
     // Blok (zkrizene sekery): pomalejsi pohyb, nejde utocit.
     public bool BlockActive { get; set; }
     public float SpeedMultiplier { get; set; } = 1f;
@@ -60,7 +66,7 @@ public class FirstPersonController : NetworkBehaviour
     public float HeroSpeedScale { get; set; } = 1f;
     // Zpomaleni pri pribliseni (sniper) a docasne zpomaleni od schopnosti (odkopnuti).
     public float ScopeSpeedScale { get; set; } = 1f;
-    // Zpomaleni od vlastni schopnosti (napr. nabijeni Maxova Dlouheho rezu).
+    // Zpomaleni od vlastni schopnosti (napr. Maxova otocka kosou).
     public float AbilitySpeedScale { get; set; } = 1f;
     float slowUntil;
     float slowFactor = 1f;
@@ -80,6 +86,10 @@ public class FirstPersonController : NetworkBehaviour
     bool waterRide;   // hrac sjel z toboganu do vody (WaterCurrent)
     float waterArmedUntil;   // hrac byl na plosine toboganu (start jizdy)
 
+    // Mireni dalekohledem (prave tlacitko, ScopeZoom) - ostatni vidi postavu s namirenou zbrani. Zapisuje vlastnik.
+    public NetworkVariable<bool> scoped = new NetworkVariable<bool>(false,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     // Jede z toboganu po vode - vidi vsichni (splouchani, WaterSplashFx). Zapisuje vlastnik.
     public NetworkVariable<bool> waterSurfing = new NetworkVariable<bool>(false,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -88,16 +98,8 @@ public class FirstPersonController : NetworkBehaviour
     public NetworkVariable<bool> waterRiding = new NetworkVariable<bool>(false,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-    // Sindel behem kazani (Ezechiel): nejde prerusit ani ovladat - jde jen zabit.
-    EzekielAbility ezekiel;
-    public bool Unstoppable
-    {
-        get
-        {
-            if (ezekiel == null) ezekiel = GetComponent<EzekielAbility>();
-            return ezekiel != null && ezekiel.enabled && ezekiel.IsSpawned && ezekiel.IsCasting;
-        }
-    }
+    // Imunita vuci omraceni, uspani, haku... (drive Sindel behem Ezechiele; ted ji nema nikdo - omraceni ultimatku prerusi).
+    public bool Unstoppable => false;
 
     public void ServerSpeedBoost(float seconds, float factor)
     {
@@ -171,7 +173,7 @@ public class FirstPersonController : NetworkBehaviour
     float mantleTimeLeft;
     Vector3[] grappleMantlePath;
     int grappleMantleWaypoint;
-    public bool ThirdPerson => AbilityActive || RushActive;
+    public bool ThirdPerson => AbilityActive || RushActive || ThirdPersonView;
     public bool IsDead => health != null && health.currentHealth.Value <= 0f;
     public bool MatchOver => MatchManager.Instance != null && MatchManager.Instance.IsOver;
     public bool InLobby => MatchManager.Instance != null && MatchManager.Instance.IsLobby;
@@ -501,11 +503,34 @@ public class FirstPersonController : NetworkBehaviour
         playerCamera.nearClipPlane = 0.03f;
     }
 
+    // Vsechny postavy na tomto pocitaci - kvuli kolizim mrtvych tel.
+    static readonly System.Collections.Generic.List<FirstPersonController> allControllers = new System.Collections.Generic.List<FirstPersonController>();
+    bool corpseState;
+    bool corpseInit;
+
+    public static System.Collections.Generic.IReadOnlyList<FirstPersonController> All => allControllers;
+
+    void OnEnable() { if (!allControllers.Contains(this)) allControllers.Add(this); corpseInit = false; }
+    void OnDisable() => allControllers.Remove(this);
+
+    void UpdateCorpseCollisions()
+    {
+        if (controller == null) return;
+        bool dead = IsDead;
+        if (corpseInit && dead == corpseState) return;
+        corpseInit = true;
+        corpseState = dead;
+        foreach (var other in allControllers)
+        {
+            if (other == null || other == this || other.controller == null) continue;
+            Physics.IgnoreCollision(controller, other.controller, dead || other.IsDead);
+        }
+    }
+
     void Update()
     {
-        // mrtve telo nebrani zivym v ceste (ostatni kapsle jim projdou)
-        if (controller != null && controller.detectCollisions == IsDead)
-            controller.detectCollisions = !IsDead;
+        // mrtve telo nebrani zivym v ceste (kolize mezi kapslemi se vypne, dokud je jeden z dvojice mrtvy)
+        UpdateCorpseCollisions();
 
         if (!IsOwner) return;
 

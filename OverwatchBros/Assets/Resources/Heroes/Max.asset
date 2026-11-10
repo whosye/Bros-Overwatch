@@ -35,7 +35,7 @@ MonoBehaviour:
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 6356481806310631466, guid: b8ceb05c85416664d8ede2cd801e9037, type: 3}
   tintCharacter: 0
-  animations: {fileID: 0}
+  animations: {fileID: 11400000, guid: d4bb1bbd52bad4149812cd03c8eaa98b, type: 2}
   sleeveColor: {r: 0.17, g: 0.16, b: 0.16, a: 1}
   skinColor: {r: 0.85, g: 0.65, b: 0.55, a: 1}
   spawnLines:

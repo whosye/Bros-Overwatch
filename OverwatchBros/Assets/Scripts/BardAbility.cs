@@ -265,6 +265,9 @@ public class BardAbility : NetworkBehaviour
     readonly List<Health> danceShielded = new List<Health>();
 
     bool Dancing => danceUntil > Time.time && health != null && health.currentHealth.Value > 0f;
+    // (server) Mosino tanci - spoluhraci v okruhu davaji dvojnasobne poskozeni; pro boty (drzet se dal)
+    public bool IsDancing => Dancing;
+    public float DanceRadius => concert != null ? concert.radius : 0f;
 
     // Nasobek poskozeni utocnika od tancicich Mosinu (spoluhrac v okruhu tance). Vola server (Combat.DamagePlayer).
     public static float DamageScaleFor(GameObject attacker)
@@ -317,6 +320,8 @@ public class BardAbility : NetworkBehaviour
     {
         var visual = GetComponent<CharacterVisual>();
         if (visual != null) visual.StopUltimate();
+        var music = GetComponent<BardAuraMusic>();
+        if (music != null) music.StopDance();
         fpc.SetCrouchedHitbox(false);
     }
 
@@ -477,7 +482,7 @@ public class BardAbility : NetworkBehaviour
         foreach (var target in Allies())
         {
             if (target.gameObject == gameObject)
-                target.Heal(BeatHeal * SelfHealScale);
+                target.Heal(BeatHeal * SelfHealScale * Combat.HealingScale(gameObject));
             else
                 Combat.HealPlayer(gameObject, target, BeatHeal);
         }
@@ -618,7 +623,7 @@ public class BardAbility : NetworkBehaviour
         foreach (var target in Allies())
         {
             if (target.gameObject == gameObject)
-                target.Heal(amount * SelfHealScale);
+                target.Heal(amount * SelfHealScale * Combat.HealingScale(gameObject));
             else
                 Combat.HealPlayer(gameObject, target, amount);
         }
@@ -742,6 +747,8 @@ public class BardAbility : NetworkBehaviour
         // Mosino tancuje (animace ultimatky pres cele telo, vidi ji vsichni)
         var visual = GetComponent<CharacterVisual>();
         if (visual != null) visual.PlayUltimate(danceSeconds);
+        var music = GetComponent<BardAuraMusic>();
+        if (music != null) music.PlayDance(danceSeconds);
         fpc.SetCrouchedHitbox(true);   // pri tanci je u zeme - zasahova kapsle jako v drepu (u vsech hracu)
 
         Fx.Explosion(position + Vector3.up * 0.2f, SlamRadius * 0.4f);
@@ -813,12 +820,46 @@ public class BardAbility : NetworkBehaviour
 // Hudba z Barda podle zapnute aury: lecivy rytmus (Resources/Audio/bard_heal) a zrychlujici (Resources/Audio/bard_speed).
 // On sam ji slysi vystredene; ostatni (spoluhraci i nepratele) jen v dosahu jeho aury (prostorove, k okraji zeslabne).
 // Pri prepnuti se skladby plynule prolnou; po smrti, mimo zapas a v POTG se ztisi (a pak kazda pokracuje, kde skoncila).
+// Behem tance (Q) hraje od zacatku tanecni pisnicka (Resources/Audio/bard_dance), aura se zatim ztisi.
 public class BardAuraMusic : MonoBehaviour
 {
     BardAbility bard;
     Health health;
-    AudioSource heal, speed;
-    static AudioClip healClip, speedClip;
+    AudioSource heal, speed, dance;
+    static AudioClip healClip, speedClip, danceClip;
+    float danceUntil = -1f;
+    const float DanceRange = 30f;   // pisnicku tance slyset dal nez auru
+
+    // Tanec zacal (vsichni klienti, ConcertClientRpc): pisnicka od zacatku.
+    public void PlayDance(float seconds)
+    {
+        danceUntil = Time.time + seconds;
+        if (danceClip == null) danceClip = Resources.Load<AudioClip>("Audio/bard_dance");
+        if (dance == null && danceClip != null)
+        {
+            var go = new GameObject("BardDanceMusic");
+            go.transform.SetParent(transform, false);
+            go.transform.localPosition = new Vector3(0f, 1.4f, 0f);
+            dance = go.AddComponent<AudioSource>();
+            dance.clip = danceClip;
+            dance.loop = true;
+            dance.playOnAwake = false;
+            dance.rolloffMode = AudioRolloffMode.Linear;
+            dance.dopplerLevel = 0f;
+            dance.minDistance = DanceRange * 0.4f;
+            dance.maxDistance = DanceRange;
+        }
+        if (dance == null) return;
+        dance.volume = 0.12f;
+        dance.time = 0f;
+        dance.Play();
+    }
+
+    // Tanec skoncil driv (preruseni, smrt).
+    public void StopDance()
+    {
+        danceUntil = -1f;
+    }
 
     void Awake()
     {
@@ -832,14 +873,26 @@ public class BardAuraMusic : MonoBehaviour
         bool active = bard != null && bard.enabled && bard.IsSpawned
             && health != null && health.currentHealth.Value > 0f
             && match != null && !match.IsLobby && !match.IsOver && !ReplayPlayer.Active;
-        bool speedOn = active && bard.SpeedMode;
-        bool healOn = active && !bard.SpeedMode;
+        bool dancing = active && danceUntil > Time.time;
+        bool speedOn = active && !dancing && bard.SpeedMode;
+        bool healOn = active && !dancing && !bard.SpeedMode;
+        UpdateDance(dancing);
 
         if (healClip == null) healClip = Resources.Load<AudioClip>("Audio/bard_heal");
         if (speedClip == null) speedClip = Resources.Load<AudioClip>("Audio/bard_speed");
         // (ostatni ji slysi jen v dosahu aury - hlida rolloff do jejiho okraje)
         Fade(ref heal, healClip, healOn, 0.08f);
         Fade(ref speed, speedClip, speedOn, 0.06f);   // (nahravka je o 2,6 dB hlasitejsi nez leciva)
+    }
+
+    void UpdateDance(bool on)
+    {
+        if (dance == null) return;
+        dance.spatialBlend = ProceduralSfx.IsLocalPlayer(bard) ? 0f : 1f;
+        if (on || !dance.isPlaying) return;
+        // konec tance: rychle zeslabne a zastavi se
+        dance.volume = Mathf.MoveTowards(dance.volume, 0f, Time.deltaTime * 0.4f);
+        if (dance.volume <= 0.001f) dance.Stop();
     }
 
     void Fade(ref AudioSource source, AudioClip clip, bool on, float volume)

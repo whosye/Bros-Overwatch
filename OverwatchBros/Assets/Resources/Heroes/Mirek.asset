@@ -15,6 +15,8 @@ MonoBehaviour:
   heroName: Mirek
   color: {r: 0.6, g: 0.45, b: 0.9, a: 1}
   maxHealth: 100
+  healingScale: 1
+  scopeAimPose: 0
   weapon: {fileID: 11400000, guid: e1024bdb9bec1d6469758999e3c4fbbf, type: 2}
   abilityKind: 13
   ability: {fileID: 11400000, guid: c6b229434130d8345beedf8b5864bb28, type: 2}
@@ -33,10 +35,11 @@ MonoBehaviour:
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
-  characterPrefab: {fileID: 7679878268085281538, guid: b3d65e1ff9363624c8f932e892b617aa, type: 3}
-  tintCharacter: 1
-  sleeveColor: {r: 0.25, g: 0.27, b: 0.32, a: 1}
-  skinColor: {r: 0.87, g: 0.67, b: 0.55, a: 1}
+  characterPrefab: {fileID: 2586593088354091029, guid: 0cc33c2ed00a1c94cbba8b317e596345, type: 3}
+  tintCharacter: 0
+  animations: {fileID: 0}
+  sleeveColor: {r: 0.9, g: 0.9, b: 0.88, a: 1}
+  skinColor: {r: 0.82, g: 0.62, b: 0.52, a: 1}
   spawnLines:
   - {fileID: 8300000, guid: 2431047247030134b99f5eb3d94be8c8, type: 3}
   killLines:
@@ -58,3 +61,12 @@ MonoBehaviour:
   snareLines:
   - {fileID: 8300000, guid: cd26453a1b1ebf243816fa909159f08c, type: 3}
   - {fileID: 8300000, guid: 1917394b2df5cb542854c34d95d396dc, type: 3}
+  attackLines: []
+  healLines: []
+  headshotLines: []
+  missLines: []
+  scopeLines: []
+  ultVoiceEcho: 0
+  ultVoiceMaxSeconds: 0
+  ultVoiceSpeed: 1
+  ultVoiceNormalTail: 0
