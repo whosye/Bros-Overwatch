@@ -13,6 +13,35 @@ public class NanoBoostAbility : NetworkBehaviour
     public const float DamageMultiplier = 1.5f;
     public const float DamageTakenMultiplier = 0.5f;
 
+    // Do kdy ma posileni mistni hrac (pro ikonu buffu v BuffUI); konci i driv, kdyz posileni zmizi (smrt).
+    static float localBoostUntil;
+    public static float LocalBoostUntil
+    {
+        get
+        {
+            if (Time.time >= localBoostUntil) return 0f;
+            var network = NetworkManager.Singleton;
+            var player = network != null && network.LocalClient != null ? network.LocalClient.PlayerObject : null;
+            var local = player != null ? player.GetComponent<PlayerHero>() : null;
+            // (kratka rezerva - stav posileni prijde po siti o chvili pozdeji nez tahle zprava)
+            if (local == null || (!local.IsBoosted && Time.time > localBoostStart + 1f)) return 0f;
+            return localBoostUntil;
+        }
+    }
+    static float localBoostStart;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatics() => localBoostUntil = localBoostStart = 0f;
+
+    // Obrazek buffu = ikona Davidovy ultimatky.
+    public static Texture BuffIcon()
+    {
+        foreach (var hero in HeroRegistry.All)
+            foreach (var a in new[] { hero.ability, hero.secondaryAbility, hero.altAbility, hero.rmbAbility, hero.blockAbility })
+                if (a != null && a.name == "NanoBoost_Data" && a.icon != null) return a.icon;
+        return null;
+    }
+
     FirstPersonController fpc;
     PlayerHero hero;
     float nextUseTime;
@@ -114,7 +143,7 @@ public class NanoBoostAbility : NetworkBehaviour
         if (recorder != null)
             recorder.ServerNoteUltimate();
 
-        BoostedClientRpc(target.transform.position, target.NetworkObjectId);
+        BoostedClientRpc(target.transform.position, target.NetworkObjectId, ability.duration);
     }
 
     [ClientRpc]
@@ -132,12 +161,20 @@ public class NanoBoostAbility : NetworkBehaviour
     }
 
     [ClientRpc]
-    void BoostedClientRpc(Vector3 position, ulong targetId)
+    void BoostedClientRpc(Vector3 position, ulong targetId, float seconds)
     {
         // z posileneho hrace hraje hudba (Resources/Audio/monster_boost), dokud posileni trva
         var network = NetworkManager.Singleton;
         if (network != null && network.SpawnManager != null && network.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var target))
+        {
             MonsterBoostMusic.Play(target.GetComponent<PlayerHero>());
+            // posileny jsem ja: ikona buffu s odpoctem
+            if (target.IsOwner && !BotBrain.IsBot(target.gameObject))
+            {
+                localBoostStart = Time.time;
+                localBoostUntil = Time.time + seconds;
+            }
+        }
 
         // Ultimatka je slyset pres celou mapu.
         Fx.PlayGlobal(ProceduralSfx.UltCharge, 0.5f);

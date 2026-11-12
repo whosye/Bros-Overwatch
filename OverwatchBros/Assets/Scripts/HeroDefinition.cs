@@ -121,6 +121,8 @@ public class HeroDefinition : ScriptableObject
     public AudioClip[] missLines;
     [Tooltip("Kdyz priblizi zamerovacem - prave tlacitko (obcas).")]
     public AudioClip[] scopeLines;
+    [Tooltip("Kdyz ho vyleci spoluhrac (obcas, nejvys jednou za nekolik sekund).")]
+    public AudioClip[] healedLines;
     [Tooltip("Hlaska k ultimatce (Q) dostane ozvenu. Vypnout, kdyz ji uz ma nahravka sama (Mirek, Sindel).")]
     public bool ultVoiceEcho = true;
     [Tooltip("Hlaska k ultimatce se prehraje jen poslednich N sekund (0 = cela). U Sindela urcuje i delku ultimatky - uder prijde na konci hlasky.")]

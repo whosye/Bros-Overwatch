@@ -75,11 +75,11 @@ public partial class MatchManager
         {
             case PickupKind.Health:
                 if (health.currentHealth.Value >= health.maxHealth - 0.5f || health.HealBlocked) return false;
-                health.Heal(spot.healAmount > 0f ? spot.healAmount : 75f);
+                Combat.HealedLine(health, health.Heal(spot.healAmount > 0f ? spot.healAmount : 75f));
                 return true;
             case PickupKind.BigHealth:
                 if (health.currentHealth.Value >= health.maxHealth - 0.5f || health.HealBlocked) return false;
-                health.Heal(health.maxHealth);
+                Combat.HealedLine(health, health.Heal(health.maxHealth));
                 return true;
             case PickupKind.Speed:
                 var movement = hero.GetComponent<FirstPersonController>();
@@ -93,7 +93,7 @@ public partial class MatchManager
                 return true;
             case PickupKind.Tramal:
                 // plne zdravi (sebere se i pri plnem zdravi - jde o buff) a kratce mensi poskozeni
-                if (!health.HealBlocked) health.Heal(health.maxHealth);
+                if (!health.HealBlocked) Combat.HealedLine(health, health.Heal(health.maxHealth));
                 health.ServerDamageReduction(PickupBuffs.TramalDamageTaken, PickupBuffs.TramalSeconds);
                 return true;
             case PickupKind.Carburetor:
@@ -114,7 +114,7 @@ public partial class MatchManager
                 health.ServerGrantShield(PickupBuffs.KangarooShield, PickupBuffs.KangarooShieldMax);
                 return true;
             case PickupKind.Lasagne:
-                if (!health.HealBlocked) health.Heal(health.maxHealth);
+                if (!health.HealBlocked) Combat.HealedLine(health, health.Heal(health.maxHealth));
                 health.ServerHoldShield(PickupBuffs.LasagneShield, PickupBuffs.LasagneSeconds);
                 return true;
             default:

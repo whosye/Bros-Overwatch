@@ -15,6 +15,8 @@ MonoBehaviour:
   heroName: Viktor
   color: {r: 0.45, g: 0.65, b: 0.95, a: 1}
   maxHealth: 100
+  healingScale: 1
+  scopeAimPose: 0
   weapon: {fileID: 11400000, guid: c0a64531a1b9ffd4bbe5f837139b5fdf, type: 2}
   abilityKind: 9
   ability: {fileID: 11400000, guid: 0959ed83f75436a4b830c2dc9916b19b, type: 2}
@@ -59,3 +61,10 @@ MonoBehaviour:
   headshotLines: []
   missLines: []
   scopeLines: []
+  healedLines:
+  - {fileID: 8300000, guid: ebf4990c2cd074844b35f8e881587d3c, type: 3}
+  - {fileID: 8300000, guid: a2a27644443df0d459880a686da5e41f, type: 3}
+  ultVoiceEcho: 1
+  ultVoiceMaxSeconds: 0
+  ultVoiceSpeed: 1
+  ultVoiceNormalTail: 0

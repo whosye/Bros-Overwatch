@@ -12,6 +12,7 @@ public class BuffUI
         public string key, shortName;
         public Color color;
         public System.Func<float> until;   // cas konce buffu (Time.time)
+        public System.Func<Texture> texture;   // obrazek odjinud (ikona schopnosti); jinak Resources/Icons/buff_<key>
         public GameObject root;
         public RawImage icon;
         public Image frame;
@@ -52,6 +53,8 @@ public class BuffUI
                 until = () => ReplayPlayer.Active ? 0f : PickupBuffs.LasagneUntil },
             new Buff { key = "bila_latka", shortName = "BL", color = new Color(0.92f, 0.95f, 1f),
                 until = () => ReplayPlayer.Active ? 0f : PickupBuffs.PowderUntil },
+            new Buff { key = "monster", shortName = "MO", color = NanoAura.AuraColor,
+                until = () => ReplayPlayer.Active ? 0f : NanoBoostAbility.LocalBoostUntil, texture = NanoBoostAbility.BuffIcon },
         };
         foreach (var b in buffs) Create(b);
     }
@@ -71,7 +74,8 @@ public class BuffUI
         outline.effectColor = b.color;
         outline.effectDistance = new Vector2(2f, -2f);
 
-        var texture = Resources.Load<Texture2D>("Icons/buff_" + b.key);
+        Texture texture = b.texture != null ? b.texture() : null;
+        if (texture == null) texture = Resources.Load<Texture2D>("Icons/buff_" + b.key);
         if (texture != null)
         {
             var iconObject = new GameObject("Ikona", typeof(RectTransform), typeof(RawImage));

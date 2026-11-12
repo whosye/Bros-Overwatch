@@ -116,7 +116,9 @@ public class HealFieldAbility : NetworkBehaviour
             if (target.gameObject != gameObject && !Combat.SameTeam(gameObject, target.gameObject)) continue;
 
             float before = target.currentHealth.Value;
-            target.Heal(ability.power * TickInterval);
+            float healedNow = target.Heal(ability.power * TickInterval);
+            if (target.gameObject != gameObject)
+                Combat.HealedLine(target, healedNow, 0.5f);   // (pole leci po malych davkach)
 
             var recorder = GetComponent<PotgRecorder>();
             if (recorder != null)

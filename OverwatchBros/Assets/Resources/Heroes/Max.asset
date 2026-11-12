@@ -15,6 +15,8 @@ MonoBehaviour:
   heroName: Max
   color: {r: 0.55, g: 0.25, b: 0.85, a: 1}
   maxHealth: 150
+  healingScale: 1
+  scopeAimPose: 0
   weapon: {fileID: 11400000, guid: 6c2f48df1ebe5d044b61ed05523d914a, type: 2}
   abilityKind: 33
   ability: {fileID: 11400000, guid: 5b90656f1ad24c54f90ca222875b81d7, type: 2}
@@ -40,31 +42,47 @@ MonoBehaviour:
   skinColor: {r: 0.85, g: 0.65, b: 0.55, a: 1}
   spawnLines:
   - {fileID: 8300000, guid: eeab4db782a13a642b214b30141d19dd, type: 3}
+  - {fileID: 8300000, guid: ce1b7297b6a565f4fb96c08d95935e09, type: 3}
   killLines:
   - {fileID: 8300000, guid: d025304f8d3342d43acb6af830355d9f, type: 3}
   - {fileID: 8300000, guid: ca9a06f08820e3c4293b51f80d7788c6, type: 3}
-  - {fileID: 8300000, guid: c6129ca2fce5ebd48a430c55163a2339, type: 3}
-  - {fileID: 8300000, guid: dda596356041d924b930512d86ed0b47, type: 3}
+  - {fileID: 8300000, guid: 8339145fb327e1f478b711f805da00cd, type: 3}
+  - {fileID: 8300000, guid: eea69335747a40c44bbb0071c9e1f208, type: 3}
+  - {fileID: 8300000, guid: 57e940e1904d84845a1189bf10bbae02, type: 3}
   deathLines:
   - {fileID: 8300000, guid: 635a8623db7a1bd4e9c202c8bc4fe956, type: 3}
+  - {fileID: 8300000, guid: e2eb90964ae09c44883d643765ccec20, type: 3}
   hurtLines:
   - {fileID: 8300000, guid: 6fb90c850aafec841ad232ed43cddd4d, type: 3}
   - {fileID: 8300000, guid: e4a0f0f039a5af74485aa3a84638acaa, type: 3}
+  - {fileID: 8300000, guid: 9d94171e6395ba54dbaefd367fe42068, type: 3}
+  - {fileID: 8300000, guid: d84f950d4f4021a4e89b5fcd8ac0a561, type: 3}
+  - {fileID: 8300000, guid: 3a2aee18d9ca2984eb1e89ce09246e36, type: 3}
   idleLines:
   - {fileID: 8300000, guid: c0e1a4f94d454324e801c178292f0830, type: 3}
   - {fileID: 8300000, guid: c66904cdbe094b04f83920d499eecdfa, type: 3}
+  - {fileID: 8300000, guid: ddb4828324147a343a21be858eefece0, type: 3}
   - {fileID: 8300000, guid: 92174236c41dd9945833dec89f1ca32b, type: 3}
   - {fileID: 8300000, guid: 7e3fb5db6b991aa43857189163815e53, type: 3}
+  - {fileID: 8300000, guid: d50c65fd5ab93c84db9efff15ad96064, type: 3}
   - {fileID: 8300000, guid: aeedd28bd137bde4ca0d6e2643c790d1, type: 3}
   - {fileID: 8300000, guid: 1bae92a4b71c2f04795a9715236a9b1a, type: 3}
   - {fileID: 8300000, guid: 1121257d1d815024d87e64142718c9cb, type: 3}
   - {fileID: 8300000, guid: 709ee089397d61145985c84ba4fd4e18, type: 3}
   - {fileID: 8300000, guid: e87ab37cba0cc994e8b0261159baf18a, type: 3}
+  - {fileID: 8300000, guid: dda596356041d924b930512d86ed0b47, type: 3}
   snareLines:
   - {fileID: 8300000, guid: 815deb9529f48b34f9968439976fc66a, type: 3}
+  - {fileID: 8300000, guid: 2f10108a1285939489775bfb7cfd793c, type: 3}
   attackLines:
   - {fileID: 8300000, guid: 4e05ea0fe82cc4149adb529473ee854d, type: 3}
   healLines: []
   headshotLines: []
   missLines: []
   scopeLines: []
+  healedLines:
+  - {fileID: 8300000, guid: 73b2f182a9800874bb68f44168dd0c10, type: 3}
+  ultVoiceEcho: 1
+  ultVoiceMaxSeconds: 0
+  ultVoiceSpeed: 1
+  ultVoiceNormalTail: 0

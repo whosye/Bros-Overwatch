@@ -129,8 +129,18 @@ public static class Combat
                 healerHero.ServerAddUltCharge(healed);
                 healerHero.ServerAddHealingStat(healed);
             }
+            HealedLine(target, healed);
         }
         return healed;
+    }
+
+    // Vyleceny obcas podekuje / okomentuje to (hlaska "healed") - leceni od spoluhrace i z balicku (lekarnicka, Tramal...).
+    public static void HealedLine(Health target, float healed, float minAmount = 5f)
+    {
+        if (target == null || healed < minAmount || healed <= 0f) return;
+        var targetHero = target.GetComponent<PlayerHero>();
+        if (targetHero != null)
+            targetHero.SayOccasionally(VoiceKind.Healed, 0.5f, 12f, 25f);
     }
 
     // Plosny vybuch (jen server): damage klesa od stredu (100 %) po okraj (edgeFactor), neprochazi zdmi, nevraci vlastni tym.

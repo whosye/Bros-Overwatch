@@ -14,7 +14,8 @@ public enum VoiceKind
     Heal,      // vylecil spoluhrace zbrani (obcas)
     Headshot,  // trefil nepritele zbrani do hlavy (obcas)
     Miss,      // schopnost minula (David: uspavaci sipka nikoho netrefila)
-    Scope      // priblizil zamerovacem (obcas)
+    Scope,     // priblizil zamerovacem (obcas)
+    Healed     // nekdo ho vylecil (obcas)
 }
 
 // Hlasove hlasky hrdiny. Nahravky se berou z HeroDefinition (spawn / kill / death / hurt / idle) a z AbilityDefinition
@@ -138,6 +139,7 @@ public class HeroVoice : MonoBehaviour
             case VoiceKind.Spawn: return 2;
             case VoiceKind.Attack: return 2;
             case VoiceKind.Heal: return 2;
+            case VoiceKind.Healed: return 2;
             case VoiceKind.Scope: return 1;
             case VoiceKind.Hurt: return 1;
             default: return 0;
@@ -162,6 +164,7 @@ public class HeroVoice : MonoBehaviour
             case VoiceKind.Headshot: return hero.headshotLines;
             case VoiceKind.Miss: return hero.missLines;
             case VoiceKind.Scope: return hero.scopeLines;
+            case VoiceKind.Healed: return hero.healedLines;
             case VoiceKind.Ability:
                 var ability = AbilityInSlot(hero, slot);
                 return ability != null ? ability.voiceLines : null;
