@@ -1496,6 +1496,7 @@ public static class DecorTools
         fire.fireLight = light;
         fire.baseIntensity = light.intensity;
         fire.size = Mathf.Max(0.4f, tl);
+        fire.fireboxDepth = tw;
 
         // kolize = vana + rost (plameny a jiskry prochazi)
         var box = root.gameObject.AddComponent<BoxCollider>();

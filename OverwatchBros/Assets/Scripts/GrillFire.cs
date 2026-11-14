@@ -11,6 +11,7 @@ public class GrillFire : MonoBehaviour
     public Light fireLight;
     public float baseIntensity = 2.2f;
     public float size = 1f;   // sirka ohniste v metrech - podle ni jiskry a kour
+    public float fireboxDepth;   // lokalni hloubka vany; 0 zachova kruhovou emisi
 
     readonly List<(Transform t, Vector3 pos, Vector3 scale, Quaternion rot, float seed)> flameParts = new();
     readonly List<(Renderer r, float seed)> emberParts = new();
@@ -78,6 +79,7 @@ public class GrillFire : MonoBehaviour
         shape.shapeType = ParticleSystemShapeType.Cone;
         shape.angle = 18f;
         shape.radius = 0.3f * size;
+        shape.scale = EmissionScale();
         var noise = ps.noise;
         noise.enabled = true;
         noise.strength = 0.35f;
@@ -101,9 +103,10 @@ public class GrillFire : MonoBehaviour
         var emission = ps.emission;
         emission.rateOverTime = 4f;
         var shape = ps.shape;
-        shape.shapeType = ParticleSystemShapeType.Circle;
+        shape.shapeType = ParticleSystemShapeType.Cone;
+        shape.angle = 8f;
         shape.radius = 0.2f * size;
-        shape.rotation = new Vector3(-90f, 0f, 0f);
+        shape.scale = EmissionScale();
         var velocity = ps.velocityOverLifetime;
         velocity.enabled = true;
         velocity.x = new ParticleSystem.MinMaxCurve(-0.1f, 0.15f);
@@ -125,12 +128,19 @@ public class GrillFire : MonoBehaviour
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         var main = ps.main;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.scalingMode = ParticleSystemScalingMode.Shape;
         main.playOnAwake = false;
         main.prewarm = true;
         main.loop = true;
         main.duration = 5f;
         go.GetComponent<ParticleSystemRenderer>().material = Fx.ParticleMaterial;
         return go.GetComponent<ParticleSystem>();
+    }
+
+    Vector3 EmissionScale()
+    {
+        // Po otoceni systemu vzhuru odpovida jeho osa Y hloubce vany.
+        return fireboxDepth > 0f && size > 0f ? new Vector3(1f, fireboxDepth / size, 1f) : Vector3.one;
     }
 
     static void Fade(ParticleSystem ps, Color start, Color end, float alpha)
