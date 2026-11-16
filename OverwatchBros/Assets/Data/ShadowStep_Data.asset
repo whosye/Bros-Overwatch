@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ShadowStep_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "St\xEDnov\xE1 forma"
+  description: "Na p\u00e1r sekund se stane\u0161 st\u00ednem: neviditeln\u00fd, nezraniteln\u00fd a projde\u0161 zdmi. Skon\u010d\u00ed \u00fatokem, dal\u0161\u00edm E nebo \u010dasem."
   icon: {fileID: 2800000, guid: b66fa93022a0fd941ab979bb7b8049e0, type: 3}
   cooldown: 9
   ultCost: 0

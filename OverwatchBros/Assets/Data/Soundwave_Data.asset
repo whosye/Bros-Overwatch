@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Soundwave_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Basov\xFD \xFAder"
+  description: "Tlakov\u00e1 vlna p\u0159ed tebe: nep\u0159\u00e1tele odhod\u00ed a zran\u00ed. Kdy\u017e m\u00ed\u0159\u00ed\u0161 pod sebe, vyst\u0159el\u00ed t\u011b do vzduchu."
   icon: {fileID: 2800000, guid: 32265fedce7c2b74fa88082789099f86, type: 3}
   cooldown: 5
   ultCost: 0

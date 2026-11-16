@@ -127,7 +127,10 @@ public class TopBarUI
                 case MatchManager.RoundSetup: phase.text = "PŘÍPRAVA"; break;
                 case MatchManager.RoundOvertime: phase.text = "PRODLOUŽENÍ"; break;
                 case MatchManager.RoundIntermission: phase.text = "VÝMĚNA STRAN"; break;
-                default: phase.text = $"{match.round.Value}. KOLO"; break;
+                default:
+                    phase.text = match.roundKind.Value == MatchManager.KindSolo ? "ROZSTŘEL"
+                        : match.round.Value > 2 ? $"{match.round.Value}. KOLO · BANKA" : $"{match.round.Value}. KOLO";
+                    break;
             }
             clock.text = overtime ? "0:00" : Clock(Mathf.Max(0, seconds));
             bool hurry = roundPhase == MatchManager.RoundAttack && seconds <= 30;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Bard
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: "Mo\u0161ino"
+  description: "Podpora s aurou: kolem sebe po\u0159\u00e1d l\u00e9\u010d\u00ed, nebo zrychluje spoluhr\u00e1\u010de. Um\u00ed dvojit\u00fd skok."
   color: {r: 0.6, g: 0.4, b: 0.95, a: 1}
   maxHealth: 100
   healingScale: 0.75

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ayran
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Pova
+  description: "Rv\u00e1\u010d na bl\u00edzko. Rychl\u00fd, hodn\u011b vydr\u017e\u00ed, z po\u0161kozen\u00ed se l\u00e9\u010d\u00ed a za zabit\u00ed se mu zkracuj\u00ed cooldowny."
   color: {r: 0.95, g: 0.55, b: 0.2, a: 1}
   maxHealth: 180
   weapon: {fileID: 11400000, guid: 609db72800e8358488080403e6361bd3, type: 2}
@@ -29,7 +30,7 @@ MonoBehaviour:
   ledgeClimb: 0
   moveSpeed: 1.15
   lifesteal: 0.15
-  takedownCooldownCut: 0.5
+  takedownCooldownCut: 0.25
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5

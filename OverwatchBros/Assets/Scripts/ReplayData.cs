@@ -502,3 +502,6 @@ public class ReplayClip
 
 // Znacka na objektech, ktere zaznam nema obecne zachytavat (prehravaji se jako udalosti, nebo jsou soucasti mapy).
 public class ReplayIgnore : MonoBehaviour { }
+
+// Dulezity objekt (Honzuv balvan...): do zaznamu se vezme vzdy, i kdyz je limit sledovanych objektu plny.
+public class ReplayTrack : MonoBehaviour { }

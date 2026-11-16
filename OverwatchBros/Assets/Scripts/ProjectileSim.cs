@@ -248,7 +248,21 @@ public class ProjectileSim : MonoBehaviour
         }
 
         bool embedArrow = weapon.IsCharged && BulletHoleDecals.CanMark(collider);
+        if (health == null) LogInvisibleHit(collider, point);
         Finish(point, KindHit, normal, velocity.normalized, embedArrow);
+    }
+
+    // Hledani neviditelnych kolizi: strela se zarazila o collider bez viditelneho modelu -> do Console (a Player.log)
+    // cesta k objektu. Staci strilet do mista, kde se strely zastavuji ve vzduchu.
+    static void LogInvisibleHit(Collider collider, Vector3 point)
+    {
+        if (collider == null) return;
+        foreach (var r in collider.GetComponentsInChildren<Renderer>())
+            if (r.enabled && r.gameObject.activeInHierarchy && r.bounds.SqrDistance(point) < 0.09f) return;   // trefil viditelny model
+        string path = collider.name;
+        for (var t = collider.transform.parent; t != null; t = t.parent) path = t.name + "/" + path;
+        Debug.LogWarning($"[Kolize] Strela se zastavila o NEVIDITELNOU kolizi: {path} ({collider.GetType().Name}, "
+            + $"obal {collider.bounds.center} / {collider.bounds.size}, zasah {point})", collider.gameObject);
     }
 
     void Finish(Vector3 position, int kind, Vector3 normal = default, Vector3 direction = default, bool embedArrow = false)

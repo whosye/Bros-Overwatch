@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Amp_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Zes\xEDlen\xED"
+  description: "Na p\u00e1r sekund v\u00fdrazn\u011b zes\u00edl\u00ed aktu\u00e1ln\u00ed auru (l\u00e9\u010den\u00ed nebo zrychlen\u00ed)."
   icon: {fileID: 2800000, guid: f9855940e007d2b458c3b0751a809309, type: 3}
   cooldown: 12
   ultCost: 0

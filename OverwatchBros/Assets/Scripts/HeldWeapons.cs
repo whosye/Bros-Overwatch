@@ -531,6 +531,51 @@ public class HeldWeapons : MonoBehaviour
             visual.PlayAttack(true, ThrowDuration);
     }
 
+    // Povuv hak (sekera na retezu): ruka se sekerou se na 'windup' s trhne dozadu a sekera se zatrese, pak vymrsti dopredu.
+    float hookWindupStart = -100f, hookWindup = 0.15f;
+    const float HookSnap = 0.12f;
+    bool hookThrown;
+
+    public void PlayHookWindup(float windup)
+    {
+        hookWindupStart = Time.time;
+        hookWindup = Mathf.Max(0.05f, windup);
+        if (visual != null && visual.HasModel)
+            visual.PlayAttack(true, windup + 0.25f);
+    }
+
+    // Zatimco sekera leti na retezu, v ruce neni (u kamery i na postave).
+    public void SetHookThrown(bool thrown)
+    {
+        hookThrown = thrown;
+        ApplyHookThrown();
+    }
+
+    void ApplyHookThrown()
+    {
+        foreach (var list in new[] { hands, bodyHands })
+        {
+            if (list == null || list.Length == 0) continue;
+            var hand = list[list.Length - 1];
+            if (hand == null || hand.holder == null) continue;
+            foreach (var r in hand.holder.GetComponentsInChildren<Renderer>(true))
+                r.enabled = !hookThrown;
+        }
+    }
+
+    // Odkud vychazi retez: ruka, ktera sekeru hazi (jak ji prave vidi tento klient), nebo null.
+    public Transform HookHand
+    {
+        get
+        {
+            if (root != null && root.activeInHierarchy && hands.Length > 0 && hands[hands.Length - 1].holder != null)
+                return hands[hands.Length - 1].holder;
+            if (bodyHands.Length > 0 && bodyHands[bodyHands.Length - 1].holder != null && bodyHands[bodyHands.Length - 1].holder.gameObject.activeInHierarchy)
+                return bodyHands[bodyHands.Length - 1].holder;
+            return null;
+        }
+    }
+
     void PlayBodyAttack(WeaponDefinition weapon)
     {
         // zbran obema rukama (strelba od pasu): postava pri vystrelu nezveda ruce, zbran zustava u boku
@@ -674,6 +719,26 @@ public class HeldWeapons : MonoBehaviour
                 float u = Mathf.Sin(Mathf.Clamp01(throwElapsed / ThrowDuration) * Mathf.PI);
                 position += new Vector3(0.10f * hand.side, -0.22f, -0.06f) * u;
                 euler += new Vector3(28f, 10f * hand.side, -18f * hand.side) * u;
+            }
+
+            float sinceHook = Time.time - hookWindupStart;
+            if (sinceHook >= 0f && sinceHook < hookWindup + HookSnap && hand == hands[hands.Length - 1])
+            {
+                Vector3 backPos = new Vector3(0.03f * hand.side, 0.08f, -0.22f), backRot = new Vector3(-38f, 0f, 10f * hand.side);
+                Vector3 outPos = new Vector3(-0.04f * hand.side, 0.02f, 0.20f), outRot = new Vector3(18f, 0f, 0f);
+                if (sinceHook < hookWindup)
+                {
+                    float u = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(sinceHook / (hookWindup * 0.6f)));
+                    float shake = Mathf.Sin(sinceHook * 95f) * 0.012f * u;
+                    position += backPos * u + new Vector3(shake, shake * 0.5f, 0f);
+                    euler += backRot * u + new Vector3(0f, 0f, shake * 300f);
+                }
+                else
+                {
+                    float u = Mathf.Clamp01((sinceHook - hookWindup) / HookSnap);
+                    position += Vector3.Lerp(Vector3.Lerp(backPos, outPos, Mathf.Min(1f, u * 3f)), Vector3.zero, Mathf.SmoothStep(0f, 1f, u));
+                    euler += Vector3.Lerp(Vector3.Lerp(backRot, outRot, Mathf.Min(1f, u * 3f)), Vector3.zero, Mathf.SmoothStep(0f, 1f, u));
+                }
             }
 
             // Priprava ultimatky: zbran se lehce zvedne a naklopi nahoru (luk se misto toho natahuje).
@@ -1163,6 +1228,7 @@ public class HeldWeapons : MonoBehaviour
                 visual.EvaluateIdlePose();
             }
         }
+        if (hookThrown) ApplyHookThrown();
     }
 
     void BuildArm(Hand hand, WeaponDefinition weapon, HeldModel model)

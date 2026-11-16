@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: HolyGrenade_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Svat\xFD gran\xE1t"
+  description: "Gran\u00e1t obloukem. O nep\u0159\u00edtele vybuchne hned, jinak chv\u00edli po dopadu. Nejsiln\u011bj\u0161\u00ed uprost\u0159ed, vlastn\u00ed t\u00fdm nezran\u00ed."
   icon: {fileID: 2800000, guid: 2b219c9936890d242a2dad5a6490a63d, type: 3}
   cooldown: 10
   ultCost: 0

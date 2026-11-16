@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Mirek
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Mirek
+  description: "Lukost\u0159elec. Dvojit\u00fd skok, vy\u0161plh\u00e1 se na hrany a odhaluje nep\u0159\u00e1tele p\u0159es zdi."
   color: {r: 0.6, g: 0.45, b: 0.9, a: 1}
   maxHealth: 100
   healingScale: 1

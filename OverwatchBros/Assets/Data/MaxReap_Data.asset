@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: MaxReap_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Rozpolcen\xED"
+  description: "V\u00fdpad ve sm\u011bru pohledu zakon\u010den\u00fd \u00faderem kosou - zran\u00ed a kr\u00e1tce omr\u00e1\u010d\u00ed nep\u0159\u00e1tele kolem. Ka\u017ed\u00fd zasa\u017een\u00fd zkr\u00e1t\u00ed cooldown o 1 s."
   icon: {fileID: 2800000, guid: 5e6aff7177046f74f9aeca50cfe0f9e4, type: 3}
   cooldown: 6
   ultCost: 0
-  power: 40
+  power: 35
   duration: 0.2
   radius: 3
   range: 6

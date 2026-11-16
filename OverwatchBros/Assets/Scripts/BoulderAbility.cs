@@ -435,6 +435,7 @@ public class BoulderAbility : NetworkBehaviour
             Destroy(boulder);
 
         boulder = new GameObject("Boulder");
+        boulder.AddComponent<ReplayTrack>();   // balvan musi byt v POTG vzdy (kamera ho sleduje)
         boulder.transform.position = at;
         rollAudio = CollectedWorldAudio.AddLoop(boulder.transform, "honza_ult.roll", 0f, 28f);
         lastPosition = at;

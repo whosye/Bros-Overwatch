@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SindelPistol_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: "Dev\xEDtka"
+  description: "P\u0159esn\u00e1 pistole. Ka\u017ed\u00fd t\u0159et\u00ed v\u00fdst\u0159el ze z\u00e1sobn\u00edku je pos\u00edlen\u00fd (zbra\u0148 zrudne) a d\u00e1 v\u00edc po\u0161kozen\u00ed."
   damage: 38
   fireRate: 2.4
   maxAmmo: 9

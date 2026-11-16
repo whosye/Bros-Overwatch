@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: RapidFire_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: Rychlopalba
+  description: "N\u011bkolik dal\u0161\u00edch \u0161\u00edp\u016f let\u00ed hned plnou silou bez natahov\u00e1n\u00ed - dr\u017e lev\u00e9 tla\u010d\u00edtko."
   icon: {fileID: 2800000, guid: bb9d1c235de10d949be6f3a60cc1196a, type: 3}
   cooldown: 10
   ultCost: 0

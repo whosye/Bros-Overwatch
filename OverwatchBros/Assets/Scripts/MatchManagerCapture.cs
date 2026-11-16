@@ -11,8 +11,14 @@ using UnityEngine;
 //    kdyz na bode nikdo z utocniku neni, pomalu klesa k posledni tretine. Vic utocniku zabira rychleji.
 //  - Po zabrani bodu: utocnici dostanou cas navic, oba tymy se presunou k dalsimu bodu, ten se chvili odemyka.
 //  - Dojde-li cas a utocnici stoji na bode, je prodlouzeni - hraje se dal, dokud z bodu neodejdou.
-// Vyhodnoceni po obou kolech: vic zabranych bodu; pri rovnosti rychlejsi cas (oba body) nebo vetsi postup na dalsim bodu.
-// Druhe kolo skonci hned, jakmile je o vitezi rozhodnuto.
+// Vyhodnoceni jako v kompetitivnim Assaultu Overwatche (casova banka):
+//  - skore = vsechny dobyte body (scitaji se pres vsechna kola); vic bodu vyhrava
+//  - kdo dobude vsechny body, zbyly cas utoku si uklada do CASOVE BANKY (jinak banka 0)
+//  - rovnost a oba tymy maji v bance aspon MinBankSeconds: dalsi dvojice kol, kazdy utoci jen s casem z banky
+//    (zase od bodu A, za dobyti bodu se cas pricita jako obvykle)
+//  - rovnost a banku ma jen jeden tym: ten utoci sam; kdyz s casem z banky dobude aspon tretinu bodu A, vyhrava, jinak remiza
+//  - rovnost a nikdo nema banku: vetsi postup na bodu, kde oba skoncili; stejny postup = remiza
+// Druhe kolo dvojice skonci hned, jakmile je o vitezi rozhodnuto.
 public partial class MatchManager
 {
     public const int ModeDeathmatch = 0;
@@ -40,6 +46,13 @@ public partial class MatchManager
     const float IntermissionSeconds = 8f;
     const float DecayDelay = 2f;
     const float OvertimeGrace = 1.2f;
+    const float MinBankSeconds = 60f;        // od kolika sekund v bance se hraje kolo navic
+    public const float SoloGoal = 1f / 3f;   // samostatne kolo navic: tolik bodu A staci k vyhre
+
+    // druh kola: prvni / druhe ve dvojici (druhy tym prekonava vysledek prvniho), samostatne kolo navic
+    public const int KindFirst = 0, KindSecond = 1, KindSolo = 2;
+    public NetworkVariable<int> roundKind = new NetworkVariable<int>(KindFirst);
+    public bool ChasingRound => roundKind.Value != KindFirst;
 
     public NetworkVariable<int> gameMode = new NetworkVariable<int>(ModeDeathmatch);
     public NetworkVariable<int> captureSeconds = new NetworkVariable<int>(20);
@@ -56,10 +69,11 @@ public partial class MatchManager
     public NetworkVariable<int> secondsLeft = new NetworkVariable<int>();      // cas utoku (nebo pripravy / odemykani)
     public NetworkVariable<int> lockSecondsLeft = new NetworkVariable<int>();  // do odemceni bodu (0 = odemceny)
 
-    // Vysledek prvniho kola (cil pro druhe): kolik bodu, postup na dalsim bodu a za jak dlouho.
+    // Vysledek prvniho kola dvojice (cil pro druhe): kolik bodu, postup na dalsim bodu a kolik mu zbylo v bance.
+    // V samostatnem kole navic: cil = SoloGoal bodu A.
     public NetworkVariable<int> firstPoints = new NetworkVariable<int>(-1);
     public NetworkVariable<float> firstProgress = new NetworkVariable<float>();
-    public NetworkVariable<float> firstTime = new NetworkVariable<float>();
+    public NetworkVariable<float> firstTime = new NetworkVariable<float>();   // banka souperova kola (s)
 
     public bool IsAttackMode => gameMode.Value == ModeAttack;
     public int DefendTeam => 1 - attackTeam.Value;
@@ -80,6 +94,9 @@ public partial class MatchManager
     float timeUsed;       // jak dlouho utocnici utoci (bez pripravy)
     float lastAttackersOnPoint;
     float overtimeEmpty;
+    readonly float[] timeBank = new float[2];   // casova banka tymu (s)
+    int nextAttacker, nextKind;                 // co se hraje po mezihre
+    float nextTime;
 
     // ---------------- nastaveni v lobby ----------------
 
@@ -161,13 +178,15 @@ public partial class MatchManager
         firstProgress.Value = 0f;
         firstTime.Value = 0f;
         round.Value = 1;
+        roundKind.Value = KindFirst;
+        timeBank[0] = timeBank[1] = 0f;
         attackTeam.Value = 0;
-        ServerStartRound();
+        ServerStartRound(AttackSeconds);
     }
 
-    void ServerStartRound()
+    void ServerStartRound(float attackSeconds)
     {
-        timer = AttackSeconds;
+        timer = attackSeconds;
         timeUsed = 0f;
         overtimeEmpty = 0f;
         lastAttackersOnPoint = -100f;
@@ -236,7 +255,7 @@ public partial class MatchManager
         {
             phaseTimer -= Time.deltaTime;
             SetSeconds(secondsLeft, phaseTimer);
-            if (phaseTimer <= 0f) ServerBeginSecondRound();
+            if (phaseTimer <= 0f) ServerBeginNextRound();
             return;
         }
         if (roundPhase.Value == RoundDone) return;
@@ -310,17 +329,16 @@ public partial class MatchManager
             }
         }
 
-        // Druhe kolo: konec, jakmile je rozhodnuto.
-        if (round.Value == 2 && roundPhase.Value != RoundDone)
+        // Druhe kolo dvojice: konec, jakmile utocnici prekonali postup souperu na stejnem bode (pri stejnem skore).
+        if (roundKind.Value == KindSecond && roundPhase.Value != RoundDone)
         {
-            // Utocnici prekonali postup souperu na stejnem bode.
             if (firstPoints.Value < CapturePointCount && pointIndex.Value == firstPoints.Value
-                && progress.Value > firstProgress.Value + 0.01f)
-                ServerEndRound(pointIndex.Value, progress.Value);
-            // Souper vzal oba body a utocnicim uz dosel jeho cas - nemuzou byt rychlejsi.
-            else if (firstPoints.Value >= CapturePointCount && timeUsed > firstTime.Value + 0.5f)
+                && Score(attackTeam.Value) == Score(DefendTeam) && progress.Value > firstProgress.Value + 0.01f)
                 ServerEndRound(pointIndex.Value, progress.Value);
         }
+        // Samostatne kolo navic: staci tretina bodu A.
+        else if (roundKind.Value == KindSolo && roundPhase.Value != RoundDone && progress.Value >= SoloGoal - 0.001f)
+            ServerEndRound(pointIndex.Value, progress.Value);
     }
 
     void CountOnPoint(out int attackers, out int defenders)
@@ -402,8 +420,8 @@ public partial class MatchManager
             return;
         }
 
-        // Druhe kolo: kdyz uz utocnici maji vic bodu nez souper v prvnim kole, je rozhodnuto.
-        if (round.Value == 2 && next > firstPoints.Value)
+        // Druhe kolo dvojice: kdyz uz utocnici maji vic bodu nez souper, je rozhodnuto. Samostatne kolo: bod A = vyhra.
+        if ((roundKind.Value == KindSecond && Score(team) > Score(1 - team)) || roundKind.Value == KindSolo)
         {
             ServerEndRound(next, 0f);
             return;
@@ -445,39 +463,95 @@ public partial class MatchManager
         roundPhase.Value = RoundDone;
         pointState.Value = StateLocked;
 
-        if (round.Value == 1)
+        int team = attackTeam.Value, other = 1 - team;
+        bool all = pointsTaken >= CapturePointCount;
+        // casova banka: zbyly cas utoku, jen kdyz tym dobyl vsechno
+        timeBank[team] = all ? Mathf.Max(0f, timer) : 0f;
+        string bankText = all ? $"  ·  v bance {Clock(timeBank[team])}" : "";
+
+        if (roundKind.Value == KindFirst)
         {
             firstPoints.Value = pointsTaken;
-            firstProgress.Value = pointsTaken >= CapturePointCount ? 0f : progressOnNext;
-            firstTime.Value = timeUsed;
-            RoundOverClientRpc(attackTeam.Value, pointsTaken);
-
-            roundPhase.Value = RoundIntermission;
-            phaseTimer = IntermissionSeconds;
-            SetSeconds(secondsLeft, phaseTimer);
+            firstProgress.Value = all ? 0f : progressOnNext;
+            firstTime.Value = timeBank[team];
+            RoundOverClientRpc($"KONEC {round.Value}. KOLA",
+                $"tým {team}: {PointsWord(pointsTaken)}{bankText}  ·  výměna stran", team);
+            ServerQueueRound(other, KindSecond, round.Value == 1 ? AttackSeconds : timeBank[other]);
             return;
         }
 
-        // Vyhodnoceni.
-        int first = 1 - attackTeam.Value, second = attackTeam.Value;
-        int winner;
-        if (pointsTaken != firstPoints.Value)
-            winner = pointsTaken > firstPoints.Value ? second : first;
-        else if (pointsTaken >= CapturePointCount)
-            winner = Mathf.Abs(timeUsed - firstTime.Value) < 0.5f ? -1 : timeUsed < firstTime.Value ? second : first;
-        else if (Mathf.Abs(progressOnNext - firstProgress.Value) > 0.01f)
-            winner = progressOnNext > firstProgress.Value ? second : first;
-        else
-            winner = -1;
+        if (roundKind.Value == KindSolo)
+        {
+            bool won = pointsTaken > 0 || progressOnNext >= SoloGoal - 0.001f;
+            EndMatch(won ? team : -1);
+            return;
+        }
 
-        EndMatch(winner);
+        // Vyhodnoceni dvojice kol.
+        int scoreAttack = Score(team), scoreOther = Score(other);
+        if (scoreAttack != scoreOther) { EndMatch(scoreAttack > scoreOther ? team : other); return; }
+
+        if (!all)
+        {
+            // oba skoncili na stejnem bode: rozhoduje postup na nem
+            if (Mathf.Abs(progressOnNext - firstProgress.Value) > 0.01f) EndMatch(progressOnNext > firstProgress.Value ? team : other);
+            else EndMatch(-1);
+            return;
+        }
+
+        // oba dobyli vsechno: kola navic s casovou bankou
+        bool bankOther = timeBank[other] >= MinBankSeconds, bankAttack = timeBank[team] >= MinBankSeconds;
+        if (bankOther && bankAttack)
+        {
+            RoundOverClientRpc("NEROZHODNĚ - KOLA NAVÍC",
+                $"oba týmy dobyly vše  ·  útočí se jen s časem z banky ({Clock(timeBank[0])} : {Clock(timeBank[1])})", -1);
+            ServerQueueRound(other, KindFirst, timeBank[other]);
+        }
+        else if (bankOther || bankAttack)
+        {
+            int solo = bankOther ? other : team;
+            RoundOverClientRpc("NEROZHODNĚ - ROZSTŘEL",
+                $"jen tým {solo} má v bance aspoň {Mathf.RoundToInt(MinBankSeconds)} s  ·  za {Clock(timeBank[solo])} musí dobýt třetinu bodu A", solo);
+            ServerQueueRound(solo, KindSolo, timeBank[solo]);
+        }
+        else
+            EndMatch(-1);
     }
 
-    void ServerBeginSecondRound()
+    int Score(int team) => team == 0 ? team0Score.Value : team1Score.Value;
+
+    static string Clock(float seconds)
     {
-        round.Value = 2;
+        int s = Mathf.Max(0, Mathf.CeilToInt(seconds));
+        return $"{s / 60}:{s % 60:00}";
+    }
+
+    static string PointsWord(int points) =>
+        $"{points} {(points == 1 ? "bod" : points >= 2 && points <= 4 ? "body" : "bodů")}";
+
+    // Po mezihre se hraje dalsi kolo (vymena stran / kolo navic).
+    void ServerQueueRound(int attacker, int kind, float attackSeconds)
+    {
+        nextAttacker = attacker;
+        nextKind = kind;
+        nextTime = attackSeconds;
+        roundPhase.Value = RoundIntermission;
+        phaseTimer = IntermissionSeconds;
+        SetSeconds(secondsLeft, phaseTimer);
+    }
+
+    void ServerBeginNextRound()
+    {
+        round.Value++;
+        roundKind.Value = nextKind;
+        if (nextKind == KindSolo)
+        {
+            firstPoints.Value = 0;            // cil: tretina bodu A
+            firstProgress.Value = SoloGoal;
+            firstTime.Value = 0f;
+        }
         cutsceneTeleportAt = -1f;
-        attackTeam.Value = 1 - attackTeam.Value;
+        attackTeam.Value = nextAttacker;
         ServerResetPickups();
         ServerResetBoiler();
         ServerResetTractor();
@@ -489,7 +563,7 @@ public partial class MatchManager
             if (health != null) health.ResetHealth();
         }
 
-        ServerStartRound();
+        ServerStartRound(nextTime);
         ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
     }
 
@@ -512,13 +586,18 @@ public partial class MatchManager
     {
         var listener = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
         ProceduralSfx.Play(ProceduralSfx.CaptureUnlock, listener, 1f);
-        CaptureUI.Headline("ÚTOK ZAČAL", $"útočí tým {attackers}", UiKit.TeamColor(attackers));
+        var localPlayer = NetworkManager != null && NetworkManager.LocalClient != null ? NetworkManager.LocalClient.PlayerObject : null;
+        var localTeam = localPlayer != null ? localPlayer.GetComponent<PlayerTeam>() : null;
+        if (localTeam != null && localTeam.teamId.Value != attackers)
+            CaptureUI.Headline("BRAŇTE BOD", $"útočí tým {attackers}  ·  vy bráníte", UiKit.TeamColor(localTeam.teamId.Value));
+        else
+            CaptureUI.Headline("ÚTOK ZAČAL", $"útočí tým {attackers}", UiKit.TeamColor(attackers));
     }
 
     [ClientRpc]
-    void RoundOverClientRpc(int attackers, int pointsTaken)
+    void RoundOverClientRpc(string title, string subtitle, int team)
     {
-        CaptureUI.Headline("KONEC 1. KOLA", $"tým {attackers}: {pointsTaken} {(pointsTaken == 1 ? "bod" : pointsTaken >= 2 && pointsTaken <= 4 ? "body" : "bodů")}  ·  výměna stran", UiKit.TeamColor(attackers), 4.5f);
+        CaptureUI.Headline(title, subtitle, team >= 0 ? UiKit.TeamColor(team) : new Color(1f, 0.82f, 0.15f), 5f);
     }
 
     // Pozde pripojeny hrac si mista oziveni vyzada.

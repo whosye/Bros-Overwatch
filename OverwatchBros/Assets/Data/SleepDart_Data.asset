@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SleepDart_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Usp\xE1vac\xED \u0161ipka"
+  description: "Rychl\u00e1 \u0161ipka. Prvn\u00ed zasa\u017een\u00fd nep\u0159\u00edtel usne: nem\u016f\u017ee se h\u00fdbat, st\u0159\u00edlet ani pou\u017e\u00edvat schopnosti. Jak\u00fdkoli z\u00e1sah ho probud\u00ed."
   icon: {fileID: 2800000, guid: c2b62330a113f4b45ac3893994b6418e, type: 3}
   cooldown: 12
   ultCost: 0

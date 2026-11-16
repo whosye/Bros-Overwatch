@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BardGun_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Zvukomet
+  description: "Ka\u017ed\u00fd v\u00fdst\u0159el je d\u00e1vka 4 zvukov\u00fdch projektil\u016f. Nejsiln\u011bj\u0161\u00ed na bl\u00edzko."
   damage: 14
   fireRate: 1.15
   maxAmmo: 20

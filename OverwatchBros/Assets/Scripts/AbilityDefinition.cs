@@ -4,6 +4,8 @@ using UnityEngine;
 public class AbilityDefinition : ScriptableObject
 {
     public string abilityName;
+    [Tooltip("Popis schopnosti pro hrace (karta hrdiny v lobby a F2 ve hre).")]
+    [TextArea(2, 6)] public string description;
     [Tooltip("Ikona schopnosti v HUD (bily piktogram na pruhlednem pozadi).")]
     public Texture2D icon;
     public float cooldown;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Scout_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Pr\u016Fzkumn\xFD \u0161\xEDp"
+  description: "Vyst\u0159el\u00ed\u0161 \u0161\u00edp. Kde se zabodne, tam na p\u00e1r sekund odhaluje nep\u0159\u00e1tele v okol\u00ed - cel\u00fd tv\u016fj t\u00fdm je vid\u00ed p\u0159es zdi."
   icon: {fileID: 2800000, guid: 0c3da020beff4c34f8ff4e4cf246d13a, type: 3}
   cooldown: 12
   ultCost: 0

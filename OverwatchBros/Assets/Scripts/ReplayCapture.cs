@@ -12,7 +12,7 @@ public class ReplayCapture : MonoBehaviour
     public const float RingSeconds = 25.5f;   // (delsi klip, kdyz akce zacala dlouhou hlaskou ultimatky)
     const float FrameInterval = 1f / 30f;
     const int MaxNodes = 96;   // (Mirkova smrst s hlavou ma 65 uzlu)
-    const int MaxObjects = 48;
+    const int MaxObjects = 96;
 
     public static ReplayCapture Local { get; private set; }
 
@@ -296,7 +296,16 @@ public class ReplayCapture : MonoBehaviour
 
             if (!tracked.TryGetValue(root, out var t))
             {
-                if (tracked.Count >= MaxObjects || !Candidate(root)) continue;
+                if (tracked.Count >= MaxObjects && root.GetComponent<ReplayTrack>() == null)
+                {
+                    if (!limitWarned && Candidate(root))
+                    {
+                        limitWarned = true;
+                        Debug.LogWarning($"[Zaznam] Plny limit {MaxObjects} objektu - {root.name} a dalsi se do POTG nedostanou.");
+                    }
+                    continue;
+                }
+                if (!Candidate(root)) continue;
                 t = Track(root);
                 if (t == null) continue;
                 tracked[root] = t;
@@ -312,6 +321,8 @@ public class ReplayCapture : MonoBehaviour
             frame.objects.Add(Capture(t));
         }
     }
+
+    bool limitWarned;
 
     Tracked Track(GameObject root)
     {

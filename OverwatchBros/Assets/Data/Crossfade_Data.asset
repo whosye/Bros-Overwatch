@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Crossfade_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "P\u0159epnut\xED rytmu"
+  description: "P\u0159ep\u00edn\u00e1 auru mezi l\u00e9\u010den\u00edm a zrychlen\u00edm spoluhr\u00e1\u010d\u016f v okol\u00ed."
   icon: {fileID: 2800000, guid: 3e9a13f998e31014695b86beaf9bf275, type: 3}
   cooldown: 1
   ultCost: 0

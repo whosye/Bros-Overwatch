@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: RighteousLeap_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Spravedliv\xFD skok"
+  description: "V\u00fdskok s pomal\u00fdm sn\u00e1\u0161en\u00edm. Zbav\u00ed t\u011b v\u0161ech omezen\u00ed (omr\u00e1\u010den\u00ed, usp\u00e1n\u00ed, past, zpomalen\u00ed, uml\u010den\u00ed) a na 1 s jsi nesmrteln\u00fd. Jde pou\u017e\u00edt i omr\u00e1\u010den\u00fd."
   icon: {fileID: 2800000, guid: ae1a7fbf946e8bd41b104c1240018ef8, type: 3}
   cooldown: 7
   ultCost: 0

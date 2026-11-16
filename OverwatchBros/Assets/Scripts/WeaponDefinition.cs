@@ -21,6 +21,8 @@ public enum HeldModel
 public class WeaponDefinition : ScriptableObject
 {
     public string weaponName = "Pistol";
+    [Tooltip("Popis zbrane pro hrace (karta hrdiny v lobby a F2 ve hre).")]
+    [TextArea(2, 6)] public string description;
     public float damage = 10f;
     public float fireRate = 8f;
     public int maxAmmo = 12;

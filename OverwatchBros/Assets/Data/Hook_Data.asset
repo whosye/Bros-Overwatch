@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Hook_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Sekera na \u0159et\u011Bzu"
+  description: "Hod\u00ed\u0161 sekeru na \u0159et\u011bzu. Zasa\u017een\u00fd nep\u0159\u00edtel je zran\u011bn, p\u0159ita\u017een k tob\u011b a kr\u00e1tce omr\u00e1\u010den. Spoluhr\u00e1\u010de prolet\u00ed, ze\u010f ji zastav\u00ed."
   icon: {fileID: 2800000, guid: 7de236a17101c824ca484773b25b53d9, type: 3}
   cooldown: 8
   ultCost: 0

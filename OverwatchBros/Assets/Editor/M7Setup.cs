@@ -173,7 +173,7 @@ public static class M7Setup
     {
         w.weaponName = "Sekyrky";
         w.fireMode = FireMode.Melee;
-        w.damage = 35f;
+        w.damage = 28f;
         w.fireRate = 2.2f;
         w.maxAmmo = 0;
         w.range = 2.1f;
@@ -439,7 +439,7 @@ public static class M7Setup
             a.radius = 3f;
             a.range = 40f;
             a.speed = 45f;
-            a.duration = 0.8f;   // delka omraceni
+            a.duration = 1.5f;   // delka zpomaleni (na 50 %)
         });
 
         var viktor = LoadOrCreate<HeroDefinition>("Assets/Resources/Heroes/Viktor.asset", h =>
@@ -765,13 +765,13 @@ public static class M7Setup
             w.weaponName = "Kosa";
             w.fireMode = FireMode.Melee;
             w.heldModel = HeldModel.Scythe;
-            w.damage = 30f;
+            w.damage = 25f;
             w.fireRate = 2f;
             w.maxAmmo = 0;
             w.range = 3.6f;
             w.meleeRadius = 0.7f;
-            w.meleeArc = 90f;   // 180 st. pred sebou
-            w.comboFinisherDamage = 50f;
+            w.meleeArc = 60f;   // 120 st. pred sebou (finisher 180 st.)
+            w.comboFinisherDamage = 40f;
             w.comboFinisherArc = 90f;
             w.comboFinisherKnockback = 6f;
             w.projectileColor = new Color(0.55f, 0.18f, 0.85f, 1f);
@@ -781,7 +781,7 @@ public static class M7Setup
         {
             a.abilityName = "Rozpolcení";
             a.cooldown = 6f;
-            a.power = 40f;       // poskozeni otocky
+            a.power = 35f;       // poskozeni otocky
             a.range = 6f;        // delka vypadu
             a.radius = 3f;
         });
@@ -795,7 +795,7 @@ public static class M7Setup
         {
             a.abilityName = "Otočka kosou";
             a.cooldown = 7f;
-            a.power = 50f;
+            a.power = 40f;
             a.radius = 3.6f;     // okruh kolem Maxe (jako dosah kosy)
             a.range = 3.6f;      // (boti otocku pouziji, az je nepritel takhle blizko)
         });

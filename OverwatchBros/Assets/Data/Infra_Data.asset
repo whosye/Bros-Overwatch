@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Infra_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: Infravize
+  description: "V\u0161ichni nep\u0159\u00e1tel\u00e9 jsou na p\u00e1r sekund odhalen\u00ed - cel\u00fd tv\u016fj t\u00fdm je vid\u00ed p\u0159es zdi."
   icon: {fileID: 2800000, guid: 7e3d0e2bc2c4f2a4ca51a4a061d92a86, type: 3}
   cooldown: 30
   ultCost: 450

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: MaxSlash_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Otočka kosou"
+  description: "Rozto\u010d\u00ed\u0161 se s kosou o 360\u00b0 a zran\u00ed\u0161 v\u0161echny nep\u0159\u00e1tele kolem sebe (ne p\u0159es zdi). B\u011bhem oto\u010dky jde\u0161 pomaleji."
   icon: {fileID: 2800000, guid: 67927d79bede65b49918642c819e5e20, type: 3}
   cooldown: 7
   ultCost: 0
-  power: 50
+  power: 40
   duration: 0.4
   radius: 3.6
   range: 3.6

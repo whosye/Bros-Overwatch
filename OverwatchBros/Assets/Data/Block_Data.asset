@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Block_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Zk\u0159\xED\u017Een\xE9 sekyry"
+  description: "Dr\u017e prav\u00e9 tla\u010d\u00edtko: zk\u0159\u00ed\u017een\u00e9 sekery zablokuj\u00ed v\u011bt\u0161inu po\u0161kozen\u00ed, ale jde\u0161 pomaleji. Blokovan\u00e9 po\u0161kozen\u00ed ub\u00edr\u00e1 z baru, ten se po chv\u00edli bez z\u00e1sahu obnov\u00ed."
   icon: {fileID: 2800000, guid: d7b212322e4b23b4eba0272a450e8362, type: 3}
   cooldown: 0
   ultCost: 0

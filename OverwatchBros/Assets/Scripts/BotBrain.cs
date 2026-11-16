@@ -524,7 +524,7 @@ public class BotBrain : MonoBehaviour
         var def = hero.Hero;
         float hp = health != null && health.maxHealth > 0f ? health.currentHealth.Value / health.maxHealth : 1f;
 
-        // Sindel kaze ve vzduchu: omraceni (flash, hak, sipka, umlceni) ho prerusi
+        // Sindel kaze ve vzduchu: omraceni (hak, sipka, umlceni) ho prerusi
         if (TryInterrupt(def)) return;
 
         if (CurrentRole(weapon) == Role.Support)
@@ -1191,7 +1191,7 @@ public class BotBrain : MonoBehaviour
     }
 
     // Omraceni, ktere prerusi Sindelovo kazani: klavesa slotu s takovou schopnosti (nebo None).
-    static readonly AbilityKind[] Interrupters = { AbilityKind.Flash, AbilityKind.Hook, AbilityKind.SleepDart, AbilityKind.SayWhat };
+    static readonly AbilityKind[] Interrupters = { AbilityKind.Hook, AbilityKind.SleepDart, AbilityKind.SayWhat };
 
     bool HasInterrupt(HeroDefinition def, out HeroInput.Key key, out AbilityDefinition ability)
     {

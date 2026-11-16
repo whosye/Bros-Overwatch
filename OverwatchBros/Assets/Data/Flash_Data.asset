@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Flash_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Pulzn\xED gran\xE1t"
+  description: "Rychl\u00fd gran\u00e1t z hlavn\u011b: vybuchne o prvn\u00ed p\u0159ek\u00e1\u017eku nebo nep\u0159\u00edtele, zran\u00ed a zpomal\u00ed nep\u0159\u00e1tele v okruhu."
   icon: {fileID: 2800000, guid: b1d14064f1818444a970f2da644f54b9, type: 3}
   cooldown: 10
   ultCost: 0
   power: 50
-  duration: 0.8
+  duration: 1.5
   radius: 3
   range: 40
   knockback: 0

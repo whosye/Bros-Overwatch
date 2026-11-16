@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Bow_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Luk
+  description: "Dr\u017een\u00edm lev\u00e9ho tla\u010d\u00edtka natahuje\u0161, pu\u0161t\u011bn\u00edm vyst\u0159el\u00ed\u0161. Pln\u011b nata\u017een\u00fd \u0161\u00edp let\u00ed d\u00e1l a v\u00edc zran\u00ed. \u0160\u00edpy padaj\u00ed obloukem."
   damage: 75
   fireRate: 2.5
   maxAmmo: 0

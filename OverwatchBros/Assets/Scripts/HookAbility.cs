@@ -1,27 +1,56 @@
+using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-// Ayranova sekera na retezu (klavesa E, jako Roadhoguv hak): hodi sekeru na retezu rovne dopredu (nejdal 'range' m).
-// Prvniho nepritele, ktereho trefi, zrani ('power'), pritahne tesne pred Ayrana a na chvili omraci
-// ('duration' s po dotazeni). Zed sekeru zastavi, spoluhrace proleti.
+// Povova sekera na retezu (klavesa E, "Chain Hook"):
+//   - napraah 'Windup' s: ruka se sekerou se trhne dozadu a sekera se zatrese,
+//   - sekera leti rovne rychlosti 'FlySpeed' (nejdal 'range' m), za ni se odviji retez z clanku,
+//   - zasah nepritele: sekera se zakousne ('power' poskozeni, jiskry, zvuk), po 'BiteSeconds' s se cil pritahne
+//     rychlosti 'PullSpeed' na 'PullDistance' m pred Povu a je omracen jeste 'duration' s po dotazeni,
+//   - minuti / zed: sekera se zastavi, cinkne a rychleji ('RetractSpeed') se navine zpet, retez zplihne a vlni se,
+//   - cooldown bezi az od chvile, kdy sekera zacvakne zpet do ruky.
+// Spoluhrace sekera proleti, zed ji zastavi.
 public class HookAbility : NetworkBehaviour, ICooldownCut
 {
     public AbilityDefinition ability;
 
-    public const float PullSeconds = 0.35f;
+    public const float Windup = 0.15f;
+    public const float FlySpeed = 40f;
+    public const float BiteSeconds = 0.1f;
+    public const float PullSpeed = 30f;
+    public const float RetractSpeed = 60f;
     const float HookRadius = 0.35f;       // zed / prekazka sekeru zastavi (tenky paprsek)
-    const float PlayerHitRadius = 1.1f;   // hrace sekera chyti i pri mene presnem miereni
-    const float PullDistance = 2.2f;   // jak daleko pred Ayranem pritazeny skonci
+    const float PlayerHitRadius = 1.1f;   // hrace sekera chyti i pri mene presnem mireni
+    const float PullDistance = 2f;        // jak daleko pred Povou pritazeny skonci
+    const float SafetySeconds = 3f;       // kdyby zprava od serveru neprisla, hak se po teto dobe uvolni
 
     FirstPersonController fpc;
 
+    // vlastnik
     float nextUseTime;
+    bool active;
+    float activeUntil;
+    float cutFactor = 1f;
 
-    public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
+    // server
+    bool serverBusy;
+
+    // vsichni klienti
+    HookVisual visual;
+
+    public bool IsActive => active && Time.time < activeUntil;
+    public float CooldownRemaining => IsActive ? 0f : Mathf.Max(0f, nextUseTime - Time.time);
 
     public void CutCooldown(float fraction)
     {
+        if (IsActive)
+        {
+            // hak je jeste venku: zkraceni se uplatni na cooldown, ktery zacne po navratu
+            cutFactor *= 1f - Mathf.Clamp01(fraction);
+            nextUseTime = activeUntil + (nextUseTime - activeUntil) * (1f - Mathf.Clamp01(fraction));
+            return;
+        }
         if (nextUseTime > Time.time)
             nextUseTime = Time.time + (nextUseTime - Time.time) * (1f - Mathf.Clamp01(fraction));
     }
@@ -36,18 +65,36 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
         fpc = GetComponent<FirstPersonController>();
     }
 
+    public override void OnDestroy()
+    {
+        if (visual != null) Destroy(visual.gameObject);
+        base.OnDestroy();
+    }
+
     void Update()
     {
         if (!IsOwner || ability == null) return;
+        if (active && Time.time >= activeUntil) active = false;
         if (!HeroInput.Pressed(this, HeroInput.Key.E) || !HeroInput.Locked(this)) return;
-        if (fpc.InputBlocked || fpc.RushActive || fpc.BlockActive || Time.time < nextUseTime) return;
+        if (IsActive || fpc.InputBlocked || fpc.RushActive || fpc.BlockActive || Time.time < nextUseTime) return;
 
-        nextUseTime = Time.time + ability.Cooldown;
+        active = true;
+        activeUntil = Time.time + SafetySeconds;
+        cutFactor = 1f;
+        nextUseTime = activeUntil + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
         ThrowServerRpc(eye.position, eye.forward);
+    }
+
+    // Vlastnik: hak se vrati za 'returnIn' s, od te chvile bezi cooldown.
+    void OwnerReturnsIn(float returnIn)
+    {
+        if (!IsOwner || ability == null) return;
+        active = true;
+        activeUntil = Time.time + Mathf.Max(0.05f, returnIn);
+        nextUseTime = activeUntil + ability.Cooldown * cutFactor;
     }
 
     // ---------------- server ----------------
@@ -56,15 +103,102 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
     void ThrowServerRpc(Vector3 origin, Vector3 direction)
     {
         var match = MatchManager.Instance;
-        if (ability == null || direction.sqrMagnitude < 0.01f || (match != null && (match.IsOver || match.IsLobby))) return;
+        if (ability == null || serverBusy || direction.sqrMagnitude < 0.01f || (match != null && (match.IsOver || match.IsLobby)))
+        {
+            CancelClientRpc();
+            return;
+        }
 
         direction.Normalize();
-        Vector3 end = origin + direction * ability.range;
-        float reach = ability.range;
+        serverBusy = true;
+        LaunchClientRpc(origin, direction, ability.range);
+        StartCoroutine(Fly(origin, direction));
+    }
+
+    IEnumerator Fly(Vector3 origin, Vector3 direction)
+    {
+        yield return new WaitForSeconds(Windup);
+
+        var ownHealth = GetComponent<Health>();
+        float range = ability.range;
+        float travelled = 0f;
         Health victim = null;
+        Vector3 point = origin;
+
+        while (true)
+        {
+            Vector3 from = origin + direction * travelled;
+            if (ownHealth != null && ownHealth.currentHealth.Value <= 0f)
+            {
+                point = from;   // Pova zemrel: sekera se jen navine
+                break;
+            }
+
+            float step = Mathf.Min(FlySpeed * Time.deltaTime, range - travelled);
+            if (Sweep(from, direction, step, out victim, out point))
+                break;
+
+            travelled += step;
+            if (travelled >= range - 0.001f)
+            {
+                point = origin + direction * range;
+                break;
+            }
+            yield return null;
+        }
+
+        if (victim == null)
+        {
+            MissClientRpc(point);
+            yield return new WaitForSeconds(Vector3.Distance(transform.position, point) / RetractSpeed);
+            serverBusy = false;
+            yield break;
+        }
+
+        Combat.DamagePlayer(gameObject, victim, ability.power, Combat.AbilitySource(ability));
+
+        var controller = victim.GetComponent<FirstPersonController>();
+        bool alive = victim.currentHealth.Value > 0f && controller != null;
+        float pull = 0f;
+        if (alive)
+        {
+            pull = Vector3.Distance(victim.transform.position, PullDestination(victim)) / PullSpeed;
+            if (pull < 0.05f) pull = 0f;   // uz stoji tesne pred Povou
+            controller.ServerStun(BiteSeconds + pull + ability.duration, gameObject, false);
+        }
+
+        HitClientRpc(victim.NetworkObject, point, alive ? pull : -1f);
+
+        yield return new WaitForSeconds(BiteSeconds);
+
+        if (alive && pull > 0f && victim != null && victim.currentHealth.Value > 0f)
+            controller.ServerPull(PullDestination(victim), pull);   // (cil podle toho, kde Pova stoji ted)
+
+        yield return new WaitForSeconds(pull + 0.2f);
+        serverBusy = false;
+    }
+
+    // Kousek pred Povou ve smeru k pritahovanemu (ve vysce Povovych nohou).
+    Vector3 PullDestination(Health victim)
+    {
+        Vector3 toVictim = victim.transform.position - transform.position;
+        toVictim.y = 0f;
+        Vector3 flat = toVictim.sqrMagnitude > 0.01f ? toVictim.normalized : transform.forward;
+        return transform.position + flat * PullDistance;
+    }
+
+    // Jeden krok letu sekery: vrati true, kdyz se o neco zastavila (victim = koho zasekla, jinak zed).
+    bool Sweep(Vector3 from, Vector3 direction, float step, out Health victim, out Vector3 point)
+    {
+        victim = null;
+        point = from + direction * step;
+        if (step <= 0f) return false;
+
+        float reach = step;
+        bool blocked = false;
 
         // 1) tenky paprsek: kde sekeru zastavi prekazka (nebo koho trefi primo)
-        var hits = Physics.SphereCastAll(origin, HookRadius, direction, ability.range, ~0, QueryTriggerInteraction.Ignore);
+        var hits = Physics.SphereCastAll(from, HookRadius, direction, step, ~0, QueryTriggerInteraction.Ignore);
         System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         foreach (var hit in hits)
         {
@@ -72,10 +206,16 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
             if (owner != null && (owner == NetworkObject || Combat.SameTeam(gameObject, owner.gameObject))) continue;
             if (hit.collider.GetComponentInParent<BoulderHitbox>() != null) continue;
 
-            end = hit.distance > 0f ? hit.point : origin;
-            reach = hit.distance;
-
             var health = hit.collider.GetComponentInParent<Health>();
+            if (health != null)
+            {
+                var other = health.GetComponent<PlayerHero>();
+                if (other != null && other.IsUntargetable) continue;   // (Max ve stinu: sekera proleti)
+            }
+
+            point = hit.distance > 0f ? hit.point : from;
+            reach = hit.distance;
+            blocked = true;
             if (health != null && health.currentHealth.Value > 0f)
                 victim = health;
             break;
@@ -84,7 +224,7 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
         // 2) sirsi paprsek jen na nepratele pred prekazkou (velkorysejsi hitbox)
         if (victim == null)
         {
-            var wide = Physics.SphereCastAll(origin, PlayerHitRadius, direction, ability.range, ~0, QueryTriggerInteraction.Ignore);
+            var wide = Physics.SphereCastAll(from, PlayerHitRadius, direction, step, ~0, QueryTriggerInteraction.Ignore);
             System.Array.Sort(wide, (a, b) => a.distance.CompareTo(b.distance));
             foreach (var hit in wide)
             {
@@ -94,84 +234,101 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
                 if (Combat.SameTeam(gameObject, health.gameObject)) continue;
                 var other = health.GetComponent<PlayerHero>();
                 if (other != null && other.IsUntargetable) continue;
-                if (!Combat.HasLineOfSight(origin, hit.collider)) continue;
+                if (!Combat.HasLineOfSight(from, hit.collider)) continue;
                 victim = health;
-                end = hit.collider.bounds.center;
+                point = hit.collider.bounds.center;
+                blocked = true;
                 break;
             }
         }
 
-        if (victim == null)
-        {
-            HookFxClientRpc(end, default, false);
-            return;
-        }
-
-        Combat.DamagePlayer(gameObject, victim, ability.power, Combat.AbilitySource(ability));
-
-        var controller = victim.GetComponent<FirstPersonController>();
-        if (controller != null && victim.currentHealth.Value > 0f)
-        {
-            // Cil: kousek pred Ayranem ve smeru, kterym se diva (ve vysce jeho nohou).
-            Vector3 forward = direction;
-            forward.y = 0f;
-            forward = forward.sqrMagnitude > 0.01f ? forward.normalized : transform.forward;
-            Vector3 destination = transform.position + forward * PullDistance;
-
-            controller.ServerPull(destination, PullSeconds);
-            controller.ServerStun(PullSeconds + ability.duration, gameObject, false);
-        }
-
-        HookFxClientRpc(end, victim.NetworkObject, true);
+        return blocked;
     }
 
-    // ---------------- vizual ----------------
+    // ---------------- klienti ----------------
 
     [ClientRpc]
-    void HookFxClientRpc(Vector3 end, NetworkObjectReference victimRef, bool hit)
+    void CancelClientRpc()
     {
-        Transform victim = null;
-        if (hit && victimRef.TryGet(out NetworkObject victimObject))
-            victim = victimObject.transform;
+        if (!IsOwner) return;
+        active = false;
+        nextUseTime = 0f;
+    }
+
+    [ClientRpc]
+    void LaunchClientRpc(Vector3 origin, Vector3 direction, float range)
+    {
+        if (visual != null) Destroy(visual.gameObject);
+
+        var held = GetComponent<HeldWeapons>();
+        if (held != null) held.PlayHookWindup(Windup);
 
         // Na retezu leti stejna sekera, jakou hrdina drzi v ruce.
         var playerHero = GetComponent<PlayerHero>();
         var weapon = playerHero != null && playerHero.Hero != null ? playerHero.Hero.weapon : null;
-        HookVisual.Spawn(transform, end, victim, weapon != null ? weapon.heldPrefab : null);
-        if (hit)
-        {
-            ProceduralSfx.Play(ProceduralSfx.Hit, end, 1f);
-            ProceduralSfx.Play(ProceduralSfx.Empty, end, 1f);
-        }
+        visual = HookVisual.Spawn(transform, held, origin, direction, range, weapon != null ? weapon.heldPrefab : null);
+    }
+
+    [ClientRpc]
+    void HitClientRpc(NetworkObjectReference victimRef, Vector3 point, float pull)
+    {
+        Transform victim = victimRef.TryGet(out NetworkObject victimObject) ? victimObject.transform : null;
+        if (visual != null) visual.OnHit(victim, point, pull);
+
+        // zakousnuti, (pritazeni), kratke navinuti z ~2 m
+        OwnerReturnsIn(BiteSeconds + Mathf.Max(0f, pull) + 0.05f + (PullDistance + 1f) / RetractSpeed);
+    }
+
+    [ClientRpc]
+    void MissClientRpc(Vector3 point)
+    {
+        if (visual != null) visual.OnMiss(point);
+        OwnerReturnsIn(Vector3.Distance(transform.position + Vector3.up * 1.25f, point) / RetractSpeed);
     }
 }
 
-// Sekera na retezu (jen efekt): tocici se sekera vyleti k cili, a kdyz nekoho zasekla, drzi se ho, dokud ho nepritahne.
+// Sekera na retezu (jen efekt, kazdy klient si ji prehraje sam podle zprav ze serveru).
 public class HookVisual : MonoBehaviour
 {
-    const float OutSeconds = 0.12f;
-    const float BackSeconds = 0.2f;
+    enum State { Windup, Out, Bite, Pull, Retract }
 
-    Transform owner, victim;
-    Vector3 end;
-    float age;
-    LineRenderer line;
+    const float LinkSpacing = 0.075f;
+    const int MaxLinks = 400;
+    static readonly Color SparkColor = new Color(1f, 0.75f, 0.35f);
+
+    static Mesh linkMesh;
+    static Material linkMaterial;
+
+    Transform owner;
+    HeldWeapons held;
+    Vector3 origin, direction;
+    float range;
+
+    State state = State.Windup;
+    float stateTime;
+    Vector3 hookPos;
+    Vector3 launchHand;
+
+    Transform victim;
+    Vector3 victimOffset;
+    float pullTime;
+
+    float sag, wave;   // zplihnuti a vlneni retezu pri navijeni
+
     Transform tip;
     Transform axe;
+    readonly List<Transform> links = new List<Transform>();
+    Vector3[] points = new Vector3[0];
 
-    public static void Spawn(Transform owner, Vector3 end, Transform victim, GameObject axePrefab = null)
+    public static HookVisual Spawn(Transform owner, HeldWeapons held, Vector3 origin, Vector3 direction, float range, GameObject axePrefab = null)
     {
         var go = new GameObject("HookVisual");
         var visual = go.AddComponent<HookVisual>();
         visual.owner = owner;
-        visual.end = end;
-        visual.victim = victim;
-
-        visual.line = go.AddComponent<LineRenderer>();
-        visual.line.positionCount = 2;
-        visual.line.startWidth = visual.line.endWidth = 0.05f;
-        visual.line.material = Fx.NewLit(new Color(0.55f, 0.56f, 0.60f));
-        visual.line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        visual.held = held;
+        visual.origin = origin;
+        visual.direction = direction.normalized;
+        visual.range = range;
 
         visual.tip = new GameObject("Tip").transform;
         visual.tip.SetParent(go.transform, false);
@@ -192,48 +349,248 @@ public class HookVisual : MonoBehaviour
             Block(visual.axe, new Vector3(0f, 0.47f, 0.10f), new Vector3(0.03f, 0.20f, 0.20f), new Color(0.78f, 0.80f, 0.84f));
         }
 
-        // Sekera drzi retez koncem topurka; pri letu se toci hlavou napred.
+        // Sekera drzi retez koncem topurka, hlavou miri dopredu.
         visual.axe.localPosition = Vector3.zero;
         visual.axe.localRotation = Quaternion.Euler(90f, 0f, 0f);
+        visual.tip.gameObject.SetActive(false);   // behem napraahu je sekera jeste v ruce
 
-        visual.Place();
+        visual.hookPos = visual.Hand();
+        return visual;
+    }
+
+    public void OnHit(Transform target, Vector3 point, float pull)
+    {
+        if (state == State.Windup) Launch();
+        victim = target;
+        hookPos = point;
+        victimOffset = victim != null ? Vector3.ClampMagnitude(point - victim.position, 1.6f) : Vector3.zero;
+        pullTime = pull;
+        SetState(State.Bite);
+
+        Fx.Sparks(point, SparkColor);
+        ProceduralSfx.Play(ProceduralSfx.BulletImpact, point, 1f);
+        ProceduralSfx.Play(ProceduralSfx.Hit, point, 0.8f);
+        ProceduralSfx.Play(ProceduralSfx.Empty, point, 1f);
+    }
+
+    public void OnMiss(Vector3 point)
+    {
+        if (state == State.Windup) Launch();
+        if (state != State.Out) return;
+        hookPos = point;
+
+        // narazila do zdi (ne jen dolet na konci dosahu): cinknuti a jiskry
+        if (Vector3.Distance(origin, point) < range - 0.3f)
+        {
+            Fx.Sparks(point, SparkColor);
+            ProceduralSfx.Play(ProceduralSfx.Hit, point, 1f);
+        }
+        sag = 0.35f;
+        wave = 0.14f;
+        SetState(State.Retract);
+    }
+
+    void SetState(State next)
+    {
+        state = next;
+        stateTime = 0f;
+    }
+
+    void Launch()
+    {
+        launchHand = Hand();
+        hookPos = launchHand;
+        tip.gameObject.SetActive(true);
+        if (held != null) held.SetHookThrown(true);
+        ProceduralSfx.Play(ProceduralSfx.Dash, launchHand, 0.6f);
+        SetState(State.Out);
     }
 
     void Update()
     {
-        age += Time.deltaTime;
-
-        float lifetime = OutSeconds + (victim != null ? HookAbility.PullSeconds + 0.05f : BackSeconds);
-        if (owner == null || age >= lifetime)
+        if (owner == null)
         {
             Destroy(gameObject);
             return;
         }
 
-        Place();
+        stateTime += Time.deltaTime;
+        Vector3 hand = Hand();
+
+        switch (state)
+        {
+            case State.Windup:
+                if (stateTime >= HookAbility.Windup) Launch();
+                break;
+
+            case State.Out:
+            {
+                // let po primce ze stredu pohledu; prvni metry se sekera dostava z ruky na tu primku
+                float d = Mathf.Min(HookAbility.FlySpeed * stateTime, range);
+                Vector3 onLine = origin + direction * d;
+                hookPos = Vector3.Lerp(launchHand, onLine, Mathf.Clamp01(d / 3f));
+                // pojistka, kdyby zprava ze serveru neprisla
+                if (stateTime > range / HookAbility.FlySpeed + 1f) { sag = 0.3f; wave = 0.12f; SetState(State.Retract); }
+                break;
+            }
+
+            case State.Bite:
+            {
+                Vector3 anchor = victim != null ? victim.position + victimOffset : hookPos;
+                float shake = 0.07f * (1f - Mathf.Clamp01(stateTime / HookAbility.BiteSeconds));
+                hookPos = anchor + Random.insideUnitSphere * shake;
+                if (stateTime >= HookAbility.BiteSeconds)
+                {
+                    if (pullTime > 0f && victim != null) SetState(State.Pull);
+                    else { wave = 0.1f; SetState(State.Retract); }
+                }
+                break;
+            }
+
+            case State.Pull:
+                if (victim != null) hookPos = victim.position + victimOffset;
+                if (victim == null || stateTime >= pullTime + 0.05f)
+                {
+                    wave = 0.1f;
+                    SetState(State.Retract);
+                }
+                break;
+
+            case State.Retract:
+                hookPos = Vector3.MoveTowards(hookPos, hand, HookAbility.RetractSpeed * Time.deltaTime);
+                sag = Mathf.MoveTowards(sag, 0f, 0.5f * Time.deltaTime);
+                if ((hookPos - hand).sqrMagnitude < 0.15f * 0.15f)
+                {
+                    ProceduralSfx.Play(ProceduralSfx.Empty, hand, 0.9f);   // zacvaknuti zpet do ruky
+                    ProceduralSfx.Play(ProceduralSfx.Hit, hand, 0.35f);
+                    Destroy(gameObject);
+                    return;
+                }
+                break;
+        }
+
+        PlaceHook(hand);
+        DrawChain(hand, hookPos, state != State.Windup);
     }
 
-    void Place()
+    void OnDestroy()
     {
-        Vector3 hand = owner.position + Vector3.up * 1.25f + owner.forward * 0.4f;
-        Vector3 hookPoint;
+        if (held != null) held.SetHookThrown(false);
+    }
 
-        if (age < OutSeconds)
-            hookPoint = Vector3.Lerp(hand, end, age / OutSeconds);
-        else if (victim != null)
-            hookPoint = victim.position + Vector3.up * 1.2f;
-        else
-            hookPoint = Vector3.Lerp(end, hand, (age - OutSeconds) / BackSeconds);
+    Vector3 Hand()
+    {
+        var holder = held != null ? held.HookHand : null;
+        if (holder != null) return holder.position;
+        return owner != null ? owner.position + Vector3.up * 1.25f + owner.forward * 0.4f : hookPos;
+    }
 
-        line.SetPosition(0, hand);
-        line.SetPosition(1, hookPoint);
-        tip.position = hookPoint;
-        if ((hookPoint - hand).sqrMagnitude > 0.001f)
-            tip.rotation = Quaternion.LookRotation(hookPoint - hand);
+    void PlaceHook(Vector3 hand)
+    {
+        tip.position = hookPos;
+        Vector3 away = state == State.Out ? direction : hookPos - hand;
+        if (away.sqrMagnitude < 0.0001f) away = direction;
 
-        // Cestou k cili se sekera toci, zaseknuta (nebo pri navratu) uz ne.
-        float spin = age < OutSeconds ? age * 1800f : 0f;
-        axe.localRotation = Quaternion.Euler(90f + spin, 0f, 0f);
+        // za letu se sekera mirne kroti kolem sve osy
+        float roll = state == State.Out ? stateTime * 540f : 0f;
+        tip.rotation = Quaternion.LookRotation(away) * Quaternion.Euler(0f, 0f, roll);
+    }
+
+    // Retez z clanku od ruky k sekere; sousedni clanky jsou otocene o 90 st. Pri navijeni se vlni
+    // (sinusovy posun, ktery slabne ke konci u sekery) a po minuti chvili visi (zplihne).
+    void DrawChain(Vector3 a, Vector3 b, bool show)
+    {
+        float length = Vector3.Distance(a, b);
+        int count = show ? Mathf.Clamp(Mathf.FloorToInt(length / LinkSpacing), 0, MaxLinks) : 0;
+
+        while (links.Count < count) links.Add(NewLink());
+        for (int i = 0; i < links.Count; i++)
+            if (links[i].gameObject.activeSelf != i < count) links[i].gameObject.SetActive(i < count);
+        if (count == 0) return;
+
+        if (points.Length < count) points = new Vector3[Mathf.Max(count, points.Length * 2)];
+
+        Vector3 dir = length > 0.0001f ? (b - a) / length : direction;
+        Vector3 side = Vector3.Cross(dir, Vector3.up);
+        side = side.sqrMagnitude > 0.0001f ? side.normalized : Vector3.right;
+
+        float time = Time.time;
+        for (int i = 0; i < count; i++)
+        {
+            float t = (i + 0.5f) * LinkSpacing / length;
+            float arch = Mathf.Sin(Mathf.PI * t);
+            float envelope = arch * (1f - 0.75f * t);
+            Vector3 offset = Vector3.down * (sag * arch)
+                + side * (wave * envelope * Mathf.Sin(t * length * 6f - time * 28f));
+            points[i] = a + dir * (t * length) + offset;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 tangent = count > 1 ? points[Mathf.Min(i + 1, count - 1)] - points[Mathf.Max(i - 1, 0)] : dir;
+            if (tangent.sqrMagnitude < 0.000001f) tangent = dir;
+            links[i].SetPositionAndRotation(points[i],
+                Quaternion.LookRotation(tangent, Vector3.up) * Quaternion.Euler(0f, 0f, (i & 1) == 0 ? 0f : 90f));
+        }
+    }
+
+    Transform NewLink()
+    {
+        if (linkMesh == null) linkMesh = BuildLinkMesh();
+        if (linkMaterial == null) linkMaterial = Fx.NewLit(new Color(0.42f, 0.43f, 0.47f));
+
+        var go = new GameObject("Link");
+        go.transform.SetParent(transform, false);
+        go.AddComponent<MeshFilter>().sharedMesh = linkMesh;
+        var renderer = go.AddComponent<MeshRenderer>();
+        renderer.sharedMaterial = linkMaterial;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        return go.transform;
+    }
+
+    // Ovalny clanek (protahly torus): delka podel lokalni osy Z, krouzek lezi v rovine XZ.
+    static Mesh BuildLinkMesh()
+    {
+        const int U = 12, V = 6;
+        const float Rx = 0.026f, Rz = 0.05f, r = 0.009f;
+
+        var vertices = new Vector3[U * V];
+        var normals = new Vector3[U * V];
+        for (int i = 0; i < U; i++)
+        {
+            float u = i * Mathf.PI * 2f / U;
+            Vector3 center = new Vector3(Mathf.Cos(u) * Rx, 0f, Mathf.Sin(u) * Rz);
+            Vector3 outward = new Vector3(Mathf.Cos(u) * Rz, 0f, Mathf.Sin(u) * Rx).normalized;
+            for (int j = 0; j < V; j++)
+            {
+                float v = j * Mathf.PI * 2f / V;
+                Vector3 n = outward * Mathf.Cos(v) + Vector3.up * Mathf.Sin(v);
+                vertices[i * V + j] = center + n * r;
+                normals[i * V + j] = n;
+            }
+        }
+
+        var triangles = new int[U * V * 6];
+        int k = 0;
+        for (int i = 0; i < U; i++)
+        {
+            int i2 = (i + 1) % U;
+            for (int j = 0; j < V; j++)
+            {
+                int j2 = (j + 1) % V;
+                int a = i * V + j, b = i2 * V + j, c = i2 * V + j2, d = i * V + j2;
+                triangles[k++] = a; triangles[k++] = d; triangles[k++] = b;
+                triangles[k++] = b; triangles[k++] = d; triangles[k++] = c;
+            }
+        }
+
+        var mesh = new Mesh { name = "ChainLink" };
+        mesh.vertices = vertices;
+        mesh.normals = normals;
+        mesh.triangles = triangles;
+        mesh.RecalculateBounds();
+        return mesh;
     }
 
     static void Block(Transform parent, Vector3 position, Vector3 scale, Color color)

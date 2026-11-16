@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Rocket_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: "Gran\xE1tomet"
+  description: "Gran\u00e1ty let\u00ed obloukem a odr\u00e1\u017eej\u00ed se od zd\u00ed. O nep\u0159\u00edtele vybuchnou hned, jinak chv\u00edli po odrazu. V\u00fdbuch zra\u0148uje v okruhu."
   damage: 60
   fireRate: 1.5
   maxAmmo: 5

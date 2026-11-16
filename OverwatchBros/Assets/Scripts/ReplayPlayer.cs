@@ -728,6 +728,15 @@ public class ReplayPlayer : MonoBehaviour
             foreach (var m in Resources.FindObjectsOfTypeAll<Material>())
                 if (m.name == name && SameColor(m, color)) { material = m; break; }
 
+        // pruhledny efekt (puls Mirkova skenu, aury...): pruhledny material, ne neprusvitny - jinak by v POTG
+        // zakryl obraz bilou/barevnou koulí
+        if (material == null && fallback == null && color.a < 0.99f && Fx.ParticleMaterial != null)
+        {
+            material = new Material(Fx.ParticleMaterial) { mainTexture = null };
+            material.color = color;
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
+        }
+
         if (material == null)
             material = fallback != null ? fallback : Fx.NewLit(color);
 

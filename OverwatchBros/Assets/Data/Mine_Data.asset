@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Mine_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "N\xE1lo\u017E"
+  description: "Shift n\u00e1lo\u017e hod\u00ed (p\u0159ilep\u00ed se), prav\u00e9 tla\u010d\u00edtko odp\u00e1l\u00ed v\u0161echny nar\u00e1z. V\u00fdbuch zran\u00ed a odhod\u00ed nep\u0159\u00e1tele, tebe jen odhod\u00ed - poslou\u017e\u00ed i jako skok."
   icon: {fileID: 2800000, guid: dc62453528dba954baa02dc6beef4710, type: 3}
   cooldown: 8
   ultCost: 0

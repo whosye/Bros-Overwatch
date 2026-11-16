@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Anna
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: David
+  description: "Podpora na d\u00e1lku. Pu\u0161kou l\u00e9\u010d\u00ed spoluhr\u00e1\u010de a zra\u0148uje nep\u0159\u00e1tele, usp\u00e1v\u00e1 a posiluje."
   color: {r: 0.35, g: 0.75, b: 0.85, a: 1}
   maxHealth: 100
   healingScale: 0.75

@@ -147,6 +147,8 @@ public class PlayerHero : NetworkBehaviour
     // zivot vyleceny spoluhraci a k tomu pomalu sama (UltPassivePerSecond). Cena je u schopnosti (AbilityDefinition.ultCost).
     // Po smrti nabiti zustava, nuluje se pouzitim a s novym zapasem.
     public const float UltPassivePerSecond = 2f;
+    // Globalni rychlost nabijeni ultimatek (poskozeni, leceni i pasivni nabijeni). 0.3 = o 70 % pomaleji.
+    public const float UltChargeRate = 0.3f;
 
     public NetworkVariable<float> ultCharge = new NetworkVariable<float>();
     bool ultSpentLocally;
@@ -234,7 +236,7 @@ public class PlayerHero : NetworkBehaviour
         var match = MatchManager.Instance;
         if (match != null && (match.IsLobby || match.IsOver)) return;
 
-        ultCharge.Value = Mathf.Min(UltCost, ultCharge.Value + points);
+        ultCharge.Value = Mathf.Min(UltCost, ultCharge.Value + points * UltChargeRate);
     }
 
     public HeroDefinition Hero { get; private set; }
@@ -903,7 +905,7 @@ public class PlayerHero : NetworkBehaviour
             slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = rush.CooldownRemaining, active = rush.IsActive, charge = -1f, count = rush.HasSeveralCharges ? rush.Charges : 0 });
 
         if (Hero.altAbilityKind == AbilityKind.Hook && hook != null && Hero.altAbility != null)
-            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = hook.CooldownRemaining, active = false, charge = -1f });
+            slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = hook.CooldownRemaining, active = hook.IsActive, charge = -1f });
 
         if (Hero.altAbilityKind == AbilityKind.Trap && trap != null && Hero.altAbility != null)
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = trap.CooldownRemaining, active = false, charge = -1f });

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Pistol_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Pistol
+  description: "Rychl\u00e1 pistole s okam\u017eit\u00fdm z\u00e1sahem. Na velkou d\u00e1lku sl\u00e1bne."
   damage: 20
-  fireRate: 6.5
-  maxAmmo: 20
+  fireRate: 5.5
+  maxAmmo: 14
   reloadTime: 1.5
   reloadAnimation: 0
   range: 100
@@ -33,7 +34,7 @@ MonoBehaviour:
   scopedChargeTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
-  headshotMultiplier: 1.5
+  headshotMultiplier: 1.2
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Honza
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Honza
+  description: "V\u00fdbu\u0161niny a pasti. Ovl\u00e1d\u00e1 prostor gran\u00e1ty, n\u00e1lo\u017e\u00ed a past\u00ed. Po smrti z n\u011bj vypadnou gran\u00e1ty."
   color: {r: 0.45, g: 0.8, b: 0.4, a: 1}
   maxHealth: 110
   weapon: {fileID: 11400000, guid: 5fafac1122454c7429625a40f68d3e02, type: 2}

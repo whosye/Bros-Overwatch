@@ -34,6 +34,9 @@ public class LobbyUI
 
     float nextRefresh;
 
+    // Kliknuti na hrdinu: krome vyberu otevre kartu hrdiny se schopnostmi (HeroInfoUI).
+    public Action<int> OnHeroClicked;
+
     public void Build(Transform canvas, Action onLeave)
     {
         var center = new Vector2(0.5f, 0.5f);
@@ -322,6 +325,7 @@ public class LobbyUI
         var local = LocalPlayer();
         if (local != null)
             local.SelectHero(index);
+        OnHeroClicked?.Invoke(index);
     }
 
     void ChangeScore(int delta)

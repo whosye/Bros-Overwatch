@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Lunge_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "V\xFDskok"
+  description: "Rychl\u00fd \u00faskok ve sm\u011bru pohybu s odrazem nahoru."
   icon: {fileID: 2800000, guid: 036e60633d3b1c9488eecfd556ef172e, type: 3}
   cooldown: 5
   ultCost: 0

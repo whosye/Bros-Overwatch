@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Dash_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "\xDAskok"
+  description: "Rychl\u00fd \u00faskok ve sm\u011bru pohybu; z\u00e1rove\u0148 p\u0159ebije zbra\u0148."
   icon: {fileID: 2800000, guid: beb79cbef5b9e49428560ab9271f1839, type: 3}
   cooldown: 6
   ultCost: 0

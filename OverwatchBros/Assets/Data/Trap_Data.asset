@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Trap_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Past na medv\u011Bdy"
+  description: "Polo\u017e\u00ed\u0161 past tam, kam m\u00ed\u0159\u00ed\u0161. Prvn\u00ed nep\u0159\u00edtel, kter\u00fd na ni \u0161l\u00e1pne, je zran\u011bn a nem\u016f\u017ee se h\u00fdbat (st\u0159\u00edlet m\u016f\u017ee). Venku je jen jedna a jde rozst\u0159\u00edlet."
   icon: {fileID: 2800000, guid: c7d2152bf05891842bab2231ea7168c0, type: 3}
   cooldown: 10
   ultCost: 0

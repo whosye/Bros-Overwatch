@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 // Max - Shift, E a prave tlacitko v jedne komponente:
 //   Shift (Rozpolceni): vypad 'range' metru ve smeru pohledu a na konci otocka kosou - 'power' vsem v okruhu
-//     'radius' a omraceni na 1 s. Za kazdeho zasazeneho nepritele se cooldown zkrati o 1 s. Ma-li Max animaci skoku s uderem
+//     'radius' a omraceni na 0.5 s. Za kazdeho zasazeneho nepritele se cooldown zkrati o 1 s. Ma-li Max animaci skoku s uderem
 //     (animations.shiftAbility), misto rychleho vypadu skoci (LeapTime) a kosou udere shora do zeme pri dopadu.
 //   E (Stinova forma): az 'duration' s je Max stin - neviditelny (jen fialovy kour), nezranitelny, bez kolize
 //     a chodi skrz zdi. Forma skonci utokem (LMB, PTM, Shift, Q), dalsim E nebo vyprsenim casu; kdyz konci ve zdi,
@@ -21,7 +21,7 @@ public class MaxAbility : NetworkBehaviour
     public static readonly Color ShadowColor = new Color(0.55f, 0.18f, 0.85f, 1f);
 
     const float DashTime = 0.18f;
-    const float ReapStun = 1f;           // zasazene Rozpolcenim omraci
+    const float ReapStun = 0.5f;          // zasazene Rozpolcenim omraci
     // Skok s uderem: usek animace od odrazu (0,73 s) po podrep po uderu; uder do zeme (1,67 s) prijde pri dopadu.
     const float LeapTime = 0.5f;
     const float LeapHeight = 2.2f;   // vrchol skoku nad mistem odrazu

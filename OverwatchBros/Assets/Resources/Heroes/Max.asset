@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Max
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Max
+  description: "Rv\u00e1\u010d s kosou. Rychle se dostane mezi nep\u0159\u00e1tele, projde i zd\u00ed a z po\u0161kozen\u00ed se l\u00e9\u010d\u00ed."
   color: {r: 0.55, g: 0.25, b: 0.85, a: 1}
   maxHealth: 150
   healingScale: 1

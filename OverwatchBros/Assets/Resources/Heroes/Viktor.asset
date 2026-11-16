@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Viktor
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Viktor
+  description: "Univerz\xE1ln\xED voj\xE1k: pistole, \xFAskok, l\xE9\u010Div\xE9
+    pole a samonav\xE1d\u011Bc\xED ultim\xE1tka."
   color: {r: 0.45, g: 0.65, b: 0.95, a: 1}
   maxHealth: 100
   healingScale: 1
@@ -45,6 +47,7 @@ MonoBehaviour:
   killLines:
   - {fileID: 8300000, guid: 1db3bbd3464f81d4eada5b8c3f10d3c9, type: 3}
   - {fileID: 8300000, guid: a2d98da1fba01cc42bc7fe8f23f6a522, type: 3}
+  - {fileID: 8300000, guid: 76e7733a13d5a344286fca683d644445, type: 3}
   deathLines:
   - {fileID: 8300000, guid: dac50d304e2b6da4bbc9e2dac37ca3ef, type: 3}
   hurtLines:

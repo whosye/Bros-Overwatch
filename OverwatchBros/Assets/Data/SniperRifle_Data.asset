@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SniperRifle_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: "Odst\u0159elova\u010Dka"
+  description: "Bez p\u0159ibl\u00ed\u017een\u00ed rychl\u00e1 st\u0159elba se slab\u00fdm po\u0161kozen\u00edm. S p\u0159ibl\u00ed\u017een\u00edm (prav\u00e9 tla\u010d\u00edtko) se r\u00e1na nab\u00edj\u00ed do pln\u00e9 s\u00edly; z\u00e1sah do hlavy v\u00edc."
   damage: 9
   fireRate: 8
   maxAmmo: 16

@@ -43,6 +43,8 @@ public enum AbilityKind
 public class HeroDefinition : ScriptableObject
 {
     public string heroName;
+    [Tooltip("Kratky popis hrdiny (role, styl hry) - karta hrdiny v lobby a F2 ve hre.")]
+    [TextArea(2, 4)] public string description;
     public Color color = Color.white;
     public float maxHealth = 100f;
     [Tooltip("Nasobek veskereho leceni, ktere hrdina dava (1 = plne, 0.75 = o 25 % mene).")]

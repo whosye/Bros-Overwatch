@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SayWhat_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: Say what again?!
+  description: "V\u00fdk\u0159ik do ku\u017eele p\u0159ed sebe: zasa\u017een\u00e9 nep\u0159\u00e1tele zpomal\u00ed a uml\u010d\u00ed (nem\u016f\u017eou pou\u017e\u00edvat schopnosti), lehce odstr\u010d\u00ed a zran\u00ed."
   icon: {fileID: 2800000, guid: b555a2e653d038140bb5eaee822fc336, type: 3}
   cooldown: 10
   ultCost: 0

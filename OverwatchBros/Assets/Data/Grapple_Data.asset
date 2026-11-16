@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Grapple_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "H\xE1k"
+  description: "Vyst\u0159el\u00ed\u0161 lano a p\u0159it\u00e1hne\u0161 se tam, kam m\u00ed\u0159\u00ed\u0161 (st\u0159echa, rozhledna, pry\u010d z boje). Chyt\u00ed se jen zd\u00ed a p\u0159edm\u011bt\u016f; kdy\u017e netref\u00ed, cooldown neza\u010dne."
   icon: {fileID: 2800000, guid: 16c32ecf81f4b794c96ab7a91017f312, type: 3}
   cooldown: 8
   ultCost: 0

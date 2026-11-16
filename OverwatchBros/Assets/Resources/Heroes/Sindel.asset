@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Sindel
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: "\u0160indel"
+  description: "Pistoln\u00edk. P\u0159esn\u00e1 pistole, svat\u00fd gran\u00e1t a ultim\u00e1tka, kter\u00e1 zas\u00e1hne celou v\u00fd\u0161ku domu."
   color: {r: 0.85, g: 0.7, b: 0.3, a: 1}
   maxHealth: 100
   weapon: {fileID: 11400000, guid: 2c41b1fd8923d4943a3171e611c4f207, type: 2}

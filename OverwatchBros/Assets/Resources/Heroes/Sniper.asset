@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Sniper
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: "Konduli\u010D"
+  description: "Odst\u0159elova\u010d. Z d\u00e1lky odst\u0159el s p\u0159ibl\u00ed\u017een\u00edm, h\u00e1kem se dostane na vyv\u00fd\u0161en\u00e1 m\u00edsta a pry\u010d z boje."
   color: {r: 0.75, g: 0.3, b: 0.35, a: 1}
   maxHealth: 90
   scopeAimPose: 1

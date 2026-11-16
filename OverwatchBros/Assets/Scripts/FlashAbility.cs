@@ -6,11 +6,12 @@ using UnityEngine.InputSystem;
 
 // Viktoruv pulzni granat (prave tlacitko mysi, jako Soldierovy Helix rakety): vystreli se z hlavne granatometu,
 // leti rychle rovne (rychlost 'speed', nejdal 'range' m) a o prvni prekazku nebo nepritele vybuchne. Nepratele
-// v okruhu 'radius' zrani ('power' uprostred, na okraji 40 %) a na 'duration' sekund omraci (nemuzou se hybat,
-// utocit ani pouzivat schopnosti). Neprochazi zdmi a spoluhrace ani Viktora nezasahne.
+// v okruhu 'radius' zrani ('power' uprostred, na okraji 40 %) a na 'duration' sekund zpomali (SlowFactor). Neprochazi zdmi a spoluhrace ani Viktora nezasahne.
 public class FlashAbility : NetworkBehaviour
 {
     public AbilityDefinition ability;
+
+    const float SlowFactor = 0.5f;   // zasazeny nepritel jde na 'duration' s polovicni rychlosti
 
     public static readonly Color PulseColor = new Color(0.55f, 0.85f, 1f);
 
@@ -103,11 +104,7 @@ public class FlashAbility : NetworkBehaviour
                 var controller = victim.GetComponent<FirstPersonController>();
                 if (controller != null && victim.currentHealth.Value > 0f)
                 {
-                    controller.ServerStun(ability.duration, gameObject);
-
-                    var recorder = GetComponent<PotgRecorder>();
-                    if (recorder != null)
-                        recorder.ServerAddStun();
+                    controller.ServerSlow(ability.duration, SlowFactor);
                 }
             }
         }

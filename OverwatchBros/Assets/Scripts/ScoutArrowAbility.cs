@@ -202,6 +202,8 @@ public class ScoutArrowVisual : MonoBehaviour
         DestroyImmediate(ring.GetComponent<Collider>());
         ring.transform.SetParent(transform, false);
         pulseMaterial = new Material(Fx.ParticleMaterial) { mainTexture = null };
+        // barva hned (pruhledna) - zaznam POTG si material uklada pri prvnim zaberu; bez toho by tam byl bily a neprusvitny
+        pulseMaterial.color = new Color(color.r, color.g, color.b, 0.16f);
         var ringRenderer = ring.GetComponent<Renderer>();
         ringRenderer.sharedMaterial = pulseMaterial;
         ringRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;

@@ -33,6 +33,7 @@ public class MatchUI : MonoBehaviour
     readonly BuffUI buffs = new BuffUI();
     TextMeshProUGUI boilerPrompt;
     readonly HeroPickerUI heroPicker = new HeroPickerUI();
+    readonly HeroInfoUI heroInfo = new HeroInfoUI();
     GameObject blockBar;
     Image blockFill;
     GameObject settingsPanel;
@@ -149,6 +150,9 @@ public class MatchUI : MonoBehaviour
 
         lobby.Build(root, LeaveGame);
         menu.Build(root);
+        // karta hrdiny (klik na hrdinu v lobby, F2 ve hre) - nad lobby
+        heroInfo.Build(root);
+        lobby.OnHeroClicked = heroInfo.Open;
 
         connectingText = UiKit.MakeText(root, "Connecting", "Připojuji se…", 56, TextAlignmentOptions.Center, center,
             Vector2.zero, new Vector2(1200f, 100f));
@@ -369,7 +373,11 @@ public class MatchUI : MonoBehaviour
         // Zmena hrdiny behem zapasu (F1).
         heroPicker.Tick(localHero, playing && !over && !PotgUI.IsShowing);
 
-        UpdateCursor(hasPlayer, inLobby, over || heroPicker.IsOpen);
+        // Karta hrdiny se schopnostmi (F2; v lobby i kliknutim na hrdinu).
+        heroInfo.Tick(hasPlayer && (inLobby || (playing && !over && !replay && !PotgUI.IsShowing)),
+            localHero != null ? localHero.heroId.Value : PlayerHero.PreferredHero);
+
+        UpdateCursor(hasPlayer, inLobby, over || heroPicker.IsOpen || heroInfo.IsOpen);
         UpdateHud(match, localHero, playing, over);
         // HUD: zivy hrac, nebo pri prehravani POTG HUD hrace, ktery akci predvedl (podle zaznamu).
         // (killcam: HUD vraha v zaznamu neni - jen obraz a zamerovac)
@@ -396,7 +404,7 @@ public class MatchUI : MonoBehaviour
         crosshair.SetActive(crosshairFade.alpha > 0.005f && ((playing && !over && locked && !replay) || (replay && ReplayPlayer.Frame != null && (killcam || !ReplayPlayer.Frame.thirdPerson))));
         UpdateBlockBar(localHero, playing && !over);
 
-        bool showSettings = playing && !over && !locked && !heroPicker.IsOpen;
+        bool showSettings = playing && !over && !locked && !heroPicker.IsOpen && !heroInfo.IsOpen;
         if (settingsWereVisible && !showSettings) PlayerPrefs.Save();
         settingsWereVisible = showSettings;
         settingsPanel.SetActive(showSettings);
