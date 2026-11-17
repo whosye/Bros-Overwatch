@@ -180,7 +180,7 @@ public class MatchOverlayUI
         {
             foreach (var player in players)
             {
-                if (player == null || player == local || !player.IsSpawned || player.Hero == null || player.IsJoining || player.IsUntargetable) continue;
+                if (player == null || player == local || !player.IsSpawned || player.Hero == null || player.IsJoining || player.IsUntargetable || player.HiddenFromLocal) continue;
 
                 var health = player.GetComponent<Health>();
                 if (health == null || health.currentHealth.Value <= 0f) continue;
@@ -194,7 +194,9 @@ public class MatchOverlayUI
 
                 // Nepritel jen kdyz je opravdu videt (ne pres zed) a neni moc daleko; spoluhrac vzdy.
                 // Nepritel odhaleny pruzkumnym sipem je videt vzdy.
-                if (!ally && !player.revealed.Value && (distance > 60f || !Visible(camera.transform.position, player, local))) continue;
+                // Nasazeny prsten ("svet stinu"): nositel vidi nepratele do 80 m i pres zdi.
+                bool ringSight = MatchManager.LocalWearsRing && distance <= 80f;
+                if (!ally && !player.revealed.Value && !ringSight && (distance > 60f || !Visible(camera.transform.position, player, local))) continue;
 
                 if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(plateRoot, screen, null, out Vector2 point)) continue;
 

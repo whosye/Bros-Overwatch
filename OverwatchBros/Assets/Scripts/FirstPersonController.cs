@@ -129,9 +129,12 @@ public class FirstPersonController : NetworkBehaviour
         rootedUntil = Mathf.Max(rootedUntil, Time.time + seconds);
     }
 
+    // Omezeni od nepratel nepusobi: nezastavitelny (ultimatky), nebo na vlastnim spawnu.
+    bool CcImmune => Unstoppable || Combat.SpawnProtected(gameObject);
+
     public void ServerSlow(float seconds, float factor)
     {
-        if (IsServer && !Unstoppable)
+        if (IsServer && !CcImmune)
             SlowClientRpc(seconds, factor);
     }
 
@@ -190,7 +193,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerSilence(float seconds)
     {
-        if (IsServer && !Unstoppable)
+        if (IsServer && !CcImmune)
             SilenceClientRpc(seconds);
     }
 
@@ -220,6 +223,24 @@ public class FirstPersonController : NetworkBehaviour
     // Odhozeni vybuchem (naloz, balvan) a znehybneni (past). Server je posila vlastnikovi hrace.
     Vector3 externalVelocity;
     float rootedUntil;
+    bool wasOnLadder;
+
+    // Je nad prikrcenym hracem misto na postaveni? (kapsle od vysky drepu po plnou vysku, bez vlastnich kolizi)
+    static readonly Collider[] standOverlap = new Collider[8];
+    bool CanStandUp()
+    {
+        float r = controller.radius * 0.9f;
+        Vector3 bottom = transform.position + Vector3.up * Mathf.Max(r, crouchHeight - r);
+        Vector3 top = transform.position + Vector3.up * (standHeight - r);
+        int n = Physics.OverlapCapsuleNonAlloc(bottom, top, r, standOverlap, ~0, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < n; i++)
+        {
+            var c = standOverlap[i];
+            if (c == null || c == controller || c.transform.IsChildOf(transform)) continue;
+            return false;
+        }
+        return true;
+    }
     public bool Rooted => Time.time < rootedUntil;
 
     public void AddImpulse(Vector3 impulse)
@@ -261,9 +282,10 @@ public class FirstPersonController : NetworkBehaviour
     public const float HoverAirSpeed = 1.6f;
     float HoverScale => Time.time < hoverUntil && !controller.isGrounded ? HoverAirSpeed : 1f;
 
-    public void ServerKnockback(Vector3 impulse)
+    // enemy = false: vlastni nalozka / spoluhrac (na spawnu se odhazuje dal - napr. skok naloží).
+    public void ServerKnockback(Vector3 impulse, bool enemy = true)
     {
-        if (IsServer && !Unstoppable)
+        if (IsServer && !Unstoppable && !(enemy && Combat.SpawnProtected(gameObject)))
             KnockbackClientRpc(impulse);
     }
 
@@ -276,7 +298,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerRoot(float seconds)
     {
-        if (!IsServer || Unstoppable) return;
+        if (!IsServer || CcImmune) return;
 
         RootClientRpc(seconds);
 
@@ -310,7 +332,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerSleep(float seconds, GameObject attacker)
     {
-        if (!IsServer || Unstoppable) return;
+        if (!IsServer || CcImmune) return;
 
         serverSleepUntil = Time.time + seconds;
         var attackerObject = attacker != null ? attacker.GetComponent<NetworkObject>() : null;
@@ -368,7 +390,7 @@ public class FirstPersonController : NetworkBehaviour
     // blind = oslepujici granat (bila obrazovka a piskani); hak omracuje bez oslepeni.
     public void ServerStun(float seconds, GameObject attacker = null, bool blind = true)
     {
-        if (!IsServer || Unstoppable) return;
+        if (!IsServer || CcImmune) return;
 
         var attackerObject = attacker != null ? attacker.GetComponent<NetworkObject>() : null;
         StunClientRpc(seconds, attackerObject != null ? attackerObject.OwnerClientId : ulong.MaxValue, blind);
@@ -409,7 +431,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ServerPull(Vector3 destination, float seconds)
     {
-        if (IsServer && !Unstoppable)
+        if (IsServer && !CcImmune)
             PullClientRpc(destination, seconds);
     }
 
@@ -658,6 +680,14 @@ public class FirstPersonController : NetworkBehaviour
     {
         if (IsOwner && riding && Tractor.Instance != null)
             transform.position = Tractor.Instance.SeatPosition;
+    }
+
+    // Presun vlastniho hrace (tajny vstup bazenem...): bez setrvacnosti padu a odhozeni.
+    public void OwnerTeleport(Vector3 feet, float yaw)
+    {
+        verticalVelocity = 0f;
+        externalVelocity = Vector3.zero;
+        Teleport(feet, yaw);
     }
 
     void Teleport(Vector3 feet, float yaw)
@@ -1047,12 +1077,21 @@ public class FirstPersonController : NetworkBehaviour
             }
         }
 
+        // Pod nizkym stropem (zaval v jeskyni) se nejde postavit - zustane v drepu, dokud nad nim neni misto.
+        if (!crouch && controller.height < standHeight - 0.01f && !CanStandUp())
+        {
+            crouch = true;
+            jump = false;
+        }
+
         Vector3 move = transform.right * input.x + transform.forward * input.y;
         crouching = crouch;
         move = Vector3.ClampMagnitude(move, 1f);
 
         // Na zebriku (Ladder) se leze: W nahoru, S dolu; vodorovne jen pomalu, at se z nej hned nesejde.
-        bool onLadder = !jump && Ladder.At(transform.position);
+        // (zebrik s grabFacing chyti jen hrace, ktery se k nemu diva a jde dopredu - wasOnLadder drzi, kdo uz leze)
+        bool onLadder = !jump && Ladder.At(transform.position, transform.forward, input.y > 0.1f, wasOnLadder);
+        wasOnLadder = onLadder;
         if (onLadder && !isGrounded)
             move *= Ladder.SideSpeedScale;
 

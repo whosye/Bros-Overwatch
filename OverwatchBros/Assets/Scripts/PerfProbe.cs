@@ -11,7 +11,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.Video;
 
 // Mereni vykonu bez cteni cisel ve hre (jen v editoru a vyvojovem buildu). Kazdou sekundu zapise do Logs/perf.log
-// casy snimku, pocty vykreslovani a polohu hrace. klavesa P = test na miste: postupne na chvili vypne svetla chaty, stiny,
+// casy snimku, pocty vykreslovani a polohu hrace. klavesa F9 = test na miste: postupne na chvili vypne svetla chaty, stiny,
 // televizi, stiny predmetu v chate a snizi rozliseni, zmeri kazdy krok a vse vrati zpet. Vysledek jde do stejneho logu.
 public class PerfProbe : MonoBehaviour
 {
@@ -96,7 +96,7 @@ public class PerfProbe : MonoBehaviour
         Collect(second);
         if (testing) Collect(stepSamples);
 
-        if (!testing && Keyboard.current != null && Keyboard.current.pKey.wasPressedThisFrame)
+        if (!testing && Keyboard.current != null && Keyboard.current.f9Key.wasPressedThisFrame)
             StartCoroutine(RunTest());
 
         if (Time.unscaledTime < nextLine) return;

@@ -129,10 +129,12 @@ public partial class MatchManager
             ServerPickupTick();
             ServerBoilerTick();
             ServerTractorTick();
+            ServerGollumUpdate();
             ServerBanterTick();
         }
 
         CapturePointView.Sync(this);
+        RingWorldView.Sync(this);
         SpawnZone.Sync(this);
     }
 

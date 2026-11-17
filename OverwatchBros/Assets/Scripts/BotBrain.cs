@@ -981,7 +981,10 @@ public class BotBrain : MonoBehaviour
             if (Combat.SameTeam(gameObject, other.gameObject)) continue;
 
             float distance = Vector3.Distance(transform.position, other.transform.position);
-            bool visible = distance <= viewDistance && CanSee(eye, other);
+            // nasazeny prsten: bot ho vidi, jen kdyz stoji skoro u nej
+            bool ringHidden = other.RingInvisible && distance > 2.5f;
+            if (ringHidden && other != target) continue;
+            bool visible = distance <= viewDistance && CanSee(eye, other) && !ringHidden;
             // bot vidi jen pred sebe (zorne pole ~140 st.) a nevi, kde jsou nepratele, ktere nevidi
             Vector3 toOther = other.transform.position - transform.position;
             toOther.y = 0f;
@@ -1920,6 +1923,8 @@ public static class BotNavigation
         var sources = new List<NavMeshBuildSource>();
         NavMeshBuilder.CollectSources(MapBounds, ~0, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>(), sources);
         sources.RemoveAll(src => src.component is Collider c && c.isTrigger);
+        // mista jen pro hrace (tajny tunel): boti o nich nevi
+        sources.RemoveAll(src => src.component is Collider c && c.GetComponentInParent<BotNoNav>() != null);
         sources.RemoveAll(src => src.component is Collider c && c.GetComponentInParent<ZoneGate>() is ZoneGate gate && gate.defendersPass);
         Bounds bounds = new Bounds();
         bool any = false;

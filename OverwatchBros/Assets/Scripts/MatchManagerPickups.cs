@@ -19,6 +19,7 @@ public partial class MatchManager
     void ServerResetPickups()
     {
         if (!IsServer) return;
+        ServerResetRing();
         pickupMask.Value = ulong.MaxValue;
         System.Array.Clear(pickupRespawnAt, 0, pickupRespawnAt.Length);
     }
@@ -29,6 +30,7 @@ public partial class MatchManager
         nextPickupTick = Time.time + PickupTickInterval;
 
         var spots = PickupSpot.Sorted;
+        ServerRingTick();
         ulong mask = pickupMask.Value;
 
         // Obnoveni sebranych.
@@ -113,6 +115,9 @@ public partial class MatchManager
             case PickupKind.KangarooSkin:
                 health.ServerGrantShield(PickupBuffs.KangarooShield, PickupBuffs.KangarooShieldMax);
                 return true;
+            case PickupKind.Ring:
+                ServerGiveRing(hero, spot.Index);
+                return true;
             case PickupKind.Lasagne:
                 if (!health.HealBlocked) Combat.HealedLine(health, health.Heal(health.maxHealth));
                 health.ServerHoldShield(PickupBuffs.LasagneShield, PickupBuffs.LasagneSeconds);
@@ -161,6 +166,8 @@ public partial class MatchManager
             PickupBuffs.LasagneUntil = Time.time + PickupBuffs.LasagneSeconds;
             CaptureUI.Announce("Snědl jsi lasagne - plné zdraví a štít", PickupSpot.KindColor(kind), 3f);
         }
+        if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Ring)
+            CaptureUI.Announce("Máš Prsten - neseš ho, dokud žiješ  ·  [P] nasadit / sundat", PickupSpot.KindColor(kind), 4.5f);
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.KangarooSkin)
             CaptureUI.Announce("Oblékl sis klokaní kůži - +100 štítu", PickupSpot.KindColor(kind), 3f);
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Carburetor)

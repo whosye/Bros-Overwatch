@@ -585,6 +585,7 @@ public class WeaponShooting : NetworkBehaviour
             if (victim == null) victim = col.GetComponentInParent<Target>();
             if (victim == null) victim = col.GetComponentInParent<BoulderHitbox>();
             if (victim == null) victim = col.GetComponentInParent<TrapHitbox>();
+            if (victim == null) victim = col.GetComponentInParent<GollumHitbox>();
             if (victim == null || struck.Contains(victim)) continue;
             if (victim is Health h && Combat.SameTeam(gameObject, h.gameObject)) continue;
 
@@ -665,6 +666,14 @@ public class WeaponShooting : NetworkBehaviour
         {
             RequestBoulderDamageServerRpc(boulder.Owner.NetworkObject, damage);
             ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, transform.position, 0.8f);
+        }
+
+        // Glum (honi nositele prstenu): poskozeni ho zahani
+        if (collider.GetComponentInParent<GollumHitbox>() != null)
+        {
+            RequestGollumDamageServerRpc(damage);
+            ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, transform.position, 0.8f);
+            if (Bot == null) HudUI.NotifyHit(false);
         }
 
         // Nepratelska past na medvedy jde rozstrilet.
@@ -832,6 +841,12 @@ public class WeaponShooting : NetworkBehaviour
         var boulder = ownerObject.GetComponent<BoulderAbility>();
         if (boulder != null)
             boulder.ServerDamage(gameObject, amount);
+    }
+
+    [ServerRpc]
+    void RequestGollumDamageServerRpc(float amount)
+    {
+        GollumHitbox.Damage(gameObject, Mathf.Clamp(amount, 0f, 300f));
     }
 
     [ServerRpc]

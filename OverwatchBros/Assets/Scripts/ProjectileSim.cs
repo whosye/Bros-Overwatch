@@ -172,7 +172,8 @@ public class ProjectileSim : MonoBehaviour
         return collider.GetComponentInParent<Health>() != null
             || collider.GetComponentInParent<Target>() != null
             || collider.GetComponentInParent<BoulderHitbox>() != null
-            || collider.GetComponentInParent<TrapHitbox>() != null;
+            || collider.GetComponentInParent<TrapHitbox>() != null
+            || collider.GetComponentInParent<GollumHitbox>() != null;
     }
 
     bool NearEnemy(Vector3 position)
@@ -228,6 +229,9 @@ public class ProjectileSim : MonoBehaviour
         var trapHit = collider.GetComponentInParent<TrapHitbox>();
         if (trapHit != null)
             trapHit.Damage(shooter.gameObject, hitDamage);
+
+        if (collider.GetComponentInParent<GollumHitbox>() != null)
+            GollumHitbox.Damage(shooter.gameObject, hitDamage);
 
         var health = collider.GetComponentInParent<Health>();
         var shooterHero = shooter.GetComponent<PlayerHero>();

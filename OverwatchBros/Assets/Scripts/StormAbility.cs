@@ -181,6 +181,8 @@ public class StormAbility : NetworkBehaviour
             var boulder = col.GetComponentInParent<BoulderHitbox>();
             if (boulder != null)
                 boulder.Damage(gameObject, ability.power * TickInterval);
+            if (col.GetComponentInParent<GollumHitbox>() != null)
+                GollumHitbox.Damage(gameObject, ability.power * TickInterval);
 
             var victim = col.GetComponentInParent<Health>();
             if (victim == null || !hit.Add(victim) || victim.currentHealth.Value <= 0f) continue;

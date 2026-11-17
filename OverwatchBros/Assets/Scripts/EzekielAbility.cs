@@ -382,6 +382,9 @@ public class EzekielAbility : NetworkBehaviour
             if (trap != null)
                 trap.Damage(gameObject, scaled);
 
+            if (col.GetComponentInParent<GollumHitbox>() != null)
+                GollumHitbox.Damage(gameObject, scaled);
+
             var health = col.GetComponentInParent<Health>();
             if (health == null || !damaged.Add(health)) continue;
             if (health.gameObject == gameObject || Combat.SameTeam(gameObject, health.gameObject)) continue;

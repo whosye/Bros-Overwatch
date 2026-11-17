@@ -207,7 +207,7 @@ public class Health : NetworkBehaviour
 
     public void ServerBlockHealing(float seconds)
     {
-        if (IsServer)
+        if (IsServer && !Combat.SpawnProtected(gameObject))
             healBlockedUntil = Mathf.Max(healBlockedUntil, Time.time + seconds);
     }
 

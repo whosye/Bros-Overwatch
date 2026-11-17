@@ -618,7 +618,8 @@ public class HeldWeapons : MonoBehaviour
 
         // Zbrane u kamery (majitel v 1. osobe) a zbrane v rukou postavy (ostatni, majitel ve 3. osobe).
         // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
-        bool hiddenByReplay = !ghost && (ReplayPlayer.Active || (CurrentHeroComponent != null && CurrentHeroComponent.IsSpawned && CurrentHeroComponent.IsUntargetable));
+        bool hiddenByReplay = !ghost && (ReplayPlayer.Active || (CurrentHeroComponent != null && CurrentHeroComponent.IsSpawned
+            && (CurrentHeroComponent.IsUntargetable || CurrentHeroComponent.HiddenFromLocal)));
         bool cameraHandsVisible = !dead && !(owner && thirdPerson) && !hiddenByReplay;
         float scopeBlend = 0f;
         if (owner && CurrentWeapon != null && CurrentWeapon.HasScopedShot)

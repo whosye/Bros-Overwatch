@@ -32,6 +32,10 @@ public class MatchUI : MonoBehaviour
     readonly TopBarUI topBar = new TopBarUI();
     readonly BuffUI buffs = new BuffUI();
     TextMeshProUGUI boilerPrompt;
+    // Nasazeny prsten (vidi jen nositel): zsedly "svet stinu" pres obrazovku.
+    Image ringVeil;
+    bool ringWornShown;
+    Transform uiRoot;
     readonly HeroPickerUI heroPicker = new HeroPickerUI();
     readonly HeroInfoUI heroInfo = new HeroInfoUI();
     GameObject blockBar;
@@ -92,6 +96,7 @@ public class MatchUI : MonoBehaviour
         canvasObject.AddComponent<GraphicRaycaster>();
 
         var root = canvasObject.transform;
+        uiRoot = root;
 
         // odpocet do oziveni (po smrti)
         respawnText = UiKit.MakeText(root, "Respawn", "", 44, TextAlignmentOptions.Center, new Vector2(0.5f, 0.5f),
@@ -395,6 +400,7 @@ public class MatchUI : MonoBehaviour
         capture.Tick(localHero, playing && !over, match);
         buffs.Tick((playing && !over && !replay) || (replay && !killcam));   // v POTG buffy hrace ze zaznamu
         boilerPrompt.text = playing && !over && !replay ? (Tractor.PromptText != "" ? Tractor.PromptText : Boiler.PromptText) : "";
+        UpdateRing(match, playing && !over && !replay);
         UpdateEndScreen(network, match, over);
         UpdateLegacyHud(playing);
 
@@ -422,6 +428,34 @@ public class MatchUI : MonoBehaviour
             headBobSlider.interactable = GameSettings.HeadBobEnabled;
             headBobText.text = $"Intenzita pohupování: {Mathf.RoundToInt(GameSettings.HeadBobIntensity * 100f)} %";
         }
+    }
+
+    // Prsten: P nasadi / sunda (jen kdo ho nese). Nasazeny = zsedly zavoj pres obrazovku (jen pro nositele).
+    void UpdateRing(MatchManager match, bool playing)
+    {
+        if (ringVeil == null)
+        {
+            if (uiRoot == null) return;
+            ringVeil = UiKit.MakeImage(uiRoot, "PrstenZavoj", new Color(0.42f, 0.45f, 0.5f, 0f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            UiKit.Stretch(ringVeil.rectTransform);
+            ringVeil.rectTransform.SetAsFirstSibling();
+        }
+
+        if (playing && match != null && GameSettings.CursorLocked && Keyboard.current != null
+            && Keyboard.current.pKey.wasPressedThisFrame && MatchManager.LocalHasRing)
+            match.ToggleRingRpc();
+
+        bool worn = playing && MatchManager.LocalWearsRing;
+        if (worn != ringWornShown)
+        {
+            ringWornShown = worn;
+            if (playing && MatchManager.LocalHasRing)
+                CaptureUI.Announce(worn ? "Nasadil sis Prsten" : "Sundal sis Prsten", PickupSpot.KindColor(PickupKind.Ring), 2.2f);
+        }
+        var c = ringVeil.color;
+        c.a = Mathf.MoveTowards(c.a, worn ? 0.32f : 0f, Time.unscaledDeltaTime * 0.8f);
+        ringVeil.color = c;
+        if (ringVeil.gameObject.activeSelf != c.a > 0.001f) ringVeil.gameObject.SetActive(c.a > 0.001f);
     }
 
     void UpdateRespawnCountdown(PlayerHero localHero, MatchManager match)

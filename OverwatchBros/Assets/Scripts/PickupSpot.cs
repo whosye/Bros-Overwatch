@@ -16,6 +16,7 @@ public enum PickupKind
     Lasagne,      // lasagne: plne zdravi + stit, ktery chvili drzi
     WhitePowder,  // cara bileho prasku na podtacku: kratce o 50 % vetsi poskozeni
     KangarooSkin, // klokani kuze: hned +100 stitu (drzi, dokud ho poskozeni nezbori)
+    Ring,         // zlaty prsten na konci tajne jeskyne: hrac ho nese, dokud zije; po jeho smrti se vrati na misto
 }
 
 // Buffy z balicku, ktere zobrazuje HUD mistniho hrace (BuffUI). Nastavuje je MatchManager, kdyz balicek sebere
@@ -114,6 +115,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Lasagne => 45f,
         PickupKind.WhitePowder => 60f,
         PickupKind.KangarooSkin => 40f,
+        PickupKind.Ring => float.MaxValue,   // vrati se az se smrti nositele (MatchManagerRing)
         _ => 30f,
     };
 
@@ -133,6 +135,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Lasagne => new Color(0.95f, 0.38f, 0.2f),
         PickupKind.WhitePowder => new Color(0.92f, 0.95f, 1f),
         PickupKind.KangarooSkin => new Color(0.8f, 0.55f, 0.32f),
+        PickupKind.Ring => new Color(1f, 0.78f, 0.22f),
         _ => new Color(0.45f, 0.85f, 1f),
     };
 
@@ -150,6 +153,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Lasagne => "Lasagne",
         PickupKind.WhitePowder => "Bílá látka",
         PickupKind.KangarooSkin => "Klokaní kůže",
+        PickupKind.Ring => "Prsten",
         _ => "Štít",
     };
 
@@ -307,6 +311,18 @@ public class PickupSpot : MonoBehaviour
                     ear.transform.localRotation = Quaternion.Euler(s * 12f, 0f, 20f);
                 }
                 Part(PrimitiveType.Cube, item, new Vector3(0f, 0f, 0f), new Vector3(0.025f, 0.165f, 0.165f), new Color(0.35f, 0.22f, 0.12f));   // remen
+                break;
+            case PickupKind.Ring:
+                // Zlaty prsten: obrucka z kratkych clanku do kruhu, postaveny na hranu (otaci se), zlaty lesk.
+                var gold = new Color(1f, 0.76f, 0.2f);
+                const int links = 16;
+                for (int i = 0; i < links; i++)
+                {
+                    float a = i * Mathf.PI * 2f / links;
+                    var link = Part(PrimitiveType.Cube, item, new Vector3(Mathf.Cos(a) * 0.13f, Mathf.Sin(a) * 0.13f, 0f),
+                        new Vector3(0.026f, 0.054f, 0.035f), gold, 1.4f);
+                    link.transform.localRotation = Quaternion.Euler(0f, 0f, a * Mathf.Rad2Deg);
+                }
                 break;
             case PickupKind.Lasagne:
                 // Alobalova vanicka s lasagnemi a lopatkou.

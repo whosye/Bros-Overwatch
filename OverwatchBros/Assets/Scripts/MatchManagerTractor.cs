@@ -260,7 +260,7 @@ public partial class MatchManager
                 Combat.DamagePlayer(driver.gameObject, health, Tractor.RunOverDamage, "env:rolba");
             }
             if (movement != null && health.currentHealth.Value > 0f)
-                movement.ServerKnockback(away * (ally ? 4f : speed * 1.3f) + Vector3.up * (ally ? 2f : 6f));
+                movement.ServerKnockback(away * (ally ? 4f : speed * 1.3f) + Vector3.up * (ally ? 2f : 6f), !ally);
             TractorHitClientRpc(player.transform.position);
         }
     }

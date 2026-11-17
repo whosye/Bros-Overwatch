@@ -729,7 +729,8 @@ public class CharacterVisual : MonoBehaviour
         // Behem prehravani POTG jsou zivi hraci skryti (misto nich hraji duchove).
         if (hero == null && !IsGhost) hero = GetComponent<PlayerHero>();
         bool hidden = hero != null && hero.IsSpawned && hero.IsHidden;   // Max uvnitr obeti
-        bool visible = IsGhost ? !GhostHidden : (!owner || fpc.ThirdPerson) && !ReplayPlayer.Active && !hidden;
+        bool ring = hero != null && hero.IsSpawned && hero.HiddenFromLocal;   // nepritel s nasazenym prstenem
+        bool visible = IsGhost ? !GhostHidden : (!owner || fpc.ThirdPerson) && !ReplayPlayer.Active && !hidden && !ring;
         foreach (var r in renderers)
             if (r != null && r.enabled != visible)
                 r.enabled = visible;

@@ -7,6 +7,9 @@ using UnityEngine;
 public class Ladder : MonoBehaviour
 {
     public Vector3 size = new Vector3(0.9f, 8f, 0.9f);
+    [Tooltip("Nenulovy smer (svet) = zebrik chyti jen hrace, ktery se diva timto smerem (k zebriku) a jde dopredu - "
+        + "kdo kolem nej jen pada nebo prochazi, nechyti se (zebrik v sachte pod poklopem). Nula = chyti kazdeho.")]
+    public Vector3 grabFacing = Vector3.zero;
 
     public const float ClimbSpeed = 4f;
     public const float SideSpeedScale = 0.35f;   // na zebriku se do stran a dopredu pohybuje pomaleji
@@ -20,11 +23,19 @@ public class Ladder : MonoBehaviour
     void OnDisable() => all.Remove(this);
 
     // Je hrac (chodidla) na nekterem zebriku?
-    public static bool At(Vector3 feet)
+    public static bool At(Vector3 feet) => At(feet, Vector3.zero, true, true);
+
+    // forward = kam se hrac diva, pushing = jde dopredu (W), wasOn = minuly snimek uz byl na zebriku.
+    public static bool At(Vector3 feet, Vector3 forward, bool pushing, bool wasOn)
     {
         foreach (var ladder in all)
-            if (ladder != null && ladder.Contains(feet))
-                return true;
+        {
+            if (ladder == null || !ladder.Contains(feet)) continue;
+            if (ladder.grabFacing.sqrMagnitude < 0.01f || wasOn) return true;
+            Vector3 flat = new Vector3(forward.x, 0f, forward.z);
+            Vector3 face = new Vector3(ladder.grabFacing.x, 0f, ladder.grabFacing.z);
+            if (pushing && flat.sqrMagnitude > 0.01f && Vector3.Dot(flat.normalized, face.normalized) > 0.5f) return true;
+        }
         return false;
     }
 

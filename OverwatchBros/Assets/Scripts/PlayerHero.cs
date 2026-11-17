@@ -19,6 +19,22 @@ public class PlayerHero : NetworkBehaviour
     // Necilitelny: neviditelny, nebo Max ve stinove forme (viditelny stin, ale bez jmenovky, kolize a zraneni).
     public bool IsUntargetable => isHidden.Value || (max != null && max.ShadowFormActive);
 
+    // Nasazeny prsten (MatchManagerRing): nepratele ho nevidi - model, zbran ani jmenovku (spoluhraci ano).
+    // Da se trefit naslepo a jsou slyset kroky; prsten sklouzne, jakmile nekoho zrani.
+    public bool RingInvisible => IsSpawned && MatchManager.Instance != null && MatchManager.Instance.WearsRing(NetworkObjectId);
+
+    // Neviditelny pro hrace na tomhle pocitaci (nepritel s nasazenym prstenem).
+    public bool HiddenFromLocal
+    {
+        get
+        {
+            if (!RingInvisible || (IsOwner && !BotBrain.IsBot(gameObject))) return false;
+            var network = NetworkManager.Singleton;
+            var local = network != null && network.LocalClient != null ? network.LocalClient.PlayerObject : null;
+            return local == null || !Combat.SameTeam(local.gameObject, gameObject);
+        }
+    }
+
     void OnHiddenChanged(bool previous, bool current)
     {
         var body = GetComponent<CharacterController>();

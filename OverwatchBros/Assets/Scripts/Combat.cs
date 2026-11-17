@@ -47,6 +47,10 @@ public static class Combat
         if (match != null && (match.IsOver || match.IsLobby)) return;
         if (SameTeam(attacker, target.gameObject)) return;
 
+        // Na vlastnim spawnu (kruh u mista oziveni / spawn stodola) je hrac vuci nepratelum (i Glumovi) nezranitelny.
+        if (attacker != target.gameObject && SpawnProtected(target.gameObject))
+            return;
+
         // Posileni (Annina ultimatka): posileny utoci silneji a dostava mensi poskozeni.
         var boostedAttacker = attacker != null ? attacker.GetComponent<PlayerHero>() : null;
         if (boostedAttacker != null && boostedAttacker.IsBoosted)
@@ -67,6 +71,8 @@ public static class Combat
         if (targetHero != null)
             targetHero.ServerNoteAttacker(attacker);
         target.TakeDamage(amount);
+        // nasazeny prsten sklouzne, kdyz nositel nekoho zrani
+        if (boostedAttacker != null && match != null) match.ServerRingSlips(boostedAttacker);
 
         bool killed = wasAlive && target.currentHealth.Value <= 0f;
 
@@ -168,6 +174,9 @@ public static class Combat
             if (trap != null)
                 trap.Damage(attacker, damage);
 
+            if (col.GetComponentInParent<GollumHitbox>() != null)
+                GollumHitbox.Damage(attacker, damage);
+
             var health = col.GetComponentInParent<Health>();
             if (health == null || !damaged.Add(health)) continue;
             if (SameTeam(attacker, health.gameObject)) continue;
@@ -177,6 +186,15 @@ public static class Combat
             float scaled = health == direct ? damage : damage * Mathf.Lerp(1f, edgeFactor, Mathf.Clamp01(distance / radius));
             DamagePlayer(attacker, health, scaled, source);
         }
+    }
+
+    // Stoji hrac na spawnu sveho tymu? Tam na nej nepratele nemuzou - poskozeni ani omezeni (omraceni, uspani,
+    // past, zpomaleni, umlceni, odhozeni, pritazeni, blokace leceni).
+    public static bool SpawnProtected(GameObject player)
+    {
+        var team = player != null ? player.GetComponent<PlayerTeam>() : null;
+        var match = MatchManager.Instance;
+        return team != null && match != null && !match.IsLobby && SpawnZone.Contains(team.teamId.Value, player.transform.position);
     }
 
     // Odhozeni hracu vybuchem (jen server): neprochazi zdmi, spoluhrace neodhazuje, utocnika sameho ano (selfScale).
@@ -208,7 +226,7 @@ public static class Combat
             direction = (direction + Vector3.up * 0.7f).normalized;
 
             float scale = Mathf.Lerp(1f, 0.5f, Mathf.Clamp01(distance / radius)) * (self ? selfScale : 1f);
-            controller.ServerKnockback(direction * force * scale);
+            controller.ServerKnockback(direction * force * scale, !self);
 
             // Kdyz odhozeny spadne z mapy, zabiti patri tomu, kdo ho odhodil.
             var pushedHero = health.GetComponent<PlayerHero>();
