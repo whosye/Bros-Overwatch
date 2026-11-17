@@ -23,7 +23,8 @@ public struct ReplayPlayerSnap
     public Vector3 holyPoint;
     public float holyRadius, holyProgress;
 
-    public const byte Alive = 1, Rushing = 2, Blocking = 4, Boosted = 8, Hidden = 16, Revealed = 32, Preaching = 64;
+    public const byte Alive = 1, Rushing = 2, Blocking = 4, Boosted = 8, Hidden = 16, Revealed = 32, Preaching = 64,
+        Scoped = 128;   // mirí pres zamerovac (killcam z pohledu vraha: priblizeni a kruh)
 }
 
 public struct ReplaySlot

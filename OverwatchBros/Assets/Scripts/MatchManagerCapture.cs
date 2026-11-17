@@ -345,7 +345,6 @@ public partial class MatchManager
     {
         attackers = 0;
         defenders = 0;
-        Quaternion toLocal = Quaternion.Euler(0f, -pointYaw.Value, 0f);
         foreach (var client in PlayerSlots())
         {
             var player = client.PlayerObject;
@@ -358,13 +357,31 @@ public partial class MatchManager
             // kdo sedi ve snezne rolbe, bod nezabira ani neblokuje
             if (IsDriving(player.NetworkObjectId) || IsRiding(player.NetworkObjectId)) continue;
 
-            Vector3 local = toLocal * (player.transform.position - pointPosition.Value);
-            if (Mathf.Abs(local.x) > pointSize.Value.x * 0.5f || Mathf.Abs(local.z) > pointSize.Value.y * 0.5f) continue;
-            if (local.y < -1.5f || local.y > 4f) continue;
+            if (!InCaptureArea(player.transform.position)) continue;
 
             if (team.teamId.Value == attackTeam.Value) attackers++;
             else defenders++;
         }
+    }
+
+    // Stoji 'feet' na bodu? Obdelnik bodu (natoceni), vyska -1,5..4 m - ale ne v jinem patre: bod v chate (C v obyvaku)
+    // nesmi zabirat ani blokovat nikdo z patra nad nim. Kdo je vys nez 1,2 m nad bodem, musi pod sebou mit volno
+    // (zadnou podlahu / strop) skoro az k urovni bodu - stul, schod nebo bedna v bode jsou nizko, patro ne.
+    public bool InCaptureArea(Vector3 feet)
+    {
+        Vector3 local = Quaternion.Euler(0f, -pointYaw.Value, 0f) * (feet - pointPosition.Value);
+        if (Mathf.Abs(local.x) > pointSize.Value.x * 0.5f || Mathf.Abs(local.z) > pointSize.Value.y * 0.5f) return false;
+        if (local.y < -1.5f || local.y > 4f) return false;
+        if (local.y <= 1.2f) return true;
+
+        float baseY = pointPosition.Value.y;
+        var hits = Physics.RaycastAll(feet + Vector3.up * 0.1f, Vector3.down, local.y - 0.4f, ~0, QueryTriggerInteraction.Ignore);
+        foreach (var hit in hits)
+        {
+            if (hit.collider.GetComponentInParent<NetworkObject>() != null) continue;   // hraci, vozidla
+            if (hit.point.y > baseY + 1.2f) return false;   // stoji na podlaze vyssiho patra
+        }
+        return true;
     }
 
     static void SetSeconds(NetworkVariable<int> variable, float seconds)

@@ -163,6 +163,8 @@ public class ReplayCapture : MonoBehaviour
             var ezekiel = p.GetComponent<EzekielAbility>();
             bool preaching = ezekiel != null && ezekiel.IsSpawned && ezekiel.IsCasting;
             if (preaching) flags |= ReplayPlayerSnap.Preaching;
+            var mover = p.GetComponent<FirstPersonController>();
+            if (mover != null && mover.IsSpawned && mover.scoped.Value) flags |= ReplayPlayerSnap.Scoped;
 
             list.Add(new ReplayPlayerSnap
             {

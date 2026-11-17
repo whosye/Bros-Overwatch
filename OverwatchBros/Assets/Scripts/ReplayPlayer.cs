@@ -171,6 +171,8 @@ public class ReplayPlayer : MonoBehaviour
         MatchOverlayUI.ClearKills();
         End();
         killcamVictim = killcam;
+        killcamFov = KillcamFov;
+        killcamScope = 0f;
         clip = replay;
         time = 0f;
         nextEvent = 0;
@@ -430,7 +432,12 @@ public class ReplayPlayer : MonoBehaviour
 
     // Killcam: oci vraha (poloha a natoceni ze snimku), pohled nahoru/dolu smerem k obeti.
     const float EyeHeight = 1.62f;
+    const float KillcamFov = 75f;
     float killcamPitch;
+    float killcamFov = KillcamFov, killcamScope;
+
+    // Killcam: jak moc je obraz pres zamerovac odstrelovacky (kruh zamerovace v MatchUI), 0 = bez.
+    public static float KillcamScopeBlend => IsKillcam ? instance.killcamScope : 0f;
 
     void KillcamView(ReplayFrame a, ReplayFrame b, float k)
     {
@@ -445,7 +452,25 @@ public class ReplayPlayer : MonoBehaviour
         }
         killcamPitch = Mathf.LerpAngle(killcamPitch, pitch, Mathf.Clamp01(Time.unscaledDeltaTime * 8f));
         view.transform.SetPositionAndRotation(eye, Quaternion.Euler(killcamPitch, yaw, 0f));
-        view.fieldOfView = 75f;
+
+        // vrah miril pres zamerovac: priblizit jako ve hre (u odstrelovacky i s kruhem zamerovace)
+        float wantFov = KillcamFov, scopeFov = 0f;
+        bool scopedShot = false;
+        foreach (var p in a.players)
+        {
+            if (p.id != clip.povId) continue;
+            var weapon = HeroRegistry.Get(p.hero) != null ? HeroRegistry.Get(p.hero).weapon : null;
+            if ((p.flags & ReplayPlayerSnap.Scoped) != 0 && weapon != null && weapon.scopeFov > 0f)
+            {
+                scopeFov = weapon.scopeFov;
+                wantFov = scopeFov;
+                scopedShot = weapon.HasScopedShot;
+            }
+            break;
+        }
+        killcamFov = Mathf.Lerp(killcamFov, wantFov, 1f - Mathf.Exp(-20f * Time.unscaledDeltaTime));
+        view.fieldOfView = killcamFov;
+        killcamScope = scopedShot ? ScopeZoom.BlendForFov(killcamFov, KillcamFov, scopeFov) : 0f;
     }
 
     static bool Snap(ReplayFrame a, ReplayFrame b, float k, int id, out Vector3 position, out float yaw)

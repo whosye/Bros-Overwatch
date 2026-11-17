@@ -450,6 +450,9 @@ public class MatchUI : MonoBehaviour
             if (!frame.thirdPerson && frame.health > 0f && weapon != null && weapon.HasScopedShot)
                 blend = ScopeZoom.BlendForFov(ReplayPlayer.Camera.fieldOfView, scope != null ? scope.BaseFov : 60f, weapon.scopeFov);
         }
+        // killcam: vrah (odstrelovac) miril pres zamerovac
+        if (ReplayPlayer.IsKillcam)
+            blend = ReplayPlayer.KillcamScopeBlend;
         scopeOverlay.SetBlend(blend);
         scopeOverlay.gameObject.SetActive(blend > 0.005f);
     }

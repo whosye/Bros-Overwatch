@@ -110,7 +110,8 @@ public class CaptureUI
             new Color(0.85f, 0.87f, 0.92f));
 
         // 2. kolo: karticka pod stavem - nahore cil, pod nim dva radky bodu (soupeř v 1. kole / utocnici ted)
-        var card = UiKit.MakeImage(panel.transform, "Zavod", new Color(0.03f, 0.05f, 0.09f, 0.6f), top, new Vector2(0f, -132f), new Vector2(RaceWidth, 80f));
+        // (levy horni roh obrazovky - pod pruhem zabirani prekazela)
+        var card = UiKit.MakeImage(canvas, "Zavod", new Color(0.03f, 0.05f, 0.09f, 0.6f), new Vector2(0f, 1f), new Vector2(20f, -20f), new Vector2(RaceWidth, 80f));
         raceGroup = card.gameObject;
         raceTitle = UiKit.MakeText(card.transform, "Cil", "", 17, TextAlignmentOptions.Center, top, new Vector2(0f, -5f), new Vector2(RaceWidth - 16f, 22f), GoalColor);
         raceTitle.fontStyle = FontStyles.Bold;
@@ -215,6 +216,8 @@ public class CaptureUI
         {
             if (marker.gameObject.activeSelf)
                 marker.gameObject.SetActive(false);
+            if (raceGroup.activeSelf)
+                raceGroup.SetActive(false);
             return;
         }
 
@@ -360,7 +363,7 @@ public class CaptureUI
         if (goalLine.gameObject.activeSelf != goalOnBar) goalLine.gameObject.SetActive(goalOnBar);
 
         // cil 2. kola je behem cekani videt v panelu cekani
-        if (waitGroup.activeSelf && target.text.Length > 0)
+        if (waitGroup.activeSelf && target.text.Length > 0 && !raceGroup.activeSelf)
             waitSub.text += $"\n<color=#{ColorUtility.ToHtmlStringRGB(GoalColor)}>{target.text}</color>";
 
         UpdateMarker(local, match, state);

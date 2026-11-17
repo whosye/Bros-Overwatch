@@ -554,17 +554,152 @@ public class BotBrain : MonoBehaviour
             return;
         }
 
-        // E (utocna)
-        if (def.altAbility != null && def.altAbilityKind != AbilityKind.HealField && distance < Reach(def.altAbility, 18f) && Random.value < 0.45f)
+        // E (utocna) - Maxuv stin ridi HeroTactics
+        if (def.altAbility != null && def.altAbilityKind != AbilityKind.HealField && def.altAbilityKind != AbilityKind.ShadowStep
+            && distance < Reach(def.altAbility, 18f) && Random.value < 0.45f)
             Press(HeroInput.Key.E);
 
         // PTM
         if (def.rmbAbility != null && distance < Reach(def.rmbAbility, 15f) && Random.value < 0.4f)
             Press(HeroInput.Key.RightMouse, 0.15f);
 
-        // Shift: priblizit se k nepriteli (vypady, skoky)
-        if (def.secondaryAbility != null && chase && distance > PreferredRange(weapon) + 4f && Random.value < 0.45f)
+        // Shift: priblizit se k nepriteli (vypady, skoky). Ne hak (sniper by se pritahl k nepriteli), nalozku
+        // a skoky, ktere slouzi k utekum / ocisteni (ty ridi HeroTactics).
+        bool shiftEngage = def.secondaryAbilityKind != AbilityKind.Grapple && def.secondaryAbilityKind != AbilityKind.Mine
+            && def.secondaryAbilityKind != AbilityKind.RighteousLeap && def.secondaryAbilityKind != AbilityKind.Dash;
+        if (def.secondaryAbility != null && shiftEngage && chase && distance > PreferredRange(weapon) + 4f && Random.value < 0.45f)
             Press(HeroInput.Key.Shift);
+    }
+
+    // ---------------- takticke pouziti schopnosti podle hrdiny ----------------
+
+    Vector3? abilityLook;          // schopnost potrebuje mirit jinam nez zbran (Povuv dopad)
+    float blockUntil, nextBlock;   // Povuv blok (drzi PTM)
+    float nextTactic;
+    float cleanseAt = -1f;
+    float leapAimSince = -1f;
+
+    // Sindel: z omraceni, uspani nebo pasti se vyprosti spravedlivym skokem (po kratke "lidske" reakci).
+    void TryCleanse()
+    {
+        var def = hero != null ? hero.Hero : null;
+        if (def == null || def.secondaryAbilityKind != AbilityKind.RighteousLeap || fpc.IsDead) { cleanseAt = -1f; return; }
+        var match = MatchManager.Instance;
+        if (match == null || match.IsLobby || match.IsOver) return;
+        bool stuck = fpc.Stunned || fpc.Rooted;
+        if (!stuck) { cleanseAt = -1f; return; }
+        if (cleanseAt < 0f) cleanseAt = Time.time + reactionTime * Random.Range(0.6f, 1.2f);
+        else if (Time.time >= cleanseAt)
+        {
+            Press(HeroInput.Key.Shift);
+            cleanseAt = Time.time + 1f;   // kdyby skok jeste nesel (cooldown), zkusit znovu
+        }
+    }
+
+    void HeroTactics(bool combat, bool chase, bool escaping)
+    {
+        abilityLook = null;
+        var def = hero != null ? hero.Hero : null;
+        if (def == null) return;
+        Vector3 eye = fpc.playerCamera != null ? fpc.playerCamera.transform.position : transform.position + Vector3.up * 1.6f;
+        float hp = health != null && health.maxHealth > 0f ? health.currentHealth.Value / health.maxHealth : 1f;
+
+        // Pova - Ohnivy dopad: ve vzduchu zamirit na cil a dopad potvrdit (bez potvrzeni ultimatka propadne)
+        var leap = def.abilityKind == AbilityKind.LeapStrike ? GetComponent<LeapStrikeAbility>() : null;
+        if (leap != null && leap.IsActive)
+        {
+            if (leapAimSince < 0f) leapAimSince = Time.time;
+            Vector3 spot = target != null ? (targetVisible ? target.transform.position : lastSeenPos)
+                : transform.position + Quaternion.Euler(0f, Yaw, 0f) * Vector3.forward * 8f;
+            abilityLook = spot + Vector3.up * 0.3f;
+            Vector3 forward = Quaternion.Euler(Pitch, Yaw, 0f) * Vector3.forward;
+            // az je nahore (vystup ~0,7 s) a miri: potvrdit; nejpozdeji pred koncem mireni
+            if (Time.time - leapAimSince > 1.1f && (Vector3.Angle(forward, abilityLook.Value - eye) < 6f || Time.time - leapAimSince > 2.6f))
+                Press(HeroInput.Key.LeftMouse);
+            return;
+        }
+        leapAimSince = -1f;
+
+        // Honza - balvan: odpalit, kdyz se valí u nepritele (nebo uz skoro dojel)
+        var boulder = def.abilityKind == AbilityKind.Boulder ? GetComponent<BoulderAbility>() : null;
+        if (boulder != null && boulder.IsActive)
+        {
+            float blast = def.ability != null ? def.ability.radius : 6f;
+            if (boulder.IsRolling && (EnemyWithin(boulder.BoulderPosition, blast * 0.55f) || boulder.TimeLeft < 0.4f))
+                Press(HeroInput.Key.LeftMouse);
+            return;
+        }
+
+        if (Time.time < nextTactic) return;
+        nextTactic = Time.time + Random.Range(0.15f, 0.3f);
+        float distance = target != null ? Vector3.Distance(transform.position, target.transform.position) : 999f;
+        Vector3 aimForward = Quaternion.Euler(Pitch, Yaw, 0f) * Vector3.forward;
+        bool aimed = target != null && targetVisible && Vector3.Angle(aimForward, target.transform.position + Vector3.up * 1.2f - eye) < 10f;
+
+        // Honza - nalozka: hodit pod nohy nepritele, odpalit, kdyz u nektere stoji nepritel
+        if (def.secondaryAbilityKind == AbilityKind.Mine)
+        {
+            var mines = GetComponent<MineAbility>();
+            if (mines != null)
+            {
+                if (mines.IsActive)
+                {
+                    minePositions.Clear();
+                    mines.MinePositions(minePositions);
+                    foreach (var mine in minePositions)
+                        if (EnemyWithin(mine, mines.BlastRadius * 0.75f)) { Press(HeroInput.Key.RightMouse); break; }
+                }
+                if (combat && aimed && distance > 4f && distance < 18f && mines.Charges > 0 && Random.value < 0.3f)
+                    Press(HeroInput.Key.Shift);
+            }
+        }
+
+        // Pova - blok: kdyz dostava zasahy a ma malo zivotu (zablokuje vetsinu, pak zase utoci)
+        if (def.blockAbility != null && combat && hp < 0.5f && Time.time >= nextBlock && hero.ServerSecondsSinceHitBy(target.gameObject) < 0.6f)
+        {
+            blockUntil = Time.time + Random.Range(0.8f, 1.6f);
+            nextBlock = blockUntil + Random.Range(2.5f, 5f);
+        }
+
+        // Max - stinova forma: utek pri malo zivotech, nebo cesta k nepriteli (projde zdi)
+        if (def.altAbilityKind == AbilityKind.ShadowStep && def.altAbility != null && target != null)
+        {
+            var max = GetComponent<MaxAbility>();
+            bool ready = max != null && !max.InShadow && max.StepRemaining <= 0f;
+            if (ready && ((combat && hp < 0.35f) || (chase && distance > 10f && distance < 30f && Random.value < 0.25f)))
+                Press(HeroInput.Key.E);
+        }
+
+        // uskoky / vyskoky (Viktor, Mirek): utek, kdyz ustupuje; Viktor jim i prebiji prazdny zasobnik
+        if (def.secondaryAbilityKind == AbilityKind.Dash && def.secondaryAbility != null)
+        {
+            bool empty = combat && shooting != null && shooting.MaxAmmo > 0 && shooting.CurrentAmmo == 0;
+            if (escaping || empty || (combat && hero.ServerSecondsSinceHitBy(target.gameObject) < 0.4f && Random.value < 0.15f))
+                Press(HeroInput.Key.Shift);
+        }
+
+        // Sindel: spravedlivy skok i jako uhyb pri ustupu (past / omraceni resi TryCleanse)
+        if (def.secondaryAbilityKind == AbilityKind.RighteousLeap)
+        {
+            TryCleanse();
+            if (escaping && Random.value < 0.5f) Press(HeroInput.Key.Shift);
+        }
+
+        // Kondulic - infravize: hlavne kdyz nikoho nevidi a nevi, kde jsou (odhali vsechny pro cely tym)
+        if (def.abilityKind == AbilityKind.Infra && hero.UltReady && !combat && Time.time - lastSeenTime > 4f && Random.value < 0.08f)
+            Press(HeroInput.Key.Q, 0.15f);
+    }
+
+    bool EnemyWithin(Vector3 point, float radius)
+    {
+        foreach (var other in FindObjectsByType<PlayerHero>())
+        {
+            if (other == hero || !other.IsSpawned || other.IsUntargetable || Combat.SameTeam(gameObject, other.gameObject)) continue;
+            var h = other.GetComponent<Health>();
+            if (h == null || h.currentHealth.Value <= 0f) continue;
+            if (Vector3.Distance(other.transform.position + Vector3.up * 0.9f, point) <= radius) return true;
+        }
+        return false;
     }
 
     // ---------------- rozhodovani ----------------
@@ -581,6 +716,7 @@ public class BotBrain : MonoBehaviour
             Move = Vector2.zero;
             Run = false;
             SetFire(false);
+            TryCleanse();   // Sindel se z omraceni / uspani vyprosti skokem
             return;
         }
 
@@ -757,7 +893,13 @@ public class BotBrain : MonoBehaviour
         healing = canHeal && (!combat || HealthFraction(healTarget) < 0.6f || healPhase)
             && !(combat && Vector3.Distance(feet, target.transform.position) < 6f);
         Vector3 lookAt;
-        if (aimAlly != null)
+        if (abilityLook.HasValue)
+        {
+            // schopnost se mirenim (Povuv dopad): divat se na cil, kam ma dopadnout
+            lookAt = abilityLook.Value;
+            TurnTowards(lookAt - eye, true, true);
+        }
+        else if (aimAlly != null)
         {
             lookAt = aimAlly.transform.position + Vector3.up * 1.1f;
             TurnTowards(lookAt - eye, true, true);
@@ -810,10 +952,13 @@ public class BotBrain : MonoBehaviour
             && shooting.CurrentAmmo < shooting.MaxAmmo * 0.6f && Time.time - lastSeenTime > 1.5f)
             reloadRequest = true;
         CheckLoiter(combat || holdPoint || wantsHealth || supporting);
-        if (aimAlly != null) SetFire(false);
+        if (aimAlly != null || abilityLook.HasValue) SetFire(false);
         else if (healing) HealShoot(eye);
         else Shoot(weapon, eye, combat);
+        HeroTactics(combat, chase, retreating || fleeing);
         UseAbilities(weapon, combat, chase);
+        // blok (Pova): drzet prave tlacitko, dokud trva
+        if (Time.time < blockUntil) holdUntil[(int)HeroInput.Key.RightMouse] = Time.time + 0.1f;
     }
 
     void PickTarget()
@@ -1310,12 +1455,8 @@ public class BotBrain : MonoBehaviour
     }
 
     // Je misto uvnitr obdelniku bodu (natoceni bodu, vyska do 4 m)?
-    static bool OnPoint(MatchManager match, Vector3 position)
-    {
-        Vector3 local = Quaternion.Euler(0f, -match.pointYaw.Value, 0f) * (position - match.pointPosition.Value);
-        Vector2 size = match.pointSize.Value;
-        return Mathf.Abs(local.x) <= size.x * 0.5f && Mathf.Abs(local.z) <= size.y * 0.5f && local.y > -1.5f && local.y < 4f;
-    }
+    // (stejne jako server pri zabirani - i patro nad bodem se nepocita)
+    static bool OnPoint(MatchManager match, Vector3 position) => match.InCaptureArea(position);
 
     // Stoji na bodu nekdo z utocniku (pro obrance: je potreba bod branit primo)? Zjistuje se 3x za sekundu.
     bool enemyOnPoint;
@@ -1346,11 +1487,14 @@ public class BotBrain : MonoBehaviour
     {
         Vector2 size = match.pointSize.Value;
         var rotation = Quaternion.Euler(0f, match.pointYaw.Value, 0f);
-        for (int tries = 0; tries < 6; tries++)
+        // v urovni bodu (ne v patre nad nim - bod v chate): navigacni sit hledat tesne u podlahy bodu
+        for (int tries = 0; tries < 12; tries++)
         {
-            Vector3 local = new Vector3(Random.Range(-0.35f, 0.35f) * size.x, 0f, Random.Range(-0.35f, 0.35f) * size.y);
+            float spread = tries < 6 ? 0.35f : 0.45f;
+            Vector3 local = new Vector3(Random.Range(-spread, spread) * size.x, 0.3f, Random.Range(-spread, spread) * size.y);
             Vector3 candidate = match.pointPosition.Value + rotation * local;
-            if (NavMesh.SamplePosition(candidate, out var hit, 2f, BotNavigation.Filter) && OnPoint(match, hit.position))
+            if (NavMesh.SamplePosition(candidate, out var hit, 1.5f, BotNavigation.Filter)
+                && hit.position.y < match.pointPosition.Value.y + 1.2f && OnPoint(match, hit.position))
                 return hit.position;
         }
         return match.pointPosition.Value;
@@ -1566,7 +1710,11 @@ public class BotBrain : MonoBehaviour
             return;
         }
         var navPath = new NavMeshPath();
-        if (!NavMesh.SamplePosition(to, out var end, 6f, BotNavigation.Filter)
+        // nejdriv tesne u cile (jinak by cil v prizemi "pritahlo" patro nad nim), pak az v sirsim okoli
+        NavMeshHit end;
+        bool found = NavMesh.SamplePosition(to, out end, 1.5f, BotNavigation.Filter)
+            || NavMesh.SamplePosition(to, out end, 6f, BotNavigation.Filter);
+        if (!found
             || !NavMesh.CalculatePath(start.position, end.position, BotNavigation.Filter, navPath))
         {
             ForgetGoal();
