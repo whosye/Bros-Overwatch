@@ -11,6 +11,14 @@ public static class GameSettings
     const string SensitivityKey = "settings.sensitivity";
     const string VolumeKey = "settings.volume";
     const string AmbientVolumeKey = "settings.ambientVolume";
+    const string VoiceVolumeKey = "settings.voiceVolume";
+
+    // Hlasitost hlasek hrdinu (a Gluma) zvlast od ostatnich zvuku; celkova Volume plati i pro ne.
+    public static float VoiceVolume
+    {
+        get => Mathf.Clamp01(PlayerPrefs.GetFloat(VoiceVolumeKey, 1f));
+        set => PlayerPrefs.SetFloat(VoiceVolumeKey, Mathf.Clamp01(value));
+    }
     public static bool MusicEnabled
     {
         get => PlayerPrefs.GetInt("settings.musicEnabled", 1) != 0;

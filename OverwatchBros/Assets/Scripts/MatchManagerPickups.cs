@@ -167,7 +167,7 @@ public partial class MatchManager
             CaptureUI.Announce("Snědl jsi lasagne - plné zdraví a štít", PickupSpot.KindColor(kind), 3f);
         }
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Ring)
-            CaptureUI.Announce("Máš Prsten - neseš ho, dokud žiješ  ·  [P] nasadit / sundat", PickupSpot.KindColor(kind), 4.5f);
+            CaptureUI.Announce("Máš Prsten - neseš ho, dokud žiješ  ·  [T] nasadit / sundat", PickupSpot.KindColor(kind), 4.5f);
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.KangarooSkin)
             CaptureUI.Announce("Oblékl sis klokaní kůži - +100 štítu", PickupSpot.KindColor(kind), 3f);
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Carburetor)

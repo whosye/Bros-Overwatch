@@ -77,7 +77,8 @@ public class HeroPickerUI
             return;
         }
 
-        bool canSwap = CanSwap(localHero);
+        bool random = MatchManager.Instance != null && MatchManager.Instance.RandomHeroes;
+        bool canSwap = !random && CanSwap(localHero);
 
         var keyboard = Keyboard.current;
         if (keyboard != null)
@@ -104,7 +105,9 @@ public class HeroPickerUI
             zoneLabel.gameObject.SetActive(showLabel);
         if (showLabel)
         {
-            zoneLabel.text = denied && !canSwap
+            zoneLabel.text = denied && random
+                ? "Náhodní hrdinové - změna hrdiny je vypnutá"
+                : denied && !canSwap
                 ? "Hrdinu jde měnit jen na základně (barevný kruh u místa oživení)"
                 : "ZÁKLADNA  ·  <color=#F28C1A>F1</color> změna hrdiny";
             zoneLabel.color = denied && !canSwap ? new Color(1f, 0.45f, 0.4f) : UiKit.Muted;

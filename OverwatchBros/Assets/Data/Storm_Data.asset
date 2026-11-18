@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "Vyst\u0159el\u00ed\u0161 to\u010d\u00edc\u00ed se smr\u0161\u0165, kter\u00e1 let\u00ed rovn\u011b dop\u0159edu i skrz zdi a ka\u017edou sekundu zra\u0148uje nep\u0159\u00e1tele, kter\u00fdch se dotkne."
   icon: {fileID: 2800000, guid: dc1e37d0e955fc740a0eb430c3fde269, type: 3}
   cooldown: 30
-  ultCost: 550
+  ultCost: 410
   power: 120
   duration: 6
   radius: 6

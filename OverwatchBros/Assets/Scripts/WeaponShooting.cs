@@ -251,6 +251,13 @@ public class WeaponShooting : NetworkBehaviour
 
     void UpdateScoped()
     {
+        // pretahovani zaveru po rane: nestrili se a rana se nenabiji
+        if (Time.time < boltUntil)
+        {
+            scopedCharge = 0f;
+            return;
+        }
+
         float previousCharge = scopedCharge;
         scopedCharge = Mathf.Clamp01(scopedCharge + Time.deltaTime / Mathf.Max(0.05f, weapon.scopedChargeTime));
         if (previousCharge < 1f && scopedCharge >= 1f)
@@ -309,6 +316,43 @@ public class WeaponShooting : NetworkBehaviour
         var team = GetComponent<PlayerTeam>();
         if (!ReplayPlayer.Active) Fx.SniperTracer(muzzle, end, team != null ? team.teamId.Value : -1, full);
         TracerServerRpc(muzzle, end, full);
+
+        // zaver (kdyz zbyvaji naboje; prazdny zasobnik se rovnou prebiji)
+        if (weapon.boltCycleTime > 0f && (!weapon.HasAmmo || currentAmmo > 0))
+        {
+            boltUntil = Time.time + weapon.boltCycleTime;
+            nextFireTime = Mathf.Max(nextFireTime, boltUntil);
+            StartCoroutine(BoltFx(weapon.boltCycleTime));
+        }
+    }
+
+    float boltUntil;
+
+    // Zvuk + animace pretazeni zaveru (chvili po vystrelu, at se neslije s ranou).
+    System.Collections.IEnumerator BoltFx(float duration)
+    {
+        const float delay = 0.12f;
+        yield return new WaitForSeconds(delay);
+        if (reloading || (fpc != null && fpc.IsDead)) yield break;
+        float length = Mathf.Max(0.1f, duration - delay);
+        PlayBoltFx(length);
+        BoltFxServerRpc(length);
+    }
+
+    void PlayBoltFx(float duration)
+    {
+        held.PlayReload(duration);
+        ProceduralSfx.PlayForActor(this, ProceduralSfx.Reload, transform.position, 0.7f, 22f);
+    }
+
+    [ServerRpc]
+    void BoltFxServerRpc(float duration) => BoltFxClientRpc(Mathf.Clamp(duration, 0.05f, 3f));
+
+    [ClientRpc]
+    void BoltFxClientRpc(float duration)
+    {
+        if (IsOwner || ReplayPlayer.Active) return;
+        PlayBoltFx(duration);
     }
 
     [ServerRpc]

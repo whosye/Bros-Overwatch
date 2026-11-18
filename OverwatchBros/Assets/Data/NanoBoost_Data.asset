@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "Ho\u010f plechovku Monsteru spoluhr\u00e1\u010di v zam\u011b\u0159ova\u010di. Na chv\u00edli d\u00e1v\u00e1 o 50 % v\u00edc po\u0161kozen\u00ed, dost\u00e1v\u00e1 o polovinu m\u00e9n\u011b a hned se vyl\u00e9\u010d\u00ed. Na sebe pou\u017e\u00edt nejde."
   icon: {fileID: 2800000, guid: b999efc7c5224deb9865c9fcdf684f1d, type: 3}
   cooldown: 30
-  ultCost: 400
+  ultCost: 300
   power: 50
   duration: 12
   radius: 6

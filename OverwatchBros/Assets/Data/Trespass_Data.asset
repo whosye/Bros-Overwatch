@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "Zam\u00ed\u0159\u00ed\u0161 na nep\u0159\u00edtele a zmiz\u00ed\u0161 v n\u011bm - jsi neviditeln\u00fd a nezraniteln\u00fd. Po chv\u00edli (nebo lev\u00fdm tla\u010d\u00edtkem) vyraz\u00ed\u0161 ven a siln\u011b ho zran\u00ed\u0161 (nav\u00edc 25 % jeho max. zdrav\u00ed)."
   icon: {fileID: 2800000, guid: a75b42c63c511ea468daad64c12ca84a, type: 3}
   cooldown: 30
-  ultCost: 350
+  ultCost: 260
   power: 60
   duration: 2
   radius: 6

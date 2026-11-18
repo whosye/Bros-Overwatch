@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "Vysko\u010d\u00ed\u0161 do vzduchu a zam\u00ed\u0159\u00ed\u0161 kruh na zem (m\u00ed\u0159en\u00ed ignoruje st\u0159echy). Na konci k\u00e1z\u00e1n\u00ed do kruhu ude\u0159\u00ed sloup sv\u011btla - nejsiln\u011bj\u0161\u00ed uprost\u0159ed, zas\u00e1hne v\u0161echna patra. Nep\u0159\u00e1tel\u00e9 vid\u00ed varov\u00e1n\u00ed a m\u016f\u017eou ut\u00e9ct."
   icon: {fileID: 2800000, guid: 391a2c0da87433948a7825fb002b1ebc, type: 3}
   cooldown: 30
-  ultCost: 450
+  ultCost: 340
   power: 220
   duration: 3
   radius: 5

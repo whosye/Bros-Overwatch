@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 // Prsten z tajne jeskyne (PickupSpot Ring): kdo ho sebere, nese ho, dokud zije. Na nositeli neni nic poznat
-// (jen on sam dostane hlasku). Klavesou P si ho nasadi / sundá (vidi to jen on: zsedly "svet stinu").
+// (jen on sam dostane hlasku). Klavesou T si ho nasadi / sundá (vidi to jen on: zsedly "svet stinu").
 //
 // Glum: prsten si pamatuje, jak dlouho byl celkem nasazeny (i u vice nositelu - nuluje se, az se vrati do jeskyne).
 // Po 'GollumThreshold' s ho zacne honit Glum a cim dele je prsten nasazeny, tim je Glum nastvanejsi: rychlejsi,
@@ -14,7 +14,7 @@ using UnityEngine.AI;
 // Kdyz ho nikdo nevezme (nebo ho dřív sebere Glum), zmizi a za 'ReturnSeconds' s se objevi zpatky v jeskyni.
 public partial class MatchManager
 {
-    public const float GollumThreshold = 25f;     // s nasazeni, nez prijde Glum
+    public const float GollumThreshold = 15f;     // s nasazeni, nez prijde Glum
     const float GollumFullAnger = 75f;            // za kolik dalsich s nasazeni je Glum nejvic nastvany
     // Krivka: zpocatku mirny, ke konci prudce horsi - nejvic nastvany Glum je skoro nehratelny (nejde utect,
     // zabije za par ran, skoro nejde zahnat a hned je zpatky).
@@ -178,7 +178,7 @@ public partial class MatchManager
     {
         var local = LocalPlayerObject;
         if (local != null && local.NetworkObjectId == playerId)
-            CaptureUI.Announce("Sebral jsi Prsten  ·  [P] nasadit / sundat", PickupSpot.KindColor(PickupKind.Ring), 3.5f);
+            CaptureUI.Announce("Sebral jsi Prsten  ·  [T] nasadit / sundat", PickupSpot.KindColor(PickupKind.Ring), 3.5f);
     }
 
     // ---------------- Glum (kazdy snimek na serveru) ----------------

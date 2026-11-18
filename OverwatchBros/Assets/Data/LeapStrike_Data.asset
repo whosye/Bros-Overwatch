@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "Vysko\u010d\u00ed\u0161 do vzduchu, kurzorem vybere\u0161 m\u00edsto dopadu a potvrd\u00ed\u0161. Dopad zran\u00ed v\u0161echny nep\u0159\u00e1tele v okruhu."
   icon: {fileID: 2800000, guid: ca735fa3a1b6aac47bd0fb711e528395, type: 3}
   cooldown: 25
-  ultCost: 350
+  ultCost: 260
   power: 60
   duration: 5
   radius: 7

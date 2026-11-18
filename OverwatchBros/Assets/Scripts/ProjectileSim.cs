@@ -244,10 +244,15 @@ public class ProjectileSim : MonoBehaviour
         else if (health != null && hitDamage > 0f)
         {
             float before = health.Effective;
+            // zasah do hlavy (horni cast kapsle): luk (natahovana zbran) dava navic headshotMultiplier; ostatni
+            // projektily (puska, granaty, zvukomet) maji jen hlasku
+            bool headshot = point.y >= collider.bounds.max.y - WeaponShooting.HeadHeight;
+            if (headshot && weapon.IsCharged && weapon.headshotMultiplier > 1f)
+                hitDamage *= weapon.headshotMultiplier;
             Combat.DamagePlayer(shooter.gameObject, health, hitDamage, weapon.IsCharged ? "weapon:bow" : "weapon:gun");
-            // zasah do hlavy (horni cast kapsle): jen hlaska, poskozeni se nemeni; pri zabiti mluvi hlaska k zabiti
+            // pri zabiti mluvi hlaska k zabiti
             bool hurt = health.Effective < before;
-            if (hurt && health.currentHealth.Value > 0f && shooterHero != null && point.y >= collider.bounds.max.y - WeaponShooting.HeadHeight)
+            if (hurt && health.currentHealth.Value > 0f && shooterHero != null && headshot)
                 shooterHero.SayOccasionally(VoiceKind.Headshot, 0.7f, 6f, 12f);
         }
 

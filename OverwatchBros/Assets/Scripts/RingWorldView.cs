@@ -189,6 +189,7 @@ public class RingWorldView : MonoBehaviour
         if (instance.lines.Length > 1 && pick == instance.lastLine) pick = (pick + 1) % instance.lines.Length;
         instance.lastLine = pick;
         instance.voice.clip = instance.lines[pick];
+        instance.voice.volume = GameSettings.VoiceVolume;
         instance.voice.Play();
     }
 

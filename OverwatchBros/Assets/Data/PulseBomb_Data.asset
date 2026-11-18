@@ -15,7 +15,7 @@ MonoBehaviour:
   abilityName: "Pulzn\xED bomba"
   icon: {fileID: 2800000, guid: b8e4672286df05e479ea033aaf2336d4, type: 3}
   cooldown: 30
-  ultCost: 350
+  ultCost: 260
   power: 150
   duration: 1.5
   radius: 3

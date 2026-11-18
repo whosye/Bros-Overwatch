@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "V\u00fdskok a \u00fader do zem\u011b: bl\u00edzk\u00e9 nep\u0159\u00e1tele odhod\u00ed, omr\u00e1\u010d\u00ed a zpomal\u00ed. Pak tan\u010d\u00ed\u0161 - spoluhr\u00e1\u010di v okruhu dostanou \u0161t\u00edt a d\u00e1vaj\u00ed v\u00edc po\u0161kozen\u00ed. Tanec skon\u010d\u00ed, kdy\u017e zem\u0159e\u0161."
   icon: {fileID: 2800000, guid: ae630322a77c65a4b85391d3c30d4648, type: 3}
   cooldown: 30
-  ultCost: 450
+  ultCost: 340
   power: 300
   duration: 6
   radius: 15

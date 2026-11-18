@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "Pust\u00ed\u0161 p\u0159ed sebe balvan, kter\u00fd se s\u00e1m val\u00ed - \u0159\u00edd\u00ed\u0161 ho my\u0161\u00ed, mezern\u00edkem sk\u00e1\u010de. Lev\u00fdm tla\u010d\u00edtkem (nebo znovu Q) vybuchne a odhod\u00ed nep\u0159\u00e1tele. Mezit\u00edm stoj\u00ed\u0161 bezbrann\u00fd a balvan jde rozst\u0159\u00edlet."
   icon: {fileID: 2800000, guid: 6e41ed76c33630943b6f92039ad41052, type: 3}
   cooldown: 30
-  ultCost: 500
+  ultCost: 375
   power: 200
   duration: 10
   radius: 7

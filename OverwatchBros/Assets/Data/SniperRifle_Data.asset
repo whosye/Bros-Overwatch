@@ -31,7 +31,8 @@ MonoBehaviour:
   maxDamageRange: 60
   allyHeal: 0
   scopeFov: 10
-  scopedChargeTime: 1.2
+  scopedChargeTime: 0.9
+  boltCycleTime: 0.7
   scopedMinDamage: 40
   scopedMaxDamage: 85
   headshotMultiplier: 2

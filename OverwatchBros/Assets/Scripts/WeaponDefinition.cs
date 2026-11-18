@@ -71,6 +71,8 @@ public class WeaponDefinition : ScriptableObject
     [Header("Odstřel s přiblížením (sniper; jen okamžitý zásah a Scope Fov > 0)")]
     [Tooltip("Jak dlouho (s) se pri pribliseni nabiji rana do plne sily. 0 = pribliseni jen meni zorne pole.")]
     public float scopedChargeTime = 0f;
+    [Tooltip("Po rane s pribliseni se musi pretahnout zaver (s): nejde strilet a rana se nenabiji. 0 = hned dalsi.")]
+    public float boltCycleTime = 0f;
     [Tooltip("Poskozeni nenabite rany s pribliseni.")]
     public float scopedMinDamage = 30f;
     [Tooltip("Poskozeni plne nabite rany s pribliseni (bez poklesu s dalkou).")]

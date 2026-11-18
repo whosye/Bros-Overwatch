@@ -13,6 +13,7 @@ public class BuffUI
         public Color color;
         public System.Func<float> until;   // cas konce buffu (Time.time)
         public System.Func<Texture> texture;   // obrazek odjinud (ikona schopnosti); jinak Resources/Icons/buff_<key>
+        public System.Func<string> caption;    // text misto zbyvajicich sekund (trvale stavy - aura); nebliká
         public GameObject root;
         public RawImage icon;
         public Image frame;
@@ -55,6 +56,17 @@ public class BuffUI
                 until = () => ReplayPlayer.Active ? 0f : PickupBuffs.PowderUntil },
             new Buff { key = "monster", shortName = "MO", color = NanoAura.AuraColor,
                 until = () => ReplayPlayer.Active ? 0f : NanoBoostAbility.LocalBoostUntil, texture = NanoBoostAbility.BuffIcon },
+            // Mosinova aura (testeri: neni poznat, co Mosino dela): spoluhraci vidi, ze je leci / zrychluje
+            new Buff { key = "mosino_leceni", shortName = "ML", color = BardAbility.HealColor,
+                until = () => !ReplayPlayer.Active && BardAbility.LocalInAura(false, out _) ? Time.time + 99f : 0f,
+                caption = () => BardAbility.LocalInAura(false, out bool amp) && amp ? "léčí ×" : "léčí" },
+            new Buff { key = "mosino_rychlost", shortName = "MR", color = BardAbility.SpeedColor,
+                until = () => !ReplayPlayer.Active && BardAbility.LocalInAura(true, out _) ? Time.time + 99f : 0f,
+                caption = () => BardAbility.LocalInAura(true, out bool amp) && amp ? "rychle ×" : "rychle" },
+            // sam Mosino: kolik spoluhracu jeho aura prave zasahuje
+            new Buff { key = "mosino_dosah", shortName = "AU", color = new Color(0.85f, 0.9f, 1f),
+                until = () => !ReplayPlayer.Active && BardAbility.LocalAudience() >= 0 ? Time.time + 99f : 0f,
+                caption = () => { int n = BardAbility.LocalAudience(); return n == 1 ? "1 hráč" : n >= 2 && n <= 4 ? $"{n} hráči" : $"{n} hráčů"; } },
         };
         foreach (var b in buffs) Create(b);
     }
@@ -113,9 +125,9 @@ public class BuffUI
             if (b.root.activeSelf != on) b.root.SetActive(on);
             if (!on) continue;
             shown++;
-            b.seconds.text = $"{Mathf.CeilToInt(left)} s";
-            // posledni 3 s blika
-            float alpha = left < 3f ? 0.45f + 0.55f * Mathf.Abs(Mathf.Sin(Time.time * 6f)) : 1f;
+            b.seconds.text = b.caption != null ? b.caption() : $"{Mathf.CeilToInt(left)} s";
+            // posledni 3 s blika (trvale stavy s popiskem ne)
+            float alpha = b.caption == null && left < 3f ? 0.45f + 0.55f * Mathf.Abs(Mathf.Sin(Time.time * 6f)) : 1f;
             b.frame.color = new Color(0.05f, 0.07f, 0.10f, 0.8f * alpha);
             b.seconds.alpha = alpha;
         }

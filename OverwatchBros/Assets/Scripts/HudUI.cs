@@ -44,6 +44,8 @@ public class HudUI
     // Ultimatka dole uprostred (kulata); nabita na 100 % - modra zare kolem.
     Slot ultSlot;
     Image ultGlow;
+    Slot ringSlot;   // Prsten vlevo vedle schopnosti (jen kdo ho nese)
+    static Texture2D ringIcon;
     static readonly Color UltGlowColor = new Color(0.3f, 0.6f, 1f, 1f);
     static Sprite circleSprite, glowSprite;
     readonly List<PlayerHero.AbilitySlot> abilities = new List<PlayerHero.AbilitySlot>();
@@ -149,6 +151,8 @@ public class HudUI
         public bool beat;             // Bard: ukazat takt
         public float stun, stunTotal = 1f; // omraceni: zbyva / celkem (s); 0 = neni
         public bool stunSleep;
+        public int ring;              // Prsten: 0 nema, 1 nese, 2 nasazeny
+        public float gollum = -1f;    // Glum honi nositele: nastvani 0-1 (-1 = nehoni)
     }
 
     readonly HudData liveData = new HudData();
@@ -239,6 +243,12 @@ public class HudUI
         var bottomRight = new Vector2(1f, 0f);
         for (int i = 0; i < MaxSlots; i++)
             slots[i] = BuildSlot(root.transform, bottomRight, new Vector2(-64f - i * 116f, 86f));
+
+        ringSlot = BuildSlot(root.transform, bottomRight, new Vector2(-64f - MaxSlots * 116f, 86f));
+        ringSlot.root.name = "Prsten";
+        ringSlot.icon.texture = RingIcon;
+        ringSlot.icon.enabled = true;
+        ringSlot.key.text = "T";
 
         ammoText = UiKit.MakeText(root.transform, "Ammo", "", 56, TextAlignmentOptions.BottomRight, bottomRight,
             new Vector2(-64f, 206f), new Vector2(600f, 70f));
@@ -555,6 +565,10 @@ public class HudUI
         d.stun = fpc != null && !fpc.IsDead ? fpc.StunRemaining : 0f;
         d.stunTotal = fpc != null ? Mathf.Max(0.1f, fpc.StunTotal) : 1f;
         d.stunSleep = fpc != null && fpc.StunIsSleep;
+        var match = MatchManager.Instance;
+        ulong id = hero.NetworkObjectId;
+        d.ring = match != null && match.IsSpawned && match.HasRing(id) ? (match.WearsRing(id) ? 2 : 1) : 0;
+        d.gollum = d.ring > 0 && match.gollumActive.Value ? match.gollumAnger.Value : -1f;
         Render(d);
     }
 
@@ -589,6 +603,8 @@ public class HudUI
         d.camera = camera;
         d.locked = frame.locked;
         d.lockPoint = frame.lockPoint;
+        d.ring = frame.ringWorn ? 2 : frame.ringCarried ? 1 : 0;
+        d.gollum = d.ring > 0 && frame.gollumChasing ? 0.6f : -1f;
         Render(d);
     }
 
@@ -774,6 +790,73 @@ public class HudUI
                 slot.root.SetActive(used);
             if (!used) continue;
             RenderSlot(slot, abilities[i]);
+        }
+        RenderRing(d, abilities.Count);
+    }
+
+    // Prsten: zlaty krouzek nalevo od schopnosti; nasazeny = zlate pozadi, pulzuje. Kdyz honi Glum, cerveny pruh
+    // (cim nastvanejsi, tim delsi).
+    void RenderRing(HudData d, int abilityCount)
+    {
+        bool show = d.ring > 0;
+        if (ringSlot.root.activeSelf != show) ringSlot.root.SetActive(show);
+        if (!show) return;
+
+        bool worn = d.ring == 2;
+        ((RectTransform)ringSlot.root.transform).anchoredPosition = new Vector2(-64f - abilityCount * 116f - 20f, 86f);
+        float pulse = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 3f);
+        ringSlot.background.color = worn ? new Color(0.42f, 0.30f, 0.04f, 0.7f + 0.2f * pulse) : Dark;
+        ringSlot.icon.color = worn ? Color.white : new Color(1f, 1f, 1f, 0.75f);
+        ringSlot.icon.rectTransform.localScale = Vector3.one * (worn ? 1f + 0.07f * pulse : 1f);
+        ringSlot.cooldown.fillAmount = 0f;
+        ringSlot.timer.text = "";
+
+        bool gollum = d.gollum >= 0f;
+        ringSlot.count.text = gollum ? "<color=#FF4A3A>!</color>" : "";
+        ringSlot.readyBar.enabled = worn || gollum;
+        ringSlot.readyBar.color = gollum
+            ? Color.Lerp(new Color(1f, 0.6f, 0.2f), new Color(1f, 0.15f, 0.1f), d.gollum)
+            : new Color(1f, 0.82f, 0.3f);
+        ringSlot.readyBar.rectTransform.sizeDelta = new Vector2(gollum ? Mathf.Lerp(18f, 100f, d.gollum) : 100f, 5f);
+    }
+
+    // Zlaty prsten (generovany): mirne sikmy krouzek s odleskem vlevo nahore a mekkou zari.
+    static Texture2D RingIcon
+    {
+        get
+        {
+            if (ringIcon != null) return ringIcon;
+            const int size = 128;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+            var pixels = new Color[size * size];
+            float half = (size - 1) * 0.5f;
+            var dark = new Color(0.55f, 0.34f, 0.05f);
+            var gold = new Color(1f, 0.78f, 0.25f);
+            var shine = new Color(1f, 0.97f, 0.8f);
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = (x - half) / half, dy = (y - half) / (half * 0.8f);
+                    float r = Mathf.Sqrt(dx * dx + dy * dy);
+                    // obrouceni krouzku: 0 u vnitrniho a vnejsiho okraje, 1 uprostred
+                    float band = 1f - Mathf.Abs(r - 0.68f) / 0.2f;
+                    float glow = Mathf.Clamp01(1f - Mathf.Abs(r - 0.68f) / 0.34f) * 0.35f;
+                    if (band <= 0f)
+                    {
+                        pixels[y * size + x] = new Color(1f, 0.8f, 0.3f, glow * glow);
+                        continue;
+                    }
+                    float round = Mathf.Sqrt(Mathf.Clamp01(band));
+                    float light = Mathf.Clamp01(0.5f + 0.5f * (-dx * 0.6f + dy * 0.8f) / Mathf.Max(0.01f, r));   // vlevo nahore svetleji
+                    var c = Color.Lerp(dark, gold, round * (0.45f + 0.55f * light));
+                    float highlight = Mathf.Pow(Mathf.Clamp01(round * light), 6f);
+                    c = Color.Lerp(c, shine, highlight * 0.8f);
+                    c.a = Mathf.Clamp01(band * 4f);
+                    pixels[y * size + x] = c;
+                }
+            texture.SetPixels(pixels);
+            texture.Apply();
+            return ringIcon = texture;
         }
     }
 

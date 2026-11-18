@@ -38,6 +38,7 @@ public class MatchUI : MonoBehaviour
     Transform uiRoot;
     readonly HeroPickerUI heroPicker = new HeroPickerUI();
     readonly HeroInfoUI heroInfo = new HeroInfoUI();
+    readonly ObjectiveHintUI objectiveHint = new ObjectiveHintUI();
     GameObject blockBar;
     Image blockFill;
     GameObject settingsPanel;
@@ -48,6 +49,8 @@ public class MatchUI : MonoBehaviour
     Slider volumeSlider;
     Slider ambientSlider;
     TextMeshProUGUI ambientText;
+    Slider voiceSlider;
+    TextMeshProUGUI voiceText;
     Button headBobButton;
     Slider headBobSlider;
     TextMeshProUGUI headBobText;
@@ -120,6 +123,7 @@ public class MatchUI : MonoBehaviour
 
         overlay.Build(root);
         topBar.Build(root);
+        objectiveHint.Build(root);
         capture.Build(root);
         buffs.Build(root);
         boilerPrompt = UiKit.MakeText(root, "KotelVyzva", "", 30, TextAlignmentOptions.Center, center,
@@ -197,48 +201,55 @@ public class MatchUI : MonoBehaviour
     {
         var center = new Vector2(0.5f, 0.5f);
 
-        var panel = UiKit.MakeImage(root, "SettingsPanel", new Color(0.05f, 0.07f, 0.10f, 0.92f), center, Vector2.zero, new Vector2(780f, 840f));
+        var panel = UiKit.MakeImage(root, "SettingsPanel", new Color(0.05f, 0.07f, 0.10f, 0.92f), center, Vector2.zero, new Vector2(780f, 940f));
         panel.raycastTarget = true;
         settingsPanel = panel.gameObject;
 
         UiKit.MakeText(settingsPanel.transform, "Title", "NASTAVENÍ", 52, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 360f), new Vector2(700f, 70f), UiKit.Accent);
+            new Vector2(0f, 410f), new Vector2(700f, 70f), UiKit.Accent);
 
         sensText = UiKit.MakeText(settingsPanel.transform, "Sens", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 280f), new Vector2(700f, 50f));
+            new Vector2(0f, 330f), new Vector2(700f, 50f));
         volumeText = UiKit.MakeText(settingsPanel.transform, "Volume", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 170f), new Vector2(700f, 50f));
+            new Vector2(0f, 225f), new Vector2(700f, 50f));
 
         // Logarithmic sensitivity keeps low values easy to adjust across the full range.
         sensitivitySlider = UiKit.MakeSlider(settingsPanel.transform, "SensitivitySlider", center,
-            new Vector2(0f, 235f), new Vector2(620f, 44f), 0f, 1f, SensitivityToSlider(),
+            new Vector2(0f, 285f), new Vector2(620f, 44f), 0f, 1f, SensitivityToSlider(),
             value => GameSettings.Sensitivity = Mathf.Round(GameSettings.MinSensitivity
                 * Mathf.Pow(GameSettings.MaxSensitivity / GameSettings.MinSensitivity, value) * 100f) / 100f);
         volumeSlider = UiKit.MakeSlider(settingsPanel.transform, "VolumeSlider", center,
-            new Vector2(0f, 125f), new Vector2(620f, 44f), 0f, 100f, GameSettings.Volume * 100f,
+            new Vector2(0f, 180f), new Vector2(620f, 44f), 0f, 100f, GameSettings.Volume * 100f,
             value => GameSettings.Volume = value / 100f, wholeNumbers: true);
 
+        // hlasky hrdinu zvlast (testeri: hlasky prehlusi zvuky / naopak)
+        voiceText = UiKit.MakeText(settingsPanel.transform, "VoiceVolume", "", 32, TextAlignmentOptions.Center, center,
+            new Vector2(0f, 120f), new Vector2(700f, 50f));
+        voiceSlider = UiKit.MakeSlider(settingsPanel.transform, "VoiceSlider", center,
+            new Vector2(0f, 75f), new Vector2(620f, 44f), 0f, 100f, GameSettings.VoiceVolume * 100f,
+            value => GameSettings.VoiceVolume = value / 100f, wholeNumbers: true);
+
         ambientText = UiKit.MakeText(settingsPanel.transform, "AmbientVolume", "", 32, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 60f), new Vector2(700f, 50f));
+            new Vector2(0f, 15f), new Vector2(700f, 50f));
         ambientSlider = UiKit.MakeSlider(settingsPanel.transform, "AmbientSlider", center,
-            new Vector2(0f, 15f), new Vector2(620f, 44f), 0f, 100f, GameSettings.AmbientVolume * 100f,
+            new Vector2(0f, -30f), new Vector2(620f, 44f), 0f, 100f, GameSettings.AmbientVolume * 100f,
             value => GameSettings.AmbientVolume = value / 100f, wholeNumbers: true);
 
         headBobButton = UiKit.MakeButton(settingsPanel.transform, "Pohupování kamery: ZAPNUTO", center,
-            new Vector2(0f, -70f), new Vector2(620f, 60f),
+            new Vector2(0f, -105f), new Vector2(620f, 60f),
             () => GameSettings.HeadBobEnabled = !GameSettings.HeadBobEnabled, fontSize: 30f);
         headBobText = UiKit.MakeText(settingsPanel.transform, "HeadBobIntensity", "", 32, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -140f), new Vector2(700f, 50f));
+            new Vector2(0f, -170f), new Vector2(700f, 50f));
         headBobSlider = UiKit.MakeSlider(settingsPanel.transform, "HeadBobSlider", center,
-            new Vector2(0f, -185f), new Vector2(620f, 44f), 0f, 200f, GameSettings.HeadBobIntensity * 100f,
+            new Vector2(0f, -215f), new Vector2(620f, 44f), 0f, 200f, GameSettings.HeadBobIntensity * 100f,
             value => GameSettings.HeadBobIntensity = value / 100f, wholeNumbers: true);
 
-        graphicsButton = UiKit.MakeButton(settingsPanel.transform, "Grafika", center, new Vector2(0f, -248f), new Vector2(620f, 52f),
+        graphicsButton = UiKit.MakeButton(settingsPanel.transform, "Grafika", center, new Vector2(0f, -280f), new Vector2(620f, 52f),
             () => GraphicsQuality.Level = (GraphicsQuality.Level + 1) % GraphicsQuality.Names.Length, fontSize: 28f);
 
-        UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -320f), new Vector2(340f, 76f),
+        UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -370f), new Vector2(340f, 76f),
             () => Cursor.lockState = CursorLockMode.Locked, UiKit.Green, 32f);
-        UiKit.MakeButton(settingsPanel.transform, "OPUSTIT HRU", center, new Vector2(190f, -320f), new Vector2(340f, 76f),
+        UiKit.MakeButton(settingsPanel.transform, "OPUSTIT HRU", center, new Vector2(190f, -370f), new Vector2(340f, 76f),
             LeaveGame, new Color(0.45f, 0.18f, 0.18f, 1f), 32f);
 
         settingsPanel.SetActive(false);
@@ -397,6 +408,7 @@ public class MatchUI : MonoBehaviour
         // Po konci zapasu (a po dohrani play of the game) je tabulka hracu videt porad, ne jen na Tab.
         overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing && !killcam);
         topBar.Tick(localHero, playing && !over, match);
+        objectiveHint.Tick(localHero, match, playing && !over);
         capture.Tick(localHero, playing && !over, match);
         buffs.Tick((playing && !over && !replay) || (replay && !killcam));   // v POTG buffy hrace ze zaznamu
         boilerPrompt.text = playing && !over && !replay ? (Tractor.PromptText != "" ? Tractor.PromptText : Boiler.PromptText) : "";
@@ -419,6 +431,8 @@ public class MatchUI : MonoBehaviour
             sensitivitySlider.SetValueWithoutNotify(SensitivityToSlider());
             volumeSlider.SetValueWithoutNotify(GameSettings.Volume * 100f);
             ambientSlider.SetValueWithoutNotify(GameSettings.AmbientVolume * 100f);
+            voiceSlider.SetValueWithoutNotify(GameSettings.VoiceVolume * 100f);
+            voiceText.text = $"Hlášky postav: {Mathf.RoundToInt(GameSettings.VoiceVolume * 100f)} %";
             ambientText.text = $"Zvuky prostředí: {Mathf.RoundToInt(GameSettings.AmbientVolume * 100f)} %";
             sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0#}  <size=65%>(max {GameSettings.MaxSensitivity:0})</size>";
             volumeText.text = $"Hlasitost: {Mathf.RoundToInt(GameSettings.Volume * 100f)} %";
@@ -430,7 +444,8 @@ public class MatchUI : MonoBehaviour
         }
     }
 
-    // Prsten: P nasadi / sunda (jen kdo ho nese). Nasazeny = zsedly zavoj pres obrazovku (jen pro nositele).
+    // Prsten: T nasadi / sunda (jen kdo ho nese). Nasazeny = zsedly zavoj pres obrazovku (jen pro nositele;
+    // v POTG i divakum, kdyz ho mel hrac v zaznamu nasazeny).
     void UpdateRing(MatchManager match, bool playing)
     {
         if (ringVeil == null)
@@ -442,7 +457,7 @@ public class MatchUI : MonoBehaviour
         }
 
         if (playing && match != null && GameSettings.CursorLocked && Keyboard.current != null
-            && Keyboard.current.pKey.wasPressedThisFrame && MatchManager.LocalHasRing)
+            && Keyboard.current.tKey.wasPressedThisFrame && MatchManager.LocalHasRing)
             match.ToggleRingRpc();
 
         bool worn = playing && MatchManager.LocalWearsRing;
@@ -452,8 +467,10 @@ public class MatchUI : MonoBehaviour
             if (playing && MatchManager.LocalHasRing)
                 CaptureUI.Announce(worn ? "Nasadil sis Prsten" : "Sundal sis Prsten", PickupSpot.KindColor(PickupKind.Ring), 2.2f);
         }
+        var frame = ReplayPlayer.Active && !ReplayPlayer.IsKillcam ? ReplayPlayer.Frame : null;
+        bool replayWorn = frame != null && frame.ringWorn && frame.health > 0f;
         var c = ringVeil.color;
-        c.a = Mathf.MoveTowards(c.a, worn ? 0.32f : 0f, Time.unscaledDeltaTime * 0.8f);
+        c.a = Mathf.MoveTowards(c.a, worn || replayWorn ? 0.32f : 0f, Time.unscaledDeltaTime * 0.8f);
         ringVeil.color = c;
         if (ringVeil.gameObject.activeSelf != c.a > 0.001f) ringVeil.gameObject.SetActive(c.a > 0.001f);
     }
@@ -481,12 +498,16 @@ public class MatchUI : MonoBehaviour
             var frame = ReplayPlayer.Frame;
             var definition = HeroRegistry.Get(frame.hudHero);
             var weapon = definition != null ? definition.weapon : null;
-            if (!frame.thirdPerson && frame.health > 0f && weapon != null && weapon.HasScopedShot)
+            if (!frame.thirdPerson && frame.health > 0f && weapon != null && weapon.scopeFov > 0f)
                 blend = ScopeZoom.BlendForFov(ReplayPlayer.Camera.fieldOfView, scope != null ? scope.BaseFov : 60f, weapon.scopeFov);
         }
         // killcam: vrah (odstrelovac) miril pres zamerovac
         if (ReplayPlayer.IsKillcam)
             blend = ReplayPlayer.KillcamScopeBlend;
+        // odstrelovacka: tmavy dalekohled; puska s priblizenim (David): holograficky zamerovac
+        var scopeHero = ReplayPlayer.Active && !ReplayPlayer.IsKillcam && ReplayPlayer.Frame != null ? HeroRegistry.Get(ReplayPlayer.Frame.hudHero)
+            : localHero != null ? localHero.Hero : null;
+        scopeOverlay.SetHolo(!ReplayPlayer.IsKillcam && scopeHero != null && scopeHero.weapon != null && !scopeHero.weapon.HasScopedShot);
         scopeOverlay.SetBlend(blend);
         scopeOverlay.gameObject.SetActive(blend > 0.005f);
     }

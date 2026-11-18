@@ -80,8 +80,7 @@ public class ScopeZoom : MonoBehaviour
         float targetFov = Zoomed ? scopeFov : baseFov;
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFov, 1f - Mathf.Exp(-ZoomSpeed * Time.deltaTime));
         fpc.LookScale = cam.fieldOfView / baseFov;
-        ScopeBlend = definition != null && definition.weapon != null && definition.weapon.HasScopedShot
-            ? BlendForFov(cam.fieldOfView, baseFov, scopeFov) : 0f;
+        ScopeBlend = scopeFov > 0f ? BlendForFov(cam.fieldOfView, baseFov, scopeFov) : 0f;   // (David: holo zamerovac)
     }
 
     // Stav mireni pro ostatni (poza postavy s namirenou zbrani).

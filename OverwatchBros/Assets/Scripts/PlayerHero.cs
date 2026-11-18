@@ -162,7 +162,7 @@ public class PlayerHero : NetworkBehaviour
     // Ultimatka se nenabiji casem (cooldownem), ale hrou: 1 bod za kazdy bod zpusobeneho poskozeni, 1 bod za kazdy
     // zivot vyleceny spoluhraci a k tomu pomalu sama (UltPassivePerSecond). Cena je u schopnosti (AbilityDefinition.ultCost).
     // Po smrti nabiti zustava, nuluje se pouzitim a s novym zapasem.
-    public const float UltPassivePerSecond = 2f;
+    public const float UltPassivePerSecond = 3f;   // (testeri: ultimatky moc dlouho - bylo 2)
     // Globalni rychlost nabijeni ultimatek (poskozeni, leceni i pasivni nabijeni). 0.3 = o 70 % pomaleji.
     public const float UltChargeRate = 0.3f;
 
@@ -506,6 +506,7 @@ public class PlayerHero : NetworkBehaviour
         var match = MatchManager.Instance;
         if (match == null || match.IsLobby || match.IsOver || joining.Value) return;
         if (HeroRegistry.Get(index) == null || index == heroId.Value) return;
+        if (match.RandomHeroes) return;   // nahodni hrdinove: menit nejde
         if (TakenInTeam(index, TeamIndex, this)) return;   // toho uz ma nekdo z tymu
 
         // Zivy hrac musi stat na zakladne sveho tymu (mrtvy ceka na oziveni, ten muze).
@@ -1138,10 +1139,21 @@ public class PlayerHero : NetworkBehaviour
         {
             Say(VoiceKind.Death);
             StartCoroutine(EnvironmentDeathFeed(Time.frameCount));
+            if (MatchManager.Instance != null) MatchManager.Instance.ServerHeroDied(this);   // nahodny hrdina po smrti
 
             var match = MatchManager.Instance;
             if (match != null && !match.IsLobby && !match.IsOver)
+            {
                 deaths.Value++;
+                // team deathmatch: smrt sebere hraci jeden kill (ne pod nulu) a s nim i bod tymu
+                // (skore tymu = soucet killu jeho hracu)
+                if (!match.IsAttackMode && kills.Value > 0)
+                {
+                    kills.Value--;
+                    var team = GetComponent<PlayerTeam>();
+                    if (team != null) match.AddScore(team.teamId.Value, -1);
+                }
+            }
         }
 
         if (IsServer && Hero != null && Hero.deathGrenades > 0)

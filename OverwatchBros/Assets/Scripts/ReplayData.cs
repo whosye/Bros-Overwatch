@@ -62,6 +62,7 @@ public class ReplayFrame
     public bool reloading;
     public bool locked;
     public Vector3 lockPoint;
+    public bool ringCarried, ringWorn, gollumChasing;   // Prsten hrace v zaznamu (HUD a zsedly zavoj)
 
     // balicky na mape (ktere jsou k sebrani) a buffy hrace na HUDu (zbyva sekund)
     public ulong pickupMask = ulong.MaxValue;
@@ -306,7 +307,8 @@ public class ReplayClip
         WriteV(w, f.cameraPosition);
         WriteQ(w, f.cameraRotation);
         w.Write(f.fov);
-        byte viewFlags = (byte)((f.thirdPerson ? 1 : 0) | (f.ultCasting ? 2 : 0) | (f.blocking ? 4 : 0) | (f.reloading ? 8 : 0) | (f.locked ? 16 : 0));
+        byte viewFlags = (byte)((f.thirdPerson ? 1 : 0) | (f.ultCasting ? 2 : 0) | (f.blocking ? 4 : 0) | (f.reloading ? 8 : 0) | (f.locked ? 16 : 0)
+            | (f.ringCarried ? 32 : 0) | (f.ringWorn ? 64 : 0) | (f.gollumChasing ? 128 : 0));
         w.Write(viewFlags);
         w.Write(f.ultWindup);
         w.Write(f.charge);
@@ -400,6 +402,9 @@ public class ReplayClip
         f.blocking = (viewFlags & 4) != 0;
         f.reloading = (viewFlags & 8) != 0;
         f.locked = (viewFlags & 16) != 0;
+        f.ringCarried = (viewFlags & 32) != 0;
+        f.ringWorn = (viewFlags & 64) != 0;
+        f.gollumChasing = (viewFlags & 128) != 0;
         f.ultWindup = r.ReadSingle();
         f.charge = r.ReadSingle();
 

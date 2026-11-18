@@ -105,6 +105,67 @@ public class BardAbility : NetworkBehaviour
         }
     }
 
+    // ---------------- zpetna vazba aury (BuffUI) ----------------
+
+    static GameObject LocalPlayer()
+    {
+        var network = Unity.Netcode.NetworkManager.Singleton;
+        var local = network != null && network.LocalClient != null ? network.LocalClient.PlayerObject : null;
+        return local != null ? local.gameObject : null;
+    }
+
+    // Stoji mistni hrac v aure spratelenho Mosina (i sveho vlastniho) v danem rezimu? amped = zesilena.
+    public static bool LocalInAura(bool speed, out bool ampedAura)
+    {
+        ampedAura = false;
+        var player = LocalPlayer();
+        if (player == null) return false;
+        bool found = false;
+        foreach (var bard in bards)
+        {
+            if (bard == null || !bard.isActiveAndEnabled || bard.crossfade == null || bard.speedMode.Value != speed) continue;
+            if (bard.health == null || bard.health.currentHealth.Value <= 0f) continue;
+            if (bard.gameObject != player && !Combat.SameTeam(bard.gameObject, player)) continue;
+            if ((bard.transform.position - player.transform.position).sqrMagnitude > bard.Radius * bard.Radius) continue;
+            found = true;
+            ampedAura |= bard.amped.Value;
+        }
+        return found;
+    }
+
+    // Mistni hrac hraje Mosina: kolik zivych spoluhracu prave zasahuje jeho aura (-1 = neni Mosino).
+    static float nextAudienceCount;
+    static int audience = -1;
+    public static int LocalAudience()
+    {
+        if (Time.unscaledTime < nextAudienceCount) return audience;
+        nextAudienceCount = Time.unscaledTime + 0.25f;
+        audience = -1;
+        var player = LocalPlayer();
+        var bard = player != null ? player.GetComponent<BardAbility>() : null;
+        if (bard == null || !bard.isActiveAndEnabled || bard.crossfade == null || bard.health == null || bard.health.currentHealth.Value <= 0f)
+            return audience;
+        audience = 0;
+        foreach (var other in FindObjectsByType<PlayerHero>())
+        {
+            if (other.gameObject == player || !other.IsSpawned || !Combat.SameTeam(player, other.gameObject)) continue;
+            var h = other.GetComponent<Health>();
+            if (h == null || h.currentHealth.Value <= 0f) continue;
+            if ((other.transform.position - player.transform.position).sqrMagnitude <= bard.Radius * bard.Radius) audience++;
+        }
+        return audience;
+    }
+
+    public static bool LocalBardSpeedMode
+    {
+        get
+        {
+            var player = LocalPlayer();
+            var bard = player != null ? player.GetComponent<BardAbility>() : null;
+            return bard != null && bard.speedMode.Value;
+        }
+    }
+
     // Kolikrat rychleji se hrac pohybuje diky aure spratelenych bardu (1 = bez bonusu). Vola vlastnik hrace.
     public static float SpeedScaleFor(GameObject player)
     {

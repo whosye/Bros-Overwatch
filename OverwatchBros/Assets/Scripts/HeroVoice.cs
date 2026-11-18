@@ -257,7 +257,7 @@ public class HeroVoice : MonoBehaviour
         source.clip = clip;
         source.pitch = 1f;
         normalPitchFrom = -1f;
-        source.volume = volume;
+        source.volume = volume * GameSettings.VoiceVolume;
         // Vlastni hlas je vystredeny; cizi hlasy jsou prostorove, ultimatky globalni.
         source.spatialBlend = ult || ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
         SetEcho(ult && hero.ultVoiceEcho);
@@ -280,7 +280,7 @@ public class HeroVoice : MonoBehaviour
         source.clip = clip;
         source.pitch = 1f;
         normalPitchFrom = -1f;
-        source.volume = volume;
+        source.volume = volume * GameSettings.VoiceVolume;
         source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
         SetEcho(false);
         source.Play();
@@ -305,7 +305,7 @@ public class HeroVoice : MonoBehaviour
         source.clip = clip;
         source.pitch = 1f;
         normalPitchFrom = -1f;
-        source.volume = volume;
+        source.volume = volume * GameSettings.VoiceVolume;
         source.spatialBlend = ult || pov ? 0f : 1f;
         SetEcho(ult && hero.ultVoiceEcho);
         StartAt(ult ? hero : null, clip, offset);

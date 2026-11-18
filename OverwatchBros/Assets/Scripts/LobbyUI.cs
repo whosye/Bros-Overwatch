@@ -24,6 +24,7 @@ public class LobbyUI
     Button modeButton;
     Button mapButton;
     Button testButton;
+    Button heroModeButton;
     Button musicButton;
     TextMeshProUGUI waitText;
 
@@ -98,6 +99,11 @@ public class LobbyUI
         // Pro testovani: vsechny cooldowny 1 s (prepina host, plati pro vsechny hrace).
         testButton = UiKit.MakeButton(Root.transform, "TEST", new Vector2(1f, 1f), new Vector2(-30f, -30f), new Vector2(470f, 58f),
             ToggleTestCooldowns, UiKit.ButtonBase, 26f);
+
+        // Nahodni hrdinove (host): vlastni vyber / nahodni na zapas / novy po kazde smrti
+        heroModeButton = UiKit.MakeButton(Root.transform, "HRDINOVÉ", new Vector2(1f, 1f), new Vector2(-30f, -96f), new Vector2(470f, 58f),
+            () => { var m = MatchManager.Instance; if (m != null) m.SetHeroMode((m.heroMode.Value + 1) % MatchManager.HeroModeNames.Length); },
+            UiKit.ButtonBase, 24f);
 
         // Boti pro trenink (vlevo nahore, jen host)
         var topLeft = new Vector2(0f, 1f);
@@ -185,6 +191,11 @@ public class LobbyUI
         UiKit.SetButtonLabel(testButton, testOn ? "TESTOVACÍ COOLDOWNY 1 s: <color=#7CFC9A>ZAP</color>" : "TESTOVACÍ COOLDOWNY 1 s: VYP");
         UiKit.SetButtonColor(testButton, testOn ? new Color(0.20f, 0.42f, 0.26f, 1f) : UiKit.ButtonBase);
         testButton.interactable = isHost && !joining;
+
+        int heroMode = match != null ? match.heroMode.Value : 0;
+        UiKit.SetButtonLabel(heroModeButton, $"HRDINOVÉ: <color=#F28C1A>{MatchManager.HeroModeNames[Mathf.Clamp(heroMode, 0, MatchManager.HeroModeNames.Length - 1)]}</color>");
+        UiKit.SetButtonColor(heroModeButton, heroMode != 0 ? new Color(0.30f, 0.22f, 0.45f, 1f) : UiKit.ButtonBase);
+        heroModeButton.interactable = isHost && !joining;
 
         int score = match != null ? match.scoreToWinSynced.Value : 10;
         scoreText.text = captureMode

@@ -95,9 +95,9 @@ public partial class MatchManager : NetworkBehaviour
         if (matchOver.Value || IsLobby) return;
 
         if (teamId == 0)
-            team0Score.Value += amount;
+            team0Score.Value = Mathf.Max(0, team0Score.Value + amount);
         else
-            team1Score.Value += amount;
+            team1Score.Value = Mathf.Max(0, team1Score.Value + amount);
 
         CheckWinCondition();
     }
@@ -374,6 +374,7 @@ public partial class MatchManager : NetworkBehaviour
             roundPhase.Value = RoundSetup;
         }
 
+        if (!IsLobby) ServerAssignRandomHeroes();   // (nahodni hrdinove, voli host v lobby)
         ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
 
         // Start zapasu: spawn hlasku rekne jen jeden nahodny hrac z kazdeho tymu, s odstupem (ne vsichni naraz).

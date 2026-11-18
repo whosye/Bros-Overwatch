@@ -22,7 +22,7 @@ MonoBehaviour:
   range: 160
   chargeTime: 0.5
   minChargeDamage: 20
-  minChargeSpeed: 55
+  minChargeSpeed: 80
   falloffStart: 20
   falloffEnd: 40
   falloffMin: 0.4
@@ -34,14 +34,14 @@ MonoBehaviour:
   scopedChargeTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
-  headshotMultiplier: 2
+  headshotMultiplier: 1.5
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0
   fireMode: 1
   projectileSpeed: 110
   projectileGravity: 9
-  projectileRadius: 0.22
+  projectileRadius: 0.12
   explosionRadius: 0
   projectileBounce: 0
   projectileFuse: 1

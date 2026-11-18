@@ -10,8 +10,18 @@ public class ScopeOverlay : MonoBehaviour
     const float PeripheralDarkness = 0.95f;
 
     const int TextureSize = 1024;
-    static Texture2D sightTexture;
+    static Texture2D sightTexture, holoTexture;
     RawImage image;
+    bool holo;
+
+    // Holograficky zamerovac (Davidova puska - pribliseni bez nabijene rany): svetly kruh s teckou, jen mirne
+    // ztmavene okoli (vidi se kolem). Jinak tmavy dalekohled odstrelovacky.
+    public void SetHolo(bool value)
+    {
+        if (holo == value) return;
+        holo = value;
+        EnsureGraphic();
+    }
     float blend;
 
     public float Blend => blend;
@@ -36,7 +46,8 @@ public class ScopeOverlay : MonoBehaviour
             if (image == null) image = gameObject.AddComponent<RawImage>();
         }
         if (sightTexture == null) sightTexture = CreateSightTexture();
-        image.texture = sightTexture;
+        if (holo && holoTexture == null) holoTexture = CreateHoloTexture();
+        image.texture = holo ? holoTexture : sightTexture;
         image.raycastTarget = false;
         image.maskable = false;
     }
@@ -126,6 +137,64 @@ public class ScopeOverlay : MonoBehaviour
 
         var texture = new Texture2D(TextureSize, TextureSize, TextureFormat.RGBA32, false);
         texture.name = "SniperScopeSight";
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        texture.SetPixels32(pixels);
+        texture.Apply(false, true);
+        return texture;
+    }
+
+    static Texture2D CreateHoloTexture()
+    {
+        var pixels = new Color32[TextureSize * TextureSize];
+        float radius = TextureSize * 0.43f;
+        Color glass = new Color(0.02f, 0.05f, 0.04f, 1f);
+        Color bio = new Color(0.45f, 1f, 0.6f, 1f);   // biotika (zeleno-tyrkysova)
+        for (int y = 0; y < TextureSize; y++)
+        for (int x = 0; x < TextureSize; x++)
+        {
+            float dx = x + 0.5f - TextureSize * 0.5f;
+            float dy = y + 0.5f - TextureSize * 0.5f;
+            float distance = Mathf.Sqrt(dx * dx + dy * dy) / radius;
+            // cista cocka, tenky ram a jen mirne ztmavele okoli
+            float alpha = distance < 0.96f ? Mathf.SmoothStep(0f, 0.08f, Mathf.InverseLerp(0.85f, 0.96f, distance))
+                : distance < 1f ? Mathf.Lerp(0.08f, 0.8f, Mathf.InverseLerp(0.96f, 1f, distance))
+                : Mathf.SmoothStep(0.8f, 0.55f, Mathf.InverseLerp(1f, 1.06f, distance));
+            Color pixel = new Color(glass.r, glass.g, glass.b, alpha);
+            // svitivy kruh zamerovace (prerusovany na 4 mistech)
+            float ring = Mathf.Abs(distance - 0.18f);
+            bool gap = Mathf.Abs(dx) < radius * 0.035f || Mathf.Abs(dy) < radius * 0.035f;
+            if (ring < 0.006f && !gap)
+                pixel = new Color(bio.r, bio.g, bio.b, 0.85f * (1f - ring / 0.006f) + 0.15f);
+            // vnejsi jemny kruh s ryskami
+            float outer = Mathf.Abs(distance - 0.94f);
+            if (outer < 0.003f && Mathf.Abs(Mathf.Abs(dx) - Mathf.Abs(dy)) < radius * 0.25f)
+                pixel = new Color(bio.r, bio.g, bio.b, 0.45f);
+            pixels[y * TextureSize + x] = pixel;
+        }
+        // ctyri kratke rysky ke stredu
+        const float halfLine = 1.3f;
+        float from = radius * 0.06f, to = radius * 0.13f;
+        Color tick = new Color(bio.r, bio.g, bio.b, 0.9f);
+        Rectangle(pixels, -to, -halfLine, -from, halfLine, tick);
+        Rectangle(pixels, from, -halfLine, to, halfLine, tick);
+        Rectangle(pixels, -halfLine, -to, halfLine, -from, tick);
+        Rectangle(pixels, -halfLine, from, halfLine, to, tick);
+        // tecka uprostred
+        float dot = Mathf.Max(1.8f, radius * 0.005f);
+        int reach = Mathf.CeilToInt(dot * 2.4f + 1f);
+        for (int y = TextureSize / 2 - reach; y < TextureSize / 2 + reach; y++)
+        for (int x = TextureSize / 2 - reach; x < TextureSize / 2 + reach; x++)
+        {
+            float dx = x + 0.5f - TextureSize * 0.5f;
+            float dy = y + 0.5f - TextureSize * 0.5f;
+            float d = Mathf.Sqrt(dx * dx + dy * dy);
+            Paint(pixels, x, y, new Color(bio.r, bio.g, bio.b, 0.35f * (1f - Mathf.SmoothStep(0f, 1f, d / (dot * 2.4f)))));
+            Paint(pixels, x, y, new Color(0.85f, 1f, 0.9f, Mathf.Clamp01(dot + 0.5f - d)));
+        }
+
+        var texture = new Texture2D(TextureSize, TextureSize, TextureFormat.RGBA32, false);
+        texture.name = "HoloSight";
         texture.wrapMode = TextureWrapMode.Clamp;
         texture.filterMode = FilterMode.Bilinear;
         texture.SetPixels32(pixels);

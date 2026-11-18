@@ -200,10 +200,10 @@ public class HeroInfoUI
                 key = "PRAVÉ TL.",
                 name = weapon.HasScopedShot ? "Odstřel" : "Zaměřovač",
                 stats = weapon.HasScopedShot
-                    ? $"{weapon.scopedMinDamage:0}–{weapon.scopedMaxDamage:0} dmg  ·  nabití {weapon.scopedChargeTime:0.#} s  ·  hlava ×{weapon.headshotMultiplier:0.#}"
+                    ? $"{weapon.scopedMinDamage:0}–{weapon.scopedMaxDamage:0} dmg  ·  nabití {weapon.scopedChargeTime:0.#} s{(weapon.boltCycleTime > 0f ? $"  ·  závěr {weapon.boltCycleTime:0.#} s" : "")}  ·  hlava ×{weapon.headshotMultiplier:0.#}"
                     : "přiblížení",
                 description = weapon.HasScopedShot
-                    ? "Drž pravé tlačítko: přiblížíš a rána se nabíjí do plné síly (ukazatel u zaměřovače). Plně nabitá rána do hlavy dá mnohem víc."
+                    ? "Drž pravé tlačítko: přiblížíš a rána se nabíjí do plné síly (ukazatel u zaměřovače). Plně nabitá rána do hlavy dá mnohem víc." + (weapon.boltCycleTime > 0f ? " Po každé ráně se přetahuje závěr." : "")
                     : "Drž pravé tlačítko pro přiblížení - přesnější míření na dálku.",
             });
 
