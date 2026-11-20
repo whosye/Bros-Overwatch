@@ -19,6 +19,11 @@ public static class GameSettings
         get => Mathf.Clamp01(PlayerPrefs.GetFloat(VoiceVolumeKey, 1f));
         set => PlayerPrefs.SetFloat(VoiceVolumeKey, Mathf.Clamp01(value));
     }
+    public static float MusicVolume
+    {
+        get => Mathf.Clamp01(PlayerPrefs.GetFloat("settings.musicVolume", 1f));
+        set => PlayerPrefs.SetFloat("settings.musicVolume", Mathf.Clamp01(value));
+    }
     public static bool MusicEnabled
     {
         get => PlayerPrefs.GetInt("settings.musicEnabled", 1) != 0;

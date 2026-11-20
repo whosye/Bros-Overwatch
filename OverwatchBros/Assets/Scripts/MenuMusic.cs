@@ -73,7 +73,7 @@ public class MenuMusic : MonoBehaviour
 
         gain = Mathf.MoveTowards(gain, wanted ? 1f : 0f, Time.unscaledDeltaTime / 0.8f);
         lowpass.cutoffFrequency = Mathf.Lerp(lowpass.cutoffFrequency, lobby ? 2300f : 850f, 1f - Mathf.Exp(-Time.unscaledDeltaTime / 0.5f));
-        source.volume = Mathf.Max(0.0001f, Mathf.Clamp01(volume) * gain);
+        source.volume = Mathf.Max(0.0001f, Mathf.Clamp01(volume) * GameSettings.MusicVolume * gain);
         if (wanted)
         {
             silentTime = 0f;

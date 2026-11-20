@@ -7,6 +7,9 @@ public static class GameConnection
 {
     public const ushort Port = 7777;
 
+    static string pendingAddress;
+    static ushort pendingPort;
+
     public static string LastError { get; private set; } = "";
 
     public static bool Host(string gameName)
@@ -18,6 +21,7 @@ public static class GameConnection
             return false;
         }
 
+        pendingAddress = null;
         MatchManager.PendingGameName = gameName;
 
         var transport = network.GetComponent<UnityTransport>();
@@ -40,6 +44,9 @@ public static class GameConnection
 
     public static bool Join(string address, ushort port)
     {
+        pendingAddress = null;
+        if (!ServerHistory.TryParse(address + ":" + port, out address, out port, out string error))
+        { LastError = error; return false; }
         var network = NetworkManager.Singleton;
         if (network == null)
         {
@@ -53,8 +60,11 @@ public static class GameConnection
         transport.SetConnectionData(address, port);
         transport.MaxConnectAttempts = 10;
 
+        pendingAddress = address;
+        pendingPort = port;
         if (!network.StartClient())
         {
+            pendingAddress = null;
             LastError = "K hostiteli se nepodařilo připojit.";
             return false;
         }
@@ -65,4 +75,12 @@ public static class GameConnection
         LastError = "";
         return true;
     }
+    // Called only after both the local player and replicated match state exist.
+    public static void ConfirmJoined(string serverName)
+    {
+        if (pendingAddress == null) return;
+        ServerHistory.Joined(pendingAddress, pendingPort, serverName);
+        pendingAddress = null;
+    }
+
 }

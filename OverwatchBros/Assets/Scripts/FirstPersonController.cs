@@ -659,7 +659,7 @@ public class FirstPersonController : NetworkBehaviour
             return;
         }
 
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (Keyboard.current.escapeKey.wasPressedThisFrame && !SettingsMenuUI.EscapeHandledThisFrame)
             Cursor.lockState = CursorLockMode.None;
 
         UpdateDriving();
