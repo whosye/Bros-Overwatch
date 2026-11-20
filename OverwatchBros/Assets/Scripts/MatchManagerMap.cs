@@ -10,14 +10,17 @@ public partial class MatchManager
     public const int MapDomasov = 0;
     public const int MapHanamura = 1;
     public const int MapDust2 = 2;
+    public const int MapDomasovPush = 3;   // kopie Domasova jen pro rezim Tlacenice (PushSetup)
 
-    public static readonly string[] MapNames = { "Domašov", "Hanamura", "Dust II" };
+    public static readonly string[] MapNames = { "Domašov", "Hanamura", "Dust II", "Domašov (Tlačenice)" };
     // Korenovy objekt mapy ve scene (prazdny = puvodni mapa, ta je ve scene vzdy).
-    static readonly string[] MapRoots = { "", "Map_Hanamura", "Map_Dust2" };
+    static readonly string[] MapRoots = { "", "Map_Hanamura", "Map_Dust2", "Map_DomasovPush" };
     const string DomasovRoot = "Map-Domasov";
     public static readonly Vector3 HanamuraOrigin = new Vector3(1000f, 0f, 0f);   // Hanamura stoji stranou od chat
     // Cela mapa i KillPlane lezi nad nulou, mimo vyskovy bonus tunelu na Domasove.
     public static readonly Vector3 Dust2Origin = new Vector3(2000f, 50f, 0f);
+    // Kopie Domasova pro Tlacenici: stejna vyska (tunel pod zemi funguje stejne), jen o 3 km stranou.
+    public static readonly Vector3 DomasovPushOrigin = new Vector3(3000f, 0f, 0f);
 
     public NetworkVariable<int> mapIndex = new NetworkVariable<int>(MapDomasov);
 
@@ -31,8 +34,10 @@ public partial class MatchManager
         if (MapSupportsMode(index, gameMode.Value)) mapIndex.Value = index;
     }
 
+    // Tlacenice jde hrat jen na sve mape a ta je jen pro ni.
     public static bool MapSupportsMode(int map, int mode) => map >= 0 && map < MapNames.Length
-        && (mode == ModeDeathmatch || (mode == ModeAttack && map != MapDust2));
+        && (map == MapDomasovPush ? mode == ModePush
+            : mode == ModeDeathmatch || (mode == ModeAttack && map != MapDust2));
 
     public static int NextMapForMode(int current, int mode)
     {
@@ -114,6 +119,8 @@ public partial class MatchManager
             if (appliedMap == MapDust2 && MapSpawnPoints.TryGetBounds(out var bounds)) return bounds;
             if (appliedMap == MapHanamura)
                 return new Bounds(HanamuraOrigin + new Vector3(0f, 20f, 75f), new Vector3(240f, 120f, 280f));
+            if (appliedMap == MapDomasovPush)
+                return new Bounds(DomasovPushOrigin + new Vector3(0f, 20f, 30f), new Vector3(600f, 200f, 600f));
             return new Bounds(new Vector3(0f, 20f, 30f), new Vector3(600f, 200f, 600f));
         }
     }

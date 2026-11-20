@@ -96,7 +96,7 @@ public class TopBarUI
     public void Tick(PlayerHero local, bool playing, MatchManager match)
     {
         if (root == null) return;
-        bool show = playing && match != null && !match.IsOver;
+        bool show = playing && match != null && !match.IsOver && !match.IsPushMode;   // (tlacenice: PushUI)
         if (root.activeSelf != show) root.SetActive(show);
         if (!show) return;
 

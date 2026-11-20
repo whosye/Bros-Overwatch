@@ -9,7 +9,7 @@ using UnityEngine.AI;
 // hraci vidi bota jako kohokoli jineho.
 // Chodi po mape (navigacni sit), hleda nepratele, miri (s reakcni dobou a nepresnosti), strili, uhyba do stran,
 // pri malo zivotech jde pro lekarnicku a pouziva schopnosti hrdiny (virtualni klavesy pres HeroInput).
-public class BotBrain : MonoBehaviour
+public partial class BotBrain : MonoBehaviour
 {
     public static readonly List<BotBrain> All = new List<BotBrain>();
 
@@ -309,7 +309,7 @@ public class BotBrain : MonoBehaviour
         if (anchor == null)
         {
             Vector3 front = target != null ? (targetVisible ? target.transform.position : lastSeenPos)
-                : match != null && match.IsAttackMode ? match.pointPosition.Value : transform.position;
+                : match != null && (match.IsAttackMode || match.IsPushMode) ? match.ObjectivePosition : transform.position;
             float best = float.MaxValue;
             foreach (var ally in allies)
             {
@@ -743,7 +743,7 @@ public class BotBrain : MonoBehaviour
         // nebezi (jen do 'leash' metru od bodu); kdyz je na bodu potreba (zabirani / obrana), drzi se na nem.
         bool hasObjective = Objective(match, out Vector3 objective, out float leash, out bool holdPoint);
         bool chase = target != null;
-        if (hasObjective && target != null && Vector3.Distance(target.transform.position, match.pointPosition.Value) > leash)
+        if (hasObjective && target != null && Vector3.Distance(target.transform.position, match.ObjectivePosition) > leash)
             chase = false;
         if (holdPoint)
             chase = false;
@@ -1394,6 +1394,7 @@ public class BotBrain : MonoBehaviour
         goal = Vector3.zero;
         leash = 0f;
         holdPoint = false;
+        if (match != null && match.IsPushMode) return PushObjective(match, out goal, out leash, out holdPoint);
         if (match == null || !match.IsAttackMode || team == null) return false;
 
         bool attacker = team.teamId.Value == match.attackTeam.Value;

@@ -68,7 +68,8 @@ public sealed class AudioSurface : MonoBehaviour
         if (explicitSurface != null) return explicitSurface.kind;
         // Domasov's lawn is a grid of generically named Tile_* meshes, not ceramic tiles.
         if ((collider.name.StartsWith("Tile_") || collider.name == "Ground" || collider.name == "Travnik")
-            && HasAncestor(collider.transform, "Map-Domasov")) return AudioSurfaceKind.Grass;
+            && (HasAncestor(collider.transform, "Map-Domasov") || HasAncestor(collider.transform, "Map_DomasovPush")))
+            return AudioSurfaceKind.Grass;
         var terrain = collider.GetComponent<Terrain>();
         if (terrain != null && terrain.terrainData != null)
         {

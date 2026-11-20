@@ -122,9 +122,9 @@ public partial class MatchManager : NetworkBehaviour
         if (killerObject != null && victimObject != null)
             KillFeedClientRpc(killerObject.NetworkObjectId, victimObject.NetworkObjectId, source ?? "");
 
-        // V utoku a obrane se skore pocita za zabrane body, ne za zabiti.
+        // V utoku a obrane (a v tlacenici) se skore pocita za body / dotlacene metry, ne za zabiti.
         var team = killer.GetComponent<PlayerTeam>();
-        if (team != null && !IsAttackMode)
+        if (team != null && IsDeathmatchMode)
             AddScore(team.teamId.Value, 1);
 
         // Play of the game: hodnoceni akce (az po pripsani bodu, at se vi, jestli zabiti rozhodlo zapas).
@@ -342,6 +342,7 @@ public partial class MatchManager : NetworkBehaviour
         ServerResetPickups();
         ServerResetBoiler();
         ServerResetTractor();
+        ServerResetPush();
         team0Score.Value = 0;
         team1Score.Value = 0;
         winnerTeam.Value = -1;
@@ -371,6 +372,10 @@ public partial class MatchManager : NetworkBehaviour
         if (!IsLobby && IsAttackMode)
         {
             ServerBeginAttackMatch();
+        }
+        else if (!IsLobby && IsPushMode)
+        {
+            ServerBeginPushMatch();
         }
         else
         {

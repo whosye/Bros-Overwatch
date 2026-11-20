@@ -103,8 +103,20 @@ public partial class MatchManager
     public void SetGameMode(int mode)
     {
         if (!IsServer || !IsLobby) return;
-        mode = mode == ModeAttack ? ModeAttack : ModeDeathmatch;
-        if (MapSupportsMode(MapIndex, mode)) gameMode.Value = mode;
+        mode = mode == ModeAttack || mode == ModePush ? mode : ModeDeathmatch;
+        if (MapSupportsMode(MapIndex, mode))
+        {
+            gameMode.Value = mode;
+            return;
+        }
+        // Tlacenice ma vlastni mapu (a ta je jen pro ni): pri prepnuti na ni nebo z ni se vybere mapa, ktera rezim podporuje.
+        if (mode == ModePush || MapIndex == MapDomasovPush)
+        {
+            int map = NextMapForMode(MapIndex, mode);
+            if (!MapSupportsMode(map, mode)) return;
+            mapIndex.Value = map;
+            gameMode.Value = mode;
+        }
     }
 
     public void SetCaptureSeconds(int seconds)
@@ -127,6 +139,7 @@ public partial class MatchManager
         if (IsSpawned && IsServer)
         {
             ServerAttackTick();
+            ServerPushTick();
             ServerPickupTick();
             ServerBoilerTick();
             ServerTractorTick();

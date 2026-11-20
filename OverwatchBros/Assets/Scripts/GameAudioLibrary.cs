@@ -31,6 +31,14 @@ public class GameAudioLibrary : ScriptableObject
 
         var map = GameObject.Find("Map-Domasov");
         if (map == null) return;
+        EnsureAmbient(map, library);
+        // Kopie Domasova pro Tlacenici (ve scene vypnuta, dokud se na ni nehraje) - stejny ambient.
+        foreach (var root in map.scene.GetRootGameObjects())
+            if (root.name == "Map_DomasovPush") EnsureAmbient(root, library);
+    }
+
+    static void EnsureAmbient(GameObject map, GameAudioLibrary library)
+    {
         var ambient = map.GetComponentInChildren<VillageAmbient>(true);
         if (ambient == null)
         {

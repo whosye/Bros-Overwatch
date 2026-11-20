@@ -50,6 +50,8 @@ public class ObjectiveHintUI
     {
         var team = local.GetComponent<PlayerTeam>();
         int myTeam = team != null ? team.teamId.Value : -1;
+        if (match.IsPushMode)
+            return MatchManager.PushObjectiveText(match, myTeam);
         if (!match.IsAttackMode)
             return $"ÚKOL: zabíjej nepřátele  ·  první tým na {match.scoreToWinSynced.Value} zabití vyhrává";
 

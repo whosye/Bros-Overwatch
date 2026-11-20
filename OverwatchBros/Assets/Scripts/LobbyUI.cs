@@ -174,20 +174,24 @@ public class LobbyUI
         LobbyShowcase.Show(localHero != null ? localHero.heroId.Value : PlayerHero.PreferredHero,
             localTeamComponent != null ? localTeamComponent.teamId.Value : -1);
 
-        // Rezim hry voli host (ostatni ho jen vidi): team deathmatch na pocet zabiti, nebo utok a obrana.
+        // Rezim hry voli host (ostatni ho jen vidi): team deathmatch na pocet zabiti, utok a obrana, nebo tlacenice
+        // (ta ma vlastni mapu - pri prepnuti na ni se mapa vybere sama).
         bool captureMode = match != null && match.IsAttackMode;
+        bool pushMode = match != null && match.IsPushMode;
         int map = match != null ? match.MapIndex : MatchManager.MapDomasov;
         bool attackAvailable = MatchManager.MapSupportsMode(map, MatchManager.ModeAttack);
-        UiKit.SetButtonLabel(modeButton, captureMode
+        UiKit.SetButtonLabel(modeButton, pushMode
+            ? "REŽIM:  <color=#F28C1A>TLAČENICE</color>  <size=75%>(obří Honza tlačí Yaris)</size>"
+            : captureMode
             ? "REŽIM:  <color=#F28C1A>ÚTOK A OBRANA</color>  <size=75%>(body A, B, C · výměna stran)</size>"
             : "REŽIM:  <color=#F28C1A>TEAM DEATHMATCH</color>"
                 + (attackAvailable ? "" : "\n<size=65%>Dust II: dobývání není dostupné</size>"));
-        modeButton.interactable = isHost && !joining && attackAvailable;
+        modeButton.interactable = isHost && !joining;
 
         bool mapReady = MatchManager.MapReady(map);
-        bool modeReady = MatchManager.MapSupportsMode(map, captureMode ? MatchManager.ModeAttack : MatchManager.ModeDeathmatch);
+        bool modeReady = MatchManager.MapSupportsMode(map, match != null ? match.gameMode.Value : MatchManager.ModeDeathmatch);
         UiKit.SetButtonLabel(mapButton, $"MAPA:  <color=#F28C1A>{MatchManager.MapNames[map].ToUpperInvariant()}</color>"
-            + (mapReady ? (attackAvailable ? "" : "  <size=65%>(jen deathmatch)</size>")
+            + (mapReady ? (map == MatchManager.MapDomasovPush ? "  <size=65%>(jen tlačenice)</size>" : attackAvailable ? "" : "  <size=65%>(jen deathmatch)</size>")
                 : "  <size=70%><color=#B0B4C0>(ve výstavbě)</color></size>"));
         mapButton.interactable = isHost && !joining;
 
@@ -202,11 +206,13 @@ public class LobbyUI
         heroModeButton.interactable = isHost && !joining;
 
         int score = match != null ? match.scoreToWinSynced.Value : 10;
-        scoreText.text = captureMode
+        scoreText.text = pushMode
+            ? $"Zápas: <color=#F28C1A>{MatchManager.PushMatchSeconds / 60f:0} min</color>  ·  checkpoint +{MatchManager.PushCheckpointBonus:0} s"
+            : captureMode
             ? $"Zabrání bodu: <color=#F28C1A>{match.captureSeconds.Value} s</color>"
             : $"Zabití na výhru: <color=#F28C1A>{score}</color>";
-        scoreMinus.gameObject.SetActive(isHost && !joining);
-        scorePlus.gameObject.SetActive(isHost && !joining);
+        scoreMinus.gameObject.SetActive(isHost && !joining && !pushMode);
+        scorePlus.gameObject.SetActive(isHost && !joining && !pushMode);
         startButton.gameObject.SetActive(isHost && !joining);
         startButton.interactable = mapReady && modeReady;
         UiKit.SetButtonLabel(startButton, !mapReady ? "MAPA NENÍ HOTOVÁ" : !modeReady ? "REŽIM NENÍ DOSTUPNÝ" : "START ZÁPASU");
@@ -346,7 +352,7 @@ public class LobbyUI
     void ChangeScore(int delta)
     {
         var match = MatchManager.Instance;
-        if (match == null) return;
+        if (match == null || match.IsPushMode) return;
 
         if (match.IsAttackMode)
             match.SetCaptureSeconds(match.captureSeconds.Value + delta * 5);
@@ -371,8 +377,12 @@ public class LobbyUI
     void ToggleMode()
     {
         var match = MatchManager.Instance;
-        if (match != null)
-            match.SetGameMode(match.IsAttackMode ? MatchManager.ModeDeathmatch : MatchManager.ModeAttack);
+        if (match == null) return;
+        // poradi: deathmatch -> utok a obrana (kde jde) -> tlacenice -> deathmatch
+        int mode = match.gameMode.Value;
+        int next = mode == MatchManager.ModeDeathmatch && MatchManager.MapSupportsMode(match.MapIndex, MatchManager.ModeAttack) ? MatchManager.ModeAttack
+            : mode == MatchManager.ModePush ? MatchManager.ModeDeathmatch : MatchManager.ModePush;
+        match.SetGameMode(next);
     }
 
     void EnterMatch()

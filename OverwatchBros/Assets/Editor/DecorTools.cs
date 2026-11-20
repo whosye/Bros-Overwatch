@@ -38,6 +38,18 @@ public static class DecorTools
     [MenuItem("BrosOverwatch/Dekorace/Obraz - Lasagne")]
     static void PictureLasagne() => PlacePicture(PictureFolder + "Obraz_Lasagne.jpg");
 
+    [MenuItem("BrosOverwatch/Dekorace/Obraz - Elf")]
+    static void PictureElf() => PlacePicture(PictureFolder + "Obraz_Elf.jpg");
+
+    [MenuItem("BrosOverwatch/Dekorace/Obraz - V kuzi")]
+    static void PictureInFur() => PlacePicture(PictureFolder + "Obraz_VKuzi.jpg");
+
+    [MenuItem("BrosOverwatch/Dekorace/Obraz - Prekvapeni")]
+    static void PictureSurprise() => PlacePicture(PictureFolder + "Obraz_Prekvapeni.jpg");
+
+    [MenuItem("BrosOverwatch/Dekorace/Obraz - V zupanu")]
+    static void PictureBathrobe() => PlacePicture(PictureFolder + "Obraz_Zupan.jpg");
+
     // Gauc se spacim kamaradem (jako na fotce Obraz_Gauc): opreny o zed primo pod obrazem "Spanek na gauci".
     // Najde obraz Obraz_Gauc ve scene; kdyz tam neni, miri stred okna Scene na zed.
     [MenuItem("BrosOverwatch/Dekorace/Gauc se spacim (pod obraz Spanek na gauci)")]
@@ -1005,7 +1017,7 @@ public static class DecorTools
     static void PlaceStanding(string name, Texture2D texture, RaycastHit hit, Transform cam)
     {
         const float height = 1.6f, lift = 0.35f;
-        float width = height * texture.width / Mathf.Max(1f, texture.height);
+        float width = height * Aspect(texture);
         float bar = 0.06f * Mathf.Max(1f, height / 1.2f);
         Vector3 toCam = cam.position - hit.point;
         toCam.y = 0f;
@@ -1031,7 +1043,7 @@ public static class DecorTools
     // Platno s obrazkem a dreveny ram kolem (root: lokalni +z miri do zdi).
     static void BuildPicture(Transform root, string name, Texture2D texture, float height)
     {
-        float width = height * texture.width / Mathf.Max(1f, texture.height);
+        float width = height * Aspect(texture);
 
         // platno (Quad je videt ze strany -Z = od zdi do mistnosti)
         var canvas = GameObject.CreatePrimitive(PrimitiveType.Quad);
@@ -1109,6 +1121,17 @@ public static class DecorTools
         pickup.reachBelow = h + 0.4f;
 
         Done(root);
+    }
+
+    // Pomer sirka/vyska podle puvodniho souboru - import muze obrazek zaokrouhlit na mocninu dvou (napr. 907x1717 -> 1024x2048).
+    static float Aspect(Texture2D texture)
+    {
+        if (AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture)) is TextureImporter importer)
+        {
+            importer.GetSourceTextureWidthAndHeight(out int w, out int h);
+            if (w > 0 && h > 0) return (float)w / h;
+        }
+        return texture.width / Mathf.Max(1f, texture.height);
     }
 
     // Material obrazu (vlastni - MapBuildKit.Mat by u jpg povazoval fotku za normalovou mapu).

@@ -30,6 +30,7 @@ public class MatchUI : MonoBehaviour
     readonly MatchOverlayUI overlay = new MatchOverlayUI();
     readonly CaptureUI capture = new CaptureUI();
     readonly TopBarUI topBar = new TopBarUI();
+    readonly PushUI pushBar = new PushUI();
     readonly BuffUI buffs = new BuffUI();
     TextMeshProUGUI boilerPrompt;
     // Nasazeny prsten (vidi jen nositel): zsedly "svet stinu" pres obrazovku.
@@ -123,6 +124,7 @@ public class MatchUI : MonoBehaviour
 
         overlay.Build(root);
         topBar.Build(root);
+        pushBar.Build(root);
         objectiveHint.Build(root);
         capture.Build(root);
         buffs.Build(root);
@@ -408,6 +410,7 @@ public class MatchUI : MonoBehaviour
         // Po konci zapasu (a po dohrani play of the game) je tabulka hracu videt porad, ne jen na Tab.
         overlay.Tick(localHero, playing && !replay && !PotgIntro.Active, match, over && !PotgUI.IsShowing && !killcam);
         topBar.Tick(localHero, playing && !over, match);
+        pushBar.Tick(localHero, playing && !over, match);
         objectiveHint.Tick(localHero, match, playing && !over);
         capture.Tick(localHero, playing && !over, match);
         buffs.Tick((playing && !over && !replay) || replay);   // v POTG buffy hrace ze zaznamu, v killcamu vraha (slivovice)

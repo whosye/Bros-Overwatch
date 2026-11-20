@@ -1182,7 +1182,7 @@ public class PlayerHero : NetworkBehaviour
                 deaths.Value++;
                 // team deathmatch: smrt sebere hraci jeden kill (ne pod nulu) a s nim i bod tymu
                 // (skore tymu = soucet killu jeho hracu)
-                if (!match.IsAttackMode && kills.Value > 0)
+                if (match.IsDeathmatchMode && kills.Value > 0)
                 {
                     kills.Value--;
                     var team = GetComponent<PlayerTeam>();
