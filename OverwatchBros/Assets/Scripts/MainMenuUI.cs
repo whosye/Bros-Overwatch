@@ -1,253 +1,123 @@
-using System.Collections.Generic;
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-// Uvodni menu: zalozit hru, nebo se pripojit (seznam her nalezenych v LAN + rucni IP).
-public class MainMenuUI
+// Landing -> host options / address book. Joining and hosting never share a form.
+public partial class MainMenuUI
 {
-    const int MaxRows = 4;
-
     public GameObject Root { get; private set; }
-
-    TMP_InputField nickInput;
-    TMP_InputField gameNameInput;
-    TMP_InputField ipInput;
+    public Action OnSettings;
+    public string Page { get; private set; }="Home";
+    GameObject home,host,profile,smallLogo;
+    readonly ServerBrowserUI servers=new ServerBrowserUI();
+    Button nameButton,musicButton;
+    TMP_InputField profileName,hostName,serverName;
     TextMeshProUGUI statusText;
-    TextMeshProUGUI noGamesText;
-    Button testButton;
-    Button musicButton;
-    readonly List<Button> gameRows = new List<Button>();
-    readonly List<LanDiscovery.Game> shownGames = new List<LanDiscovery.Game>();
-    float nextRefresh;
-
     public void Build(Transform canvas)
     {
-        var center = new Vector2(0.5f, 0.5f);
-
-        var root = UiKit.MakeImage(canvas, "MainMenu", new Color(0.03f, 0.04f, 0.07f, 0.97f), center, Vector2.zero, Vector2.zero);
-        UiKit.Stretch(root.rectTransform);
-        root.raycastTarget = true;
-        Root = root.gameObject;
-
-        UiKit.MakeText(Root.transform, "Title", "BROS OVERWATCH", 100, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 440f), new Vector2(1400f, 130f), UiKit.Accent);
-        UiKit.MakeText(Root.transform, "Subtitle", "LAN HERO SHOOTER  ·  TEAM DEATHMATCH  ·  DOBÝVÁNÍ BODŮ", 34, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 362f), new Vector2(1400f, 46f), UiKit.Muted);
-
-        // Prezdivka je nad kartami (karty zacinaji az pod ni), aby se nic neprekryvalo.
-        UiKit.MakeText(Root.transform, "NickLabel", "PŘEZDÍVKA", 34, TextAlignmentOptions.Right, center,
-            new Vector2(-330f, 290f), new Vector2(260f, 60f), Color.white);
-        string nick = PlayerPrefs.GetString("nick", "Hráč" + Random.Range(10, 99));
-        nickInput = UiKit.MakeInput(Root.transform, "Tvoje jméno", center, new Vector2(80f, 290f), new Vector2(520f, 66f), nick, 36f);
-        nickInput.characterLimit = 20;
-
-        BuildHostCard(center, nick);
-        BuildJoinCard(center);
-
-        // Pro testovani: zalozena hra bude mit vsechny cooldowny 1 s (jde prepnout i pozdeji v lobby).
-        testButton = UiKit.MakeButton(Root.transform, "TEST", new Vector2(0f, 1f), new Vector2(40f, -40f), new Vector2(470f, 70f),
-            ToggleTestCooldowns, UiKit.ButtonBase, 26f);
-        RefreshTestButton();
-        musicButton = BuildMusicToggle(Root.transform);
-
-        UiKit.MakeButton(Root.transform, "UKONČIT HRU", new Vector2(1f, 1f), new Vector2(-40f, -40f), new Vector2(300f, 70f),
-            QuitGame, new Color(0.45f, 0.18f, 0.18f, 1f), 30f);
-
-        statusText = UiKit.MakeText(Root.transform, "Status", "", 34, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -385f), new Vector2(1600f, 50f), new Color(1f, 0.45f, 0.4f));
-
-        UiKit.MakeText(Root.transform, "Controls",
-            "WASD pohyb  ·  Shift běh / schopnost  ·  Mezerník skok  ·  Ctrl dřep  ·  LMB útok  ·  PTM blok / odpal  ·  E schopnost  ·  R přebití  ·  Tab tabulka  ·  F1 změna hrdiny  ·  Q schopnost  ·  Esc nastavení",
-            24, TextAlignmentOptions.Center, center, new Vector2(0f, -470f), new Vector2(1800f, 40f), UiKit.Muted);
+        var root=UiKit.MakeImage(canvas,"MainMenu",Color.clear,MenuStyle.Center,Vector2.zero,Vector2.zero);
+        UiKit.Stretch(root.rectTransform); root.raycastTarget=true; Root=root.gameObject;
+        MenuStyle.Background(Root.transform);
+        var scrim=new GameObject("Readability",typeof(RectTransform),typeof(MenuScrim)); scrim.transform.SetParent(Root.transform,false);
+        UiKit.Stretch((RectTransform)scrim.transform); scrim.GetComponent<MenuScrim>().raycastTarget=false;
+        home=MenuStyle.Box(Root.transform,"Home",Vector2.zero,new Vector2(1920,1080),Color.clear).gameObject;
+        var title=MenuStyle.Text(home.transform,"GameTitle","BROS\nOVERWATCH",new Vector2(-560,225),new Vector2(600,220),84);
+        title.textWrappingMode=TextWrappingModes.Normal; title.fontStyle=FontStyles.Bold|FontStyles.Italic;
+        MenuStyle.Box(home.transform,"TitleAccent",new Vector2(-640,105),new Vector2(440,3),MenuStyle.Peach);
+        MenuStyle.Button(home.transform,"+   ZALOŽIT HRU",new Vector2(-625,35),new Vector2(470,70),()=>Navigate("Host"),true,36);
+        HomeAction("SERVERY",-55,()=>Navigate("Servers"));
+        HomeAction("NASTAVENÍ",-135,()=>OnSettings?.Invoke());
+        HomeAction("UKONČIT",-215,QuitGame);
+        smallLogo=MenuStyle.Text(Root.transform,"Wordmark","BROS OVERWATCH",new Vector2(-580,470),new Vector2(640,60),32).gameObject;
+        smallLogo.GetComponent<TextMeshProUGUI>().fontStyle=FontStyles.Bold|FontStyles.Italic;
+        BuildHost();
+        servers.Build(Root.transform,()=>Navigate("Home"),SaveName,ShowStatus);
+        nameButton=MenuStyle.Button(Root.transform,"",new Vector2(640,470),new Vector2(260,56),OpenProfile,false,25);
+        UiKit.SetButtonColor(nameButton,Color.clear);
+        musicButton=BuildMusicToggle(Root.transform);
+        statusText=MenuStyle.Text(Root.transform,"MenuStatus","",new Vector2(0,-495),new Vector2(1650,65),25,MenuStyle.Peach,TextAlignmentOptions.Center);
+        BuildProfile(); Navigate("Home");
     }
-
-    void BuildHostCard(Vector2 center, string nick)
+    void HomeAction(string label,float y,UnityEngine.Events.UnityAction action)
     {
-        var card = UiKit.MakeImage(Root.transform, "HostCard", UiKit.PanelLight, center, new Vector2(-470f, -70f), new Vector2(820f, 560f));
-
-        UiKit.MakeText(card.transform, "Heading", "ZALOŽIT HRU", 52, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 225f), new Vector2(760f, 70f), UiKit.Accent);
-        UiKit.MakeText(card.transform, "Sub", "Ostatní uvidí tvoji hru v seznamu a připojí se.", 28, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 160f), new Vector2(760f, 40f), UiKit.Muted);
-
-        UiKit.MakeText(card.transform, "NameLabel", "NÁZEV HRY", 26, TextAlignmentOptions.Left, center,
-            new Vector2(0f, 95f), new Vector2(700f, 36f), UiKit.Muted);
-        gameNameInput = UiKit.MakeInput(card.transform, "Název hry", center, new Vector2(0f, 40f), new Vector2(700f, 64f),
-            PlayerPrefs.GetString("gameName", $"Hra hráče {nick}"));
-        gameNameInput.characterLimit = 30;
-
-        UiKit.MakeButton(card.transform, "ZALOŽIT HRU", center, new Vector2(0f, -100f), new Vector2(700f, 100f), OnHostClicked, UiKit.Green, 44f);
-
-        UiKit.MakeText(card.transform, "Hint", "Budeš hostitel: v lobby vyberete týmy a hrdiny a ty spustíš zápas.", 26,
-            TextAlignmentOptions.Center, center, new Vector2(0f, -205f), new Vector2(740f, 70f), UiKit.Muted);
+        var b=MenuStyle.Button(home.transform,label,new Vector2(-625,y),new Vector2(470,56),action,false,34);
+        UiKit.SetButtonColor(b,Color.clear);
+        b.GetComponentInChildren<TextMeshProUGUI>().alignment=TextAlignmentOptions.Left;
+        b.GetComponentInChildren<TextMeshProUGUI>().margin=new Vector4(20,0,0,0);
     }
-
-    void BuildJoinCard(Vector2 center)
+    public void Navigate(string page)
     {
-        var card = UiKit.MakeImage(Root.transform, "JoinCard", UiKit.PanelLight, center, new Vector2(470f, -70f), new Vector2(820f, 560f));
-
-        UiKit.MakeText(card.transform, "Heading", "PŘIPOJIT SE", 52, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 225f), new Vector2(760f, 70f), UiKit.Accent);
-        UiKit.MakeText(card.transform, "Sub", "Hry nalezené v místní síti:", 28, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 165f), new Vector2(760f, 40f), UiKit.Muted);
-
-        noGamesText = UiKit.MakeText(card.transform, "NoGames", "Hledám hry v síti…", 30, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 70f), new Vector2(740f, 50f), UiKit.Muted);
-
-        for (int i = 0; i < MaxRows; i++)
-        {
-            int index = i;
-            var row = UiKit.MakeButton(card.transform, "-", center, new Vector2(0f, 105f - i * 70f), new Vector2(740f, 60f),
-                () => OnGameRowClicked(index), UiKit.ButtonBase, 28f);
-            row.gameObject.SetActive(false);
-            gameRows.Add(row);
-        }
-
-        UiKit.MakeText(card.transform, "ManualLabel", "nebo zadej IP hostitele:", 26, TextAlignmentOptions.Left, center,
-            new Vector2(0f, -172f), new Vector2(740f, 36f), UiKit.Muted);
-        ipInput = UiKit.MakeInput(card.transform, "např. 192.168.0.12", center, new Vector2(-135f, -232f), new Vector2(470f, 60f),
-            PlayerPrefs.GetString("lastIp", ""));
-        UiKit.MakeButton(card.transform, "PŘIPOJIT", center, new Vector2(260f, -232f), new Vector2(220f, 60f), OnManualJoinClicked, UiKit.Accent, 30f);
+        Page=page; home.SetActive(page=="Home"); host.SetActive(page=="Host"); smallLogo.SetActive(page!="Home");
+        servers.SetVisible(page=="Servers"); profile.SetActive(false); ShowStatus("");
+        if(page=="Host") { hostName.SetTextWithoutNotify(PlayerName); RefreshHost(); }
+        PlayerPrefs.Save();
     }
-
+    public static string PlayerName=>PlayerPrefs.GetString("nick","Hráč");
+    public static void SaveName(string value)
+    {
+        value=(value??"").Trim().Replace("<", "").Replace(">", ""); if(value.Length==0)value="Hráč"; if(value.Length>20)value=value.Substring(0,20);
+        PlayerHero.PreferredName=value; PlayerPrefs.SetString("nick",value); PlayerPrefs.Save();
+    }
+    void BuildProfile()
+    {
+        var veil=UiKit.MakeImage(Root.transform,"RenameOverlay",new Color(0,0,0,.65f),MenuStyle.Center,Vector2.zero,Vector2.zero);
+        UiKit.Stretch(veil.rectTransform); veil.raycastTarget=true; profile=veil.gameObject;
+        var box=MenuStyle.Box(profile.transform,"Rename",Vector2.zero,new Vector2(760,360));
+        MenuStyle.Text(box.transform,"Title","JMÉNO HRÁČE",new Vector2(0,100),new Vector2(640,60),38).fontStyle=FontStyles.Bold;
+        MenuStyle.Compact(box.transform,.88f);
+        profileName=MenuStyle.Input(box.transform,"Jméno hráče",PlayerName,new Vector2(0,10),new Vector2(640,65),20);
+        MenuStyle.Button(box.transform,"ZRUŠIT",new Vector2(-170,-100),new Vector2(280,65),()=>profile.SetActive(false));
+        MenuStyle.Button(box.transform,"ULOŽIT",new Vector2(170,-100),new Vector2(280,65),()=>{ SaveName(profileName.text); profile.SetActive(false); hostName.SetTextWithoutNotify(PlayerName); servers.SyncName(); },true);
+        profile.SetActive(false);
+    }
+    void OpenProfile() { profileName.SetTextWithoutNotify(PlayerName); profile.SetActive(true); profile.transform.SetAsLastSibling(); profileName.ActivateInputField(); }
     public void SetVisible(bool visible)
     {
-        if (Root == null || Root.activeSelf == visible) return;
-
+        if(Root==null||Root.activeSelf==visible)return;
         Root.SetActive(visible);
-
-        var discovery = LanDiscovery.GetOrCreate();
-        if (visible)
-        {
-            discovery.StartListening();
-            nextRefresh = 0f;
-        }
-        else
-        {
-            discovery.StopListening();
-        }
+        if(!visible) { LanDiscovery.Instance?.StopListening(); profile.SetActive(false); }
+        else { Cursor.lockState=CursorLockMode.None; servers.SetVisible(Page=="Servers",true); }
     }
-
-    public void ShowStatus(string message)
+    public void ShowStatus(string value) { if(statusText!=null)statusText.text=value??""; }
+    public void Tick(bool settingsOpen=false)
     {
-        if (statusText != null)
-            statusText.text = message ?? "";
-    }
-
-    public void Tick()
-    {
-        RefreshMusicToggle(musicButton);
-        if (Root == null || !Root.activeSelf || Time.unscaledTime < nextRefresh) return;
-        nextRefresh = Time.unscaledTime + 0.5f;
-
-        var discovery = LanDiscovery.Instance;
-        shownGames.Clear();
-        if (discovery != null)
+        if(Root==null||!Root.activeSelf)return;
+        RefreshMusicToggle(musicButton); UiKit.SetButtonLabel(nameButton,PlayerName+"   / upravit");
+        servers.Tick();
+        if(!settingsOpen&&Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            shownGames.AddRange(discovery.Games.Values);
-            shownGames.Sort((a, b) => string.CompareOrdinal(a.name, b.name));
-        }
-
-        noGamesText.gameObject.SetActive(shownGames.Count == 0);
-        noGamesText.text = discovery != null && discovery.IsListening
-            ? "Hledám hry v síti…"
-            : "Hledání v síti není dostupné — zadej IP ručně.";
-
-        for (int i = 0; i < gameRows.Count; i++)
-        {
-            bool has = i < shownGames.Count;
-            gameRows[i].gameObject.SetActive(has);
-            if (!has) continue;
-
-            var game = shownGames[i];
-            UiKit.SetButtonLabel(gameRows[i], $"{game.name}   <size=70%><color=#A6B3C7>{game.players} hráč(ů)  ·  {game.address}</color></size>");
+            if(servers.CloseModal())return;
+            if(profile.activeSelf)profile.SetActive(false);
+            else if(Page!="Home")Navigate("Home");
         }
     }
-
-    void SaveInputs()
-    {
-        string nick = nickInput.text.Trim();
-        if (string.IsNullOrEmpty(nick))
-            nick = "Hráč";
-
-        PlayerHero.PreferredName = nick;
-        PlayerPrefs.SetString("nick", nick);
-        PlayerPrefs.SetString("gameName", gameNameInput.text.Trim());
-    }
-
     public static Button BuildMusicToggle(Transform parent)
     {
-        var button = UiKit.MakeButton(parent, "", new Vector2(1f, 1f), new Vector2(-40f, -125f),
-            new Vector2(300f, 60f), () => GameSettings.MusicEnabled = !GameSettings.MusicEnabled, UiKit.ButtonBase, 24f);
-        RefreshMusicToggle(button);
-        return button;
+        var b=MenuStyle.Button(parent,"",new Vector2(865,470),new Vector2(64,46),()=>GameSettings.MusicEnabled=!GameSettings.MusicEnabled,false,28);
+        var icon=new GameObject("MusicIcon",typeof(RectTransform),typeof(MenuMusicIcon));
+        icon.transform.SetParent(b.transform,false);
+        var rect=(RectTransform)icon.transform; rect.anchorMin=rect.anchorMax=rect.pivot=MenuStyle.Center; rect.sizeDelta=new Vector2(32,32);
+        icon.GetComponent<MenuMusicIcon>().raycastTarget=false;
+        RefreshMusicToggle(b); return b;
     }
-
     public static void RefreshMusicToggle(Button button)
     {
-        if (button != null)
-            UiKit.SetButtonLabel(button, GameSettings.MusicEnabled ? "♪ HUDBA: ZAPNUTO" : "♪ HUDBA: VYPNUTO");
+        if(button==null)return;
+        UiKit.SetButtonLabel(button,"");
+        var icon=button.GetComponentInChildren<MenuMusicIcon>();
+        if(icon!=null) { icon.Muted=!GameSettings.MusicEnabled; icon.color=GameSettings.MusicEnabled?MenuStyle.Ink:MenuStyle.Muted; }
+        UiKit.SetButtonColor(button,GameSettings.MusicEnabled?MenuStyle.Mint:MenuStyle.Field);
+        button.GetComponentInChildren<TextMeshProUGUI>().color=GameSettings.MusicEnabled?MenuStyle.Ink:MenuStyle.Muted;
     }
-
-    void ToggleTestCooldowns()
-    {
-        MatchManager.PendingTestCooldowns = !MatchManager.PendingTestCooldowns;
-        RefreshTestButton();
-    }
-
-    void RefreshTestButton()
-    {
-        bool on = MatchManager.PendingTestCooldowns;
-        UiKit.SetButtonLabel(testButton, on ? "TESTOVACÍ COOLDOWNY 1 s: <color=#7CFC9A>ZAP</color>" : "TESTOVACÍ COOLDOWNY 1 s: VYP");
-        UiKit.SetButtonColor(testButton, on ? new Color(0.20f, 0.42f, 0.26f, 1f) : UiKit.ButtonBase);
-    }
-
-    // Ukonci hru (v editoru zastavi Play mod).
     void QuitGame()
     {
-        SaveInputs();
         PlayerPrefs.Save();
-
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+        UnityEditor.EditorApplication.isPlaying=false;
 #else
         Application.Quit();
 #endif
-    }
-
-    void OnHostClicked()
-    {
-        SaveInputs();
-
-        string gameName = gameNameInput.text.Trim();
-        if (string.IsNullOrEmpty(gameName))
-            gameName = $"Hra hráče {PlayerHero.PreferredName}";
-
-        ShowStatus(GameConnection.Host(gameName) ? "" : GameConnection.LastError);
-    }
-
-    void OnGameRowClicked(int index)
-    {
-        if (index >= shownGames.Count) return;
-
-        SaveInputs();
-        var game = shownGames[index];
-        ShowStatus(GameConnection.Join(game.address, game.port) ? $"Připojuji se k „{game.name}“…" : GameConnection.LastError);
-    }
-
-    void OnManualJoinClicked()
-    {
-        SaveInputs();
-
-        string address = ipInput.text.Trim();
-        if (string.IsNullOrEmpty(address))
-        {
-            ShowStatus("Zadej IP adresu hostitele.");
-            return;
-        }
-
-        PlayerPrefs.SetString("lastIp", address);
-        ShowStatus(GameConnection.Join(address, GameConnection.Port) ? $"Připojuji se k {address}…" : GameConnection.LastError);
     }
 }

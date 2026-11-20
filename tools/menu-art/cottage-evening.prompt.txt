@@ -1,0 +1,7 @@
+Generated with the built-in image_gen tool, 2026-11-20.
+Asset: OverwatchBros/Assets/Resources/UI/cottage-evening.png
+Role: static illustrative menu backdrop; this is not a capture of the actual Chaty map.
+Reference: the approved warm green cottage menu concept from this chat.
+
+Final prompt:
+Create a production game menu BACKGROUND ASSET ONLY, 16:9 wide landscape, ideally 2560x1440. Use the provided approved menu mockup strictly as a scene and mood reference. Remove ALL UI, ALL text, logos, icons, gradients, scrims and buttons, reconstruct the scene beneath. The full frame is a warm inviting stylized Czech cottage garden during golden evening, modest countryside cottage at center-left, wooden cabin at right, round above-ground swimming pool bottom right, wooden picnic table with two small beer mugs and compact music speaker near bottom center, grass, trees, soft patio string lights, warm windows, hazy sunset hills. Plausible stylized 3D indie game rendering, playful grown-up friends LAN weekend atmosphere. Keep left 35 percent subdued trees and dark garden foliage with lower visual detail so a game interface can later be placed there. Rich warm soft illumination, clean controlled detail, beautiful but not luxury resort, no people. No text, no words, no logo, no UI whatsoever, no external board framing. This will be saved in the Unity project as an actual menu background.

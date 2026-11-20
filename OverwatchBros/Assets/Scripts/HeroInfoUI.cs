@@ -136,7 +136,7 @@ public class HeroInfoUI
 
     // ---------------- obsah ----------------
 
-    struct Entry
+    internal struct Entry
     {
         public string key, name, stats, description;
         public Texture icon;
@@ -175,7 +175,7 @@ public class HeroInfoUI
         footer.text = $"<color=#F28C1A>šipky</color> další hrdinové ({heroIndex + 1}/{HeroRegistry.All.Length})   ·   zavřít: <color=#F28C1A>F2</color> nebo <color=#F28C1A>Esc</color>";
     }
 
-    static List<Entry> Entries(HeroDefinition hero)
+    internal static List<Entry> Entries(HeroDefinition hero)
     {
         var list = new List<Entry>();
         var weapon = hero.weapon;
@@ -257,7 +257,7 @@ public class HeroInfoUI
         return string.Join("  ·  ", parts);
     }
 
-    static string Passives(HeroDefinition hero)
+    internal static string Passives(HeroDefinition hero)
     {
         var parts = new List<string> { $"<color=#FFFFFF>{hero.maxHealth:0} HP</color>" };
         if (Mathf.Abs(hero.moveSpeed - 1f) > 0.01f) parts.Add($"rychlost {(hero.moveSpeed - 1f) * 100f:+0;-0} %");

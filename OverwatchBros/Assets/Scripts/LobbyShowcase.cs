@@ -9,6 +9,8 @@ public class LobbyShowcase : MonoBehaviour
     static LobbyShowcase instance;
 
     Camera view;
+    RenderTexture preview;
+    public static Texture PreviewTexture => instance!=null?instance.preview:null;
     Transform hero;
     CharacterVisual visual;
     HeldWeapons held;
@@ -59,6 +61,7 @@ public class LobbyShowcase : MonoBehaviour
         rim.transform.SetParent(transform, false);
         rim.transform.localPosition = new Vector3(0f, -0.035f, 0f);
         rim.transform.localScale = new Vector3(2.8f, 0.02f, 2.8f);
+        Fx.Paint(rim,MenuStyle.Mint);
         ring = rim.GetComponent<Renderer>();
         ring.material.EnableKeyword("_EMISSION");
 
@@ -70,17 +73,26 @@ public class LobbyShowcase : MonoBehaviour
         // kamera: cela postava, posazena nad stredem obrazovky (mezi kartami tymu)
         var camObject = new GameObject("LobbyCamera");
         camObject.transform.SetParent(transform, false);
-        camObject.transform.localPosition = new Vector3(0f, 1.0f, 6.4f);
-        camObject.transform.LookAt(transform.position + new Vector3(0f, 0.47f, 0f));
+        camObject.transform.localPosition = new Vector3(0f, 1.15f, 5.8f);
+        camObject.transform.LookAt(transform.position + new Vector3(0f, 1.0f, 0f));
         view = camObject.AddComponent<Camera>();
         view.clearFlags = CameraClearFlags.SolidColor;
-        view.backgroundColor = new Color(0.035f, 0.045f, 0.08f);
+        view.backgroundColor = MenuStyle.Field;
+        preview=new RenderTexture(512,512,24) { name="LobbyHeroPreview" };
+        view.targetTexture=preview;
         view.fieldOfView = 30f;
         view.nearClipPlane = 0.1f;
         view.farClipPlane = 30f;
         view.depth = 5f;
         var data = view.GetUniversalAdditionalCameraData();
         data.renderPostProcessing = true;
+    }
+
+    void OnDestroy()
+    {
+        if(view!=null)view.targetTexture=null;
+        if(preview!=null) { preview.Release(); Destroy(preview); }
+        if(instance==this)instance=null;
     }
 
     void AddLight(Vector3 local, Color color, float intensity, float range)

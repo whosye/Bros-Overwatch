@@ -81,6 +81,17 @@ public partial class MatchManager : NetworkBehaviour
         scoreToWinSynced.Value = Mathf.Max(1, scoreToWin);
         gameName.Value = new FixedString64Bytes(string.IsNullOrWhiteSpace(PendingGameName) ? "Hra" : PendingGameName);
         phase.Value = PhaseLobby;
+        if (HostOptions.ApplyOnSpawn)
+        {
+            HostOptions.ApplyOnSpawn = false;
+            int selectedMap = HostOptions.Map;
+            int selectedMode = HostOptions.Mode;
+            if (!MapReady(selectedMap) || !MapSupportsMode(selectedMap, selectedMode)) selectedMap = MapDomasov;
+            mapIndex.Value = selectedMap;
+            gameMode.Value = selectedMode;
+            scoreToWinSynced.Value = HostOptions.Kills;
+            captureSeconds.Value = HostOptions.CaptureSeconds;
+        }
     }
 
     public void SetScoreToWin(int value)

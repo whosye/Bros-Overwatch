@@ -17,6 +17,7 @@ public class MatchUI : MonoBehaviour
     TextMeshProUGUI infoText;
     TextMeshProUGUI abilityText;
     TextMeshProUGUI connectingText;
+    GameObject connectingPanel;
     TextMeshProUGUI respawnText;
     TextMeshProUGUI endTitle;
     TextMeshProUGUI endHint;
@@ -41,20 +42,7 @@ public class MatchUI : MonoBehaviour
     readonly ObjectiveHintUI objectiveHint = new ObjectiveHintUI();
     GameObject blockBar;
     Image blockFill;
-    GameObject settingsPanel;
-    Button graphicsButton;
-    TextMeshProUGUI sensText;
-    TextMeshProUGUI volumeText;
-    Slider sensitivitySlider;
-    Slider volumeSlider;
-    Slider ambientSlider;
-    TextMeshProUGUI ambientText;
-    Slider voiceSlider;
-    TextMeshProUGUI voiceText;
-    Button headBobButton;
-    Slider headBobSlider;
-    TextMeshProUGUI headBobText;
-    bool settingsWereVisible;
+    readonly SettingsMenuUI settings = new SettingsMenuUI();
 
     NetworkUI legacyMenu;
     PlayerHUD legacyHud;
@@ -94,7 +82,7 @@ public class MatchUI : MonoBehaviour
         var scaler = canvasObject.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);
-        scaler.matchWidthOrHeight = 0.5f;
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
 
         canvasObject.AddComponent<GraphicRaycaster>();
 
@@ -154,18 +142,25 @@ public class MatchUI : MonoBehaviour
         blockBar.SetActive(false);
 
         BuildEndPanel(root);
-        BuildSettingsPanel(root);
         heroPicker.Build(root);
 
         lobby.Build(root, LeaveGame);
         menu.Build(root);
         // karta hrdiny (klik na hrdinu v lobby, F2 ve hre) - nad lobby
         heroInfo.Build(root);
-        lobby.OnHeroClicked = heroInfo.Open;
+        settings.Build(root, () => Cursor.lockState = CursorLockMode.Locked, LeaveGame);
+        menu.OnSettings = () => settings.Open(false);
 
-        connectingText = UiKit.MakeText(root, "Connecting", "Připojuji se…", 56, TextAlignmentOptions.Center, center,
-            Vector2.zero, new Vector2(1200f, 100f));
-        connectingText.gameObject.SetActive(false);
+        var connecting = UiKit.MakeImage(root, "ConnectingOverlay", MenuStyle.Ink, center, Vector2.zero, Vector2.zero);
+        UiKit.Stretch(connecting.rectTransform);
+        connecting.raycastTarget = true;
+        connectingPanel = connecting.gameObject;
+        MenuStyle.Background(connecting.transform);
+        var tint = UiKit.MakeImage(connecting.transform, "Tint", new Color(0.02f, 0.08f, 0.04f, 0.72f), center, Vector2.zero, Vector2.zero);
+        UiKit.Stretch(tint.rectTransform);
+        connectingText = MenuStyle.Text(connecting.transform, "Connecting", "Připojuji se…", Vector2.zero, new Vector2(1200, 100), 56, null, TextAlignmentOptions.Center);
+        MenuStyle.Button(connecting.transform, "ZRUŠIT", new Vector2(0, -120), new Vector2(340, 70), LeaveGame);
+        connectingPanel.SetActive(false);
 
         // Prehravac "play of the game" (vlastni platno nad vsim ostatnim).
         gameObject.AddComponent<PotgUI>();
@@ -195,71 +190,6 @@ public class MatchUI : MonoBehaviour
 
         // Tabulka hracu se na konci zapasu ukazuje nad timhle panelem.
         overlay.PlaceBoardAbove(endPanel.transform);
-    }
-
-    void BuildSettingsPanel(Transform root)
-    {
-        var center = new Vector2(0.5f, 0.5f);
-
-        var panel = UiKit.MakeImage(root, "SettingsPanel", new Color(0.05f, 0.07f, 0.10f, 0.92f), center, Vector2.zero, new Vector2(780f, 940f));
-        panel.raycastTarget = true;
-        settingsPanel = panel.gameObject;
-
-        UiKit.MakeText(settingsPanel.transform, "Title", "NASTAVENÍ", 52, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 410f), new Vector2(700f, 70f), UiKit.Accent);
-
-        sensText = UiKit.MakeText(settingsPanel.transform, "Sens", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 330f), new Vector2(700f, 50f));
-        volumeText = UiKit.MakeText(settingsPanel.transform, "Volume", "", 36, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 225f), new Vector2(700f, 50f));
-
-        // Logarithmic sensitivity keeps low values easy to adjust across the full range.
-        sensitivitySlider = UiKit.MakeSlider(settingsPanel.transform, "SensitivitySlider", center,
-            new Vector2(0f, 285f), new Vector2(620f, 44f), 0f, 1f, SensitivityToSlider(),
-            value => GameSettings.Sensitivity = Mathf.Round(GameSettings.MinSensitivity
-                * Mathf.Pow(GameSettings.MaxSensitivity / GameSettings.MinSensitivity, value) * 100f) / 100f);
-        volumeSlider = UiKit.MakeSlider(settingsPanel.transform, "VolumeSlider", center,
-            new Vector2(0f, 180f), new Vector2(620f, 44f), 0f, 100f, GameSettings.Volume * 100f,
-            value => GameSettings.Volume = value / 100f, wholeNumbers: true);
-
-        // hlasky hrdinu zvlast (testeri: hlasky prehlusi zvuky / naopak)
-        voiceText = UiKit.MakeText(settingsPanel.transform, "VoiceVolume", "", 32, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 120f), new Vector2(700f, 50f));
-        voiceSlider = UiKit.MakeSlider(settingsPanel.transform, "VoiceSlider", center,
-            new Vector2(0f, 75f), new Vector2(620f, 44f), 0f, 100f, GameSettings.VoiceVolume * 100f,
-            value => GameSettings.VoiceVolume = value / 100f, wholeNumbers: true);
-
-        ambientText = UiKit.MakeText(settingsPanel.transform, "AmbientVolume", "", 32, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 15f), new Vector2(700f, 50f));
-        ambientSlider = UiKit.MakeSlider(settingsPanel.transform, "AmbientSlider", center,
-            new Vector2(0f, -30f), new Vector2(620f, 44f), 0f, 100f, GameSettings.AmbientVolume * 100f,
-            value => GameSettings.AmbientVolume = value / 100f, wholeNumbers: true);
-
-        headBobButton = UiKit.MakeButton(settingsPanel.transform, "Pohupování kamery: ZAPNUTO", center,
-            new Vector2(0f, -105f), new Vector2(620f, 60f),
-            () => GameSettings.HeadBobEnabled = !GameSettings.HeadBobEnabled, fontSize: 30f);
-        headBobText = UiKit.MakeText(settingsPanel.transform, "HeadBobIntensity", "", 32, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -170f), new Vector2(700f, 50f));
-        headBobSlider = UiKit.MakeSlider(settingsPanel.transform, "HeadBobSlider", center,
-            new Vector2(0f, -215f), new Vector2(620f, 44f), 0f, 200f, GameSettings.HeadBobIntensity * 100f,
-            value => GameSettings.HeadBobIntensity = value / 100f, wholeNumbers: true);
-
-        graphicsButton = UiKit.MakeButton(settingsPanel.transform, "Grafika", center, new Vector2(0f, -280f), new Vector2(620f, 52f),
-            () => GraphicsQuality.Level = (GraphicsQuality.Level + 1) % GraphicsQuality.Names.Length, fontSize: 28f);
-
-        UiKit.MakeButton(settingsPanel.transform, "POKRAČOVAT", center, new Vector2(-190f, -370f), new Vector2(340f, 76f),
-            () => Cursor.lockState = CursorLockMode.Locked, UiKit.Green, 32f);
-        UiKit.MakeButton(settingsPanel.transform, "OPUSTIT HRU", center, new Vector2(190f, -370f), new Vector2(340f, 76f),
-            LeaveGame, new Color(0.45f, 0.18f, 0.18f, 1f), 32f);
-
-        settingsPanel.SetActive(false);
-    }
-
-    static float SensitivityToSlider()
-    {
-        float sensitivity = Mathf.Clamp(GameSettings.Sensitivity, GameSettings.MinSensitivity, GameSettings.MaxSensitivity);
-        return Mathf.Log(sensitivity / GameSettings.MinSensitivity)
-            / Mathf.Log(GameSettings.MaxSensitivity / GameSettings.MinSensitivity);
     }
 
     void RestartMatch()
@@ -366,7 +296,10 @@ public class MatchUI : MonoBehaviour
         bool playing = hasPlayer && !inLobby;
 
         if (hasPlayer)
+        {
             everHadPlayer = true;
+            GameConnection.ConfirmJoined(match.gameName.Value.ToString());
+        }
 
         if (wasConnected && !connected && !leaving)
             menu.ShowStatus(everHadPlayer
@@ -377,9 +310,9 @@ public class MatchUI : MonoBehaviour
         wasConnected = connected;
 
         menu.SetVisible(!connected && !PotgIntro.Active);   // (ukazka POTG uvodu z editoru bezi pres menu)
-        menu.Tick();
+        menu.Tick(settings.IsOpen);
 
-        connectingText.gameObject.SetActive(connected && !hasPlayer);
+        connectingPanel.SetActive(connected && !hasPlayer);
         lobby.SetVisible(inLobby);
         lobby.Tick(localHero, joining);
         // Behem prehravani "play of the game" se koncova obrazovka neukazuje (hraje se ve scene).
@@ -390,7 +323,7 @@ public class MatchUI : MonoBehaviour
         heroPicker.Tick(localHero, playing && !over && !PotgUI.IsShowing);
 
         // Karta hrdiny se schopnostmi (F2; v lobby i kliknutim na hrdinu).
-        heroInfo.Tick(hasPlayer && (inLobby || (playing && !over && !replay && !PotgUI.IsShowing)),
+        heroInfo.Tick(hasPlayer && playing && !inLobby && !over && !replay && !PotgUI.IsShowing,
             localHero != null ? localHero.heroId.Value : PlayerHero.PreferredHero);
 
         UpdateCursor(hasPlayer, inLobby, over || heroPicker.IsOpen || heroInfo.IsOpen);
@@ -422,26 +355,10 @@ public class MatchUI : MonoBehaviour
         crosshair.SetActive(crosshairFade.alpha > 0.005f && ((playing && !over && locked && !replay) || (replay && ReplayPlayer.Frame != null && (killcam || !ReplayPlayer.Frame.thirdPerson))));
         UpdateBlockBar(localHero, playing && !over);
 
-        bool showSettings = playing && !over && !locked && !heroPicker.IsOpen && !heroInfo.IsOpen;
-        if (settingsWereVisible && !showSettings) PlayerPrefs.Save();
-        settingsWereVisible = showSettings;
-        settingsPanel.SetActive(showSettings);
-        if (showSettings)
-        {
-            sensitivitySlider.SetValueWithoutNotify(SensitivityToSlider());
-            volumeSlider.SetValueWithoutNotify(GameSettings.Volume * 100f);
-            ambientSlider.SetValueWithoutNotify(GameSettings.AmbientVolume * 100f);
-            voiceSlider.SetValueWithoutNotify(GameSettings.VoiceVolume * 100f);
-            voiceText.text = $"Hlášky postav: {Mathf.RoundToInt(GameSettings.VoiceVolume * 100f)} %";
-            ambientText.text = $"Zvuky prostředí: {Mathf.RoundToInt(GameSettings.AmbientVolume * 100f)} %";
-            sensText.text = $"Citlivost myši: {GameSettings.Sensitivity:0.0#}  <size=65%>(max {GameSettings.MaxSensitivity:0})</size>";
-            volumeText.text = $"Hlasitost: {Mathf.RoundToInt(GameSettings.Volume * 100f)} %";
-            UiKit.SetButtonLabel(headBobButton, GameSettings.HeadBobEnabled ? "Pohupování kamery: ZAPNUTO" : "Pohupování kamery: VYPNUTO");
-            UiKit.SetButtonLabel(graphicsButton, $"Grafika: <color=#F28C1A>{GraphicsQuality.Names[GraphicsQuality.Level]}</color>  <size=65%>(klikni = další)</size>");
-            headBobSlider.SetValueWithoutNotify(GameSettings.HeadBobIntensity * 100f);
-            headBobSlider.interactable = GameSettings.HeadBobEnabled;
-            headBobText.text = $"Intenzita pohupování: {Mathf.RoundToInt(GameSettings.HeadBobIntensity * 100f)} %";
-        }
+        bool showSettings = playing && !over && !locked && !heroPicker.IsOpen && !heroInfo.IsOpen && !replay && !PotgUI.IsShowing;
+        if (showSettings && !settings.IsOpen) settings.Open(true);
+        if (settings.IsOpen && ((settings.InGame && !showSettings) || (connected && !playing))) settings.Close();
+        settings.Tick();
     }
 
     // Prsten: T nasadi / sunda (jen kdo ho nese). Nasazeny = zsedly zavoj pres obrazovku (jen pro nositele;
