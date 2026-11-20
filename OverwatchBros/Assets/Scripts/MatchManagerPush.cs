@@ -1,129 +1,97 @@
 using Unity.Netcode;
 using UnityEngine;
 
-// Herni rezim "Tlacenice" (jako Push v Overwatchi). Hraje se jen na mape Domasov (Tlacenice) - MapDomasovPush.
+// Herni rezim "Tlacenice" (jako Push v Overwatchi 2). Hraje se jen na mape Domasov (Tlacenice) - MapDomasovPush.
 //
-//  - Uprostred trasy (PushRoute) stoji obri Honza (robot, PushRobot) a pred sebou ma Toyotu Yaris.
-//  - Robot tlaci Yaris pro tym, ktery je u nej (PushRadius) sam. Oba tymy = sporny, stoji. Nikdo = stoji (necouva).
-//  - Kdyz Yaris prevezme druhy tym, robot ho nejdriv obejde na druhou stranu (PushCrossing) a az pak tlaci opacne.
-//  - Tym 0 tlaci k s = Length (zakladna tymu 1), tym 1 k s = 0. Checkpointy na strane soupere: poprve dotlaceno
-//    = bonusovy cas a spawn tymu se posune dopredu.
-//  - Dotlaceno na konec trasy = okamzita vyhra. Jinak po case vyhrava, kdo dotlacil nejdal od stredu.
-//    Prodlouzeni: cas vyprsel a prohravajici tym stoji u robota - hraje se dal, dokud neodejde.
-// Server je autorita: poloha Yarisu na trase (s), strana robota, prechazeni, postup a checkpointy jsou NetworkVariable.
-// Klienti si polohu mezi aktualizacemi (5x za s) dopocitavaji podle rychlosti (PushRobot).
+//  - Trasa (PushRoute): s = 0 u zakladny tymu 0 (modri), s = Length u zakladny tymu 1 (cerveni).
+//  - Kazdy tym ma svuj Yaris. Na zacatku stoji oba uprostred trasy a mezi nimi obri Honza (robot, PushRobot).
+//    Yaris tymu 0 je na strane tymu 1 a tym 0 ho tlaci k zakladne tymu 1 (s roste); Yaris tymu 1 opacne.
+//  - Honza tlaci Yaris tymu, ktery je u nej sam (PushRadius). Oba tymy = sporny, stoji. Nikdo = stoji (Yarisy necouvaji).
+//  - Kdyz Honzu prevezme druhy tym, Honza dobehne po trase k jeho Yarisu (PushWalkSpeed) a teprve pak tlaci.
+//    Yarisy zustavaji, kde je kdo nechal - postup tymu = jak daleko je jeho Yaris od startu.
+//  - Checkpointy (PushRoute.checkpoints, metry od startu Yarisu): poprve dotlaceno = bonusovy cas a spawn dopredu.
+//  - Yaris dotlaceny az na konec trasy = okamzita vyhra. Jinak po case vyhrava, kdo dotlacil svuj Yaris dal.
+//    Prodlouzeni: cas vyprsel a prohravajici tym stoji u Honzy - hraje se dal, dokud neodejde.
+// Server je autorita: poloha obou Yarisu a Honzy na trase (s), komu Honza patri, stav, postup a checkpointy jsou
+// NetworkVariable. Polohu Honzy posila server 5x za s i s rychlosti - klienti mezi tim dopocitavaji (PushRobot).
 public partial class MatchManager
 {
     public const int ModePush = 2;
     public bool IsPushMode => gameMode.Value == ModePush;
     public bool IsDeathmatchMode => gameMode.Value == ModeDeathmatch;
 
-    // stav robota
-    public const int PushLocked = 0, PushIdle = 1, PushPushing = 2, PushContested = 3, PushCrossing = 4;
+    // stav Honzy
+    public const int PushLocked = 0, PushIdle = 1, PushPushing = 2, PushContested = 3, PushWalking = 4;
 
     public const float PushSetupSeconds = 15f;
     public const float PushMatchSeconds = 480f;
     public const float PushCheckpointBonus = 60f;
-    public const float PushRadius = 5f;            // kdo je bliz (k obrovi nebo Yarisu), je "u robota"
+    public const float PushRadius = 8f;            // kdo je bliz k Honzovi (nebo k Yarisu, ktery prave tlaci), je "u nej"
     const float PushHeight = 3f;
-    // (rozestup obra od Yarisu: PushRoute.robotOffset / sideOffset - podle velikosti auta, u vsech stejne ze sceny)
-    public const float PushWalkSpeed = 2.5f;       // obr bez tlaceni (obchazeni Yarisu)
+    public const float PushWalkSpeed = 3f;         // Honza bezi k Yarisu druheho tymu
     const float PushOvertimeGrace = 1.5f;
     static readonly float[] PushSpeeds = { 0f, 0.9f, 1.05f, 1.2f };   // podle poctu tlacicich (strop 3+)
+    // (rozestup Honzy od stredu Yarisu: PushRoute.robotOffset - podle velikosti auta, u vsech stejne ze sceny)
 
-    public NetworkVariable<float> pushCar = new NetworkVariable<float>(-1f);   // s Yarisu (-1 = stred trasy)
-    public NetworkVariable<float> pushRate = new NetworkVariable<float>(0f);   // rychlost tlaceni (+ k zakladne tymu 1)
-    public NetworkVariable<int> pushSide = new NetworkVariable<int>(0);        // +1 tlaci tym 0, -1 tlaci tym 1, 0 stoji vedle (start)
-    public NetworkVariable<int> pushCrossFrom = new NetworkVariable<int>(0);
-    public NetworkVariable<double> pushCrossStart = new NetworkVariable<double>(-1000.0);
+    public NetworkVariable<float> pushCar0 = new NetworkVariable<float>(-1f);   // s Yarisu tymu 0 (-1 = start)
+    public NetworkVariable<float> pushCar1 = new NetworkVariable<float>(-1f);   // s Yarisu tymu 1
+    public NetworkVariable<float> pushRobot = new NetworkVariable<float>(-1f);  // s Honzy
+    public NetworkVariable<float> pushRobotRate = new NetworkVariable<float>(0f); // jak rychle se Honza prave hybe (+ k zakladne tymu 1)
+    public NetworkVariable<int> pushOwner = new NetworkVariable<int>(-1);       // komu Honza patri (-1 = nikomu, start)
     public NetworkVariable<int> pushState = new NetworkVariable<int>(PushLocked);
-    public NetworkVariable<int> pushers = new NetworkVariable<int>(0);         // u robota: tym 0 + 16 * tym 1
-    public NetworkVariable<float> pushBest0 = new NetworkVariable<float>(0f);  // nejdal za stred (m)
+    public NetworkVariable<int> pushers = new NetworkVariable<int>(0);          // u Honzy: tym 0 + 16 * tym 1
+    public NetworkVariable<float> pushBest0 = new NetworkVariable<float>(0f);   // jak daleko od startu je Yaris tymu (m)
     public NetworkVariable<float> pushBest1 = new NetworkVariable<float>(0f);
     public NetworkVariable<int> pushCheckpoints0 = new NetworkVariable<int>(0);
     public NetworkVariable<int> pushCheckpoints1 = new NetworkVariable<int>(0);
 
-    // Kde obr prave stoji (server - boti).
+    // Kde Honza prave stoji (server - boti).
     public static Vector3 PushRobotPosition { get; private set; }
 
-    // Cil botu: v tlacenici robot, jinak bod.
+    // Cil botu: v tlacenici Honza, jinak bod.
     public Vector3 ObjectivePosition => IsPushMode ? PushRobotPosition : pointPosition.Value;
 
     public int PushersOf(int team) => team == 0 ? pushers.Value & 15 : (pushers.Value >> 4) & 15;
     public float PushBest(int team) => team == 0 ? pushBest0.Value : pushBest1.Value;
     public int PushCheckpointsOf(int team) => team == 0 ? pushCheckpoints0.Value : pushCheckpoints1.Value;
-    public static int PushSideOf(int team) => team == 0 ? 1 : -1;
+    public int PushOwner => pushOwner.Value;
 
-    // Tym, ktery robota vlastni (tlaci nebo k nemu prave prechazi). -1 = nikdo (start).
-    public int PushOwner => pushSide.Value > 0 ? 0 : pushSide.Value < 0 ? 1 : -1;
+    // Kam tym tlaci svuj Yaris (+1 k zakladne tymu 1, -1 k zakladne tymu 0).
+    public static int PushDirection(int team) => team == 0 ? 1 : -1;
+
+    // Start Yarisu tymu a kde stoji Honza, kdyz ho tlaci.
+    public static float PushCarStart(PushRoute route, int team) => route.Center + PushDirection(team) * route.robotOffset;
+    public static float PushBehind(PushRoute route, int team, float car) => car - PushDirection(team) * route.robotOffset;
+
+    // Polohy ze sitovych promennych (-1 = start).
+    public float PushCarOf(PushRoute route, int team)
+    {
+        float s = team == 0 ? pushCar0.Value : pushCar1.Value;
+        return s < 0f ? PushCarStart(route, team) : s;
+    }
+
+    public float PushRobotOf(PushRoute route) => pushRobot.Value < 0f ? route.Center : pushRobot.Value;
 
     // server
-    float serverCar = -1f;
-    float pushTimer, pushLock, pushOvertimeEmpty, nextCarSync;
-
-    // ---------------- geometrie robota (server i klienti stejne) ----------------
-
-    static float CrossLength(PushRoute route, int from, int to) =>
-        (from != 0 ? route.sideOffset : 0f) + Mathf.Abs(to - from) * route.robotOffset + route.sideOffset;
-
-    public static float CrossDuration(PushRoute route, int from, int to) => CrossLength(route, from, to) / PushWalkSpeed;
-
-    // Jak daleko je obchazeni (0..1; >= 1 = neobchazi).
-    public float PushCrossT(PushRoute route, double serverTime)
-    {
-        if (pushCrossStart.Value < 0.0 || route == null) return 1f;
-        float duration = CrossDuration(route, pushCrossFrom.Value, pushSide.Value);
-        return duration <= 0f ? 1f : (float)((serverTime - pushCrossStart.Value) / duration);
-    }
-
-    // Misto obra vuci Yarisu: podel trasy (along) a do strany (lat).
-    static Vector2 RobotLocal(PushRoute route, int side) =>
-        side == 0 ? new Vector2(0f, route.sideOffset) : new Vector2(-side * route.robotOffset, 0f);
-
-    // Poloha a smer obra. moving = jde (obchazi Yaris); tlaceni urcuje pushRate.
-    public static void PushRobotPose(PushRoute route, float car, int side, int crossFrom, float crossT,
-        out Vector3 position, out Vector3 facing, out bool crossing)
-    {
-        crossing = crossT < 1f && crossFrom != side;
-        Vector2 local;
-        Vector2 dir;
-        if (!crossing)
-        {
-            local = RobotLocal(route, side);
-            dir = side == 0 ? new Vector2(0f, -1f) : new Vector2(side, 0f);
-        }
-        else
-        {
-            // A (start) -> B (vedle Yarisu) -> C (vedle Yarisu na druhe strane) -> D (za Yarisem)
-            Vector2 a = RobotLocal(route, crossFrom), d = RobotLocal(route, side);
-            Vector2 b = new Vector2(a.x, route.sideOffset), c = new Vector2(d.x, route.sideOffset);
-            float ab = Vector2.Distance(a, b), bc = Vector2.Distance(b, c), cd = Vector2.Distance(c, d);
-            float walked = Mathf.Clamp01(crossT) * (ab + bc + cd);
-            if (walked < ab && ab > 0f) { local = Vector2.Lerp(a, b, walked / ab); dir = b - a; }
-            else if (walked < ab + bc && bc > 0f) { local = Vector2.Lerp(b, c, (walked - ab) / bc); dir = c - b; }
-            else { local = cd > 0f ? Vector2.Lerp(c, d, Mathf.Clamp01((walked - ab - bc) / cd)) : d; dir = cd > 0f ? d - c : c - b; }
-        }
-
-        float s = car + local.x;
-        Vector3 forward = route.Forward(s), right = route.Right(s);
-        position = route.Point(s) + right * local.y;
-        Vector3 world = forward * dir.x + right * dir.y;
-        facing = world.sqrMagnitude > 1e-4f ? world.normalized : forward;
-    }
+    readonly float[] serverCar = { -1f, -1f };
+    float serverRobot = -1f;
+    float pushTimer, pushLock, pushOvertimeEmpty, nextRobotSync;
 
     // ---------------- prubeh (server) ----------------
 
-    // Vola ResetRound (vzdy): robot zpet na stred, vse vynulovat.
+    // Vola ResetRound (vzdy): Honza a Yarisy zpet na start, vse vynulovat.
     void ServerResetPush()
     {
         if (!IsServer) return;
         var route = PushRoute.Active;
-        serverCar = route != null ? route.Center : -1f;
-        pushCar.Value = serverCar;
-        pushRate.Value = 0f;
-        pushSide.Value = 0;
-        pushCrossFrom.Value = 0;
-        pushCrossStart.Value = -1000.0;
+        serverCar[0] = route != null ? PushCarStart(route, 0) : -1f;
+        serverCar[1] = route != null ? PushCarStart(route, 1) : -1f;
+        serverRobot = route != null ? route.Center : -1f;
+        pushCar0.Value = serverCar[0];
+        pushCar1.Value = serverCar[1];
+        pushRobot.Value = serverRobot;
+        pushRobotRate.Value = 0f;
+        pushOwner.Value = -1;
         pushState.Value = PushLocked;
         pushers.Value = 0;
         pushBest0.Value = 0f;
@@ -131,7 +99,7 @@ public partial class MatchManager
         pushCheckpoints0.Value = 0;
         pushCheckpoints1.Value = 0;
         pushOvertimeEmpty = 0f;
-        if (route != null) PushRobotPosition = route.Point(route.Center) + route.Right(route.Center) * route.sideOffset;
+        if (route != null) PushRobotPosition = route.Point(route.Center);
     }
 
     // Vola ResetRound pri startu zapasu v tlacenici.
@@ -152,7 +120,7 @@ public partial class MatchManager
         for (int team = 0; team < 2; team++)
             customSpawn[team] = PushSpawn(route, team, 0);
 
-        // Oba tymy chvili stoji ve spawnu (robot se probouzi) - po presunu na spawn, proto s malym zpozdenim.
+        // Oba tymy chvili stoji ve spawnu (Honza se probouzi) - po presunu na spawn, proto s malym zpozdenim.
         StopCoroutine(nameof(HoldPushTeamsSoon));
         StartCoroutine(nameof(HoldPushTeamsSoon));
     }
@@ -180,15 +148,15 @@ public partial class MatchManager
         if (!IsPushMode || IsLobby || IsOver) return;
         var route = PushRoute.Active;
         if (route == null) return;
-        float length = route.Length, center = length * 0.5f;
-        if (serverCar < 0f) serverCar = center;
+        float length = route.Length;
+        if (serverRobot < 0f) serverRobot = route.Center;
+        for (int t = 0; t < 2; t++) if (serverCar[t] < 0f) serverCar[t] = PushCarStart(route, t);
         float dt = Time.deltaTime;
-        double now = NetworkManager.ServerTime.Time;
 
-        PushRobotPose(route, serverCar, pushSide.Value, pushCrossFrom.Value, PushCrossT(route, now), out var robot, out _, out bool crossing);
+        Vector3 robot = route.Point(serverRobot);
         PushRobotPosition = robot;
 
-        // priprava: robot spi
+        // priprava: Honza spi
         if (pushLock > 0f)
         {
             pushLock -= dt;
@@ -201,46 +169,64 @@ public partial class MatchManager
         }
         if (roundPhase.Value == RoundDone) return;
 
-        CountAtRobot(robot, route.Point(serverCar), out int n0, out int n1);
+        // kdo je u Honzy (a u Yarisu, ktery prave tlaci)
+        int owner = pushOwner.Value;
+        bool attached = owner >= 0 && Mathf.Abs(serverRobot - PushBehind(route, owner, serverCar[owner])) < 0.05f;
+        Vector3 car = attached ? route.Point(serverCar[owner]) : robot;
+        CountAtRobot(robot, car, out int n0, out int n1);
         int packed = Mathf.Min(n0, 15) + Mathf.Min(n1, 15) * 16;
         if (pushers.Value != packed) pushers.Value = packed;
 
         int state;
         float rate = 0f;
-        if (crossing) state = PushCrossing;
-        else if (n0 > 0 && n1 > 0) state = PushContested;
+        if (n0 > 0 && n1 > 0) state = PushContested;
         else if (n0 > 0 || n1 > 0)
         {
             int team = n0 > 0 ? 0 : 1;
-            int want = PushSideOf(team);
-            if (pushSide.Value != want)
+            if (owner != team)
             {
-                // prevzeti: robot nejdriv obejde Yaris na druhou stranu
-                pushCrossFrom.Value = pushSide.Value;
-                pushSide.Value = want;
-                pushCrossStart.Value = now;
-                state = PushCrossing;
+                owner = team;
+                pushOwner.Value = team;
+            }
+            int dir = PushDirection(team);
+            float behind = PushBehind(route, team, serverCar[team]);
+            if (Mathf.Abs(serverRobot - behind) > 0.05f)
+            {
+                // Honza bezi po trase k Yarisu tymu, ktery ho prevzal
+                state = PushWalking;
+                float step = PushWalkSpeed * dt;
+                rate = Mathf.Sign(behind - serverRobot) * PushWalkSpeed;
+                serverRobot = Mathf.Abs(behind - serverRobot) <= step ? behind : serverRobot + Mathf.Sign(behind - serverRobot) * step;
             }
             else
             {
                 state = PushPushing;
-                rate = want * PushSpeeds[Mathf.Min(Mathf.Max(n0, n1), PushSpeeds.Length - 1)];
-                serverCar = Mathf.Clamp(serverCar + rate * dt, 0f, length);
+                float speed = PushSpeeds[Mathf.Min(team == 0 ? n0 : n1, PushSpeeds.Length - 1)];
+                rate = dir * speed;
+                serverCar[team] = Mathf.Clamp(serverCar[team] + rate * dt, 0f, length);
+                serverRobot = PushBehind(route, team, serverCar[team]);
+                SyncCar(team);
             }
         }
         else state = PushIdle;
 
         if (pushState.Value != state) pushState.Value = state;
-        if (!Mathf.Approximately(pushRate.Value, rate)) pushRate.Value = rate;
-        // poloha Yarisu 5x za sekundu (klienti mezi tim dopocitavaji podle pushRate); po zastaveni hned
-        if ((Time.time >= nextCarSync || rate == 0f) && !Mathf.Approximately(pushCar.Value, serverCar))
+        if (!Mathf.Approximately(pushRobotRate.Value, rate))
         {
-            nextCarSync = Time.time + 0.2f;
-            pushCar.Value = serverCar;
+            pushRobotRate.Value = rate;
+            pushRobot.Value = serverRobot;
+            for (int t = 0; t < 2; t++) ForceSyncCar(t);
+            nextRobotSync = Time.time + 0.2f;
+        }
+        // poloha Honzy 5x za sekundu (klienti mezi tim dopocitavaji podle pushRobotRate)
+        if (Time.time >= nextRobotSync && !Mathf.Approximately(pushRobot.Value, serverRobot))
+        {
+            nextRobotSync = Time.time + 0.2f;
+            pushRobot.Value = serverRobot;
         }
 
-        // postup (nejdal za stred) a skore = dotlacene metry
-        float reach0 = serverCar - center, reach1 = center - serverCar;
+        // postup (jak daleko od startu je Yaris tymu) a skore = dotlacene metry
+        float reach0 = serverCar[0] - PushCarStart(route, 0), reach1 = PushCarStart(route, 1) - serverCar[1];
         if (reach0 > pushBest0.Value + 0.05f)
         {
             pushBest0.Value = reach0;
@@ -254,11 +240,12 @@ public partial class MatchManager
         ServerPushCheckpoints(route, 0, reach0);
         ServerPushCheckpoints(route, 1, reach1);
 
-        // dotlaceno az na konec = vyhra
-        if (serverCar >= length - 0.01f || serverCar <= 0.01f)
+        // Yaris dotlaceny az na konec = vyhra
+        if (serverCar[0] >= length - 0.01f || serverCar[1] <= 0.01f)
         {
-            int winner = serverCar >= length - 0.01f ? 0 : 1;
-            pushCar.Value = serverCar;
+            int winner = serverCar[0] >= length - 0.01f ? 0 : 1;
+            ForceSyncCar(winner);
+            pushRobot.Value = serverRobot;
             ServerEndPush(winner, $"TÝM {winner} DOTLAČIL YARIS", $"až do základny týmu {1 - winner}");
             return;
         }
@@ -286,6 +273,18 @@ public partial class MatchManager
             ServerEndPush(leader, $"TÝM {leader} VYHRÁL", $"dotlačil dál: {PushBest(leader):0} m proti {PushBest(1 - leader):0} m");
     }
 
+    // Poloha tlaceneho Yarisu do site 5x za s (klienti ho mezi tim dopocitavaji z polohy Honzy).
+    void SyncCar(int team)
+    {
+        if (Time.time >= nextRobotSync) ForceSyncCar(team);
+    }
+
+    void ForceSyncCar(int team)
+    {
+        var variable = team == 0 ? pushCar0 : pushCar1;
+        if (!Mathf.Approximately(variable.Value, serverCar[team])) variable.Value = serverCar[team];
+    }
+
     // Kdo dotlacil dal (-1 = stejne).
     int PushLeader()
     {
@@ -304,20 +303,20 @@ public partial class MatchManager
             customSpawns = true;
             customSpawn[team] = PushSpawn(route, team, reached.Value);
             SpawnsClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
-            PushCheckpointClientRpc(team, reached.Value, route.Point(serverCar));
+            PushCheckpointClientRpc(team, reached.Value, route.Point(serverCar[team]));
         }
     }
 
     void ServerEndPush(int winner, string title, string subtitle)
     {
         roundPhase.Value = RoundDone;
-        pushRate.Value = 0f;
+        pushRobotRate.Value = 0f;
         pushState.Value = PushIdle;
         RoundOverClientRpc(title, subtitle, winner);
         EndMatch(winner);
     }
 
-    // Kdo stoji u robota: do PushRadius od usecky obr - Yaris (vodorovne), vyskove do PushHeight.
+    // Kdo stoji u Honzy: do PushRadius od usecky Honza - tlaceny Yaris (vodorovne), vyskove do PushHeight.
     void CountAtRobot(Vector3 robot, Vector3 car, out int team0, out int team1)
     {
         team0 = 0;
@@ -352,7 +351,7 @@ public partial class MatchManager
     {
         var listener = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
         ProceduralSfx.Play(ProceduralSfx.CaptureUnlock, listener, 1f);
-        CaptureUI.Headline("ROBOT SE PROBUDIL", "stůj u obřího Honzy - tlačí Yaris k základně soupeře", UiKit.Accent);
+        CaptureUI.Headline("HONZA SE PROBUDIL", "stůj u obřího Honzy - tlačí Yaris tvého týmu k základně soupeře", UiKit.Accent);
         if (PushRobot.Instance != null) PushRobot.Instance.Say();
     }
 
@@ -363,7 +362,7 @@ public partial class MatchManager
         Fx.Sparks(position + Vector3.up * 2f, UiKit.TeamColor(team));
         if (PushRobot.Instance != null)
         {
-            PushRobot.Instance.Horn();
+            PushRobot.Instance.Horn(team);
             PushRobot.Instance.Say();
         }
         CaptureUI.Headline($"CHECKPOINT {index}  ·  TÝM {team}",
@@ -379,11 +378,13 @@ public partial class MatchManager
         if (state == PushLocked || match.roundPhase.Value == RoundOvertime) return "";
         int owner = match.PushOwner;
         if (state == PushContested)
-            return "ÚKOL: vyžeň soupeře od robota  ·  dokud jsou u něj oba týmy, stojí";
+            return "ÚKOL: vyžeň soupeře od Honzy  ·  dokud jsou u něj oba týmy, stojí";
         if (owner == myTeam)
-            return $"ÚKOL: tlač Yaris k základně týmu {1 - myTeam}  ·  stůj u obřího Honzy, víc vás = rychleji";
+            return state == PushWalking
+                ? "ÚKOL: Honza běží k vašemu Yarisu  ·  doprovoď ho a kryj"
+                : $"ÚKOL: tlač svůj Yaris k základně týmu {1 - myTeam}  ·  stůj u Honzy, víc vás = rychleji";
         if (owner < 0)
-            return "ÚKOL: dojdi k obřímu Honzovi uprostřed a tlač Yaris k základně soupeře";
-        return "ÚKOL: zastav robota  ·  stoupni si k němu - až tam soupeř nebude, převezmeš ho";
+            return "ÚKOL: dojdi k obřímu Honzovi uprostřed - bude tlačit Yaris vašeho týmu";
+        return "ÚKOL: převezmi Honzu  ·  stoupni si k němu - až tam soupeř nebude, poběží k vašemu Yarisu";
     }
 }

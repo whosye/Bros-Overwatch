@@ -79,7 +79,10 @@ public partial class MainMenuUI
         create.interactable=ready;
         mapPreview.sprite=MenuStyle.MapPreview(HostOptions.Map);
         mapPreview.gameObject.SetActive(mapPreview.sprite!=null);
-        mapSummary.text=MatchManager.MapNames[HostOptions.Map]+" · "+(pushing?"Tlačenice":capture?"Dobývání":"Team deathmatch");
+        mapSummary.text=MatchManager.MapNames[HostOptions.Map]+" · "+(pushing?"Tlačenice":capture?"Dobývání":"Team deathmatch")
+            +(MatchManager.MapReady(HostOptions.Map)?"":HostOptions.Map==MatchManager.MapDomasovPush
+                ?"\n<size=75%>Mapa ještě není postavená - v editoru BrosOverwatch › Tlacenice › kroky 1 a 2, pak uložit scénu.</size>"
+                :"\n<size=75%>Mapa ještě není postavená.</size>");
         mapSummary.textWrappingMode=TextWrappingModes.Normal;
         UiKit.SetButtonLabel(test,"Testovací cooldowny 1 s: "+(MatchManager.PendingTestCooldowns?"ZAPNUTO":"VYPNUTO"));
     }

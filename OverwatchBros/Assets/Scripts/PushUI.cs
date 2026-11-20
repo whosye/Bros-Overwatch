@@ -2,10 +2,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Horni lista rezimu Tlacenice (misto TopBarUI): cas zapasu, pruh postupu Yarisu a stav robota.
-// Pruh: vlevo zakladna tymu 0, vpravo zakladna tymu 1, uprostred start. Tym 0 tlaci doprava, tym 1 doleva.
-// Barevne vyplneni = nejdal dotlaceno (postup tymu), bily jezdec = kde Yaris prave je, kosoctverce = checkpointy
-// (plne = dosazene). Pod pruhem: kdo tlaci / sporny / robot prechazi, a metry obou tymu.
+// Horni lista rezimu Tlacenice (misto TopBarUI): cas zapasu, pruh trasy s obema Yarisy a stav Honzy.
+// Pruh: vlevo zakladna tymu 0, vpravo zakladna tymu 1, uprostred start. Yaris tymu 0 (modry) jede doprava,
+// Yaris tymu 1 (cerveny) doleva - barevne vyplneni = jak daleko ho tym dotlacil. Oranzova znacka = Honza.
+// Kosoctverce = checkpointy (plne = dosazene). Pod pruhem: kdo tlaci / sporny / Honza bezi k Yarisu, metry obou tymu.
 public class PushUI
 {
     const float BarWidth = 640f, BarHeight = 14f, CenterWidth = 180f;
@@ -14,7 +14,7 @@ public class PushUI
     static readonly Color Contested = new Color(1f, 0.62f, 0.12f);
 
     GameObject root;
-    Image centerEdge, fill0, fill1, car;
+    Image centerEdge, fill0, fill1, car0, car1, robot;
     TextMeshProUGUI clock, phase, status, distances, base0, base1;
     Image overtimePlate;
     readonly Image[] marks0 = new Image[4], marks1 = new Image[4];
@@ -34,13 +34,13 @@ public class PushUI
             new Color(0.8f, 0.83f, 0.9f));
         phase.fontStyle = FontStyles.Bold;
 
-        // pruh postupu
+        // pruh trasy
         var bar = UiKit.MakeImage(root.transform, "Pruh", Dark, mid, new Vector2(0f, -56f), new Vector2(BarWidth + 8f, BarHeight + 8f));
         var back = UiKit.MakeImage(bar.transform, "Podklad", new Color(1f, 1f, 1f, 0.08f), mid, Vector2.zero, new Vector2(BarWidth, BarHeight));
         fill0 = UiKit.MakeImage(back.transform, "Postup0", UiKit.Team0, mid, Vector2.zero, new Vector2(0f, BarHeight));
-        fill0.rectTransform.pivot = new Vector2(0f, 0.5f);   // od stredu doprava
+        fill0.rectTransform.pivot = new Vector2(0f, 0.5f);   // od startu doprava
         fill1 = UiKit.MakeImage(back.transform, "Postup1", UiKit.Team1, mid, Vector2.zero, new Vector2(0f, BarHeight));
-        fill1.rectTransform.pivot = new Vector2(1f, 0.5f);   // od stredu doleva
+        fill1.rectTransform.pivot = new Vector2(1f, 0.5f);   // od startu doleva
         UiKit.MakeImage(back.transform, "Start", new Color(1f, 1f, 1f, 0.7f), mid, Vector2.zero, new Vector2(2f, BarHeight + 8f));
 
         for (int i = 0; i < marks0.Length; i++)
@@ -48,19 +48,22 @@ public class PushUI
             MakeMark(back.transform, out marks0[i], out markFill0[i]);
             MakeMark(back.transform, out marks1[i], out markFill1[i]);
         }
-        car = UiKit.MakeImage(back.transform, "Yaris", Color.white, mid, Vector2.zero, new Vector2(10f, BarHeight + 12f));
+        car0 = MakeCar(back.transform, UiKit.Team0);
+        car1 = MakeCar(back.transform, UiKit.Team1);
+        robot = UiKit.MakeImage(back.transform, "Honza", UiKit.Accent, mid, new Vector2(0f, BarHeight * 0.5f + 7f), new Vector2(12f, 12f));
+        robot.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
 
         base0 = UiKit.MakeText(bar.transform, "Zakladna0", "", 15, TextAlignmentOptions.Right, mid, new Vector2(-BarWidth * 0.5f - 76f, 0f), new Vector2(140f, 22f), UiKit.Team0);
         base0.fontStyle = FontStyles.Bold;
         base1 = UiKit.MakeText(bar.transform, "Zakladna1", "", 15, TextAlignmentOptions.Left, mid, new Vector2(BarWidth * 0.5f + 76f, 0f), new Vector2(140f, 22f), UiKit.Team1);
         base1.fontStyle = FontStyles.Bold;
 
-        status = UiKit.MakeText(root.transform, "Stav", "", 20, TextAlignmentOptions.Center, mid, new Vector2(0f, -84f), new Vector2(700f, 26f));
+        status = UiKit.MakeText(root.transform, "Stav", "", 20, TextAlignmentOptions.Center, mid, new Vector2(0f, -82f), new Vector2(700f, 26f));
         status.fontStyle = FontStyles.Bold | FontStyles.Italic;
-        distances = UiKit.MakeText(root.transform, "Metry", "", 15, TextAlignmentOptions.Center, mid, new Vector2(0f, -106f), new Vector2(700f, 20f),
+        distances = UiKit.MakeText(root.transform, "Metry", "", 15, TextAlignmentOptions.Center, mid, new Vector2(0f, -102f), new Vector2(700f, 20f),
             new Color(0.82f, 0.85f, 0.92f));
 
-        overtimePlate = UiKit.MakeImage(root.transform, "Prodlouzeni", Overtime, mid, new Vector2(0f, -134f), new Vector2(260f, 30f));
+        overtimePlate = UiKit.MakeImage(root.transform, "Prodlouzeni", Overtime, mid, new Vector2(0f, -164f), new Vector2(260f, 30f));
         var overtimeText = UiKit.MakeText(overtimePlate.transform, "Text", "»  PRODLOUŽENÍ  «", 22, TextAlignmentOptions.Center, mid, Vector2.zero, new Vector2(260f, 30f),
             new Color(0.08f, 0.05f, 0.02f));
         overtimeText.fontStyle = FontStyles.Bold | FontStyles.Italic;
@@ -73,6 +76,14 @@ public class PushUI
         mark = UiKit.MakeImage(parent, "Checkpoint", new Color(1f, 1f, 1f, 0.6f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(14f, 14f));
         mark.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
         fill = UiKit.MakeImage(mark.transform, "Plne", Color.white, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(9f, 9f));
+    }
+
+    // Yaris na pruhu: bily ramecek s vnitrkem v barve tymu.
+    static Image MakeCar(Transform parent, Color color)
+    {
+        var frame = UiKit.MakeImage(parent, "Yaris", Color.white, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(12f, BarHeight + 12f));
+        UiKit.MakeImage(frame.transform, "Barva", color, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(8f, BarHeight + 8f));
+        return frame;
     }
 
     public void Tick(PlayerHero local, bool playing, MatchManager match)
@@ -101,15 +112,18 @@ public class PushUI
         if (overtimePlate.gameObject.activeSelf != overtime) overtimePlate.gameObject.SetActive(overtime);
         if (overtime) overtimePlate.color = Color.Lerp(Overtime, Color.white, Mathf.PingPong(Time.unscaledTime * 2.5f, 1f) * 0.35f);
 
-        // pruh
-        float half = Mathf.Max(1f, route.Center);
-        float best0 = match.pushBest0.Value, best1 = match.pushBest1.Value;
-        fill0.rectTransform.sizeDelta = new Vector2(Mathf.Clamp01(best0 / half) * BarWidth * 0.5f, BarHeight);
-        fill1.rectTransform.sizeDelta = new Vector2(Mathf.Clamp01(best1 / half) * BarWidth * 0.5f, BarHeight);
-        float carS = PushRobot.DisplayCar >= 0f ? PushRobot.DisplayCar : match.pushCar.Value < 0f ? route.Center : match.pushCar.Value;
-        car.rectTransform.anchoredPosition = new Vector2(BarX(route, carS), 0f);
+        // pruh: Yarisy, postup, Honza
+        float center = route.Center;
+        float s0 = PushRobot.DisplayCars[0] >= 0f ? PushRobot.DisplayCars[0] : match.PushCarOf(route, 0);
+        float s1 = PushRobot.DisplayCars[1] >= 0f ? PushRobot.DisplayCars[1] : match.PushCarOf(route, 1);
+        float sRobot = PushRobot.DisplayRobot >= 0f ? PushRobot.DisplayRobot : match.PushRobotOf(route);
+        fill0.rectTransform.sizeDelta = new Vector2(Mathf.Max(0f, BarX(route, s0)), BarHeight);
+        fill1.rectTransform.sizeDelta = new Vector2(Mathf.Max(0f, -BarX(route, s1)), BarHeight);
+        car0.rectTransform.anchoredPosition = new Vector2(BarX(route, s0), 0f);
+        car1.rectTransform.anchoredPosition = new Vector2(BarX(route, s1), 0f);
+        robot.rectTransform.anchoredPosition = new Vector2(BarX(route, sRobot), BarHeight * 0.5f + 7f);
         int state = match.pushState.Value;
-        car.color = state == MatchManager.PushContested ? Contested : owner >= 0 && state == MatchManager.PushPushing ? Color.Lerp(Color.white, UiKit.TeamColor(owner), 0.35f) : Color.white;
+        robot.color = state == MatchManager.PushContested ? Contested : owner >= 0 ? Color.Lerp(UiKit.Accent, UiKit.TeamColor(owner), 0.6f) : UiKit.Accent;
 
         for (int i = 0; i < marks0.Length; i++)
         {
@@ -121,21 +135,21 @@ public class PushUI
         base0.text = mine == 0 ? "VY  «" : "TÝM 0  «";
         base1.text = mine == 1 ? "»  VY" : "»  TÝM 1";
 
-        // stav robota
+        // stav Honzy
         int pushers0 = match.PushersOf(0), pushers1 = match.PushersOf(1);
         switch (state)
         {
             case MatchManager.PushLocked:
-                status.text = "Robot se probouzí…";
+                status.text = "Honza se probouzí…";
                 status.color = UiKit.Accent;
                 break;
             case MatchManager.PushContested:
-                status.text = $"SPORNÝ  ·  u robota jsou oba týmy ({pushers0} : {pushers1})";
+                status.text = $"SPORNÝ  ·  u Honzy jsou oba týmy ({pushers0} : {pushers1})";
                 status.color = Contested;
                 break;
-            case MatchManager.PushCrossing:
-                status.text = owner >= 0 ? $"ROBOT PŘECHÁZÍ K TÝMU {owner}{(owner == mine ? " (VÁM)" : "")}" : "ROBOT PŘECHÁZÍ";
-                status.color = owner >= 0 ? UiKit.TeamColor(owner) : Color.white;
+            case MatchManager.PushWalking:
+                status.text = $"HONZA BĚŽÍ K YARISU TÝMU {owner}{(owner == mine ? " (VAŠEMU)" : "")}";
+                status.color = UiKit.TeamColor(owner);
                 break;
             case MatchManager.PushPushing:
                 int count = owner == 0 ? pushers0 : pushers1;
@@ -143,15 +157,15 @@ public class PushUI
                 status.color = UiKit.TeamColor(owner);
                 break;
             default:
-                status.text = owner < 0 ? "ROBOT ČEKÁ UPROSTŘED  ·  dojdi k němu" : "ROBOT STOJÍ  ·  nikdo u něj není";
+                status.text = owner < 0 ? "HONZA ČEKÁ UPROSTŘED  ·  dojdi k němu" : "HONZA STOJÍ  ·  nikdo u něj není";
                 status.color = new Color(0.85f, 0.88f, 0.95f);
                 break;
         }
-        distances.text = $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team0)}>tým 0: {best0:0} m</color>      "
-            + $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team1)}>tým 1: {best1:0} m</color>";
+        distances.text = $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team0)}>tým 0: {match.pushBest0.Value:0} m</color>      "
+            + $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team1)}>tým 1: {match.pushBest1.Value:0} m</color>";
     }
 
-    // s na trase -> x na pruhu (s = 0 vlevo).
+    // s na trase -> x na pruhu (s = 0 vlevo, stred trasy uprostred).
     static float BarX(PushRoute route, float s) => (Mathf.Clamp01(s / Mathf.Max(1f, route.Length)) - 0.5f) * BarWidth;
 
     static void SetMark(Image mark, Image fill, bool on, float x, bool reached, Color color)

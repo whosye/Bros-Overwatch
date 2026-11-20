@@ -4,24 +4,23 @@ using UnityEngine;
 // Trasa robota v rezimu Tlacenice (MatchManagerPush). Lomena cara z bodu Bod_0..Bod_N (deti tohoto objektu),
 // rohy jsou zaoblene (polomer 'cornerRadius'), aby se Yaris v zatacce plynule natacel.
 //  s = vzdalenost podel trasy: s = 0 je konec u zakladny tymu 0, s = Length konec u zakladny tymu 1.
-//  Stred (Length / 2) = start robota. Tym 0 tlaci k s = Length, tym 1 k s = 0.
-//  Checkpointy: 'checkpoints' metru od stredu (pro kazdy tym na strane soupere).
+//  Stred (Length / 2) = start Honzy, Yarisy obou tymu stoji 'robotOffset' pred nim a za nim.
+//  Tym 0 tlaci svuj Yaris k s = Length, tym 1 svuj k s = 0.
+//  Checkpointy: 'checkpoints' metru od startu Yarisu tymu (na strane soupere).
 //  Spawny: deti skupiny 'spawns' se jmeny Spawn_T{tym}_{uroven} (0 = zakladna, 1.. = po checkpointu).
 // V editoru je trasa videt (Gizmos): cara, koridor, checkpointy, spawny.
 public class PushRoute : MonoBehaviour
 {
     [Tooltip("Polomer zaobleni rohu trasy (m).")]
     public float cornerRadius = 7f;
-    [Tooltip("Checkpointy - kolik metru od stredu trasy (pro oba tymy stejne).")]
-    public float[] checkpoints = { 25f, 45f };
+    [Tooltip("Checkpointy - kolik metru od startu Yarisu (pro oba tymy stejne).")]
+    public float[] checkpoints = { 35f, 65f };
     [Tooltip("Skupina se spawny Spawn_T0_0, Spawn_T0_1, ... Spawn_T1_2.")]
     public Transform spawns;
     [Tooltip("Pulka sirky koridoru, ktery musi byt volny (jen pro nahled a audit).")]
     public float halfWidth = 3.0f;
-    [Tooltip("Obr stoji tolik metru za stredem Yarisu (podel trasy). Nastavi PushSetup podle velikosti auta.")]
+    [Tooltip("Honza stoji tolik metru za stredem Yarisu (podel trasy). Nastavi PushSetup podle velikosti auta.")]
     public float robotOffset = 5.1f;
-    [Tooltip("Pri obchazeni Yarisu jde obr tolik metru vedle jeho stredu. Nastavi PushSetup podle velikosti auta.")]
-    public float sideOffset = 3.4f;
 
     public static PushRoute Active { get; private set; }
 
@@ -81,10 +80,10 @@ public class PushRoute : MonoBehaviour
         return Mathf.Min(bestS, length);
     }
 
-    // Kde je checkpoint 'index' tymu 'team' (s).
+    // Kde je checkpoint 'index' tymu 'team' (s) - metry od startu jeho Yarisu.
     public float Checkpoint(int team, int index)
     {
-        float offset = checkpoints != null && index >= 0 && index < checkpoints.Length ? checkpoints[index] : 0f;
+        float offset = robotOffset + (checkpoints != null && index >= 0 && index < checkpoints.Length ? checkpoints[index] : 0f);
         return team == 0 ? Center + offset : Center - offset;
     }
 
@@ -203,7 +202,9 @@ public class PushRoute : MonoBehaviour
             Gizmos.DrawLine(samples[i - 1] + Vector3.up * 0.15f, samples[i] + Vector3.up * 0.15f);
 
         // stred, checkpointy, konce
-        DrawMarker(Center, new Color(1f, 0.85f, 0.1f), 1.2f, "STRED");
+        DrawMarker(Center, new Color(1f, 0.85f, 0.1f), 1.2f, "START Honzy");
+        DrawMarker(Center + robotOffset, new Color(0.3f, 0.64f, 1f), 0.7f, "Yaris tymu 0");
+        DrawMarker(Center - robotOffset, new Color(1f, 0.35f, 0.3f), 0.7f, "Yaris tymu 1");
         for (int team = 0; team < 2; team++)
         {
             Color c = team == 0 ? new Color(0.3f, 0.64f, 1f) : new Color(1f, 0.35f, 0.3f);

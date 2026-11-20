@@ -1219,6 +1219,7 @@ public partial class BotBrain : MonoBehaviour
             return;
         }
         if (health.currentHealth.Value > health.maxHealth * 0.4f) return;
+        if (PushHoldDespiteLowHealth(match)) return;   // tlacenice v nouzi: u Honzy vydrzet (BotBrainPush)
 
         float best = 45f;
         var spots = PickupSpot.Sorted;
@@ -1927,6 +1928,11 @@ public static class BotNavigation
         // mista jen pro hrace (tajny tunel): boti o nich nevi
         sources.RemoveAll(src => src.component is Collider c && c.GetComponentInParent<BotNoNav>() != null);
         sources.RemoveAll(src => src.component is Collider c && c.GetComponentInParent<ZoneGate>() is ZoneGate gate && gate.defendersPass);
+        // otevrene brany zon (mimo utok vsechny) - i kdyz jejich kolize jeste nestihla vypnout: po prepnuti mapy
+        // (Tlacenice) se sit muze postavit driv, nez brana poprve probehne Update - spawny by pak byly v siti uzavrene
+        int openGates = sources.RemoveAll(src => src.component is Collider c && c.GetComponentInParent<ZoneGate>() is ZoneGate gate
+            && ZoneGate.ShouldBeOpen(gate.unlockAfter));
+        if (openGates > 0) Debug.Log($"[Boti] Otevrene brany zon - vynechano kolizi: {openGates}.");
         Bounds bounds = new Bounds();
         bool any = false;
         foreach (var src in sources)

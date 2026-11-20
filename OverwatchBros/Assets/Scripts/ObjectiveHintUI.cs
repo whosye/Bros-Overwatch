@@ -38,6 +38,9 @@ public class ObjectiveHintUI
         wasPlaying = show;
 
         string text = show ? Objective(local, match) : "";
+        // v tlacenici je pod horni listou pruh trasy a stav Honzy (PushUI) - ukol az pod nimi
+        float y = match != null && match.IsPushMode ? -170f : -128f;
+        if (objective.rectTransform.anchoredPosition.y != y) objective.rectTransform.anchoredPosition = new Vector2(0f, y);
         if (objective.gameObject.activeSelf != (text.Length > 0)) objective.gameObject.SetActive(text.Length > 0);
         if (text.Length > 0) objective.text = text;
 
