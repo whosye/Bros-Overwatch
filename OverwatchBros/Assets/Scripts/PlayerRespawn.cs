@@ -227,6 +227,9 @@ public class PlayerRespawn : NetworkBehaviour
             return true;
         }
 
+        if (MapSpawnPoints.TryGetSpawn(team.teamId.Value, NetworkObjectId, out position))
+            return true;
+
         string spawnPointName = $"SpawnPoint_Team{team.teamId.Value}";
         GameObject spawnPointObject = GameObject.Find(spawnPointName);
         position = spawnPointObject != null ? spawnPointObject.transform.position : Vector3.zero;

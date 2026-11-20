@@ -1,0 +1,6 @@
+# Local map sources, intermediate exports, renders and validation bundles.
+/artifacts/Dust2/
+/tools/map-export/__pycache__/
+
+# Local archives prepared for moving outside the repository.
+/_MIMO_GIT_K_PRESUNU/

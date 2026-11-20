@@ -303,6 +303,11 @@ public partial class MatchManager : NetworkBehaviour
     public void StartMatch()
     {
         if (!IsServer) return;
+        if (!SelectedMapSupportsMode)
+        {
+            Debug.LogWarning($"[Mapa] {MapName} nepodporuje zvoleny herni rezim.");
+            return;
+        }
         if (!SelectedMapReady)
         {
             Debug.LogWarning($"[Mapa] {MapName} jeste neni postavena - zapas nejde spustit.");
@@ -317,7 +322,7 @@ public partial class MatchManager : NetworkBehaviour
     // Novy zapas se stejnymi tymy a hrdiny.
     public void RestartMatch()
     {
-        if (!IsServer || PotgPending) return;
+        if (!IsServer || PotgPending || !SelectedMapReady || !SelectedMapSupportsMode) return;
 
         phase.Value = PhasePlaying;
         ResetRound();

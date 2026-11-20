@@ -176,15 +176,19 @@ public class LobbyUI
 
         // Rezim hry voli host (ostatni ho jen vidi): team deathmatch na pocet zabiti, nebo utok a obrana.
         bool captureMode = match != null && match.IsAttackMode;
+        int map = match != null ? match.MapIndex : MatchManager.MapChaty;
+        bool attackAvailable = MatchManager.MapSupportsMode(map, MatchManager.ModeAttack);
         UiKit.SetButtonLabel(modeButton, captureMode
             ? "REŽIM:  <color=#F28C1A>ÚTOK A OBRANA</color>  <size=75%>(body A, B, C · výměna stran)</size>"
-            : "REŽIM:  <color=#F28C1A>TEAM DEATHMATCH</color>");
-        modeButton.interactable = isHost && !joining;
+            : "REŽIM:  <color=#F28C1A>TEAM DEATHMATCH</color>"
+                + (attackAvailable ? "" : "\n<size=65%>Dust II: dobývání není dostupné</size>"));
+        modeButton.interactable = isHost && !joining && attackAvailable;
 
-        int map = match != null ? match.MapIndex : MatchManager.MapChaty;
         bool mapReady = MatchManager.MapReady(map);
+        bool modeReady = MatchManager.MapSupportsMode(map, captureMode ? MatchManager.ModeAttack : MatchManager.ModeDeathmatch);
         UiKit.SetButtonLabel(mapButton, $"MAPA:  <color=#F28C1A>{MatchManager.MapNames[map].ToUpperInvariant()}</color>"
-            + (mapReady ? "" : "  <size=70%><color=#B0B4C0>(ve výstavbě)</color></size>"));
+            + (mapReady ? (attackAvailable ? "" : "  <size=65%>(jen deathmatch)</size>")
+                : "  <size=70%><color=#B0B4C0>(ve výstavbě)</color></size>"));
         mapButton.interactable = isHost && !joining;
 
         bool testOn = match != null && match.testCooldowns.Value;
@@ -204,8 +208,8 @@ public class LobbyUI
         scoreMinus.gameObject.SetActive(isHost && !joining);
         scorePlus.gameObject.SetActive(isHost && !joining);
         startButton.gameObject.SetActive(isHost && !joining);
-        startButton.interactable = mapReady;
-        UiKit.SetButtonLabel(startButton, mapReady ? "START ZÁPASU" : "MAPA NENÍ HOTOVÁ");
+        startButton.interactable = mapReady && modeReady;
+        UiKit.SetButtonLabel(startButton, !mapReady ? "MAPA NENÍ HOTOVÁ" : !modeReady ? "REŽIM NENÍ DOSTUPNÝ" : "START ZÁPASU");
         enterButton.gameObject.SetActive(joining);
         waitText.gameObject.SetActive(!isHost && !joining);
 
@@ -361,7 +365,7 @@ public class LobbyUI
     {
         var match = MatchManager.Instance;
         if (match != null)
-            match.SetMap((match.MapIndex + 1) % MatchManager.MapNames.Length);
+            match.SetMap(MatchManager.NextMapForMode(match.MapIndex, match.gameMode.Value));
     }
 
     void ToggleMode()
