@@ -108,7 +108,7 @@ public static class Dust2Playtest
                 match.SetGameMode(MatchManager.ModeAttack);
                 Require(match.IsAttackMode, "Na chatach nelze zvolit dobyvani.");
                 match.SetMap(MatchManager.MapDust2);
-                Require(match.MapIndex == MatchManager.MapChaty, "Server povolil Dust II pro dobyvani.");
+                Require(match.MapIndex == MatchManager.MapDomasov, "Server povolil Dust II pro dobyvani.");
                 match.SetGameMode(MatchManager.ModeDeathmatch);
                 match.SetMap(MatchManager.MapDust2);
                 Require(match.MapIndex == MatchManager.MapDust2, "Server nepovolil Dust II pro deathmatch.");

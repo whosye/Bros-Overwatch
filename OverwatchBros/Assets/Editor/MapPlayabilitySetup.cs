@@ -50,6 +50,7 @@ public static class MapPlayabilitySetup
         ("TraktorPojizdny", 1),    // traktor bez statickeho slucovani (static batching) - jinak by se za jizdy nehybal
         ("Rolba", 1),              // misto traktoru mala snezna rolba (projede dvermi, vyjede schody) - jezdi se s ni misto traktoru
         ("RolbaNaZemi", 1),        // rolba se postavila na strechu traktoru (byl jeste ve scene) - posadit ji na zem
+        ("ZachodSto", 1),          // lekarnicka na zachode leci 100 HP (drive 50) - ma i vlastni zeleny vzhled
     };
 
     static MapPlayabilitySetup()
@@ -195,6 +196,9 @@ public static class MapPlayabilitySetup
                 break;
             case "Rolba":
                 SnowGroomer(map, covers);
+                break;
+            case "ZachodSto":
+                ToiletPacksHundred(map);
                 break;
             case "RolbaNaZemi":
                 GroomerOnGround(map);
@@ -1302,11 +1306,26 @@ public static class MapPlayabilitySetup
             spot.transform.position = new Vector3(b.center.x, b.max.y + 0.01f, b.center.z);
             var pickup = spot.AddComponent<PickupSpot>();
             pickup.kind = PickupKind.Health;
-            pickup.healAmount = 50f;
+            pickup.healAmount = 100f;
             pickup.reachBelow = b.size.y + 0.4f;   // hrac stoji na podlaze vedle zachodu
             added++;
         }
         Debug.Log($"[Hratelnost] Lekarnicka na zachode: pridano {added}.");
+    }
+
+    // Lekarnicky na zachodech (Balicek_Zachod) leci 100 HP misto 50.
+    static void ToiletPacksHundred(Transform map)
+    {
+        int changed = 0;
+        foreach (var spot in map.GetComponentsInChildren<PickupSpot>(true))
+        {
+            if (spot.name != "Balicek_Zachod" || spot.healAmount >= 100f) continue;
+            Undo.RecordObject(spot, "Lekarnicka na zachode 100 HP");
+            spot.healAmount = 100f;
+            EditorUtility.SetDirty(spot);
+            changed++;
+        }
+        Debug.Log($"[Hratelnost] Lekarnicka na zachode leci 100 HP (upraveno {changed}).");
     }
 
     static int Depth(Transform t)

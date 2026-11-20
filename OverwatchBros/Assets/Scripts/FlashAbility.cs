@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 // Viktoruv pulzni granat (prave tlacitko mysi, jako Soldierovy Helix rakety): vystreli se z hlavne granatometu,
 // leti rychle rovne (rychlost 'speed', nejdal 'range' m) a o prvni prekazku nebo nepritele vybuchne. Nepratele
 // v okruhu 'radius' zrani ('power' uprostred, na okraji 40 %) a na 'duration' sekund zpomali (SlowFactor). Neprochazi zdmi a spoluhrace ani Viktora nezasahne.
+// Ma 'charges' nabiti, kazde se obnovi za 'cooldown' sekund (jedno po druhem, jako Blink).
 public class FlashAbility : NetworkBehaviour
 {
     public AbilityDefinition ability;
@@ -17,13 +18,20 @@ public class FlashAbility : NetworkBehaviour
 
     FirstPersonController fpc;
 
-    float nextUseTime;
+    int charges;
+    float rechargeAt;
 
-    public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
+    public int Charges => charges;
+    public int MaxCharges => ability != null ? Mathf.Max(1, ability.charges) : 1;
+    public float CooldownRemaining => charges > 0 ? 0f : Mathf.Max(0f, rechargeAt - Time.time);
+    // Za kolik sekund pribude dalsi nabiti (i kdyz jedno jeste zbyva); 0 = vsechna nabita.
+    public float RechargeRemaining => charges < MaxCharges ? Mathf.Max(0f, rechargeAt - Time.time) : 0f;
 
     public void Configure(AbilityDefinition definition)
     {
         ability = definition;
+        charges = MaxCharges;
+        rechargeAt = 0f;
     }
 
     void Awake()
@@ -34,10 +42,21 @@ public class FlashAbility : NetworkBehaviour
     void Update()
     {
         if (!IsOwner || ability == null) return;
-        if (!HeroInput.Pressed(this, HeroInput.Key.RightMouse) || !HeroInput.Locked(this)) return;
-        if (fpc.InputBlocked || Time.time < nextUseTime) return;
 
-        nextUseTime = Time.time + ability.Cooldown;
+        // nabiti se doplnuji jedno po druhem
+        if (charges < MaxCharges && Time.time >= rechargeAt)
+        {
+            charges++;
+            if (charges < MaxCharges)
+                rechargeAt = Time.time + ability.Cooldown;
+        }
+
+        if (!HeroInput.Pressed(this, HeroInput.Key.RightMouse) || !HeroInput.Locked(this)) return;
+        if (fpc.InputBlocked || charges <= 0) return;
+
+        if (charges == MaxCharges)
+            rechargeAt = Time.time + ability.Cooldown;
+        charges--;
 
         var eye = fpc.playerCamera.transform;
         // granat vyleti z hlavne (stejne misto jako stopy strel), miri se ale ze stredu obrazovky

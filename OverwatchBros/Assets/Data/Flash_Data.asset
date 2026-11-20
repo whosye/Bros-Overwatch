@@ -22,7 +22,7 @@ MonoBehaviour:
   radius: 3
   range: 40
   knockback: 0
-  charges: 1
+  charges: 2
   sound: {fileID: 0}
   voiceLines:
   - {fileID: 8300000, guid: c3cbaefea3512d34e88f1a852257e0d3, type: 3}

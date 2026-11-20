@@ -46,6 +46,8 @@ public class BuffUI
                 until = () => ReplayPlayer.Active ? Time.time + ReplayPlayer.BuffRemaining(2) : PickupBuffs.TramalUntil },
             new Buff { key = "karburator", shortName = "HK", color = new Color(0.95f, 0.45f, 0.15f),
                 until = () => ReplayPlayer.Active ? 0f : MatchManager.LocalCarburetorUntil },
+            new Buff { key = "pelety", shortName = "PE", color = new Color(0.88f, 0.68f, 0.36f),
+                until = () => !ReplayPlayer.Active && MatchManager.LocalHasPellets ? Time.time + 99f : 0f },
             new Buff { key = "kava", shortName = "KA", color = new Color(0.72f, 0.48f, 0.28f),
                 until = () => ReplayPlayer.Active ? 0f : PickupBuffs.CoffeeUntil },
             new Buff { key = "pivo", shortName = "PI", color = new Color(1f, 0.86f, 0.3f),

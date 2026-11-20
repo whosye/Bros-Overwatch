@@ -840,6 +840,7 @@ public class PlayerHero : NetworkBehaviour
         public bool active;       // schopnost prave bezi
         public float charge;      // 0-1 u schopnosti s barem (blok), jinak -1
         public int count;         // pocet naboju (naloz), 0 = nezobrazovat
+        public float recharge;    // za kolik s pribude dalsi naboj, i kdyz jeste nejaky zbyva (0 = nezobrazovat)
         public bool fullOnly;     // schopnost jde pouzit az pri plnem nabiti (ultimatka)
     }
 
@@ -917,7 +918,8 @@ public class PlayerHero : NetworkBehaviour
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = recall.CooldownRemaining, active = recall.IsActive, charge = -1f });
 
         if (Hero.secondaryAbilityKind == AbilityKind.Blink && blink != null && Hero.secondaryAbility != null)
-            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = blink.CooldownRemaining, active = false, charge = -1f, count = blink.Charges });
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = blink.CooldownRemaining, active = false, charge = -1f, count = blink.Charges,
+                recharge = blink.Charges > 0 ? blink.RechargeRemaining : 0f });
 
         if (Hero.altAbilityKind == AbilityKind.Kick && kick != null && Hero.altAbility != null)
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = kick.CooldownRemaining, active = false, charge = -1f });
@@ -938,7 +940,8 @@ public class PlayerHero : NetworkBehaviour
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = scout.CooldownRemaining, active = scout.IsActive, charge = -1f });
 
         if (Hero.rmbAbilityKind == AbilityKind.Flash && flash != null && Hero.rmbAbility != null)
-            slots.Add(new AbilitySlot { key = "PTM", ability = Hero.rmbAbility, remaining = flash.CooldownRemaining, active = false, charge = -1f });
+            slots.Add(new AbilitySlot { key = "PTM", ability = Hero.rmbAbility, remaining = flash.CooldownRemaining, active = false, charge = -1f, count = flash.MaxCharges > 1 ? flash.Charges : 0,
+                recharge = flash.Charges > 0 ? flash.RechargeRemaining : 0f });
 
         if (Hero.altAbilityKind == AbilityKind.HealField && healField != null && Hero.altAbility != null)
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = healField.CooldownRemaining, active = healField.IsActive, charge = -1f });

@@ -880,10 +880,16 @@ public class HudUI
             bool ready = !onCooldown && !info.active && !(info.charge >= 0f && info.charge <= 0.01f) && !(info.fullOnly && charging);
 
             float total = info.ability != null ? Mathf.Max(0.1f, info.ability.Cooldown) : 1f;
-            slot.cooldown.fillAmount = onCooldown ? Mathf.Clamp01(info.remaining / total) : (charging ? 1f - info.charge : 0f);
+            // dalsi naboj se dobiji (jeden jeste zbyva): slot je pripraveny, ale ukaze odpocet a mensi stin
+            bool recharging = !onCooldown && !info.active && info.recharge > 0.05f;
+            slot.cooldown.fillAmount = onCooldown ? Mathf.Clamp01(info.remaining / total)
+                : recharging ? Mathf.Clamp01(info.recharge / total) * 0.5f
+                : (charging ? 1f - info.charge : 0f);
 
             if (onCooldown)
                 slot.timer.text = info.remaining >= 10f ? Mathf.CeilToInt(info.remaining).ToString() : info.remaining.ToString("0.0");
+            else if (recharging)
+                slot.timer.text = $"<size=60%>+1 za {(info.recharge >= 10f ? Mathf.CeilToInt(info.recharge).ToString() : info.recharge.ToString("0.0"))}</size>";
             else if (charging && !info.active)
                 slot.timer.text = $"<size=60%>{Mathf.RoundToInt(info.charge * 100f)}%</size>";
             else

@@ -55,7 +55,7 @@ public static class Dust2Setup
         AssetDatabase.SaveAssets();
 
         ValidateMap(root, manifest);
-        MatchManager.ApplyMap(MatchManager.MapChaty);
+        MatchManager.ApplyMap(MatchManager.MapDomasov);
         EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
         AssetDatabase.SaveAssets();
         Debug.Log("[Dust II] Import, kolize, spawny a dostupnost rezimu overeny.");
@@ -99,7 +99,7 @@ public static class Dust2Setup
             Object.DestroyImmediate(texture);
             Object.DestroyImmediate(cameraObject);
             FindRoot().GetComponent<MapEnvironment>().Restore();
-            MatchManager.ApplyMap(MatchManager.MapChaty);
+            MatchManager.ApplyMap(MatchManager.MapDomasov);
         }
         string bundles = Path.Combine(folder, "bundle-size-check");
         Directory.CreateDirectory(bundles);
@@ -282,11 +282,11 @@ public static class Dust2Setup
         Require(MatchManager.MapReady(MatchManager.MapDust2), "Mapa se neobjevila v registru.");
         Require(MatchManager.MapSupportsMode(MatchManager.MapDust2, MatchManager.ModeDeathmatch), "Deathmatch neni povoleny.");
         Require(!MatchManager.MapSupportsMode(MatchManager.MapDust2, MatchManager.ModeAttack), "Dust II nesmi podporovat dobyvani.");
-        Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeAttack) == MatchManager.MapChaty,
+        Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeAttack) == MatchManager.MapDomasov,
             "Dobyvani nepreskocilo Dust II.");
         Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeDeathmatch) == MatchManager.MapDust2,
             "Deathmatch nenabizi Dust II.");
-        foreach (int map in new[] { MatchManager.MapChaty, MatchManager.MapHanamura })
+        foreach (int map in new[] { MatchManager.MapDomasov, MatchManager.MapHanamura })
             foreach (int mode in new[] { MatchManager.ModeDeathmatch, MatchManager.ModeAttack })
                 Require(MatchManager.MapSupportsMode(map, mode), "Puvodni mapy ztratily podporu rezimu.");
 

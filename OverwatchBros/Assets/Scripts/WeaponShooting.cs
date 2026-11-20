@@ -201,7 +201,7 @@ public class WeaponShooting : NetworkBehaviour
         }
 
         // u packy kotle je R "zatopit" (Boiler), ne nabijeni
-        if (Bot == null ? Keyboard.current.rKey.wasPressedThisFrame && !Boiler.LocalCanUse : Bot.ConsumeReload())
+        if (Bot == null ? Keyboard.current.rKey.wasPressedThisFrame && !Boiler.LocalCanUse && !PelletFeeder.LocalCanUse : Bot.ConsumeReload())
         {
             Reload();
             return;

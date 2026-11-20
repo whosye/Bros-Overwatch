@@ -411,7 +411,7 @@ public class MatchUI : MonoBehaviour
         objectiveHint.Tick(localHero, match, playing && !over);
         capture.Tick(localHero, playing && !over, match);
         buffs.Tick((playing && !over && !replay) || replay);   // v POTG buffy hrace ze zaznamu, v killcamu vraha (slivovice)
-        boilerPrompt.text = playing && !over && !replay ? (Tractor.PromptText != "" ? Tractor.PromptText : Boiler.PromptText) : "";
+        boilerPrompt.text = playing && !over && !replay ? (Tractor.PromptText != "" ? Tractor.PromptText : PelletFeeder.PromptText != "" ? PelletFeeder.PromptText : Boiler.PromptText) : "";
         UpdateRing(match, playing && !over && !replay);
         UpdateEndScreen(network, match, over);
         UpdateLegacyHud(playing);

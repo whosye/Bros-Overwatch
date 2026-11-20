@@ -277,6 +277,10 @@ public static class DecorTools
     }
 
     // Lasagne v alobalove vanicce (balicek: plne zdravi + stit). Stred okna Scene na stul / linku / zem.
+    // Pytel pelet do feederu kotle (balicek, obnova 10 s). Stred okna Scene na zem / stul.
+    [MenuItem("BrosOverwatch/Dekorace/Pytel pelet (mir na zem nebo stul)")]
+    static void Pellets() => PlaceBuff(PickupKind.Pellets, "Pelety");
+
     [MenuItem("BrosOverwatch/Dekorace/Lasagne (mir na stul nebo linku)")]
     static void Lasagne() => PlaceBuff(PickupKind.Lasagne, "Lasagne");
 

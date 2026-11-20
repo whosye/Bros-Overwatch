@@ -16,6 +16,7 @@ public class BlinkAbility : NetworkBehaviour
     public int Charges => charges;
     public int MaxCharges => ability != null ? Mathf.Max(1, ability.charges) : 1;
     public float CooldownRemaining => charges > 0 ? 0f : Mathf.Max(0f, rechargeAt - Time.time);
+    public float RechargeRemaining => charges < MaxCharges ? Mathf.Max(0f, rechargeAt - Time.time) : 0f;
 
     public void Configure(AbilityDefinition definition)
     {

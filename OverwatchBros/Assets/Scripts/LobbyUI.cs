@@ -176,7 +176,7 @@ public class LobbyUI
 
         // Rezim hry voli host (ostatni ho jen vidi): team deathmatch na pocet zabiti, nebo utok a obrana.
         bool captureMode = match != null && match.IsAttackMode;
-        int map = match != null ? match.MapIndex : MatchManager.MapChaty;
+        int map = match != null ? match.MapIndex : MatchManager.MapDomasov;
         bool attackAvailable = MatchManager.MapSupportsMode(map, MatchManager.ModeAttack);
         UiKit.SetButtonLabel(modeButton, captureMode
             ? "REŽIM:  <color=#F28C1A>ÚTOK A OBRANA</color>  <size=75%>(body A, B, C · výměna stran)</size>"

@@ -47,7 +47,7 @@ public partial class MatchManager : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
-        ApplyMap(MapChaty);   // po odpojeni zpet puvodni mapa (menu, dalsi hra)
+        ApplyMap(MapDomasov);   // po odpojeni zpet puvodni mapa (menu, dalsi hra)
         testCooldowns.OnValueChanged -= OnTestCooldownsChanged;
         AbilityDefinition.TestCooldowns = false;
     }

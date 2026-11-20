@@ -762,12 +762,25 @@ public class ReplayPlayer : MonoBehaviour
     Material FindMaterial(string name, Color color, Material fallback = null)
     {
         string key = name + "|" + ColorUtility.ToHtmlStringRGBA(color);
-        if (materials.TryGetValue(key, out var material)) return material;
+        // (zniceny material z cache pryc - jinak by se kreslil fialove porad)
+        if (materials.TryGetValue(key, out var material) && material != null) return material;
+        material = null;
 
         // Podle jmena jen kdyz sedi i barva (obarvene materialy z Fx.Paint se jmenuji stejne jako jejich zaklad).
+        // Vzdy vlastni kopie: nalezeny material muze patrit zivemu efektu (puls Mirkova skenu), ktery ho pri zaniku
+        // znici - zaznam by pak kreslil zniceny material = fialove.
         if (!string.IsNullOrEmpty(name) && !name.Contains("(Instance)"))
             foreach (var m in Resources.FindObjectsOfTypeAll<Material>())
-                if (m.name == name && SameColor(m, color)) { material = m; break; }
+                if (m != null && m.name == name && SameColor(m, color))
+                {
+                    material = new Material(m) { name = m.name };
+                    if (color.a < 0.99f)
+                    {
+                        material.color = color;
+                        if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
+                    }
+                    break;
+                }
 
         // pruhledny efekt (puls Mirkova skenu, aury...): pruhledny material, ne neprusvitny - jinak by v POTG
         // zakryl obraz bilou/barevnou koulí

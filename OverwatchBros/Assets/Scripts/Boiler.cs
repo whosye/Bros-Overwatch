@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 // Stav sdili MatchManager (MatchManagerBoiler.cs); tady je vzhled, vyzva a ovladani pro mistniho hrace.
 public class Boiler : MonoBehaviour
 {
-    public const float Cooldown = 90f;
+    public const float Cooldown = 35f;
     public const float HeatSeconds = 10f;
     public const float TotalDamage = 60f;
     public const float UseDistance = 2.2f;
@@ -33,6 +33,41 @@ public class Boiler : MonoBehaviour
     ParticleSystem heatHaze;
     AudioSource roar;
     bool wasHeating;
+
+    // Domovska poloha kotle a packy (jak je ve scene). Packa se jen otaci - kdyby ji neco posunulo nebo
+    // prevesilo jinam (hlaseno: pri posledni casti utoku byla videt jinde v chate), vrati se zpet a zapise se to.
+    Vector3 boilerHome;
+    Transform leverParent;
+    Vector3 leverHomeLocal;
+    bool homeSet, driftLogged;
+
+    void Awake() => RememberHome();
+
+    void RememberHome()
+    {
+        if (homeSet || lever == null) return;
+        homeSet = true;
+        boilerHome = transform.position;
+        leverParent = lever.parent;
+        leverHomeLocal = lever.localPosition;
+    }
+
+    void KeepLeverHome()
+    {
+        if (!homeSet || lever == null) return;
+        bool boilerMoved = (transform.position - boilerHome).sqrMagnitude > 0.0001f;
+        bool leverMoved = lever.parent != leverParent || (lever.localPosition - leverHomeLocal).sqrMagnitude > 0.0001f;
+        if (!boilerMoved && !leverMoved) return;
+        if (!driftLogged)
+        {
+            driftLogged = true;
+            Debug.LogWarning($"[Kotel] Packa/kotel se posunuly (kotel {boilerHome} -> {transform.position}, packa -> {lever.position}, " +
+                $"rodic packy {(lever.parent != null ? lever.parent.name : "zadny")}) - vracim zpet.", this);
+        }
+        if (boilerMoved) transform.position = boilerHome;
+        if (lever.parent != leverParent) lever.SetParent(leverParent, false);
+        lever.localPosition = leverHomeLocal;
+    }
 
     void OnEnable() => Instance = this;
 
@@ -87,7 +122,7 @@ public class Boiler : MonoBehaviour
         }
 
         LocalCanUse = true;
-        PromptText = "[R] Zatopit v kotli";
+        PromptText = match.feederLoaded.Value ? "[R] Zatopit v kotli (podavač je plný pelet!)" : "[R] Zatopit v kotli";
         if (GameSettings.CursorLocked && !fpc.InputBlocked && Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
             match.UseBoilerRpc();
     }
@@ -96,6 +131,7 @@ public class Boiler : MonoBehaviour
 
     void UpdateLook(bool heating)
     {
+        KeepLeverHome();
         if (lever != null)
         {
             float z = lever.localEulerAngles.z;
@@ -130,9 +166,13 @@ public class Boiler : MonoBehaviour
 
     void OnStarted()
     {
+        if (lever != null) Debug.Log($"[Kotel] Zatopeno - packa je na {lever.position}, kotel na {transform.position}.", this);
         ProceduralSfx.Play(ProceduralSfx.Explosion, LeverPoint, 0.45f);
         ProceduralSfx.Play(ProceduralSfx.Reload, LeverPoint, 0.9f);
-        CaptureUI.Announce("Někdo zatopil v kotli - horní patro chaty se přehřívá!", HeatColor, 3f);
+        var match = MatchManager.Instance;
+        bool pellets = match != null && match.boilerWithPellets.Value;
+        CaptureUI.Announce(pellets ? "Někdo zatopil v kotli s peletami - horní patro chaty je peklo!"
+            : "Někdo zatopil v kotli - horní patro chaty se přehřívá!", HeatColor, 3f);
 
         if (heatHaze == null) BuildHaze();
         if (roar == null)

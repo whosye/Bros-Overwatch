@@ -28,6 +28,7 @@ public partial class MatchManager
         boilerStoker = null;
         boilerHeatLeft.Value = 0f;
         boilerCooldownLeft.Value = 0f;
+        ServerResetPellets();
     }
 
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
@@ -45,15 +46,21 @@ public partial class MatchManager
         if (Vector3.Distance(player.transform.position + Vector3.up * 1.6f, boiler.LeverPoint) > Boiler.UseDistance + 1.5f) return;
 
         boilerStoker = player.gameObject;
+        // plny feeder: pelety jdou do kotle (silnejsi horko), feeder se vyprazdni
+        boilerWithPellets.Value = feederLoaded.Value;
+        feederLoaded.Value = false;
         boilerHeatEnd = Time.time + Boiler.HeatSeconds;
         boilerReadyAt = Time.time + Boiler.Cooldown;
         nextBoilerTick = Time.time + BoilerTickInterval;
         nextBoilerSync = 0f;
-        Debug.Log($"[Kotel] Zatopeno ({player.name}) - horni patra se prehrivaji {Boiler.HeatSeconds} s.");
+        Debug.Log($"[Kotel] Zatopeno ({player.name}{(boilerWithPellets.Value ? ", s peletami" : "")}) - horni patra se prehrivaji {Boiler.HeatSeconds} s.");
     }
 
     void ServerBoilerTick()
     {
+        ServerPelletTick();
+        if (boilerWithPellets.Value && Time.time >= boilerHeatEnd) boilerWithPellets.Value = false;
+
         // zbyvajici casy pro klienty (vzhled, vyzva u packy)
         if (Time.time >= nextBoilerSync)
         {
@@ -70,7 +77,8 @@ public partial class MatchManager
         var boiler = Boiler.Instance;
         if (boiler == null || IsLobby || IsOver) return;
 
-        float damage = Boiler.TotalDamage / Boiler.HeatSeconds * BoilerTickInterval;
+        float total = boilerWithPellets.Value ? PelletTotalDamage : Boiler.TotalDamage;
+        float damage = total / Boiler.HeatSeconds * BoilerTickInterval;
         int burned = 0;
         foreach (var client in PlayerSlots())
         {

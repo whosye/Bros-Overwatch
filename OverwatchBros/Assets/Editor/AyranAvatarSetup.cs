@@ -207,6 +207,14 @@ public static class AyranAvatarSetup
             foreach (var smr in root.GetComponentsInChildren<SkinnedMeshRenderer>())
                 smr.updateWhenOffscreen = true;
 
+            // Postava s kosti "Pupek" (Honza upraveny v Blenderu): pupek se pri behu houpe.
+            foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                if (t.name == "Pupek")
+                {
+                    if (root.GetComponent<BellyJiggle>() == null) root.AddComponent<BellyJiggle>();
+                    break;
+                }
+
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, entry.PrefabPath);
             Debug.Log($"[AyranAvatarSetup] Prefab postavy {entry.hero} vytvoren.");
             return prefab;

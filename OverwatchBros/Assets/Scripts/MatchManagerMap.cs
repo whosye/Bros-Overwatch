@@ -7,19 +7,19 @@ using UnityEngine.SceneManagement;
 // i navigacni sit botu se pak hledaji jen v ni (GameObject.Find najde jen aktivni objekty).
 public partial class MatchManager
 {
-    public const int MapChaty = 0;
+    public const int MapDomasov = 0;
     public const int MapHanamura = 1;
     public const int MapDust2 = 2;
 
-    public static readonly string[] MapNames = { "Chaty", "Hanamura", "Dust II" };
+    public static readonly string[] MapNames = { "Domašov", "Hanamura", "Dust II" };
     // Korenovy objekt mapy ve scene (prazdny = puvodni mapa, ta je ve scene vzdy).
     static readonly string[] MapRoots = { "", "Map_Hanamura", "Map_Dust2" };
     const string DomasovRoot = "Map-Domasov";
     public static readonly Vector3 HanamuraOrigin = new Vector3(1000f, 0f, 0f);   // Hanamura stoji stranou od chat
-    // Cela mapa i KillPlane lezi nad nulou, mimo vyskovy bonus tunelu na Chatach.
+    // Cela mapa i KillPlane lezi nad nulou, mimo vyskovy bonus tunelu na Domasove.
     public static readonly Vector3 Dust2Origin = new Vector3(2000f, 50f, 0f);
 
-    public NetworkVariable<int> mapIndex = new NetworkVariable<int>(MapChaty);
+    public NetworkVariable<int> mapIndex = new NetworkVariable<int>(MapDomasov);
 
     public int MapIndex => Mathf.Clamp(mapIndex.Value, 0, MapNames.Length - 1);
     public string MapName => MapNames[MapIndex];
@@ -41,7 +41,7 @@ public partial class MatchManager
             int candidate = (Mathf.Clamp(current, 0, MapNames.Length - 1) + step) % MapNames.Length;
             if (MapSupportsMode(candidate, mode)) return candidate;
         }
-        return MapChaty;
+        return MapDomasov;
     }
 
     public bool SelectedMapSupportsMode => MapSupportsMode(MapIndex, gameMode.Value);
@@ -60,17 +60,17 @@ public partial class MatchManager
 
     // ---------------- prepnuti mapy ----------------
 
-    static int appliedMap = MapChaty;
+    static int appliedMap = MapDomasov;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void ResetAppliedMap() => appliedMap = MapChaty;
+    static void ResetAppliedMap() => appliedMap = MapDomasov;
 
     // Po nacteni sceny vzdy chaty (kdyby byla scena ulozena se zapnutou Hanamurou z prohlizeni v editoru).
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void InitialMap()
     {
         appliedMap = -1;
-        ApplyMap(MapChaty);
+        ApplyMap(MapDomasov);
     }
 
     static GameObject FindRoot(string name)
@@ -83,11 +83,11 @@ public partial class MatchManager
     // Zapne mapu 'index' a ostatni vypne. Vola se u vsech: pri startu zapasu, po pripojeni do bezici hry a po odpojeni (zpet na chaty).
     public static void ApplyMap(int index)
     {
-        if (!MapReady(index)) index = MapChaty;
+        if (!MapReady(index)) index = MapDomasov;
         bool changed = appliedMap != index;
         for (int map = 0; map < MapNames.Length; map++)
         {
-            var root = FindRoot(map == MapChaty ? DomasovRoot : MapRoots[map]);
+            var root = FindRoot(map == MapDomasov ? DomasovRoot : MapRoots[map]);
             if (root == null) continue;
             bool active = map == index;
             if (root.activeSelf != active) { root.SetActive(active); changed = true; }

@@ -17,13 +17,14 @@ public enum PickupKind
     WhitePowder,  // cara bileho prasku na podtacku: kratce o 50 % vetsi poskozeni
     KangarooSkin, // klokani kuze: hned +100 stitu (drzi, dokud ho poskozeni nezbori)
     Ring,         // zlaty prsten na konci tajne jeskyne: hrac ho nese, dokud zije; po jeho smrti se vrati na misto
+    Pellets,      // pytel pelet: hrac ho nese, dokud zije; u feederu kotle ho nasype (R) - pristi zatopeni pali vic
 }
 
 // Buffy z balicku, ktere zobrazuje HUD mistniho hrace (BuffUI). Nastavuje je MatchManager, kdyz balicek sebere
 // mistni hrac (ucinek sam hlida server).
 public static class PickupBuffs
 {
-    public const float InvulnerableSeconds = 15f;
+    public const float InvulnerableSeconds = 10f;
     public static float InvulnerableUntil;
 
     public const float TramalSeconds = 25f;
@@ -110,16 +111,21 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Invulnerable => 60f,
         PickupKind.Tramal => 30f,
         PickupKind.Carburetor => 90f,
-        PickupKind.Coffee => 35f,
-        PickupKind.Beer => 35f,
-        PickupKind.Lasagne => 45f,
+        PickupKind.Coffee => 12f,
+        PickupKind.Beer => 12f,
+        PickupKind.Lasagne => 12f,
         PickupKind.WhitePowder => 60f,
         PickupKind.KangarooSkin => 40f,
+        PickupKind.Pellets => 10f,
         PickupKind.Ring => float.MaxValue,   // vrati se az se smrti nositele (MatchManagerRing)
         _ => 30f,
     };
 
-    public Color Color => KindColor(kind);
+    // Lekarnicka na zachode (leci 100 HP a vic): vlastni vzhled a barva, at se odlisi od obycejnych.
+    public bool IsToiletPack => kind == PickupKind.Health && healAmount >= 100f;
+    static readonly Color ToiletColor = new Color(0.2f, 0.95f, 0.5f);   // lekarnicka zelena
+
+    public Color Color => IsToiletPack ? ToiletColor : KindColor(kind);
 
     public static Color KindColor(PickupKind kind) => kind switch
     {
@@ -136,6 +142,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.WhitePowder => new Color(0.92f, 0.95f, 1f),
         PickupKind.KangarooSkin => new Color(0.8f, 0.55f, 0.32f),
         PickupKind.Ring => new Color(1f, 0.78f, 0.22f),
+        PickupKind.Pellets => new Color(0.88f, 0.68f, 0.36f),
         _ => new Color(0.45f, 0.85f, 1f),
     };
 
@@ -150,10 +157,11 @@ public class PickupSpot : MonoBehaviour
         PickupKind.Carburetor => "Honzův karburátor",
         PickupKind.Coffee => "Káva",
         PickupKind.Beer => "Pivo z výčepu",
-        PickupKind.Lasagne => "Lasagne",
+        PickupKind.Lasagne => "Maxovy lasagne",
         PickupKind.WhitePowder => "Bílá látka",
         PickupKind.KangarooSkin => "Klokaní kůže",
         PickupKind.Ring => "Prsten",
+        PickupKind.Pellets => "Pytel pelet",
         _ => "Štít",
     };
 
@@ -258,6 +266,24 @@ public class PickupSpot : MonoBehaviour
 
         switch (kind)
         {
+            case PickupKind.Health when IsToiletPack:
+                // Lekarnicka na zachode (100 HP): zelena lekarnicka se svitivym bilym krizem, zlate rohy
+                // a na ni role toaletniho papiru - na prvni pohled jina nez cervene lekarnicky.
+                Part(PrimitiveType.Cube, item, Vector3.zero, new Vector3(0.44f, 0.3f, 0.3f), color, 0.35f);
+                foreach (float side in new[] { -1f, 1f })
+                {
+                    Part(PrimitiveType.Cube, item, new Vector3(0f, 0f, 0.152f * side), new Vector3(0.24f, 0.075f, 0.01f), Color.white, 1.6f);
+                    Part(PrimitiveType.Cube, item, new Vector3(0f, 0f, 0.152f * side), new Vector3(0.075f, 0.24f, 0.01f), Color.white, 1.6f);
+                    foreach (float end in new[] { -1f, 1f })
+                        Part(PrimitiveType.Cube, item, new Vector3(0.2f * end, 0.13f, 0.13f * side), new Vector3(0.06f, 0.06f, 0.06f), new Color(1f, 0.8f, 0.25f), 1f);
+                }
+                var paper = Part(PrimitiveType.Cylinder, item, new Vector3(0f, 0.24f, 0f), new Vector3(0.17f, 0.08f, 0.17f), new Color(0.97f, 0.97f, 0.95f), 0.3f);
+                paper.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                var core = Part(PrimitiveType.Cylinder, item, new Vector3(0f, 0.24f, 0f), new Vector3(0.07f, 0.082f, 0.07f), new Color(0.55f, 0.42f, 0.28f));
+                core.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                var paperTail = Part(PrimitiveType.Cube, item, new Vector3(0.05f, 0.17f, 0.07f), new Vector3(0.16f, 0.008f, 0.06f), new Color(0.97f, 0.97f, 0.95f), 0.3f);
+                paperTail.transform.localRotation = Quaternion.Euler(0f, 0f, -20f);
+                break;
             case PickupKind.Health:
             case PickupKind.BigHealth:
                 // Bila krabicka s cervenym krizem na obou stranach.
@@ -357,6 +383,19 @@ public class PickupSpot : MonoBehaviour
                 Part(PrimitiveType.Cube, item, new Vector3(0.05f, 0.036f, 0.02f), new Vector3(0.08f, 0.006f, 0.06f), new Color(0.98f, 0.85f, 0.45f));
                 Part(PrimitiveType.Cube, item, new Vector3(0.14f, 0.05f, 0.03f), new Vector3(0.2f, 0.008f, 0.04f), new Color(0.12f, 0.12f, 0.13f));
                 break;
+            case PickupKind.Pellets:
+                // Pytel pelet: igelitovy pytel se zelenym pruhem, zavazany nahore, pred nim par rozsypanych pelet.
+                Part(PrimitiveType.Cube, item, Vector3.zero, new Vector3(0.34f, 0.4f, 0.2f), new Color(0.93f, 0.9f, 0.82f), 0.15f);
+                Part(PrimitiveType.Cube, item, new Vector3(0f, 0.05f, 0.101f), new Vector3(0.3f, 0.1f, 0.005f), new Color(0.2f, 0.6f, 0.3f), 0.5f);
+                Part(PrimitiveType.Cube, item, new Vector3(0f, -0.07f, 0.101f), new Vector3(0.18f, 0.06f, 0.005f), color, 0.6f);
+                Part(PrimitiveType.Cube, item, new Vector3(0f, 0.22f, 0f), new Vector3(0.14f, 0.05f, 0.1f), new Color(0.93f, 0.9f, 0.82f));
+                for (int i = 0; i < 5; i++)
+                {
+                    var pellet = Part(PrimitiveType.Cylinder, item, new Vector3(-0.1f + i * 0.05f, -0.17f, 0.15f + (i % 2) * 0.03f),
+                        new Vector3(0.025f, 0.02f, 0.025f), color, 0.3f);
+                    pellet.transform.localRotation = Quaternion.Euler(90f, i * 35f, 0f);
+                }
+                break;
             case PickupKind.WhitePowder:
                 // Podtacek (tmave sklo) s carou bileho prasku a srolovanou bankovkou.
                 Part(PrimitiveType.Cylinder, item, Vector3.zero, new Vector3(0.22f, 0.006f, 0.22f), new Color(0.12f, 0.12f, 0.14f));
@@ -380,8 +419,8 @@ public class PickupSpot : MonoBehaviour
         glow.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         glow.type = LightType.Point;
         glow.color = color;
-        glow.range = 3.5f;
-        glow.intensity = 1.6f;
+        glow.range = IsToiletPack ? 4.5f : 3.5f;
+        glow.intensity = IsToiletPack ? 2.4f : 1.6f;
         glow.shadows = LightShadows.None;
     }
 
