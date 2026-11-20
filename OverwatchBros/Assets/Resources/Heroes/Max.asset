@@ -31,7 +31,7 @@ MonoBehaviour:
   doubleJump: 0
   ledgeClimb: 0
   moveSpeed: 1.2
-  lifesteal: 0.15
+  lifesteal: 0.25
   takedownCooldownCut: 0
   deathGrenades: 0
   deathGrenadeDamage: 30

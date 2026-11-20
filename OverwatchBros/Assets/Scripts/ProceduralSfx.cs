@@ -10,6 +10,7 @@ public static class ProceduralSfx
     static AudioClip bowRelease, arrowFlight;
     static AudioClip bulletImpact;
     static AudioClip surfaceSlash;
+    static AudioClip shadowEmerge, shadowStrike;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Reset()
@@ -18,6 +19,52 @@ public static class ProceduralSfx
         bowRelease = arrowFlight = null;
         bulletImpact = null;
         surfaceSlash = null;
+        shadowEmerge = shadowStrike = null;
+    }
+
+    // Max vyrazi ze stinu utokem: temne nasati (stoupajici sum a hluboky bzukot), na konci prudce utne.
+    public static AudioClip ShadowEmerge => shadowEmerge ??= MakeShadowEmerge();
+
+    // Uder ze stinu (dvojnasobne poskozeni): hluboky klesajici uder, tresk, kovove zazvoneni kosy a temny dozvuk.
+    public static AudioClip ShadowStrike => shadowStrike ??= MakeShadowStrike();
+
+    static AudioClip MakeShadowEmerge()
+    {
+        const float rise = 0.22f;
+        float low = 0f, band = 0f;
+        return Make("shadowEmerge", 0.32f, (t, r) =>
+        {
+            float k = Mathf.Clamp01(t / rise);
+            float n = Noise(r);
+            low += Mathf.Lerp(0.02f, 0.4f, k * k) * (n - low);   // sum se zjasnuje
+            band += 0.05f * (low - band);
+            float cut = t < rise ? 1f : Mathf.Exp(-(t - rise) * 40f);
+            float whoosh = (low - band) * 3.4f * k * k * k * cut;
+            float drone = (Mathf.Sin(2f * Mathf.PI * 55f * t) * 0.5f
+                + Mathf.Sin(2f * Mathf.PI * 82.5f * t + 2f * Mathf.Sin(2f * Mathf.PI * 3f * t)) * 0.3f)
+                * Mathf.Min(1f, t * 6f) * cut * 0.5f;
+            return (whoosh + drone) * 0.9f;
+        });
+    }
+
+    static AudioClip MakeShadowStrike()
+    {
+        float low = 0f;
+        return Make("shadowStrike", 1.1f, (t, r) =>
+        {
+            // klesajici sub 120 -> 38 Hz (faze = integral kmitoctu)
+            const float f0 = 120f, f1 = 38f, drop = 9f;
+            float phase = 2f * Mathf.PI * (f1 * t + (f0 - f1) * (1f - Mathf.Exp(-drop * t)) / drop);
+            float sub = Mathf.Sin(phase) * Mathf.Exp(-t * 4.5f) * 0.85f;
+            float n = Noise(r);
+            low += 0.25f * (n - low);
+            float crack = (n * 0.6f + low * 0.8f) * Mathf.Exp(-t * 55f);
+            float ring = (Mathf.Sin(2f * Mathf.PI * 1180f * t) * 0.35f + Mathf.Sin(2f * Mathf.PI * 1745f * t) * 0.25f
+                + Mathf.Sin(2f * Mathf.PI * 2630f * t) * 0.18f + Mathf.Sin(2f * Mathf.PI * 3910f * t) * 0.1f)
+                * Mathf.Exp(-t * 6f) * Mathf.Min(1f, t * 400f);
+            float tail = low * 0.5f * Mathf.Exp(-t * 3f) * (0.6f + 0.4f * Mathf.Sin(2f * Mathf.PI * 7f * t));
+            return (sub + crack + ring * 0.5f + tail) * 0.85f;
+        });
     }
 
     public static AudioClip Gunshot => gunshot ??= Make("gunshot", 0.28f, (t, r) =>

@@ -325,6 +325,36 @@ public class PlayerHero : NetworkBehaviour
         voice = GetComponent<HeroVoice>();
     }
 
+    // Dedova slivovice (nesmrtelnost z balicku): konec v case serveru - vidi ji vsichni (zlata aura), HUD,
+    // killcam i POTG (i u botu). Nastavuje server pri sebrani.
+    public NetworkVariable<double> slivoviceEnd = new NetworkVariable<double>(0);
+
+    public float SlivoviceRemaining
+    {
+        get
+        {
+            var network = NetworkManager;
+            if (network == null || !IsSpawned) return 0f;
+            return Mathf.Max(0f, (float)(slivoviceEnd.Value - network.ServerTime.Time));
+        }
+    }
+
+    public void ServerSlivovice(float seconds)
+    {
+        if (!IsServer) return;
+        slivoviceEnd.Value = NetworkManager.ServerTime.Time + seconds;
+    }
+
+    bool slivoviceShown;
+
+    void UpdateSlivoviceAura()
+    {
+        bool on = SlivoviceRemaining > 0f && health != null && health.currentHealth.Value > 0f;
+        if (on == slivoviceShown) return;
+        slivoviceShown = on;
+        SlivoviceAura.Set(transform, on);
+    }
+
     public override void OnNetworkSpawn()
     {
         heroId.OnValueChanged += OnHeroChanged;
@@ -370,6 +400,7 @@ public class PlayerHero : NetworkBehaviour
     // Vlastnik: dokud si vybira, stoji vysoko nad mapou; po vstupu do hry se objevi na spawnu sveho tymu.
     void Update()
     {
+        UpdateSlivoviceAura();
         if (IsServer && IsSpawned)
         {
             ServerCheckFall();
@@ -1134,6 +1165,7 @@ public class PlayerHero : NetworkBehaviour
 
     void OnDeath()
     {
+        if (IsServer) slivoviceEnd.Value = 0;
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Death, transform.position, 0.8f);
         if (IsServer)
         {

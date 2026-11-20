@@ -33,6 +33,13 @@ public class ReplayPlayer : MonoBehaviour
     public static float BuffRemaining(int which)
     {
         var f = Frame;
+        if (f != null && IsKillcam && which == 1)
+        {
+            // killcam: nesmrtelnost vraha (dedova slivovice) ze snimku postav
+            foreach (var p in f.players)
+                if (p.id == instance.clip.povId) return p.slivovice / 10f;
+            return 0f;
+        }
         if (f == null || IsKillcam) return 0f;
         return which == 0 ? f.buffFastCooldown : which == 1 ? f.buffInvulnerable : f.buffTramal;
     }
@@ -136,6 +143,7 @@ public class ReplayPlayer : MonoBehaviour
         public ParticleSystem rushAura;
         public ParticleSystem holyAura;
         public bool boosted;
+        public bool slivovice;
         public Light holyLight;
         public GameObject holyCircle;
     }
@@ -339,6 +347,14 @@ public class ReplayPlayer : MonoBehaviour
             {
                 g.boosted = boosted;
                 NanoAura.Set(g.go.transform, boosted);
+            }
+
+            // dedova slivovice (nesmrtelnost): zlata aura jako ve hre
+            bool slivovice = p.slivovice > 0 && alive && !(pov && !povThird);   // (z pohledu nositele v 1. osobe ne - jiskry pred kamerou)
+            if (slivovice != g.slivovice)
+            {
+                g.slivovice = slivovice;
+                SlivoviceAura.Set(g.go.transform, slivovice);
             }
 
             // Sindelova ultimatka: zarici aura a svetlo kolem postavy (jako ve hre)

@@ -21,7 +21,7 @@ public class MatchOverlayUI
     {
         public string killer, victim, icon;
         public int killerTeam, victimTeam;
-        public bool local;
+        public bool local, headshot;
         public float time;
     }
 
@@ -38,8 +38,11 @@ public class MatchOverlayUI
     // killer muze byt prazdny (smrt bez utocnika).
     public static void AddKill(string killer, int killerTeam, string victim, int victimTeam, bool localInvolved, string icon = "")
     {
-        ReplayLog.KillFeed(killer, killerTeam, victim, victimTeam, localInvolved, icon ?? "");
-        kills.Add(new Kill { killer = killer, killerTeam = killerTeam, victim = victim, victimTeam = victimTeam, local = localInvolved, icon = icon ?? "", time = Time.unscaledTime });
+        icon = icon ?? "";
+        ReplayLog.KillFeed(killer, killerTeam, victim, victimTeam, localInvolved, icon);   // (i se znackou headshotu - POTG)
+        bool headshot = icon.EndsWith(Combat.HeadshotSuffix);
+        if (headshot) icon = icon.Substring(0, icon.Length - Combat.HeadshotSuffix.Length);
+        kills.Add(new Kill { killer = killer, killerTeam = killerTeam, victim = victim, victimTeam = victimTeam, local = localInvolved, icon = icon, headshot = headshot, time = Time.unscaledTime });
         while (kills.Count > MaxKills)
             kills.RemoveAt(0);
     }
@@ -64,6 +67,7 @@ public class MatchOverlayUI
         public Image background;
         public TextMeshProUGUI killer, victim;
         public RawImage icon;
+        public RawImage headshot;   // znacka zasahu do hlavy (mezi zbrani a obeti)
     }
 
     const float BarWidth = 110f;
@@ -113,6 +117,15 @@ public class MatchOverlayUI
             iconRect.sizeDelta = new Vector2(30f, 30f);
             row.icon = iconObject.GetComponent<RawImage>();
             row.icon.raycastTarget = false;
+            var headObject = new GameObject("Headshot", typeof(RectTransform), typeof(RawImage));
+            headObject.transform.SetParent(row.background.transform, false);
+            var headRect = (RectTransform)headObject.transform;
+            headRect.anchorMin = headRect.anchorMax = headRect.pivot = right;
+            headRect.sizeDelta = new Vector2(28f, 28f);
+            row.headshot = headObject.GetComponent<RawImage>();
+            row.headshot.raycastTarget = false;
+            row.headshot.texture = HeadshotIcon;
+            row.headshot.gameObject.SetActive(false);
             row.background.gameObject.SetActive(false);
             feedRows[i] = row;
         }
@@ -354,10 +367,19 @@ public class MatchOverlayUI
             row.victim.text = Colored(kill.victim, kill.victimTeam == localTeam);
             row.killer.text = string.IsNullOrEmpty(kill.killer) ? "" : Colored(kill.killer, kill.killerTeam == localTeam);
             float victimWidth = Mathf.Min(200f, row.victim.GetPreferredValues(row.victim.text).x);
+            // vrah [zbran] [hlava] obet
+            float x = -12f - victimWidth - 8f;
+            if (row.headshot.gameObject.activeSelf != kill.headshot) row.headshot.gameObject.SetActive(kill.headshot);
+            if (kill.headshot)
+            {
+                ((RectTransform)row.headshot.transform).anchoredPosition = new Vector2(x, 0f);
+                row.headshot.color = new Color(1f, 1f, 1f, alpha);
+                x -= 28f + 4f;
+            }
             var iconRect = (RectTransform)row.icon.transform;
-            iconRect.anchoredPosition = new Vector2(-12f - victimWidth - 8f, 0f);
+            iconRect.anchoredPosition = new Vector2(x, 0f);
             row.icon.texture = KillIcon(kill.icon);
-            ((RectTransform)row.killer.transform).anchoredPosition = new Vector2(-12f - victimWidth - 8f - 30f - 8f, 0f);
+            ((RectTransform)row.killer.transform).anchoredPosition = new Vector2(x - 30f - 8f, 0f);
             row.victim.alpha = alpha;
             row.killer.alpha = alpha;
             row.icon.color = new Color(1f, 1f, 1f, alpha);
@@ -366,6 +388,35 @@ public class MatchOverlayUI
             var background = kill.local ? new Color(0.22f, 0.26f, 0.36f, 0.95f) : new Color(0.05f, 0.07f, 0.10f, 0.72f);
             background.a *= alpha;
             row.background.color = background;
+        }
+    }
+
+    // Znacka headshotu: hlava (kruh) v zamerovaci krizi, cervenooranzova (generovana).
+    static Texture2D headshotIcon;
+    static Texture2D HeadshotIcon
+    {
+        get
+        {
+            if (headshotIcon != null) return headshotIcon;
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+            var pixels = new Color[size * size];
+            float half = (size - 1) * 0.5f;
+            var color = new Color(1f, 0.38f, 0.22f);
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = (x - half) / half, dy = (y - half) / half;
+                    float r = Mathf.Sqrt(dx * dx + dy * dy);
+                    float a = Mathf.Clamp01(1f - Mathf.Abs(r - 0.52f) / 0.1f) * 1.5f;          // hlava
+                    float cross = Mathf.Min(Mathf.Abs(dx), Mathf.Abs(dy));
+                    if (r > 0.22f && r < 0.98f) a = Mathf.Max(a, Mathf.Clamp01(1f - cross / 0.07f) * 1.5f);   // kriz (stred prazdny)
+                    a = Mathf.Max(a, Mathf.Clamp01(1f - r / 0.1f) * 1.5f);                        // tecka
+                    pixels[y * size + x] = new Color(color.r, color.g, color.b, Mathf.Clamp01(a));
+                }
+            texture.SetPixels(pixels);
+            texture.Apply();
+            return headshotIcon = texture;
         }
     }
 

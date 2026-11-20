@@ -306,7 +306,7 @@ public class WeaponShooting : NetworkBehaviour
                 ProceduralSfx.PlayForActor(this, ProceduralSfx.StunConfirm, playerCamera.transform.position, 1f);
             }
 
-            ApplyHit(hit.collider, hit.point, full ? 2f : 1.2f, damage, hit.normal);
+            ApplyHit(hit.collider, hit.point, full ? 2f : 1.2f, damage, hit.normal, headshot: headshot);
             end = hit.point;
             break;
         }
@@ -579,7 +579,7 @@ public class WeaponShooting : NetworkBehaviour
             {
                 float body = DamageFor(hit.collider, hit.point) * (power ? weapon.powerShotDamageScale : 1f);
                 ProceduralSfx.PlayForActor(this, ProceduralSfx.StunConfirm, playerCamera.transform.position, 0.8f);
-                ApplyHit(hit.collider, hit.point, power ? 2.4f : 1.3f, body * weapon.headshotMultiplier, hit.normal, power);
+                ApplyHit(hit.collider, hit.point, power ? 2.4f : 1.3f, body * weapon.headshotMultiplier, hit.normal, power, headshot: true);
             }
             else if (power)
                 ApplyHit(hit.collider, hit.point, 2.2f, DamageFor(hit.collider, hit.point) * weapon.powerShotDamageScale, hit.normal, true);
@@ -684,7 +684,7 @@ public class WeaponShooting : NetworkBehaviour
 
     // Spolecny zasah pro hitscan i melee: damage, zvuk zasahu a maly vybuch v miste dopadu.
     // damageOverride >= 0: pevne poskozeni (odstrel s pribliseni), jinak podle zbrane a vzdalenosti.
-    void ApplyHit(Collider collider, Vector3 point, float fxScale, float damageOverride = -1f, Vector3 normal = default, bool power = false)
+    void ApplyHit(Collider collider, Vector3 point, float fxScale, float damageOverride = -1f, Vector3 normal = default, bool power = false, bool headshot = false)
     {
         impactPower = power;
         // Strelba na dalku je slabsi (jen zbrane s nastavenym poklesem poskozeni).
@@ -732,7 +732,7 @@ public class WeaponShooting : NetworkBehaviour
         NetworkObject hitNetworkObject = collider.GetComponentInParent<NetworkObject>();
         if (hitNetworkObject != null && hitNetworkObject != NetworkObject)
         {
-            RequestDamageServerRpc(hitNetworkObject, damage);
+            RequestDamageServerRpc(hitNetworkObject, damage, headshot);
             ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, transform.position, 0.8f);
         }
 
@@ -866,7 +866,7 @@ public class WeaponShooting : NetworkBehaviour
     }
 
     [ServerRpc]
-    void RequestDamageServerRpc(NetworkObjectReference targetRef, float amount)
+    void RequestDamageServerRpc(NetworkObjectReference targetRef, float amount, bool headshot)
     {
         if (MatchManager.Instance != null && MatchManager.Instance.IsOver) return;
         if (!targetRef.TryGet(out NetworkObject targetObject)) return;
@@ -874,6 +874,7 @@ public class WeaponShooting : NetworkBehaviour
         Health targetHealth = targetObject.GetComponent<Health>();
         if (targetHealth == null) return;
 
+        Combat.HeadshotHit = headshot && weapon != null && !weapon.IsMelee;
         Combat.DamagePlayer(gameObject, targetHealth, amount, weapon != null && weapon.IsMelee ? "weapon:melee" : "weapon:gun");
     }
 

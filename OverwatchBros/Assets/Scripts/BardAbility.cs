@@ -26,7 +26,7 @@ public class BardAbility : NetworkBehaviour
 
     public const float SpeedBonus = 1.3f;
     const float SlamRadius = 7f;       // Drop the Beat: dosah uderu na nepratele
-    const float SlamStun = 1f;
+    const float SlamStun = 0.5f;
     const float SlamKnockback = 13f;
     const float SlamSlowSeconds = 3f;
     const float SlamSlowFactor = 0.5f;
@@ -626,7 +626,7 @@ public class BardAbility : NetworkBehaviour
     // Basova vlna do zdi: odhozeny nepritel, kteremu v draze odhozeni (do WallSlamDistance m) stoji zed, je po narazu
     // WallSlamStun s omraceny. Pohyb odhozeneho pocita jeho klient, proto server zed hleda dopredu tvarem jeho kapsle.
     const float WallSlamDistance = 10f;
-    const float WallSlamStun = 1f;
+    const float WallSlamStun = 0.5f;
 
     static bool WallBehind(Health victim, Vector3 direction, out float distance, out Vector3 point)
     {

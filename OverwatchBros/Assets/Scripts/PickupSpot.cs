@@ -161,6 +161,10 @@ public class PickupSpot : MonoBehaviour
     Light glow;
     Renderer[] itemRenderers;
     bool shown = true;
+    Transform progress;        // svitici kotouc na podstavci: roste, jak se balicek obnovuje
+    float takenAt = -1f;       // kdy (mistne) zmizel; -1 = nevime (pripojeni pozdeji) - odpocet od ted
+    float shownAt = -10f;      // kdy se znovu objevil (vyskoci)
+    float padSize = 1.1f;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics()
@@ -196,13 +200,33 @@ public class PickupSpot : MonoBehaviour
             shown = available;
             foreach (var r in itemRenderers) if (r != null) r.enabled = available;
             if (glow != null) glow.enabled = available;
+            if (available) shownAt = Time.time;
+            else takenAt = Time.time;
         }
         if (item != null && available)
         {
             bool low = OnFurniture;   // na nabytku lezi nizko
             item.localPosition = new Vector3(0f, (low ? 0.22f : 0.75f) + Mathf.Sin(Time.time * 2f + Index) * (low ? 0.03f : 0.08f), 0f);
             item.localRotation = Quaternion.Euler(0f, Time.time * 70f + Index * 40f, 0f);
+            // po obnoveni kratce vyskoci (je videt, ze je zpet)
+            float pop = Mathf.Clamp01((Time.time - shownAt) / 0.3f);
+            item.localScale = Vector3.one * (pop >= 1f ? 1f : 0.3f + 0.7f * pop + Mathf.Sin(pop * Mathf.PI) * 0.25f);
         }
+        UpdateProgress(available);
+    }
+
+    // Odpocet obnovy: kotouc v barve balicku roste od stredu podstavce, dokud se balicek nevrati (jako v Overwatchi).
+    void UpdateProgress(bool available)
+    {
+        if (progress == null) return;
+        float total = RespawnSeconds;
+        bool counting = !available && total < 1000f;
+        if (progress.gameObject.activeSelf != counting) progress.gameObject.SetActive(counting);
+        if (!counting) return;
+        if (takenAt < 0f) takenAt = Time.time;
+        float t = Mathf.Clamp01((Time.time - takenAt) / total);
+        float size = Mathf.Lerp(0.12f, 0.98f, t) * padSize;
+        progress.localScale = new Vector3(size, 0.022f, size);
     }
 
     // Znacka v editoru (vizual se stavi az ve hre).
@@ -221,8 +245,10 @@ public class PickupSpot : MonoBehaviour
 
         // Podstavec: tmavy kotouc se svitivym okrajem (vidi se i kdyz je balicek sebrany - misto se pozna).
         // (Tramal lezi na skrince - jen maly svitici kruzek.)
-        float padSize = OnFurniture ? 0.32f : 1.1f;
+        padSize = OnFurniture ? 0.32f : 1.1f;
         Part(PrimitiveType.Cylinder, transform, new Vector3(0f, 0.03f, 0f), new Vector3(padSize, 0.03f, padSize), new Color(0.12f, 0.13f, 0.15f));
+        progress = Part(PrimitiveType.Cylinder, transform, new Vector3(0f, 0.045f, 0f), new Vector3(0.1f, 0.022f, 0.1f), color * 0.8f, 0.9f).transform;
+        progress.gameObject.SetActive(false);
         var ring = Part(PrimitiveType.Cylinder, transform, new Vector3(0f, 0.035f, 0f), new Vector3(padSize * 1.14f, 0.02f, padSize * 1.14f), color, 1.5f);
         ring.transform.SetSiblingIndex(0);
 

@@ -97,7 +97,23 @@ public partial class MatchManager
             CaptureUI.Announce("Prsten ti sklouzl z prstu - zase tě vidí", PickupSpot.KindColor(PickupKind.Ring), 2.5f);
     }
 
-    // P: nasadit / sundat (jen nositel, jen zivy).
+    // Po sundani (i kdyz sklouzne) jde prsten znovu nasadit az za RingCooldown s. Kazdy (server i klienti) si
+    // hlida prechod nasazeny -> sundany sam (server pro kontrolu, klient pro odpocet v HUD).
+    public const float RingCooldown = 2f;
+    bool ringWasWorn;
+    float ringRemovedAt = -100f;
+    public float RingCooldownLeft => Mathf.Max(0f, ringRemovedAt + RingCooldown - Time.time);
+    public static float LocalRingCooldown => Instance != null && LocalHasRing ? Instance.RingCooldownLeft : 0f;
+
+    void RingCooldownTick()
+    {
+        bool worn = IsSpawned && ringWorn.Value;
+        if (ringWasWorn && !worn) ringRemovedAt = Time.time;
+        if (IsSpawned && ringHolder.Value == Nobody) ringRemovedAt = -100f;   // novy nositel zacina bez cekani
+        ringWasWorn = worn;
+    }
+
+    // T: nasadit / sundat (jen nositel, jen zivy; nasadit az po cooldownu).
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void ToggleRingRpc(RpcParams rpcParams = default)
     {
@@ -106,6 +122,7 @@ public partial class MatchManager
         if (player == null || !HasRing(player.NetworkObjectId)) return;
         var health = player.GetComponent<Health>();
         if (health == null || health.currentHealth.Value <= 0f) return;
+        if (!ringWorn.Value && RingCooldownLeft > 0.15f) return;   // (maly prostor na zpozdeni site)
         ringWorn.Value = !ringWorn.Value;
     }
 

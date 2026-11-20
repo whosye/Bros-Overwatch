@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -23,7 +24,10 @@ public class PlayerRespawn : NetworkBehaviour
         if (!IsOwner) return;
 
         if (TryFindSpawn(out Vector3 spawn))
+        {
             transform.position = spawn;
+            if (!HasGround(spawn)) HoldUntilGround();
+        }
     }
 
     void OnEnable()
@@ -136,7 +140,79 @@ public class PlayerRespawn : NetworkBehaviour
         {
             fpc.ResetVertical();
             fpc.ClearForces();
+            fpc.ForgetSafeGround();
         }
+
+        // pod spawnem zatim neni podlaha (mapa se teprve zapina - pripojeni do bezici hry, prepnuti mapy):
+        // drzet postavu na miste, dokud se podlaha neobjevi, at nespadne pod mapu
+        if (hasSpawn && !HasGround(spawn)) HoldUntilGround();
+    }
+
+    // ---------------- bezpecny spawn ----------------
+
+    Coroutine holding;
+
+    void HoldUntilGround()
+    {
+        if (holding != null) StopCoroutine(holding);
+        holding = StartCoroutine(HoldRoutine());
+    }
+
+    IEnumerator HoldRoutine()
+    {
+        float until = Time.time + 4f;
+        while (Time.time < until)
+        {
+            yield return null;
+            if (!TryFindSpawn(out Vector3 spawn)) break;
+            controller.enabled = false;
+            transform.position = spawn;
+            controller.enabled = true;
+            if (fpc != null) fpc.ResetVertical();
+            if (HasGround(spawn)) break;
+        }
+        holding = null;
+    }
+
+    // Je pod mistem pevna zem (kousek pod nohama)?
+    static bool HasGround(Vector3 feet) => GroundBelow(feet, out _);
+
+    // Nejblizsi pevna vodorovna plocha u vysky 'feet' (paprsek z 1,2 m nad ni az 2,8 m pod ni).
+    static bool GroundBelow(Vector3 feet, out float y)
+    {
+        y = feet.y;
+        float best = float.MaxValue;
+        foreach (var hit in Physics.RaycastAll(feet + Vector3.up * 1.2f, Vector3.down, 4f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.normal.y < 0.6f || hit.collider is CharacterController || hit.collider.GetComponentInParent<PlayerHero>() != null) continue;
+            float gap = Mathf.Abs(hit.point.y - feet.y);
+            if (gap < best) { best = gap; y = hit.point.y; }
+        }
+        return best < float.MaxValue;
+    }
+
+    // Volno na postavu (krome jinych hracu - ti se rozestoupi)?
+    static bool Free(Vector3 feet)
+    {
+        foreach (var c in Physics.OverlapCapsule(feet + Vector3.up * 0.6f, feet + Vector3.up * 1.5f, 0.42f, ~0, QueryTriggerInteraction.Ignore))
+            if (!(c is CharacterController) && c.GetComponentInParent<PlayerHero>() == null) return false;
+        return true;
+    }
+
+    // Misto oziveni kousek vedle znacky: postava stoji na podlaze (i kdyz znacka trci kousek do ni nebo visi nad ni)
+    // a neni ve zdi - kdyz je misto vedle znacky zablokovane, zkusi se jine smery a nakonec znacka sama.
+    static Vector3 SafeSpawn(Vector3 marker, Vector3 offset)
+    {
+        for (int attempt = 0; attempt <= 6; attempt++)
+        {
+            Vector3 p = marker + (attempt < 6 ? Quaternion.Euler(0f, attempt * 60f, 0f) * offset : Vector3.zero);
+            if (!GroundBelow(p, out float y)) continue;
+            p.y = y + 0.05f;
+            if (Free(p)) return p;
+        }
+        Vector3 fallback = marker + offset;
+        if (GroundBelow(fallback, out float fy)) fallback.y = fy + 0.05f;
+        return fallback;
     }
 
     // Misto oziveni: v dobyvani bodu u aktualniho bodu (kazdy hrac kousek vedle, at nestoji v sobe),
@@ -147,7 +223,7 @@ public class PlayerRespawn : NetworkBehaviour
         if (match != null && match.TryGetSpawn(team.teamId.Value, out position))
         {
             float angle = NetworkObjectId * 2.4f;
-            position += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 1.4f;
+            position = SafeSpawn(position, new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * 1.4f);
             return true;
         }
 
@@ -159,7 +235,7 @@ public class PlayerRespawn : NetworkBehaviour
         if (spawnPointObject != null)
         {
             float angle = NetworkObjectId * 2.4f;
-            position += new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * (1.4f + (NetworkObjectId % 2) * 0.8f);
+            position = SafeSpawn(position, new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * (1.4f + (NetworkObjectId % 2) * 0.8f));
         }
         return spawnPointObject != null;
     }

@@ -10,6 +10,9 @@ using UnityEngine.InputSystem;
 //   E (Stinova forma): az 'duration' s je Max stin - neviditelny (jen fialovy kour), nezranitelny, bez kolize
 //     a chodi skrz zdi. Forma skonci utokem (LMB, PTM, Shift, Q), dalsim E nebo vyprsenim casu; kdyz konci ve zdi,
 //     vystrci ho to na nejblizsi volne misto. Cooldown bezi az od konce formy.
+//   Uder ze stinu: utok, kterym Max stinovou formu ukonci, da dvojnasobne poskozeni (prvni zasah do
+//     StrikeWindow s po vystupu - vsem, koho ten utok zasahne).
+//   Odolnost pri vypadu: behem Shiftu a GuardAfter s po nem dostava Max o GuardReduction mene poskozeni.
 //   PTM (Otocka kosou): Max se s kosou roztoci o 360 st. - 'power' poskozeni vsem nepratelum v okruhu 'radius'
 //     kolem sebe (ne pres zdi). Behem otocky jde pomaleji.
 public class MaxAbility : NetworkBehaviour
@@ -21,6 +24,11 @@ public class MaxAbility : NetworkBehaviour
     public static readonly Color ShadowColor = new Color(0.55f, 0.18f, 0.85f, 1f);
 
     const float DashTime = 0.18f;
+    public const float StrikeMultiplier = 2f;
+    const float StrikeWindow = 1.2f;        // jak dlouho po vystupu ze stinu utokem plati dvojnasobne poskozeni
+    const float StrikeSpread = 0.12f;       // po prvnim zasahu jeste chvili (vic cilu jednim utokem)
+    public const float GuardReduction = 0.4f;
+    const float GuardAfter = 1f;
     const float ReapStun = 0.5f;          // zasazene Rozpolcenim omraci
     // Skok s uderem: usek animace od odrazu (0,73 s) po podrep po uderu; uder do zeme (1,67 s) prijde pri dopadu.
     const float LeapTime = 0.5f;
@@ -87,6 +95,7 @@ public class MaxAbility : NetworkBehaviour
         busy = true;
         nextReap = Time.time + reap.Cooldown;
         hero.SayAbility(reap);
+        ReapGuardServerRpc(0.6f);   // odolnost uz behem vypadu (prodlouzi se pri dopadu)
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.7f);
 
         // smer pohledu; pri pohledu nahoru i kousek do vyse
@@ -105,8 +114,11 @@ public class MaxAbility : NetworkBehaviour
         float speed = (reap.range > 0f ? reap.range : 6f) / time;
         var controller = GetComponent<CharacterController>();
         float elapsed = 0f;
+        NetworkObject struck = null;   // nepritel v ceste: u nej se vypad zastavi
         while (elapsed < time && !fpc.CannotAct)
         {
+            struck = EnemyInPath();
+            if (struck != null) break;
             float before = elapsed / time;
             elapsed += Time.deltaTime;
             float after = Mathf.Min(1f, elapsed / time);
@@ -115,10 +127,33 @@ public class MaxAbility : NetworkBehaviour
             controller.Move(direction * speed * (after - before) * time + Vector3.up * rise);
             yield return null;
         }
+        if (struck == null) struck = EnemyInPath();
         fpc.ResetVertical();
-        if (!leap && held != null) held.Swing();
-        ReapServerRpc(transform.position);
+        if ((!leap || struck != null) && held != null) held.Swing();
+        if (struck != null) ReapServerRpc(transform.position, struck, true);
+        else ReapServerRpc(transform.position, default, false);
         busy = false;
+    }
+
+    // Zivy nepritel tesne pred Maxem (ve smeru vypadu) - neviditelne (stin, prsten) a spoluhrace ignoruje.
+    NetworkObject EnemyInPath()
+    {
+        Vector3 center = transform.position + Vector3.up * 1f + LookFlat() * 0.7f;
+        NetworkObject best = null;
+        float bestDistance = float.MaxValue;
+        foreach (var col in Physics.OverlapSphere(center, 0.9f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            var victim = col.GetComponentInParent<Health>();
+            if (victim == null || victim.gameObject == gameObject || victim.currentHealth.Value <= 0f) continue;
+            if (Combat.SameTeam(gameObject, victim.gameObject)) continue;
+            var victimHero = victim.GetComponent<PlayerHero>();
+            if (victimHero != null && (victimHero.IsUntargetable || victimHero.HiddenFromLocal)) continue;
+            var networkObject = victim.GetComponent<NetworkObject>();
+            if (networkObject == null || !networkObject.IsSpawned) continue;
+            float distance = (victim.transform.position - transform.position).sqrMagnitude;
+            if (distance < bestDistance) { bestDistance = distance; best = networkObject; }
+        }
+        return best;
     }
 
     static void PlayLeap(CharacterVisual visual) =>
@@ -135,9 +170,58 @@ public class MaxAbility : NetworkBehaviour
         if (visual != null) PlayLeap(visual);
     }
 
+    // ---------------- server: uder ze stinu a odolnost ----------------
+
+    float strikeUntil = -1f;   // server: do kdy plati dvojnasobne poskozeni
+    bool strikeHit;
+    float guardUntil = -1f;    // server: do kdy dostava mene poskozeni
+
     [ServerRpc]
-    void ReapServerRpc(Vector3 position)
+    void ReapGuardServerRpc(float seconds) => guardUntil = Mathf.Max(guardUntil, Time.time + Mathf.Clamp(seconds, 0f, 1f) + GuardAfter);
+
+    // Nasobek poskozeni, ktere 'attacker' prave zpusobuje (Combat.DamagePlayer, jen server).
+    public static float OutgoingScale(GameObject attacker, Vector3 at)
     {
+        if (attacker == null || !attacker.TryGetComponent<MaxAbility>(out var max) || !max.isActiveAndEnabled) return 1f;
+        if (Time.time >= max.strikeUntil) return 1f;
+        if (!max.strikeHit)
+        {
+            max.strikeHit = true;
+            max.strikeUntil = Mathf.Min(max.strikeUntil, Time.time + StrikeSpread);
+            max.StrikeFxClientRpc(at);
+        }
+        return StrikeMultiplier;
+    }
+
+    // Nasobek poskozeni, ktere 'target' prave dostava (odolnost pri vypadu).
+    public static float IncomingScale(GameObject target)
+    {
+        if (target == null || !target.TryGetComponent<MaxAbility>(out var max) || !max.isActiveAndEnabled) return 1f;
+        return Time.time < max.guardUntil ? 1f - GuardReduction : 1f;
+    }
+
+    [ClientRpc]
+    void StrikeFxClientRpc(Vector3 at)
+    {
+        Fx.Sparks(at, ShadowColor);
+        Fx.Sparks(at + Vector3.up * 0.3f, new Color(0.9f, 0.5f, 1f));
+        ProceduralSfx.Play(ProceduralSfx.ShadowStrike, at, 1f, 45f);
+        var body = CollectedAudioBank.Pick("combat_melee_body");
+        if (body != null) ProceduralSfx.Play(body, at, 0.8f, 30f);
+    }
+
+    // Vystup ze stinu utokem: temne nasati (vlastnik hned, ostatni pres server).
+    [ClientRpc]
+    void EmergeClientRpc()
+    {
+        if (IsOwner) return;
+        ProceduralSfx.Play(ProceduralSfx.ShadowEmerge, transform.position + Vector3.up, 0.9f, 35f);
+    }
+
+    [ServerRpc]
+    void ReapServerRpc(Vector3 position, NetworkObjectReference struckRef, bool hasStruck)
+    {
+        guardUntil = Mathf.Max(guardUntil, Time.time + GuardAfter);
         if (reap == null || (position - transform.position).sqrMagnitude > 25f) position = transform.position;
         var match = MatchManager.Instance;
         int hits = 0;
@@ -145,6 +229,21 @@ public class MaxAbility : NetworkBehaviour
         {
             var done = new System.Collections.Generic.HashSet<Health>();
             Vector3 center = position + Vector3.up * 1f;
+            // nepritel, o ktereho se vypad zastavil: zasah a omraceni vzdy (i kdyby stal tesne za hranou okruhu)
+            if (hasStruck && struckRef.TryGet(out NetworkObject struckObject))
+            {
+                var victim = struckObject.GetComponent<Health>();
+                if (victim != null && victim.gameObject != gameObject && victim.currentHealth.Value > 0f
+                    && !Combat.SameTeam(gameObject, victim.gameObject)
+                    && (victim.transform.position - position).sqrMagnitude < 3.5f * 3.5f)
+                {
+                    done.Add(victim);
+                    Combat.DamagePlayer(gameObject, victim, reap.power, Combat.AbilitySource(reap));
+                    if (victim.currentHealth.Value > 0f && victim.TryGetComponent<FirstPersonController>(out var stunnedTarget))
+                        stunnedTarget.ServerStun(ReapStun, gameObject, false);
+                    hits++;
+                }
+            }
             foreach (var col in Physics.OverlapSphere(center, reap.radius, ~0, QueryTriggerInteraction.Ignore))
             {
                 var victim = col.GetComponentInParent<Health>();
@@ -176,7 +275,11 @@ public class MaxAbility : NetworkBehaviour
 
     // ---------------- E: Stinova forma ----------------
 
-    const float ShadowSpeed = 8f;           // m/s ve stinu (o neco rychleji nez chuze)
+    // Ve stinu je Max jen o malo rychlejsi nez bezny strelec (chuze, rychlost hrdiny 1; sprint ma jen hrdina
+    // bez schopnosti na Shiftu): walkSpeed * 1,25 = 6,25 m/s (strelec 5, Max normalne 6). Odvozeno od chuze,
+    // takze se prizpusobi, kdyz se zmeni rychlost postav.
+    const float ShadowSpeedFactor = 1.25f;
+    float ShadowSpeed => fpc.walkSpeed * fpc.SpeedMultiplier * ShadowSpeedFactor;
     const float FloorProbe = 1.1f;          // jak vysoko nad chodidly hleda podlahu (schody nahoru)
     bool inShadow;
     float shadowEnd;
@@ -274,9 +377,29 @@ public class MaxAbility : NetworkBehaviour
         return ps;
     }
 
+    const float ShadowGravity = 20f;
+    float shadowFall;
+
+    // Nejvyssi pevna podlaha pod mistem (nejvys FloorProbe nad chodidly - schody), hleda az 80 m dolu.
+    // Postavy a jine sitove objekty (a Glum) se nepocitaji.
+    static bool ShadowGround(Vector3 feet, out float groundY)
+    {
+        groundY = 0f;
+        var hits = Physics.RaycastAll(feet + Vector3.up * FloorProbe, Vector3.down, FloorProbe + 80f, ~0, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (var hit in hits)
+        {
+            if (hit.collider.GetComponentInParent<NetworkObject>() != null || hit.collider.GetComponentInParent<GollumHitbox>() != null) continue;
+            groundY = hit.point.y;
+            return true;
+        }
+        return false;
+    }
+
     void EnterShadow()
     {
         inShadow = true;
+        shadowFall = 0f;
         shadowEntry = transform.position;
         shadowEnd = Time.time + (step.duration > 0.2f ? step.duration : 3f);
         GetComponent<CharacterController>().enabled = false;   // skrz zdi
@@ -294,7 +417,7 @@ public class MaxAbility : NetworkBehaviour
         bool again = HeroInput.Pressed(this, HeroInput.Key.E) && Time.time > shadowEnd - (step.duration > 0.2f ? step.duration : 3f) + 0.2f;
         if (Time.time >= shadowEnd || attack || again || fpc.IsDead || fpc.Stunned || fpc.MatchOver)
         {
-            ExitShadow();
+            ExitShadow(attack && !fpc.IsDead && !fpc.Stunned);
             return;
         }
 
@@ -309,15 +432,27 @@ public class MaxAbility : NetworkBehaviour
         Vector3 move = Vector3.ClampMagnitude(forward * input.y + right * input.x, 1f) * ShadowSpeed * Time.deltaTime;
 
         Vector3 next = transform.position + move;
-        if (Physics.Raycast(next + Vector3.up * FloorProbe, Vector3.down, out RaycastHit floor, FloorProbe + 3f, ~0, QueryTriggerInteraction.Ignore)
-            && floor.collider.GetComponentInParent<NetworkObject>() == null)
-            next.y = Mathf.MoveTowards(transform.position.y, floor.point.y, 6f * Time.deltaTime);
+        if (ShadowGround(next, out float groundY))
+        {
+            if (next.y - groundY <= 0.35f)
+            {
+                // schody nahoru / mirne dolu: plynule po podlaze
+                next.y = Mathf.MoveTowards(transform.position.y, groundY, 6f * Time.deltaTime);
+                shadowFall = 0f;
+            }
+            else
+            {
+                // pod nim neni podlaha (okno z patra, okraj strechy): pada jako normalne (zrychluje), na zem
+                shadowFall = Mathf.Min(shadowFall + ShadowGravity * Time.deltaTime, 30f);
+                next.y = Mathf.Max(groundY, transform.position.y - shadowFall * Time.deltaTime);
+            }
+        }
         transform.position = next;
 
         // ve stinu bez zbrane a rukou (HeldWeapons skryva pri IsHidden), mys se otaci normalne (FirstPersonController)
     }
 
-    void ExitShadow()
+    void ExitShadow(bool byAttack = false)
     {
         inShadow = false;
         var controller = GetComponent<CharacterController>();
@@ -327,8 +462,9 @@ public class MaxAbility : NetworkBehaviour
         fpc.AbilityActive = false;
         fpc.ResetVertical();
         fpc.OwnerSpeedBoost(1.5f, 1.3f);
-        nextStep = Time.time + (step != null ? step.Cooldown : 9f);
-        ExitShadowServerRpc();
+        nextStep = Time.time + (step != null ? step.Cooldown : 12f);
+        if (byAttack) ProceduralSfx.PlayForActor(this, ProceduralSfx.ShadowEmerge, transform.position + Vector3.up, 0.9f, 35f);
+        ExitShadowServerRpc(byAttack);
     }
 
     // Volne misto na stani co nejbliz (forma muze skoncit ve zdi): kruhy do 5 m, jinak zpet tam, kde zacala.
@@ -371,10 +507,16 @@ public class MaxAbility : NetworkBehaviour
     }
 
     [ServerRpc]
-    void ExitShadowServerRpc()
+    void ExitShadowServerRpc(bool byAttack)
     {
         shadowForm.Value = false;
         health.ServerClearInvulnerable();
+        if (byAttack)
+        {
+            strikeUntil = Time.time + StrikeWindow;   // uder ze stinu
+            strikeHit = false;
+            EmergeClientRpc();
+        }
     }
 
     // ---------------- PTM: Otocka kosou ----------------

@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: MaxReap_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "Rozpolcen\xED"
-  description: "V\u00fdpad ve sm\u011bru pohledu zakon\u010den\u00fd \u00faderem kosou - zran\u00ed a kr\u00e1tce omr\u00e1\u010d\u00ed nep\u0159\u00e1tele kolem. Ka\u017ed\u00fd zasa\u017een\u00fd zkr\u00e1t\u00ed cooldown o 1 s."
+  description: "V\u00fdpad ve sm\u011bru pohledu zakon\u010den\u00fd \u00faderem kosou - zran\u00ed a kr\u00e1tce omr\u00e1\u010d\u00ed nep\u0159\u00e1tele kolem. Kdy\u017e v cest\u011b naraz\u00ed\u0161 na nep\u0159\u00edtele, zastav\u00ed\u0161 se u n\u011bj a zas\u00e1hne\u0161 ho. Ka\u017ed\u00fd zasa\u017een\u00fd zkr\u00e1t\u00ed cooldown o 1 s. B\u011bhem v\u00fdpadu a 1 s po n\u011bm dost\u00e1v\u00e1\u0161 o 40 % men\u0161\u00ed po\u0161kozen\u00ed."
   icon: {fileID: 2800000, guid: 5e6aff7177046f74f9aeca50cfe0f9e4, type: 3}
-  cooldown: 6
+  cooldown: 5
   ultCost: 0
   power: 35
   duration: 0.2
   radius: 3
-  range: 6
+  range: 8
   knockback: 0
   charges: 1
   sound: {fileID: 0}

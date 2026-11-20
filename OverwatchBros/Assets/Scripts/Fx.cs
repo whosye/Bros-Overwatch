@@ -161,9 +161,14 @@ public static class Fx
         shape.shapeType = ParticleSystemShapeType.Sphere;
         shape.radius = 0.1f;
 
-        go.GetComponent<ParticleSystemRenderer>().material = ParticleMaterial;
+        var renderer = go.GetComponent<ParticleSystemRenderer>();
+        renderer.material = ParticleMaterial;
+        renderer.maxParticleSize = MaxScreenSize;   // tesne u kamery (killcam, uder zblizka) nezakryje obraz
         ps.Play();
     }
+
+    // Nejvetsi velikost jiskry na obrazovce (podil vysky obrazu).
+    const float MaxScreenSize = 0.06f;
 
     // Maly vybuch v miste dopadu strely (hitscan) nebo uderu (melee).
     public static void BulletImpact(Vector3 position, Color tint, float scale = 1f)
@@ -198,7 +203,9 @@ public static class Fx
         size.enabled = true;
         size.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 0f)));
 
-        go.GetComponent<ParticleSystemRenderer>().material = ParticleMaterial;
+        var impactRenderer = go.GetComponent<ParticleSystemRenderer>();
+        impactRenderer.material = ParticleMaterial;
+        impactRenderer.maxParticleSize = MaxScreenSize;
         ps.Play();
 
         var lightObject = new GameObject("Flash");

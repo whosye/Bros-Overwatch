@@ -347,6 +347,11 @@ MonoBehaviour:
   eyeHeight: 1.62
   crouchEyeHeight: 1
   footstepDistance: 2.2
+  scoped:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   waterSurfing:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -585,6 +590,11 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
   boosted:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  slivoviceEnd:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0

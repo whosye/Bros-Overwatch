@@ -31,7 +31,7 @@ public static class HanamuraSetup
     class Mats
     {
         public Material paving, plaster, wood, darkWood, planks, roof, red, stone, lawn, gravel, bark, sakura, sakura2,
-            paper, lantern, gold, water, rock, black, blue, banner;
+            paper, lantern, gold, water, rock, black, blue, banner, hedge;
     }
 
     static HanamuraSetup()
@@ -141,6 +141,7 @@ public static class HanamuraSetup
             black = MapBuildKit.Mat(f + "/Black.mat", null, new Color(0.1f, 0.1f, 0.12f), Vector2.one, 0.3f),
             blue = MapBuildKit.Mat(f + "/Indigo.mat", null, new Color(0.15f, 0.25f, 0.5f), Vector2.one, 0.2f),
             banner = MapBuildKit.Mat(f + "/Banner.mat", null, new Color(0.95f, 0.85f, 0.3f), Vector2.one, 0.2f),
+            hedge = MapBuildKit.Mat(f + "/Hedge.mat", "Assets/Materials/Garden/Lawn.png", new Color(0.55f, 0.72f, 0.45f), new Vector2(0.8f, 0.8f), 0.05f),
         };
         foreach (var field in typeof(Mats).GetFields())
             if (field.GetValue(mats) == null) return null;   // textura se jeste neimportovala
@@ -464,6 +465,10 @@ public static class HanamuraSetup
     {
         bool changed = false;
         changed |= Feature(map, "SpawnKryt", alreadyLoaded, SpawnCover);
+        changed |= Feature(map, "Lekarnicky", alreadyLoaded, HealthPacks);
+        changed |= Feature(map, "Stanky", alreadyLoaded, MarketStalls);
+        changed |= Feature(map, "Truhliky", alreadyLoaded, Planters);
+        changed |= Feature(map, "Okvetni2", alreadyLoaded, Petals);   // (puvodni "Okvetni" prestavi)
         return changed;
     }
 
@@ -500,6 +505,205 @@ public static class HanamuraSetup
         var spawn = markers != null ? markers.Find("SpawnPoint_Utok_A") : null;
         if (spawn != null) spawn.position = O + new Vector3(0f, 0.1f, -2.5f);
         Debug.Log("[Hanamura] Pred spawn utocniku pridan dum (neni na nej videt z hlavni ulice).");
+    }
+
+    // Lekarnicky (na Hanamure nebylo cim se lecit): u kazdeho bodu dve male (+75 HP) na krytych mistech
+    // stranou hlavni cesty (terasy, podloubi, veranda, pod galerii), velke (plne zdravi) v kavarne a na zapadni
+    // obchvatce k dojo. Vsechna mista overena: pevna podlaha a volno na postavu.
+    static void HealthPacks(Transform map)
+    {
+        var g = MapBuildKit.Group(map, "Lekarnicky");
+        void Pack(string id, Vector3 at, PickupKind kind)
+        {
+            var go = new GameObject("Balicek_Hanamura_" + id);
+            go.transform.SetParent(g, false);
+            go.transform.position = O + at;
+            go.AddComponent<PickupSpot>().kind = kind;
+        }
+        // mesto (cesta k A)
+        Pack("Mesto_Ulicka", new Vector3(-17f, 0f, 20f), PickupKind.Health);
+        Pack("Mesto_PravaUlice", new Vector3(17f, 0f, 40f), PickupKind.Health);
+        Pack("Mesto_Kavarna_Velka", new Vector3(8.3f, 0f, 38f), PickupKind.BigHealth);
+        // bod A (nadvori)
+        Pack("A_Ochoz", new Vector3(-10f, BalconyY, 53.5f), PickupKind.Health);
+        Pack("A_Terasa", new Vector3(-14f, 1.6f, 77f), PickupKind.Health);
+        Pack("A_PodBalkonem", new Vector3(16f, 0f, 73.5f), PickupKind.Health);
+        // bod B (zahrada)
+        Pack("B_Veranda", new Vector3(-13.8f, CastleY + 0.4f, 105f), PickupKind.Health);
+        Pack("B_Terasa", new Vector3(15f, BalconyY, 104f), PickupKind.Health);
+        // cesta k C a dojo
+        Pack("C_Zapad_Velka", new Vector3(-20f, CastleY, 130f), PickupKind.BigHealth);
+        Pack("C_Vychod", new Vector3(22f, CastleY, 120f), PickupKind.Health);
+        Pack("C_PodVyhledem", new Vector3(-12.5f, CastleY, 125.5f), PickupKind.Health);
+        Pack("C_PodGalerii", new Vector3(12.2f, CastleY, 133f), PickupKind.Health);
+        Debug.Log("[Hanamura] Pridano 12 lekarnicek (10 malych, 2 velke).");
+    }
+
+    // Stanky na hlavni ulici: dlouha ulice od spawnu k brane byla bez kryti. Pult (polovicni kryti), sloupky,
+    // sikma strisska a zbozi - vse pevne (strely i hraci se zastavi).
+    static void MarketStalls(Transform map)
+    {
+        var g = MapBuildKit.Group(map, "Stanky");
+        Stall(g, "Stanek_Ryby", 4.2f, 16.5f, 1f, m.red);
+        Stall(g, "Stanek_Lucerny", -4.2f, 29f, -1f, m.blue);
+        Debug.Log("[Hanamura] Na hlavni ulici pridany dva stanky (kryti).");
+    }
+
+    // 'side' = +1 stanek na prave strane ulice (pult k ose ulice, tj. k -x), -1 na leve.
+    static void Stall(Transform parent, string name, float cx, float cz, float side, Material accent)
+    {
+        var g = MapBuildKit.Group(parent, name);
+        const float half = 1.4f;
+        Box(g, "Pult", new Vector3(cx, 0.55f, cz), new Vector3(0.9f, 1.1f, half * 2f), m.wood);
+        Box(g, "Pult_Deska", new Vector3(cx - side * 0.05f, 1.13f, cz), new Vector3(1.05f, 0.06f, half * 2f + 0.15f), m.darkWood);
+        Box(g, "Pult_Pruh", new Vector3(cx - side * 0.46f, 0.75f, cz), new Vector3(0.04f, 0.25f, half * 2f), accent, false);
+        foreach (float dz in new[] { -half + 0.07f, half - 0.07f })
+        {
+            Box(g, "Sloupek_Zadni", new Vector3(cx + side * 0.9f, 1.4f, cz + dz), new Vector3(0.14f, 2.8f, 0.14f), m.darkWood);
+            Box(g, "Sloupek_Predni", new Vector3(cx - side * 0.4f, 1.85f, cz + dz), new Vector3(0.12f, 1.4f, 0.12f), m.darkWood);
+        }
+        Box(g, "Zadni_Stena", new Vector3(cx + side * 0.9f, 1.6f, cz), new Vector3(0.08f, 1.6f, half * 2f - 0.2f), m.planks);
+        // strisska: sklon k ulici
+        Box(g, "Strisska", new Vector3(cx + side * 0.15f, 2.72f, cz), new Vector3(2.2f, 0.08f, half * 2f + 0.4f), accent,
+            rotation: Quaternion.Euler(0f, 0f, side * 11f));
+        Box(g, "Strisska_Lem", new Vector3(cx - side * 0.93f, 2.48f, cz), new Vector3(0.06f, 0.24f, half * 2f + 0.4f), m.banner);
+        // zbozi na pultu (bedynky, misky)
+        Box(g, "Zbozi_A", new Vector3(cx + side * 0.1f, 1.27f, cz - 0.8f), new Vector3(0.5f, 0.22f, 0.6f), m.planks);
+        Box(g, "Zbozi_B", new Vector3(cx + side * 0.1f, 1.24f, cz + 0.1f), new Vector3(0.45f, 0.16f, 0.45f), m.lantern);
+        Box(g, "Zbozi_C", new Vector3(cx + side * 0.1f, 1.3f, cz + 0.85f), new Vector3(0.4f, 0.28f, 0.5f), m.wood);
+    }
+
+    // Truhliky s keri v zahrade (bod B): polovicni kryti na prichodu od hradni brany, kde byl jen holy travnik.
+    static void Planters(Transform map)
+    {
+        var g = MapBuildKit.Group(map, "Truhliky");
+        Planter(g, new Vector3(-9.5f, CastleY, 101.5f), new Vector3(3f, 0f, 1f));
+        Planter(g, new Vector3(9.5f, CastleY, 105f), new Vector3(1f, 0f, 3f));
+        Debug.Log("[Hanamura] Do zahrady pridany dva truhliky (kryti u bodu B).");
+    }
+
+    static void Planter(Transform parent, Vector3 foot, Vector3 size)
+    {
+        var g = MapBuildKit.Group(parent, "Truhlik");
+        Box(g, "Telo", foot + Vector3.up * 0.4f, new Vector3(size.x, 0.8f, size.z), m.darkWood);
+        Box(g, "Lem", foot + Vector3.up * 0.82f, new Vector3(size.x + 0.1f, 0.06f, size.z + 0.1f), m.wood);
+        Box(g, "Kere", foot + Vector3.up * 1.0f, new Vector3(size.x - 0.15f, 0.34f, size.z - 0.15f), m.hedge);
+    }
+
+    // Padajici okvetni listky sakur nad zahradou a nadvorim (jen vizual). Jen pod sirym nebem: listek, ktery
+    // narazi na strechu, zed nebo zem, zmizi (do dojo ani domu nepada); u kamery zustane maly.
+    static void Petals(Transform map)
+    {
+        var old = map.Find("Okvetni");
+        if (old != null) Object.DestroyImmediate(old.gameObject);   // prvni verze (padala i do dojo)
+        var g = MapBuildKit.Group(map, "Okvetni");
+        var material = PetalMaterial();
+        // vitr fouka k +x (~0,5 m/s), proto pole posunuta k -x
+        PetalField(g, "Listky_Zahrada", new Vector3(-3f, 11f, 101f), new Vector3(30f, 1f, 24f), 16f, material);
+        PetalField(g, "Listky_Nadvori", new Vector3(-3f, 9.5f, 69f), new Vector3(28f, 1f, 24f), 11f, material);
+        Debug.Log("[Hanamura] Listky sakur: jen pod sirym nebem, mizi na strechach a zemi.");
+    }
+
+    // Material listku: ovalny listek s mekkym okrajem (textura i material se ulozi do slozky Hanamury).
+    static Material PetalMaterial()
+    {
+        string texturePath = MaterialFolder + "/Petal.png", materialPath = MaterialFolder + "/Petal.mat";
+        var existing = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+        if (existing != null) return existing;
+
+        if (AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath) == null)
+        {
+            const int n = 32;
+            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false);
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    // ovalny listek, na jednom konci vykrojeny
+                    float u = (x + 0.5f) / n * 2f - 1f, v = (y + 0.5f) / n * 2f - 1f;
+                    float d = Mathf.Sqrt(u * u / 0.45f + v * v);
+                    float notch = Mathf.Clamp01(1f - (Mathf.Sqrt(u * u * 6f + (v - 1.05f) * (v - 1.05f) * 4f)));
+                    float a = Mathf.Clamp01((1f - d) * 6f) * (1f - notch);
+                    float shade = 0.82f + 0.18f * (1f - Mathf.Abs(v));
+                    tex.SetPixel(x, y, new Color(shade, shade, shade, a));
+                }
+            tex.Apply();
+            System.IO.File.WriteAllBytes(texturePath, tex.EncodeToPNG());
+            Object.DestroyImmediate(tex);
+            AssetDatabase.ImportAsset(texturePath);
+            if (AssetImporter.GetAtPath(texturePath) is TextureImporter importer)
+            {
+                importer.alphaIsTransparency = true;
+                importer.mipmapEnabled = true;
+                importer.wrapMode = TextureWrapMode.Clamp;
+                importer.SaveAndReimport();
+            }
+        }
+
+        var template = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/Fx/Particle.mat");
+        var material = template != null ? new Material(template) : new Material(Shader.Find("Sprites/Default"));
+        material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+        AssetDatabase.CreateAsset(material, materialPath);
+        return material;
+    }
+
+    static void PetalField(Transform parent, string name, Vector3 center, Vector3 size, float rate, Material material)
+    {
+        var go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = O + center;
+        var ps = go.AddComponent<ParticleSystem>();
+        var main = ps.main;
+        main.loop = true;
+        main.prewarm = true;
+        main.duration = 10f;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(12f, 16f);
+        main.startSpeed = 0f;
+        main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.12f);
+        main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(1f, 0.78f, 0.86f, 0.95f), new Color(0.98f, 0.62f, 0.76f, 0.95f));
+        main.gravityModifier = 0f;
+        main.maxParticles = 300;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        var emission = ps.emission;
+        emission.rateOverTime = rate;
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.scale = size;
+        var velocity = ps.velocityOverLifetime;
+        velocity.enabled = true;
+        velocity.space = ParticleSystemSimulationSpace.World;
+        velocity.x = new ParticleSystem.MinMaxCurve(0.25f, 0.8f);    // vanek
+        velocity.y = new ParticleSystem.MinMaxCurve(-0.9f, -0.55f);
+        velocity.z = new ParticleSystem.MinMaxCurve(-0.2f, 0.2f);
+        var noise = ps.noise;
+        noise.enabled = true;
+        noise.strength = 0.3f;
+        noise.frequency = 0.35f;
+        noise.scrollSpeed = 0.2f;
+        var rotation = ps.rotationOverLifetime;
+        rotation.enabled = true;
+        rotation.z = new ParticleSystem.MinMaxCurve(-2.5f, 2.5f);
+        var fade = ps.colorOverLifetime;
+        fade.enabled = true;
+        var gradient = new Gradient();
+        gradient.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+            new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.08f), new GradientAlphaKey(1f, 0.85f), new GradientAlphaKey(0f, 1f) });
+        fade.color = gradient;
+        // narazi na cokoli (strecha, zed, zem) = zmizi
+        var collision = ps.collision;
+        collision.enabled = true;
+        collision.type = ParticleSystemCollisionType.World;
+        collision.mode = ParticleSystemCollisionMode.Collision3D;
+        collision.quality = ParticleSystemCollisionQuality.Medium;
+        collision.lifetimeLoss = 1f;
+        collision.radiusScale = 0.5f;
+        collision.enableDynamicColliders = false;
+        var renderer = go.GetComponent<ParticleSystemRenderer>();
+        renderer.maxParticleSize = 0.012f;   // tesne u kamery zustane malym listkem
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        if (material != null) renderer.sharedMaterial = material;
     }
 
     static void BuildGround()

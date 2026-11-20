@@ -134,6 +134,7 @@ public partial class MatchManager
         }
 
         CapturePointView.Sync(this);
+        RingCooldownTick();
         RingWorldView.Sync(this);
         SpawnZone.Sync(this);
     }

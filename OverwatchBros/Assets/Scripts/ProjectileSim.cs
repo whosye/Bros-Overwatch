@@ -249,6 +249,7 @@ public class ProjectileSim : MonoBehaviour
             bool headshot = point.y >= collider.bounds.max.y - WeaponShooting.HeadHeight;
             if (headshot && weapon.IsCharged && weapon.headshotMultiplier > 1f)
                 hitDamage *= weapon.headshotMultiplier;
+            Combat.HeadshotHit = headshot && weapon.IsCharged && weapon.headshotMultiplier > 1f;
             Combat.DamagePlayer(shooter.gameObject, health, hitDamage, weapon.IsCharged ? "weapon:bow" : "weapon:gun");
             // pri zabiti mluvi hlaska k zabiti
             bool hurt = health.Effective < before;

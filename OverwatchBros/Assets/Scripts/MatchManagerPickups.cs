@@ -92,6 +92,8 @@ public partial class MatchManager
                 return true;
             case PickupKind.Invulnerable:
                 health.ServerInvulnerable(PickupBuffs.InvulnerableSeconds);
+                var drinker = health.GetComponent<PlayerHero>();
+                if (drinker != null) drinker.ServerSlivovice(PickupBuffs.InvulnerableSeconds);   // aura, HUD, zaznam
                 return true;
             case PickupKind.Tramal:
                 // plne zdravi (sebere se i pri plnem zdravi - jde o buff) a kratce mensi poskozeni

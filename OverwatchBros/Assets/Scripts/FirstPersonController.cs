@@ -10,7 +10,7 @@ public class FirstPersonController : NetworkBehaviour
     // Bot (BotBrain) misto klavesnice a mysi - jen na hostu.
     public BotBrain Bot { get; set; }
 
-    public float walkSpeed = 6f;
+    public float walkSpeed = 5f;
     public float runSpeed = 9.5f;
     public float jumpHeight = 1.2f;
     public float gravity = -9.81f;
@@ -502,6 +502,58 @@ public class FirstPersonController : NetworkBehaviour
     {
         abilityFlight = false;
         verticalVelocity = 0f;
+    }
+
+    // ---------------- pojistka proti propadnuti podlahou ----------------
+    // Postava (vlastnik, i bot na serveru), ktera projde pevnou podlahou, na ktere prave stala (zaseknuti v kolizi,
+    // teleport kousek do podlahy...), se vrati na posledni misto, kde pevne stala. Pozna se to tak, ze je kousek pod
+    // tou podlahou a paprsek nahoru narazi na jeji spodek - legalne (seskokem z kraje) se tam kapsle nevejde.
+    // Pohyblive veci (Rigidbody - sklopna podlaha, NetworkObject - rolba, traktor) se nepocitaji.
+    Vector3 safeFeet;
+    Collider safeGround;
+    float nextSafeProbe;
+
+    public void ForgetSafeGround() => safeGround = null;
+
+    static bool StaticGround(Collider collider) =>
+        collider != null && !(collider is CharacterController) && collider.attachedRigidbody == null
+        && collider.GetComponentInParent<NetworkObject>() == null;
+
+    void FallRescueTick(bool grounded)
+    {
+        Vector3 feet = transform.position;
+        if (grounded)
+        {
+            if (Time.time < nextSafeProbe) return;
+            nextSafeProbe = Time.time + 0.1f;
+            if (Physics.Raycast(feet + Vector3.up * 0.3f, Vector3.down, out var below, 0.7f, ~0, QueryTriggerInteraction.Ignore)
+                && below.normal.y > 0.7f && StaticGround(below.collider))
+            {
+                safeFeet = feet;
+                safeGround = below.collider;
+            }
+            return;
+        }
+
+        if (safeGround == null || verticalVelocity > -0.5f) return;
+        if (!safeGround.enabled || !safeGround.gameObject.activeInHierarchy) { safeGround = null; return; }
+        float drop = safeFeet.y - feet.y;
+        if (drop < 0.25f) return;
+        Vector3 flat = feet - safeFeet;
+        flat.y = 0f;
+        if (drop > 1.0f || flat.sqrMagnitude > 0.8f * 0.8f) { safeGround = null; return; }   // normalni pad / seskok
+
+        foreach (var hit in Physics.RaycastAll(feet + Vector3.up * 0.05f, Vector3.up, 1.2f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.collider != safeGround) continue;
+            Debug.LogWarning($"[Pojistka] {name} propadl podlahou '{safeGround.name}' - vracim ho zpet nahoru.", safeGround);
+            controller.enabled = false;
+            transform.position = safeFeet + Vector3.up * 0.05f;
+            controller.enabled = true;
+            verticalVelocity = 0f;
+            abilityFlight = false;
+            return;
+        }
     }
 
     void Awake()
@@ -1162,6 +1214,7 @@ public class FirstPersonController : NetworkBehaviour
         controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
 
         bool groundedNow = controller.isGrounded;
+        FallRescueTick(groundedNow && !onLadder);
         if (!groundedNow && !onLadder)
         {
             audioAirTime += Time.deltaTime;

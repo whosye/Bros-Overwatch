@@ -11,12 +11,15 @@ using UnityEngine;
 //   - minuti / zed: sekera se zastavi, cinkne a rychleji ('RetractSpeed') se navine zpet, retez zplihne a vlni se,
 //   - cooldown bezi az od chvile, kdy sekera zacvakne zpet do ruky.
 // Spoluhrace sekera proleti, zed ji zastavi.
+// Let (zasah / minuti) pocita hazejici hrac podle toho, co sam vidi (jako u strelby) - server zasah jen overi
+// (vzdalenost, dosah, zed mezi) a provede poskozeni, pritazeni a omraceni. Driv let pocital server a klientum
+// kvuli zpozdeni site sekera "projizdela" pres cile, ktere u nich zasahla.
 public class HookAbility : NetworkBehaviour, ICooldownCut
 {
     public AbilityDefinition ability;
 
-    public const float Windup = 0.15f;
-    public const float FlySpeed = 40f;
+    public const float Windup = 0.07f;
+    public const float FlySpeed = 65f;
     public const float BiteSeconds = 0.1f;
     public const float PullSpeed = 30f;
     public const float RetractSpeed = 60f;
@@ -86,6 +89,47 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
         var eye = fpc.playerCamera.transform;
         GetComponent<PlayerHero>().SayAbility(ability);
         ThrowServerRpc(eye.position, eye.forward);
+        // hazejici vidi sekeru hned (neceka na odpoved serveru)
+        SpawnVisual(eye.position, eye.forward.normalized, ability.range);
+        if (ownerFly != null) StopCoroutine(ownerFly);
+        ownerFly = StartCoroutine(OwnerFly(eye.position, eye.forward.normalized));
+    }
+
+    Coroutine ownerFly;
+
+    // Vlastnik: let sekery podle vlastniho pohledu; vysledek posle serveru.
+    IEnumerator OwnerFly(Vector3 origin, Vector3 direction)
+    {
+        yield return new WaitForSeconds(Windup);
+
+        var ownHealth = GetComponent<Health>();
+        float range = ability.range;
+        float travelled = 0f;
+        Health victim = null;
+        Vector3 point = origin;
+        while (true)
+        {
+            Vector3 from = origin + direction * travelled;
+            if (ownHealth != null && ownHealth.currentHealth.Value <= 0f) { point = from; break; }
+            float step = Mathf.Min(FlySpeed * Time.deltaTime, range - travelled);
+            if (Sweep(from, direction, step, out victim, out point)) break;
+            travelled += step;
+            if (travelled >= range - 0.001f) { point = origin + direction * range; break; }
+            yield return null;
+        }
+        ownerFly = null;
+        if (victim != null && victim.NetworkObject != null)
+        {
+            // sekera se u hazejiciho zakousne hned (server pak jen potvrdi)
+            float pull = Vector3.Distance(victim.transform.position, PullDestination(victim)) / PullSpeed;
+            if (visual != null) visual.OnHit(victim.transform, point, pull < 0.05f ? 0f : pull);
+            ResolveServerRpc(victim.NetworkObject, true, point);
+        }
+        else
+        {
+            if (visual != null) visual.OnMiss(point);
+            ResolveServerRpc(default, false, point);
+        }
     }
 
     // Vlastnik: hak se vrati za 'returnIn' s, od te chvile bezi cooldown.
@@ -111,41 +155,60 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
 
         direction.Normalize();
         serverBusy = true;
+        serverThrow = ++serverThrowCount;
+        serverOrigin = origin;
         LaunchClientRpc(origin, direction, ability.range);
-        StartCoroutine(Fly(origin, direction));
+        StartCoroutine(ServerTimeout(serverThrow));
     }
 
-    IEnumerator Fly(Vector3 origin, Vector3 direction)
+    int serverThrow, serverThrowCount;   // aktualni hod (0 = zadny ceka na vysledek)
+    Vector3 serverOrigin;
+
+    // Kdyby vysledek od vlastnika neprisel (odpojeni), hak se uvolni.
+    IEnumerator ServerTimeout(int id)
     {
-        yield return new WaitForSeconds(Windup);
+        yield return new WaitForSeconds(Windup + (ability != null ? ability.range : 20f) / FlySpeed + 1.5f);
+        if (serverThrow != id) yield break;
+        serverThrow = 0;
+        MissClientRpc(transform.position + Vector3.up * 1.25f);
+        serverBusy = false;
+    }
 
-        var ownHealth = GetComponent<Health>();
+    // Vysledek letu od vlastnika: server ho overi (jinak minuti v danem miste) a dokonci.
+    [ServerRpc]
+    void ResolveServerRpc(NetworkObjectReference victimRef, bool hasVictim, Vector3 point)
+    {
+        if (serverThrow == 0 || ability == null) return;
+        serverThrow = 0;
+
         float range = ability.range;
-        float travelled = 0f;
+        Vector3 origin = serverOrigin;
+        // bod musi lezet v dosahu hodu (s rezervou na pohyb hrace)
+        if ((point - origin).sqrMagnitude > (range + 2f) * (range + 2f))
+            point = origin + (point - origin).normalized * range;
+
         Health victim = null;
-        Vector3 point = origin;
-
-        while (true)
+        if (hasVictim && victimRef.TryGet(out NetworkObject victimObject))
         {
-            Vector3 from = origin + direction * travelled;
-            if (ownHealth != null && ownHealth.currentHealth.Value <= 0f)
-            {
-                point = from;   // Pova zemrel: sekera se jen navine
-                break;
-            }
-
-            float step = Mathf.Min(FlySpeed * Time.deltaTime, range - travelled);
-            if (Sweep(from, direction, step, out victim, out point))
-                break;
-
-            travelled += step;
-            if (travelled >= range - 0.001f)
-            {
-                point = origin + direction * range;
-                break;
-            }
-            yield return null;
+            var health = victimObject.GetComponent<Health>();
+            var other = victimObject.GetComponent<PlayerHero>();
+            var col = victimObject.GetComponent<Collider>();
+            bool valid = health != null && health.gameObject != gameObject && health.currentHealth.Value > 0f
+                && !Combat.SameTeam(gameObject, health.gameObject)
+                && (other == null || !other.IsUntargetable)
+                // cil u serveru nejvys par metru od mista zasahu u hazejiciho (zpozdeni site, pohyb)
+                && (health.transform.position + Vector3.up - point).sqrMagnitude < 4.5f * 4.5f
+                && (health.transform.position - origin).sqrMagnitude < (range + 4f) * (range + 4f)
+                && (col == null || Combat.HasLineOfSight(origin, col) || Combat.HasLineOfSight(point, col));
+            if (valid) victim = health;
         }
+        StartCoroutine(Finish(victim, point));
+    }
+
+    IEnumerator Finish(Health victim, Vector3 point)
+    {
+        var match = MatchManager.Instance;
+        if (match != null && (match.IsOver || match.IsLobby)) victim = null;
 
         if (victim == null)
         {
@@ -253,10 +316,18 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
         if (!IsOwner) return;
         active = false;
         nextUseTime = 0f;
+        if (ownerFly != null) { StopCoroutine(ownerFly); ownerFly = null; }
+        if (visual != null) Destroy(visual.gameObject);
     }
 
     [ClientRpc]
     void LaunchClientRpc(Vector3 origin, Vector3 direction, float range)
+    {
+        if (IsOwner) return;   // hazejici uz sekeru spustil sam
+        SpawnVisual(origin, direction, range);
+    }
+
+    void SpawnVisual(Vector3 origin, Vector3 direction, float range)
     {
         if (visual != null) Destroy(visual.gameObject);
 
@@ -273,7 +344,7 @@ public class HookAbility : NetworkBehaviour, ICooldownCut
     void HitClientRpc(NetworkObjectReference victimRef, Vector3 point, float pull)
     {
         Transform victim = victimRef.TryGet(out NetworkObject victimObject) ? victimObject.transform : null;
-        if (visual != null) visual.OnHit(victim, point, pull);
+        if (visual != null && !IsOwner) visual.OnHit(victim, point, pull);   // (hazejici uz zobrazil sam)
 
         // zakousnuti, (pritazeni), kratke navinuti z ~2 m
         OwnerReturnsIn(BiteSeconds + Mathf.Max(0f, pull) + 0.05f + (PullDistance + 1f) / RetractSpeed);

@@ -38,8 +38,14 @@ public static class Combat
     // "env:car|fall|boiler". Prazdny = nezname.
     public static string AbilitySource(AbilityDefinition ability) => ability != null ? "ability:" + ability.name : "";
 
+    // Nastavi zbran tesne pred DamagePlayer, kdyz zasah byl do hlavy (s bonusem): pri zabiti znacka v seznamu zabiti.
+    public static bool HeadshotHit;
+    public const string HeadshotSuffix = "|hs";
+
     public static void DamagePlayer(GameObject attacker, Health target, float amount, string source = "")
     {
+        bool headshot = HeadshotHit;
+        HeadshotHit = false;
         var network = NetworkManager.Singleton;
         if (network == null || !network.IsServer || target == null) return;
 
@@ -59,6 +65,12 @@ public static class Combat
             amount *= boostedAttacker.ServerDamageScale;   // pivo z vycepu
         // Mosinuv tanec (ultimatka): spoluhraci v jeho okruhu davaji dvojnasobne poskozeni
         amount *= BardAbility.DamageScaleFor(attacker);
+        // Max: uder ze stinu (dvojnasobek) a odolnost pri vypadu (mene poskozeni)
+        if (attacker != target.gameObject)
+        {
+            amount *= MaxAbility.OutgoingScale(attacker, target.transform.position + Vector3.up * 1.1f);
+            amount *= MaxAbility.IncomingScale(target.gameObject);
+        }
         var boostedTarget = target.GetComponent<PlayerHero>();
         if (boostedTarget != null && boostedTarget.IsBoosted)
             amount *= NanoBoostAbility.DamageTakenMultiplier;
@@ -105,7 +117,7 @@ public static class Combat
         }
 
         if (killed && match != null)
-            match.ReportKill(attacker, target.gameObject, source);
+            match.ReportKill(attacker, target.gameObject, headshot ? (source ?? "") + HeadshotSuffix : source);
     }
 
     // Leceni spoluhrace (jen server): lecitel dostane potvrzeni zasahu a nabiti ultimatky za vylecene HP.

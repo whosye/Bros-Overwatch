@@ -312,6 +312,113 @@ public class MonsterCan : MonoBehaviour
 }
 
 // Viditelna aura posileneho hrace: modre svetlo a stoupajici jiskry kolem tela.
+// Dedova slivovice: zlata aura nesmrtelnosti - zlate svetlo, jiskry stoupajici kolem cele postavy a zlaty
+// prstenec u nohou. U neviditelneho hrace (prsten, Max ve stinu) se schova, at ho neprozradi.
+public class SlivoviceAura : MonoBehaviour
+{
+    public static readonly Color AuraColor = new Color(1f, 0.72f, 0.25f, 1f);
+
+    Light glow;
+    ParticleSystem sparks, ring;
+    PlayerHero hero;
+    bool shown = true;
+
+    public static void Set(Transform player, bool on)
+    {
+        var aura = player.GetComponentInChildren<SlivoviceAura>(true);
+        if (!on)
+        {
+            if (aura != null) Destroy(aura.gameObject);
+            return;
+        }
+        if (aura != null) return;
+        var go = new GameObject("SlivoviceAura");
+        go.AddComponent<ReplayIgnore>();   // (v zaznamu ji kresli prehravac podle stavu postavy)
+        go.transform.SetParent(player, false);
+        go.transform.localPosition = new Vector3(0f, 1f, 0f);
+        aura = go.AddComponent<SlivoviceAura>();
+        aura.hero = player.GetComponent<PlayerHero>();
+        aura.Build();
+    }
+
+    void Build()
+    {
+        glow = gameObject.AddComponent<Light>();
+        glow.type = LightType.Point;
+        glow.color = AuraColor;
+        glow.range = 4.5f;
+        glow.intensity = 3f;
+        glow.shadows = LightShadows.None;
+
+        sparks = gameObject.AddComponent<ParticleSystem>();
+        sparks.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        var main = sparks.main;
+        main.loop = true;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.6f, 1.1f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(0.1f, 0.4f);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.12f);
+        main.startColor = new ParticleSystem.MinMaxGradient(AuraColor, new Color(1f, 0.95f, 0.7f));
+        main.gravityModifier = -0.5f;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        var emission = sparks.emission;
+        emission.rateOverTime = 55f;
+        var shape = sparks.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = 0.55f;
+        shape.scale = new Vector3(1f, 1.6f, 1f);
+        sparks.GetComponent<ParticleSystemRenderer>().material = Fx.ParticleMaterial;
+        sparks.Play();
+
+        // zlaty prstenec u nohou (toci se)
+        var ringObject = new GameObject("Prstenec");
+        ringObject.transform.SetParent(transform, false);
+        ringObject.transform.localPosition = new Vector3(0f, -0.95f, 0f);
+        ring = ringObject.AddComponent<ParticleSystem>();
+        ring.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        var ringMain = ring.main;
+        ringMain.loop = true;
+        ringMain.startLifetime = 0.5f;
+        ringMain.startSpeed = 0f;
+        ringMain.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.16f);
+        ringMain.startColor = new ParticleSystem.MinMaxGradient(AuraColor, new Color(1f, 0.85f, 0.4f, 0.8f));
+        ringMain.simulationSpace = ParticleSystemSimulationSpace.Local;
+        var ringEmission = ring.emission;
+        ringEmission.rateOverTime = 70f;
+        var ringShape = ring.shape;
+        ringShape.shapeType = ParticleSystemShapeType.Circle;
+        ringShape.radius = 0.7f;
+        ringShape.radiusThickness = 0f;
+        ringShape.arcMode = ParticleSystemShapeMultiModeValue.Loop;
+        ringShape.arcSpeed = 1.2f;
+        ringShape.rotation = new Vector3(90f, 0f, 0f);
+        ring.GetComponent<ParticleSystemRenderer>().material = Fx.ParticleMaterial;
+        ring.Play();
+    }
+
+    // vlastni hrac v prvni osobe: jiskry by mu letaly pred oci (zlaty nadech a HUD mu staci)
+    bool OwnView()
+    {
+        if (!BotBrain.IsLocalHuman(hero)) return false;
+        var fpc = hero.GetComponent<FirstPersonController>();
+        return fpc == null || !fpc.ThirdPerson;
+    }
+
+    void Update()
+    {
+        // neprozradit neviditelneho (nasazeny prsten, Max ve stinu / v obeti); v prehravani hraje vzdy
+        bool show = ReplayPlayer.Active || hero == null || !(hero.HiddenFromLocal || hero.IsUntargetable || OwnView());
+        if (show != shown)
+        {
+            shown = show;
+            if (show) { sparks.Play(); ring.Play(); }
+            else { sparks.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); ring.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); }
+            glow.enabled = show;
+        }
+        if (glow != null && shown)
+            glow.intensity = 2.8f + Mathf.Sin(Time.time * 5f) * 0.7f;
+    }
+}
+
 public class NanoAura : MonoBehaviour
 {
     public static readonly Color AuraColor = new Color(0.45f, 0.8f, 1f, 1f);

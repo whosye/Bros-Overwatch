@@ -22,6 +22,7 @@ public struct ReplayPlayerSnap
     public bool holyAim;          // Sindel pri kazani: kam miri (kruh dopadu)
     public Vector3 holyPoint;
     public float holyRadius, holyProgress;
+    public byte slivovice;        // zbyvajici nesmrtelnost z dedovy slivovice (desetiny s, 0 = nema)
 
     public const byte Alive = 1, Rushing = 2, Blocking = 4, Boosted = 8, Hidden = 16, Revealed = 32, Preaching = 64,
         Scoped = 128;   // mirí pres zamerovac (killcam z pohledu vraha: priblizeni a kruh)
@@ -295,6 +296,7 @@ public class ReplayClip
             w.Write(p.health);
             w.Write(p.maxHealth);
             w.Write(p.charge);
+            w.Write(p.slivovice);
             w.Write(p.holyAim);
             if (p.holyAim)
             {
@@ -383,7 +385,7 @@ public class ReplayClip
             f.players[i] = new ReplayPlayerSnap
             {
                 id = r.ReadInt32(), hero = r.ReadInt16(), team = r.ReadByte(), position = ReadV(r), yaw = r.ReadSingle(), flags = r.ReadByte(),
-                health = r.ReadSingle(), maxHealth = r.ReadSingle(), charge = r.ReadByte(), holyAim = r.ReadBoolean(),
+                health = r.ReadSingle(), maxHealth = r.ReadSingle(), charge = r.ReadByte(), slivovice = r.ReadByte(), holyAim = r.ReadBoolean(),
             };
             if (f.players[i].holyAim)
             {

@@ -153,6 +153,7 @@ public class HudUI
         public bool stunSleep;
         public int ring;              // Prsten: 0 nema, 1 nese, 2 nasazeny
         public float gollum = -1f;    // Glum honi nositele: nastvani 0-1 (-1 = nehoni)
+        public float ringCooldown;    // s do moznosti znovu nasadit
     }
 
     readonly HudData liveData = new HudData();
@@ -569,6 +570,7 @@ public class HudUI
         ulong id = hero.NetworkObjectId;
         d.ring = match != null && match.IsSpawned && match.HasRing(id) ? (match.WearsRing(id) ? 2 : 1) : 0;
         d.gollum = d.ring > 0 && match.gollumActive.Value ? match.gollumAnger.Value : -1f;
+        d.ringCooldown = d.ring == 1 ? match.RingCooldownLeft : 0f;
         Render(d);
     }
 
@@ -808,8 +810,11 @@ public class HudUI
         ringSlot.background.color = worn ? new Color(0.42f, 0.30f, 0.04f, 0.7f + 0.2f * pulse) : Dark;
         ringSlot.icon.color = worn ? Color.white : new Color(1f, 1f, 1f, 0.75f);
         ringSlot.icon.rectTransform.localScale = Vector3.one * (worn ? 1f + 0.07f * pulse : 1f);
-        ringSlot.cooldown.fillAmount = 0f;
-        ringSlot.timer.text = "";
+        // po sundani chvili nejde nasadit: tmavy vysec a odpocet
+        float cooldown = worn ? 0f : d.ringCooldown;
+        ringSlot.cooldown.fillAmount = Mathf.Clamp01(cooldown / MatchManager.RingCooldown);
+        ringSlot.timer.text = cooldown > 0.05f ? cooldown.ToString("0.0") : "";
+        if (cooldown > 0.05f) ringSlot.icon.color = new Color(1f, 1f, 1f, 0.35f);
 
         bool gollum = d.gollum >= 0f;
         ringSlot.count.text = gollum ? "<color=#FF4A3A>!</color>" : "";

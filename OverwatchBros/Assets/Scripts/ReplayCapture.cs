@@ -177,6 +177,7 @@ public class ReplayCapture : MonoBehaviour
                 health = h != null ? h.currentHealth.Value : 0f,
                 maxHealth = h != null ? h.maxHealth : 100f,
                 charge = (byte)Mathf.RoundToInt(Mathf.Clamp01(bow != null ? bow.ChargeFraction : 0f) * 255f),
+                slivovice = (byte)Mathf.Clamp(Mathf.CeilToInt(p.SlivoviceRemaining * 10f), 0, 255),
                 holyAim = preaching && ezekiel.AimValid,
                 holyPoint = preaching ? ezekiel.Aim : Vector3.zero,
                 holyRadius = preaching ? ezekiel.Radius : 0f,
@@ -227,7 +228,7 @@ public class ReplayCapture : MonoBehaviour
         frame.gollumChasing = frame.ringCarried && match.gollumActive.Value;
         frame.matchPoint = match != null && match.IsSpawned && match.IsAttackMode && !match.IsLobby ? (sbyte)match.pointIndex.Value : (sbyte)-1;
         frame.buffFastCooldown = Mathf.Max(0f, AbilityDefinition.FastCooldownUntil - Time.time);
-        frame.buffInvulnerable = Mathf.Max(0f, PickupBuffs.InvulnerableUntil - Time.time);
+        frame.buffInvulnerable = Mathf.Max(hero.SlivoviceRemaining, PickupBuffs.InvulnerableUntil - Time.time);
         frame.buffTramal = Mathf.Max(0f, PickupBuffs.TramalUntil - Time.time);
 
         hero.GetAbilitySlots(slotBuffer);

@@ -410,7 +410,7 @@ public class MatchUI : MonoBehaviour
         topBar.Tick(localHero, playing && !over, match);
         objectiveHint.Tick(localHero, match, playing && !over);
         capture.Tick(localHero, playing && !over, match);
-        buffs.Tick((playing && !over && !replay) || (replay && !killcam));   // v POTG buffy hrace ze zaznamu
+        buffs.Tick((playing && !over && !replay) || replay);   // v POTG buffy hrace ze zaznamu, v killcamu vraha (slivovice)
         boilerPrompt.text = playing && !over && !replay ? (Tractor.PromptText != "" ? Tractor.PromptText : Boiler.PromptText) : "";
         UpdateRing(match, playing && !over && !replay);
         UpdateEndScreen(network, match, over);
@@ -457,7 +457,8 @@ public class MatchUI : MonoBehaviour
         }
 
         if (playing && match != null && GameSettings.CursorLocked && Keyboard.current != null
-            && Keyboard.current.tKey.wasPressedThisFrame && MatchManager.LocalHasRing)
+            && Keyboard.current.tKey.wasPressedThisFrame && MatchManager.LocalHasRing
+            && (MatchManager.LocalWearsRing || MatchManager.LocalRingCooldown <= 0f))
             match.ToggleRingRpc();
 
         bool worn = playing && MatchManager.LocalWearsRing;
