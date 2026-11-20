@@ -102,8 +102,9 @@ public partial class MatchManager
 
     public void SetGameMode(int mode)
     {
-        if (IsServer && IsLobby)
-            gameMode.Value = mode == ModeAttack ? ModeAttack : ModeDeathmatch;
+        if (!IsServer || !IsLobby) return;
+        mode = mode == ModeAttack ? ModeAttack : ModeDeathmatch;
+        if (MapSupportsMode(MapIndex, mode)) gameMode.Value = mode;
     }
 
     public void SetCaptureSeconds(int seconds)
