@@ -23,6 +23,11 @@ public class FirstPersonController : NetworkBehaviour
     [Tooltip("Extra gravity while falling after a mine launch or other knock-up; ascent stays the same. Active hover keeps its slow fall.")]
     [Min(1f)] public float abilityFallingGravityScale = 1.8f;
     public float mouseSensitivity = 2f;
+    [Tooltip("Horizontal acceleration time scale; lower values accelerate faster. Friction also applies during counter-strafing.")]
+    [Min(.01f)] public float directionChangeSeconds = .12f;
+    Vector3 movementVelocity;
+    readonly MouseLookInput lookInput = new MouseLookInput();
+    float nextLookDiagnostic;
     public float standHeight = 2f;
     public float crouchHeight = 1f;
     // Vyska oci nad chodidly (model postavy meri ~1.8 m).
@@ -130,7 +135,8 @@ public class FirstPersonController : NetworkBehaviour
     }
 
     // Omezeni od nepratel nepusobi: nezastavitelny (ultimatky), nebo na vlastnim spawnu.
-    bool CcImmune => Unstoppable || Combat.SpawnProtected(gameObject);
+    bool CcImmune => Unstoppable || Combat.SpawnProtected(gameObject)
+        || (MatchManager.Instance != null && MatchManager.Instance.CaptureCombatPaused);
 
     public void ServerSlow(float seconds, float factor)
     {
@@ -182,7 +188,8 @@ public class FirstPersonController : NetworkBehaviour
     public bool InLobby => MatchManager.Instance != null && MatchManager.Instance.IsLobby;
     // Hrac se pripojil do rozehraneho zapasu a jeste si vybira tym / hrdinu.
     public bool Joining => hero != null && hero.IsJoining;
-    public bool CannotAct => IsDead || MatchOver || InLobby || Joining || Stunned;
+    public bool CannotAct => IsDead || MatchOver || InLobby || Joining || Stunned
+        || (MatchManager.Instance != null && MatchManager.Instance.CaptureCombatPaused);
     public bool InputBlocked => ShootBlocked || Silenced || riding;
     // Strelba (a pribliseni): jako InputBlocked, ale vystraseny hrac strilet muze.
     public bool ShootBlocked => CannotAct || AbilityActive || UltCasting;
@@ -489,6 +496,7 @@ public class FirstPersonController : NetworkBehaviour
 
     public void ClearForces()
     {
+        movementVelocity = Vector3.zero;
         abilityFlight = false;
         pulling = false;
         grappleAutoMantle = false;
@@ -645,6 +653,16 @@ public class FirstPersonController : NetworkBehaviour
 
         if (!IsOwner) return;
 
+        if (MatchManager.Instance != null && MatchManager.Instance.CaptureCombatPaused)
+        {
+            movementVelocity = Vector3.zero;
+            externalVelocity = Vector3.zero;
+            verticalVelocity = 0f;
+            gaitSpeed = 0f;
+            lookInput.Reset(Time.frameCount);
+            return;
+        }
+
         gaitSpeed = 0f;
         crouching = false;
 
@@ -744,6 +762,8 @@ public class FirstPersonController : NetworkBehaviour
 
     void Teleport(Vector3 feet, float yaw)
     {
+        movementVelocity = Vector3.zero;
+        lookInput.Reset(Time.frameCount);
         controller.enabled = false;
         transform.SetPositionAndRotation(feet, Quaternion.Euler(0f, yaw, 0f));
         controller.enabled = true;
@@ -812,26 +832,34 @@ public class FirstPersonController : NetworkBehaviour
 
     void HandleLook()
     {
-        if (!GameSettings.CursorLocked) return;
-
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-
-        float sensitivity = mouseSensitivity * GameSettings.Sensitivity * LookScale;
+        Vector2 raw = Mouse.current != null ? Mouse.current.delta.ReadValue() : Vector2.zero;
+        if (!lookInput.TryRead(raw, GameSettings.CursorLocked, Application.isFocused || GameSettings.ForceCursorLocked,
+            Time.frameCount, Time.unscaledDeltaTime, out var mouseDelta)) return;
+        Vector2 degrees = MouseLookInput.Degrees(mouseDelta,mouseSensitivity * GameSettings.Sensitivity * LookScale);
+        // Diagnostics preserve genuine fast flicks; no arbitrary angular cap or aim smoothing.
+        if (degrees.sqrMagnitude > 45f*45f && Time.unscaledTime >= nextLookDiagnostic)
+        {
+            nextLookDiagnostic = Time.unscaledTime + 5f;
+            Debug.LogWarning($"[MouseLook] large delta={mouseDelta} degrees={degrees} frameMs={Time.unscaledDeltaTime*1000f:0.0} focus={Application.isFocused} lock={Cursor.lockState}");
+        }
 
         // v traktoru se zataci klavesami; mysi jen kamera nahoru / dolu
         if (driving)
         {
-            cameraPitch = Mathf.Clamp(cameraPitch - mouseDelta.y * sensitivity * Time.deltaTime, -15f, 40f);
+            cameraPitch = Mathf.Clamp(cameraPitch - degrees.y, -15f, 40f);
             playerCamera.transform.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
             return;
         }
 
-        transform.Rotate(Vector3.up * mouseDelta.x * sensitivity * Time.deltaTime);
+        transform.Rotate(Vector3.up * degrees.x);
 
-        cameraPitch -= mouseDelta.y * sensitivity * Time.deltaTime;
+        cameraPitch -= degrees.y;
         cameraPitch = Mathf.Clamp(cameraPitch, -80f, 80f);
         playerCamera.transform.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
     }
+
+    void OnApplicationFocus(bool focused) => lookInput.Reset(Time.frameCount);
+    void OnApplicationPause(bool paused) => lookInput.Reset(Time.frameCount);
 
     // Vytazeni na hranu: pred hracem je zed, nad ni volno a kousek nad hlavou rovna plocha.
     bool TryStartMantle()
@@ -1066,6 +1094,8 @@ public class FirstPersonController : NetworkBehaviour
 
     void HandleMovement()
     {
+        if (driving || riding || pulling || IsDead || AbilityActive || Joining || mantling)
+            movementVelocity = Vector3.zero;
         if (driving)
         {
             DriveTick();
@@ -1153,9 +1183,14 @@ public class FirstPersonController : NetworkBehaviour
         bool ridingWall = UpdateWallRide(isGrounded || onLadder, frozen, input, ref move);
         if (ridingWall) speed *= WallRideSpeedScale;
         Vector3 beforeMove = transform.position;
-        var flags = controller.Move((move * speed + externalVelocity) * Time.deltaTime);
+        if (frozen || Rooted) movementVelocity = Vector3.zero;
+        else if (onLadder || ridingWall) movementVelocity = move * speed;
+        else movementVelocity = PlayerMotion.Step(movementVelocity,move * speed,speed,directionChangeSeconds,Time.deltaTime);
+        var flags = controller.Move((movementVelocity + externalVelocity) * Time.deltaTime);
         Vector3 travelled = transform.position - beforeMove;
         float groundDistance = new Vector2(travelled.x, travelled.z).magnitude;
+        if ((flags & CollisionFlags.Sides) != 0 && externalVelocity.sqrMagnitude < .0001f)
+            movementVelocity = PlayerMotion.AfterCollision(movementVelocity,travelled,Time.deltaTime);
 
         // Odhozeni postupne odezni: na zemi rychle (treni), ve vzduchu pomalu; naraz do zdi ho zastavi.
         if (externalVelocity.sqrMagnitude > 0f)

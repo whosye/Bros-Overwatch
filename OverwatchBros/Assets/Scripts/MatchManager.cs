@@ -356,6 +356,7 @@ public partial class MatchManager : NetworkBehaviour
 
     void ResetRound()
     {
+        ServerResetCaptureTransition();
         ServerResetPickups();
         ServerResetBoiler();
         ServerResetTractor();

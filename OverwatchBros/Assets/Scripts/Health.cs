@@ -117,6 +117,7 @@ public class Health : NetworkBehaviour
         if (!IsServer) return;
         if (currentHealth.Value <= 0f) return;
         if (MatchManager.Instance != null && MatchManager.Instance.IsLobby) return;
+        if (MatchManager.Instance != null && MatchManager.Instance.CaptureCombatPaused) return;
         if (hero != null && hero.IsJoining) return;
         if (Time.time < invulnerableUntil) return;
 

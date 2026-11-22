@@ -35,7 +35,7 @@ MonoBehaviour:
   boltCycleTime: 0.7
   scopedMinDamage: 40
   scopedMaxDamage: 85
-  headshotMultiplier: 2
+  headshotMultiplier: 4
   scopedFalloffStart: 30
   scopedFalloffEnd: 70
   scopedFalloffMin: 0.4

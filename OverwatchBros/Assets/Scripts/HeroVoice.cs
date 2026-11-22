@@ -57,6 +57,7 @@ public class HeroVoice : MonoBehaviour
     static int duckFrame = -1;
     VoiceGain gain;
     AudioEchoFilter echo;
+    VoiceSpatialProfile spatialProfile;
     bool playingOwn;   // hraje hlas postavy, za kterou tento hrac hraje (v zaznamu: postava, z jejiz pohledu se prehrava)
 
     float normalPitchFrom = -1f;   // zrychlena ultimatka: od tohoto mista v nahravce zase normalni rychlost
@@ -258,8 +259,8 @@ public class HeroVoice : MonoBehaviour
         source.pitch = 1f;
         normalPitchFrom = -1f;
         source.volume = volume * GameSettings.VoiceVolume;
-        // Vlastni hlas je vystredeny; cizi hlasy jsou prostorove, ultimatky globalni.
-        source.spatialBlend = ult || ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        // Own voice stays centered; remote ultimates keep global audibility and a world direction.
+        spatialProfile.Configure(ProceduralSfx.IsLocalPlayer(this),ult);
         SetEcho(ult && hero.ultVoiceEcho);
         StartAt(ult ? hero : null, clip, 0f);
         source.Play();
@@ -281,7 +282,7 @@ public class HeroVoice : MonoBehaviour
         source.pitch = 1f;
         normalPitchFrom = -1f;
         source.volume = volume * GameSettings.VoiceVolume;
-        source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        spatialProfile.Configure(ProceduralSfx.IsLocalPlayer(this),false);
         SetEcho(false);
         source.Play();
         playingPriority = priority;
@@ -306,7 +307,7 @@ public class HeroVoice : MonoBehaviour
         source.pitch = 1f;
         normalPitchFrom = -1f;
         source.volume = volume * GameSettings.VoiceVolume;
-        source.spatialBlend = ult || pov ? 0f : 1f;
+        spatialProfile.Configure(pov,ult);
         SetEcho(ult && hero.ultVoiceEcho);
         StartAt(ult ? hero : null, clip, offset);
         source.Play();
@@ -327,7 +328,7 @@ public class HeroVoice : MonoBehaviour
         source.pitch = 1f;
         normalPitchFrom = -1f;
         source.volume = 1f;
-        source.spatialBlend = ProceduralSfx.IsLocalPlayer(this) ? 0f : 1f;
+        spatialProfile.Configure(ProceduralSfx.IsLocalPlayer(this),false,true);
         SetEcho(false);
         source.Play();
         playingPriority = 99;
@@ -377,10 +378,8 @@ public class HeroVoice : MonoBehaviour
             source.panStereo = 0f;
             source.dopplerLevel = 0f;
             source.spatialBlend = 1f;
-            source.rolloffMode = AudioRolloffMode.Linear;
-            source.minDistance = 4f;
-            source.maxDistance = 30f;
             source.playOnAwake = false;
+            spatialProfile = go.AddComponent<VoiceSpatialProfile>();
             gain = go.AddComponent<VoiceGain>();   // (ultimatka nad ztlumenym zbytkem)
             echo = go.AddComponent<AudioEchoFilter>();
             echo.delay = 230f;

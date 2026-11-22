@@ -313,7 +313,7 @@ public partial class BotBrain : MonoBehaviour
             float best = float.MaxValue;
             foreach (var ally in allies)
             {
-                if (IsSupportHero(ally)) continue;   // healeri by se drzeli jeden druheho a stali by
+                if (ally == null || !ally.IsSpawned || IsSupportHero(ally)) continue;   // cached ally may disconnect before the next scan
                 float score = Vector3.Distance(ally.transform.position, front) + Vector3.Distance(ally.transform.position, transform.position) * 0.5f;
                 if (score < best) { best = score; anchor = ally; }
             }

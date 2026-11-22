@@ -231,6 +231,7 @@ public partial class MatchManager
 
     void HoldAttackers(float seconds)
     {
+        seconds += CapturePauseRemaining;
         foreach (var client in PlayerSlots())
         {
             var player = client.PlayerObject;
@@ -267,6 +268,7 @@ public partial class MatchManager
     {
         if (!IsAttackMode || IsLobby || IsOver) return;
         ServerCutsceneTick();
+        if (ServerCaptureTransitionTick()) return;
 
         if (roundPhase.Value == RoundIntermission)
         {
@@ -435,8 +437,8 @@ public partial class MatchManager
     {
         if (cutsceneTeleportAt < 0f || Time.time < cutsceneTeleportAt) return;
         cutsceneTeleportAt = -1f;
-        ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);   // vsichni na spawny dalsiho bodu
-        ServerHoldUntilUnlock();
+        ServerPresentCapture(CapturePresentationState.NextPoint,attackTeam.Value,pointIndex.Value,pointIndex.Value,
+            1.8f,CaptureAction.CutsceneTeleport,.65f);
     }
 
     void ServerPointCaptured()
@@ -446,38 +448,13 @@ public partial class MatchManager
         if (team == 0) team0Score.Value++;
         else team1Score.Value++;
 
-        int next = pointIndex.Value + 1;
-        if (next >= CapturePointCount)
-        {
-            ServerEndRound(CapturePointCount, 0f);
-            return;
-        }
-
-        // Druhe kolo dvojice: kdyz uz utocnici maji vic bodu nez souper, je rozhodnuto. Samostatne kolo: bod A = vyhra.
-        if ((roundKind.Value == KindSecond && Score(team) > Score(1 - team)) || roundKind.Value == KindSolo)
-        {
-            ServerEndRound(next, 0f);
-            return;
-        }
-
-        // Dalsi bod: cas navic (za A a B plny, za dalsi mensi), oba tymy se presunou, bod se chvili odemyka.
-        timer += pointIndex.Value < 2 ? BonusSeconds : LateBonusSeconds;
-        if (roundPhase.Value == RoundOvertime) roundPhase.Value = RoundAttack;
-        overtimeEmpty = 0f;
-        float film = ServerStartCutscene(next);
-        ServerApplyPoint(next, UnlockNextSeconds + film);
-        // vsichni hned na spawny dalsiho bodu a cekaji tam, nez se bod odemkne (s filmem az po nem - ServerCutsceneTick)
-        if (film <= 0f)
-        {
-            ResetPlayersClientRpc(customSpawns, customSpawn[0], customSpawn[1]);
-            ServerHoldUntilUnlock();
-        }
+        ServerQueueCapturedPoint(pointIndex.Value + 1);
     }
 
     // Do odemceni bodu: hraci se spawnem ve stodole cekaji za zavrenymi dvermi (SpawnBarn), ostatni stoji na spawnu.
     void ServerHoldUntilUnlock()
     {
-        float seconds = Mathf.Max(0f, lockTimer);
+        float seconds = Mathf.Max(0f, lockTimer) + CapturePauseRemaining;
         if (seconds <= 0f) return;
         foreach (var client in PlayerSlots())
         {
@@ -491,7 +468,7 @@ public partial class MatchManager
         }
     }
 
-    void ServerEndRound(int pointsTaken, float progressOnNext)
+    void ServerFinishRound(int pointsTaken, float progressOnNext)
     {
         roundPhase.Value = RoundDone;
         pointState.Value = StateLocked;
@@ -573,7 +550,7 @@ public partial class MatchManager
         SetSeconds(secondsLeft, phaseTimer);
     }
 
-    void ServerBeginNextRound()
+    void ServerCompleteNextRound()
     {
         round.Value++;
         roundKind.Value = nextKind;
@@ -610,8 +587,7 @@ public partial class MatchManager
         ProceduralSfx.Play(ProceduralSfx.CaptureWon, listener, 1f);
         Fx.Sparks(position + Vector3.up, UiKit.TeamColor(team));
         Fx.Sparks(position + Vector3.up * 2f, UiKit.TeamColor(team));
-        CaptureUI.Headline($"BOD {PointNames[Mathf.Clamp(index, 0, PointNames.Length - 1)]} DOBYT",
-            index + 1 < CapturePointCount ? $"další cíl: bod {PointNames[index + 1]}" : "všechny body dobyty", UiKit.TeamColor(team));
+        // The replicated fullscreen presentation shows a team-relative result before teleporting.
     }
 
     [ClientRpc]

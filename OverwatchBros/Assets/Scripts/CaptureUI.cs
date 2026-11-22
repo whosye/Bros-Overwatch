@@ -74,6 +74,7 @@ public class CaptureUI
     public void Build(Transform canvas)
     {
         instance = this;
+        CaptureTransitionView.Build(canvas);
         canvasRect = (RectTransform)canvas;
         var top = new Vector2(0.5f, 1f);
         var center = new Vector2(0.5f, 0.5f);

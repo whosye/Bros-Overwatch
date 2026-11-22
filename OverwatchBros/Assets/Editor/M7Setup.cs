@@ -534,6 +534,7 @@ public static class M7Setup
         var bow = LoadOrCreate<WeaponDefinition>("Assets/Data/Bow_Data.asset", w =>
         {
             w.weaponName = "Luk";
+            w.headshotMultiplier = 2.25f;
             w.fireMode = FireMode.Projectile;
             w.heldModel = HeldModel.Bow;
             w.damage = 75f;
@@ -708,7 +709,7 @@ public static class M7Setup
             w.scopedChargeTime = 1.2f;
             w.scopedMinDamage = 40f;
             w.scopedMaxDamage = 85f;
-            w.headshotMultiplier = 2f;
+            w.headshotMultiplier = 4f;
             w.scopedAmmoCost = 2;
             w.scopedMoveSpeed = 0.5f;
             w.projectileColor = new Color(1f, 0.35f, 0.3f, 1f);
