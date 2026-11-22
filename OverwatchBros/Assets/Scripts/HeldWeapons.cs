@@ -1191,7 +1191,8 @@ public class HeldWeapons : MonoBehaviour
                 // (prvni snimek animace), vystrel prehraje celou animaci; puska v prave ruce srovnana podle pozy strelby,
                 // leva ruka na predpazbi (IK po animaci, viz LateUpdate)
                 bool scopeAim = CurrentHero != null && CurrentHero.scopeAimPose;
-                if ((weapon.twoHanded || scopeAim) && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && visual.HasHeroShoot)
+                bool hipFire = CurrentHero != null && CurrentHero.hipFire;
+                if ((weapon.twoHanded || scopeAim) && !hipFire && count == 1 && model == HeldModel.Gun && visual.BodyAnimator != null && visual.HasHeroShoot)
                 {
                     visual.AimOnScope = scopeAim && !weapon.twoHanded;   // namiri jen pri mireni dalekohledem (a chvili po vystrelu)
                     hand.twoHanded = true;

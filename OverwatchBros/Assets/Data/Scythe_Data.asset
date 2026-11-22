@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Scythe_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Kosa
-  description: "Kosa na bl\u00edzko. Ka\u017ed\u00fd t\u0159et\u00ed \u00fader rychle po sob\u011b je siln\u011bj\u0161\u00ed a nep\u0159\u00edtele odhod\u00ed."
-  damage: 32
-  fireRate: 2
+  description: "Kosa na blízko. Široký úder zasáhne všechny před Maxem."
+  damage: 25
+  fireRate: 1
   maxAmmo: 0
   reloadTime: 1.5
   reloadAnimation: 0
@@ -53,9 +53,9 @@ MonoBehaviour:
   projectilePrefab: {fileID: 0}
   meleeRadius: 0.7
   meleeArc: 75
-  comboFinisherDamage: 55
+  comboFinisherDamage: 0
   comboFinisherArc: 90
-  comboFinisherKnockback: 6
+  comboFinisherKnockback: 0
   heldModel: 5
   dualWield: 0
   heldPrefab: {fileID: 0}

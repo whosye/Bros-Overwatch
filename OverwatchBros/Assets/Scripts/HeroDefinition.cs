@@ -51,6 +51,8 @@ public class HeroDefinition : ScriptableObject
     public float healingScale = 1f;
     [Tooltip("Pri mireni dalekohledem (prave tlacitko) postava drzi zbran namirenou obema rukama v poze z animace strelby (jako Viktor). Potrebuje animaci Shoot v sade animaci.")]
     public bool scopeAimPose;
+    [Tooltip("Postava (pro ostatni) drzi a strili zbran obema rukama od pasu, i kdyz ma vlastni animaci strelby (Viktor).")]
+    public bool hipFire;
     public WeaponDefinition weapon;
     public AbilityKind abilityKind = AbilityKind.Dash;
     public AbilityDefinition ability;

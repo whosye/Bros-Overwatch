@@ -19,6 +19,10 @@ public class Boiler : MonoBehaviour
     public Light fireLight;          // plamen za dvirky
     public Light[] heatLights;       // oranzova svetla v hornich patrech (sviti jen pri prehrati)
     public Vector3 heatMin, heatMax; // oblast hornich pater (svet) - kde prehrati boli
+    // Prehrati saha o patro vys nez heatMax ze sceny (at to jde poznat i nahore pod strechou).
+    public const float ExtraHeight = 3f;
+    public const float FloorHeight = 3f;
+    public Vector3 HeatTop => heatMax + Vector3.up * ExtraHeight;
 
     const float LeverIdle = -30f, LeverPulled = 45f;
     public static readonly Color HeatColor = new Color(1f, 0.55f, 0.2f);
@@ -30,8 +34,14 @@ public class Boiler : MonoBehaviour
     // Text vyzvy pod zamerovacem (prazdny = nic).
     public static string PromptText { get; private set; } = "";
 
-    ParticleSystem heatHaze;
+    readonly System.Collections.Generic.List<ParticleSystem> heatHaze = new System.Collections.Generic.List<ParticleSystem>();
+    readonly System.Collections.Generic.List<Light> extraLights = new System.Collections.Generic.List<Light>();
+    bool hazeBuilt;
     AudioSource roar;
+    // Oranzove ztmaveni okraju obrazu, kdyz je mistni hrac v prehratych patrech.
+    static UnityEngine.UI.RawImage heatVignette;
+    static Texture2D vignetteTexture;
+    float vignette;
     bool wasHeating;
 
     // Domovska poloha kotle a packy (jak je ve scene). Packa se jen otaci - kdyby ji neco posunulo nebo
@@ -99,7 +109,7 @@ public class Boiler : MonoBehaviour
     public bool InHeatZone(Vector3 feet) => InZone(feet - ZoneOffset);
 
     bool InZone(Vector3 feet) =>
-        feet.x >= heatMin.x && feet.x <= heatMax.x && feet.y >= heatMin.y && feet.y <= heatMax.y && feet.z >= heatMin.z && feet.z <= heatMax.z;
+        feet.x >= heatMin.x && feet.x <= heatMax.x && feet.y >= heatMin.y && feet.y <= HeatTop.y && feet.z >= heatMin.z && feet.z <= heatMax.z;
 
     void Update()
     {
@@ -109,6 +119,7 @@ public class Boiler : MonoBehaviour
 
         UpdateLocalPlayer(match, live, heating);
         UpdateLook(heating);
+        UpdateVignette(live && heating && !match.IsLobby);
 
         if (heating && !wasHeating) OnStarted();
         wasHeating = heating;
@@ -164,22 +175,87 @@ public class Boiler : MonoBehaviour
 
         if (heatLights != null)
             foreach (var l in heatLights)
-            {
-                if (l == null) continue;
-                if (l.enabled != heating) l.enabled = heating;
-                if (heating) l.intensity = 1.6f + Mathf.PerlinNoise(Time.time * 2f, l.transform.position.x) * 1.4f;
-            }
+                FlickerHeat(l, heating);
+        foreach (var l in extraLights)
+            FlickerHeat(l, heating);
 
-        if (heatHaze != null)
+        foreach (var haze in heatHaze)
         {
-            var emission = heatHaze.emission;
-            emission.rateOverTime = heating ? 90f : 0f;
+            if (haze == null) continue;
+            var emission = haze.emission;
+            emission.rateOverTime = heating ? 150f : 0f;
         }
         if (roar != null)
         {
             roar.volume = Mathf.MoveTowards(roar.volume, heating ? 0.9f : 0f, Time.deltaTime * 0.8f);
             if (!heating && roar.volume <= 0.001f && roar.isPlaying) roar.Stop();
         }
+    }
+
+    static void FlickerHeat(Light l, bool heating)
+    {
+        if (l == null) return;
+        if (l.enabled != heating) l.enabled = heating;
+        if (heating) l.intensity = 2.4f + Mathf.PerlinNoise(Time.time * 2.5f, l.transform.position.x) * 2f;
+    }
+
+    // Mistni hrac v prehratych patrech: okraje obrazu pulzuji do oranzova.
+    void UpdateVignette(bool heating)
+    {
+        bool inside = false;
+        if (heating)
+        {
+            var network = NetworkManager.Singleton;
+            var local = network != null && network.LocalClient != null ? network.LocalClient.PlayerObject : null;
+            var fpc = local != null ? local.GetComponent<FirstPersonController>() : null;
+            inside = fpc != null && !fpc.IsDead && InHeatZone(local.transform.position) && !ReplayPlayer.Active;
+        }
+        vignette = Mathf.MoveTowards(vignette, inside ? 1f : 0f, Time.deltaTime * (inside ? 2.5f : 1.2f));
+        if (vignette <= 0.001f)
+        {
+            if (heatVignette != null && heatVignette.enabled) heatVignette.enabled = false;
+            return;
+        }
+        if (heatVignette == null) BuildVignette();
+        heatVignette.enabled = true;
+        float pulse = 0.75f + 0.25f * Mathf.Sin(Time.time * 5f);
+        var c = HeatColor;
+        c.a = vignette * pulse * 0.8f;
+        heatVignette.color = c;
+    }
+
+    static void BuildVignette()
+    {
+        var canvasObject = new GameObject("KotelHorkoObraz");
+        DontDestroyOnLoad(canvasObject);
+        var canvas = canvasObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = -10;   // pod HUD
+        var imageObject = new GameObject("Okraje", typeof(RectTransform));
+        imageObject.transform.SetParent(canvasObject.transform, false);
+        var rect = (RectTransform)imageObject.transform;
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = rect.offsetMax = Vector2.zero;
+        heatVignette = imageObject.AddComponent<UnityEngine.UI.RawImage>();
+        heatVignette.raycastTarget = false;
+        if (vignetteTexture == null)
+        {
+            const int size = 128;
+            vignetteTexture = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, name = "KotelOkraje" };
+            var pixels = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                float dx = (x + 0.5f) / size * 2f - 1f, dy = (y + 0.5f) / size * 2f - 1f;
+                float d = Mathf.Sqrt(dx * dx + dy * dy) / 1.414f;
+                float a = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.35f, 1f, d));
+                pixels[y * size + x] = new Color(1f, 1f, 1f, a);
+            }
+            vignetteTexture.SetPixels32(pixels);
+            vignetteTexture.Apply(false, true);
+        }
+        heatVignette.texture = vignetteTexture;
     }
 
     void OnStarted()
@@ -189,7 +265,7 @@ public class Boiler : MonoBehaviour
         ProceduralSfx.Play(ProceduralSfx.Reload, LeverPoint, 0.9f);
         // (oznameni dostane jen ten, kdo zatopil - MatchManager.BoilerLitClientRpc)
 
-        if (heatHaze == null) BuildHaze();
+        if (!hazeBuilt) BuildHaze();
         if (roar == null)
         {
             // huceni ohne: zpomalene huceni vody
@@ -208,23 +284,43 @@ public class Boiler : MonoBehaviour
         if (!roar.isPlaying) roar.Play();
     }
 
-    // Tetelici se horko nad podlahou hornich pater.
+    // Tetelici se horko nad podlahou kazdeho prehrateho patra + svetla o patro vys nad nejvyssimi svetly ze sceny.
     void BuildHaze()
+    {
+        hazeBuilt = true;
+        for (float y = heatMin.y; y < HeatTop.y - 1f; y += FloorHeight)
+            heatHaze.Add(BuildHazeLayer(y));
+
+        if (heatLights == null) return;
+        float highest = float.MinValue;
+        foreach (var l in heatLights)
+            if (l != null) highest = Mathf.Max(highest, l.transform.position.y);
+        foreach (var l in heatLights)
+        {
+            if (l == null || l.transform.position.y < highest - 0.1f) continue;
+            var copy = Instantiate(l.gameObject, l.transform.parent);
+            copy.name = l.name + "_PatroVys";
+            copy.transform.position = l.transform.position + Vector3.up * ExtraHeight;
+            extraLights.Add(copy.GetComponent<Light>());
+        }
+    }
+
+    ParticleSystem BuildHazeLayer(float floorY)
     {
         var go = new GameObject("FX_Horko");
         go.transform.SetParent(transform, false);
-        go.transform.SetPositionAndRotation(ZoneOffset + new Vector3((heatMin.x + heatMax.x) * 0.5f, heatMin.y + 0.6f, (heatMin.z + heatMax.z) * 0.5f),
+        go.transform.SetPositionAndRotation(ZoneOffset + new Vector3((heatMin.x + heatMax.x) * 0.5f, floorY + 0.6f, (heatMin.z + heatMax.z) * 0.5f),
             Quaternion.Euler(-90f, 0f, 0f));
-        heatHaze = go.AddComponent<ParticleSystem>();
+        var heatHaze = go.AddComponent<ParticleSystem>();
         heatHaze.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         var main = heatHaze.main;
         main.loop = true;
         main.startLifetime = new ParticleSystem.MinMaxCurve(1.2f, 2.2f);
         main.startSpeed = new ParticleSystem.MinMaxCurve(0.3f, 0.9f);
-        main.startSize = new ParticleSystem.MinMaxCurve(0.4f, 1.1f);
-        main.startColor = new ParticleSystem.MinMaxGradient(new Color(1f, 0.6f, 0.25f, 0.18f), new Color(1f, 0.35f, 0.1f, 0.28f));
+        main.startSize = new ParticleSystem.MinMaxCurve(0.5f, 1.4f);
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(1f, 0.6f, 0.25f, 0.26f), new Color(1f, 0.35f, 0.1f, 0.4f));
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.maxParticles = 400;
+        main.maxParticles = 600;
         var emission = heatHaze.emission;
         emission.rateOverTime = 0f;
         var shape = heatHaze.shape;
@@ -238,5 +334,6 @@ public class Boiler : MonoBehaviour
         fade.color = gradient;
         go.GetComponent<ParticleSystemRenderer>().material = Fx.ParticleMaterial;
         heatHaze.Play();
+        return heatHaze;
     }
 }

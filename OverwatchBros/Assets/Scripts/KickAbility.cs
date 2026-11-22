@@ -11,7 +11,7 @@ public class KickAbility : NetworkBehaviour
 {
     public AbilityDefinition ability;
 
-    public const float KickSeconds = 0.42f;
+    public const float KickSeconds = 0.21f;   // (2x rychleji nez puvodnich 0,42 s)
     const float SlowFactor = 0.5f;
 
     FirstPersonController fpc;
@@ -59,14 +59,14 @@ public class KickAbility : NetworkBehaviour
         }
     }
 
-    // Cely klip, o chlup rychleji (kop ma byt svizny), nejvys 1,6 s.
+    // Cely klip, dvakrat rychleji (kop ma byt svizny), nejvys 0,8 s.
     float KickAnimSeconds
     {
         get
         {
             var visual = GetComponent<CharacterVisual>();
             float length = visual != null ? visual.AbilityClipLength(CharacterVisual.AbilityAnim.E) : 0f;
-            return Mathf.Clamp(length / KickAnimSpeed, 0.4f, 1.6f);
+            return Mathf.Clamp(length / KickAnimSpeed, 0.2f, 0.8f);
         }
     }
 
@@ -85,7 +85,7 @@ public class KickAbility : NetworkBehaviour
 
     // ---------------- kamera za hracem behem kopu ----------------
 
-    const float KickAnimSpeed = 1.2f;
+    const float KickAnimSpeed = 2.4f;   // (2x rychleji nez puvodnich 1,2)
     // kamera za hracem a trochu vpravo, at je kopajici noha videt
     static readonly Vector3 KickCameraOffset = new Vector3(1.3f, 1.9f, -3.8f);
     Vector3 kickCameraLocal;

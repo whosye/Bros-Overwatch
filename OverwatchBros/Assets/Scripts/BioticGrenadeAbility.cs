@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 
 // Annin biotický granat (E): hod dopredu (nejdal 'range' m), po dopadu vybuchne. Spoluhrace v okruhu 'radius'
 // (i Annu) vyleci o 'power' HP, nepratele o 'power' zrani a na 'duration' sekund jim zablokuje leceni.
+// Zasazeni spoluhraci (i David sam) navic dostanou slabsi posileni nez z Q: o PowerScale vetsi poskozeni
+// na PowerSeconds s; nepratele zpomali na SlowSeconds s (bez snizeni prijimaneho poskozeni; Q = +50 % poskozeni, -50 % prijimaneho, 12 s).
 // Neprochazi zdmi.
 public class BioticGrenadeAbility : NetworkBehaviour
 {
@@ -14,8 +16,30 @@ public class BioticGrenadeAbility : NetworkBehaviour
     static readonly Color GrenadeColor = new Color(0.55f, 1f, 0.65f, 1f);
     static readonly Color HarmColor = new Color(0.75f, 0.35f, 1f, 1f);
 
+    public const float PowerScale = 1.2f;
+    public const float PowerSeconds = 4f;
+    // nepratele v okruhu navic zpomali
+    public const float SlowSeconds = 2f;
+    public const float SlowFactor = 0.6f;
+
     FirstPersonController fpc;
     float nextUseTime;
+
+    // Do kdy ma mistni hrac posileni z granatu (ikona v BuffUI).
+    static float localPowerUntil;
+    public static float LocalPowerUntil => Time.time < localPowerUntil ? localPowerUntil : 0f;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatics() => localPowerUntil = 0f;
+
+    // Obrazek buffu = ikona granatu.
+    public static Texture BuffIcon()
+    {
+        foreach (var hero in HeroRegistry.All)
+            foreach (var a in new[] { hero.ability, hero.secondaryAbility, hero.altAbility, hero.rmbAbility, hero.blockAbility })
+                if (a != null && a.name == "BioticGrenade_Data" && a.icon != null) return a.icon;
+        return null;
+    }
 
     public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
 
@@ -94,11 +118,18 @@ public class BioticGrenadeAbility : NetworkBehaviour
                 if (friend)
                 {
                     Combat.HealPlayer(gameObject, target, ability.power);
+                    if (target.TryGetComponent<PlayerHero>(out var ally))
+                    {
+                        ally.ServerDamageBuff(PowerScale, PowerSeconds);
+                        PoweredClientRpc(ally.NetworkObjectId, PowerSeconds);
+                    }
                 }
                 else
                 {
                     Combat.DamagePlayer(gameObject, target, ability.power, Combat.AbilitySource(ability));
                     target.ServerBlockHealing(ability.duration);
+                    if (target.TryGetComponent<FirstPersonController>(out var slowed))
+                        slowed.ServerSlow(SlowSeconds, SlowFactor);
                 }
             }
         }
@@ -109,16 +140,24 @@ public class BioticGrenadeAbility : NetworkBehaviour
     // ---------------- vizual ----------------
 
     [ClientRpc]
+    void PoweredClientRpc(ulong targetId, float seconds)
+    {
+        var network = NetworkManager.Singleton;
+        if (network == null || network.SpawnManager == null || !network.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var target)) return;
+        Fx.Sparks(target.transform.position + Vector3.up * 1.2f, GrenadeColor);
+        if (target.IsOwner && !BotBrain.IsBot(target.gameObject))
+            localPowerUntil = Time.time + seconds;
+    }
+
+    [ClientRpc]
     void ThrownClientRpc(Vector3 from, Vector3 to, float seconds)
     {
         if (!IsOwner)
             ProceduralSfx.PlayForActor(this, CollectedAudioBank.ForActor(this, "david_grenade", ProceduralSfx.Dash), from, 0.5f);
-        var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        DestroyImmediate(ball.GetComponent<Collider>());
-        ball.name = "BioticGrenade";
-        ball.transform.localScale = Vector3.one * 0.18f;
-        Fx.Paint(ball, GrenadeColor);
-        ball.AddComponent<FlashGrenadeVisual>().Init(from, to, seconds);
+        // hazi zelenou plechovku Monsteru (Q = bila)
+        var can = new GameObject("BioticGrenade_Monster");
+        MonsterCan.Build(can.transform, true);
+        can.AddComponent<GreenCanFlight>().Init(from, to, seconds, GrenadeColor);
     }
 
     [ClientRpc]
@@ -138,5 +177,42 @@ public class BioticGrenadeAbility : NetworkBehaviour
         light.range = radius * 2.5f;
         light.intensity = 6f;
         Destroy(lightObject, 0.35f);
+    }
+}
+
+// Let zelene plechovky (biotický granat): obloukem k mistu dopadu, toci se, za sebou zelena stopa.
+public class GreenCanFlight : MonoBehaviour
+{
+    Vector3 from, to;
+    float seconds, age;
+
+    public void Init(Vector3 start, Vector3 end, float flight, Color color)
+    {
+        from = start;
+        to = end;
+        seconds = Mathf.Max(0.02f, flight);
+        transform.position = start;
+
+        var trail = gameObject.AddComponent<TrailRenderer>();
+        trail.time = 0.25f;
+        trail.minVertexDistance = 0.1f;
+        trail.widthCurve = new AnimationCurve(new Keyframe(0f, 0.12f), new Keyframe(1f, 0f));
+        trail.material = Fx.ParticleMaterial;
+        var gradient = new Gradient();
+        gradient.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(color, 1f) },
+            new[] { new GradientAlphaKey(0.8f, 0f), new GradientAlphaKey(0f, 1f) });
+        trail.colorGradient = gradient;
+        trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+    }
+
+    void Update()
+    {
+        age += Time.deltaTime;
+        float t = Mathf.Clamp01(age / seconds);
+        float arc = Mathf.Sin(t * Mathf.PI) * Mathf.Min(1.5f, Vector3.Distance(from, to) * 0.12f);
+        transform.position = Vector3.Lerp(from, to, t) + Vector3.up * arc;
+        transform.rotation = Quaternion.Euler(age * 720f, age * 260f, 0f);
+        if (age >= seconds)
+            Destroy(gameObject);
     }
 }

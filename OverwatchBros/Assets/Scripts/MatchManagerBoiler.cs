@@ -114,6 +114,6 @@ public partial class MatchManager
             foreach (var client in PlayerSlots())
                 if (client.PlayerObject != null)
                     Debug.Log($"[Kotel] {client.PlayerObject.name} je na {client.PlayerObject.transform.position} - mimo horni patra " +
-                              $"({boiler.heatMin} az {boiler.heatMax}).");
+                              $"({boiler.heatMin} az {boiler.HeatTop}).");
     }
 }

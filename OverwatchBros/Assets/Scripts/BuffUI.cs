@@ -58,6 +58,8 @@ public class BuffUI
                 until = () => ReplayPlayer.Active ? 0f : PickupBuffs.PowderUntil },
             new Buff { key = "monster", shortName = "MO", color = NanoAura.AuraColor,
                 until = () => ReplayPlayer.Active ? 0f : NanoBoostAbility.LocalBoostUntil, texture = NanoBoostAbility.BuffIcon },
+            new Buff { key = "biotika", shortName = "BG", color = new Color(0.55f, 1f, 0.65f),
+                until = () => ReplayPlayer.Active ? 0f : BioticGrenadeAbility.LocalPowerUntil, texture = BioticGrenadeAbility.BuffIcon },
             // Mosinova aura (testeri: neni poznat, co Mosino dela): spoluhraci vidi, ze je leci / zrychluje
             new Buff { key = "mosino_leceni", shortName = "ML", color = BardAbility.HealColor,
                 until = () => !ReplayPlayer.Active && BardAbility.LocalInAura(false, out _) ? Time.time + 99f : 0f,

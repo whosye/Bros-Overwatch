@@ -65,12 +65,9 @@ public static class Combat
             amount *= boostedAttacker.ServerDamageScale;   // pivo z vycepu
         // Mosinuv tanec (ultimatka): spoluhraci v jeho okruhu davaji dvojnasobne poskozeni
         amount *= BardAbility.DamageScaleFor(attacker);
-        // Max: uder ze stinu (dvojnasobek) a odolnost pri vypadu (mene poskozeni)
+        // Max: odolnost pri vypadu (mene poskozeni)
         if (attacker != target.gameObject)
-        {
-            amount *= MaxAbility.OutgoingScale(attacker, target.transform.position + Vector3.up * 1.1f);
             amount *= MaxAbility.IncomingScale(target.gameObject);
-        }
         var boostedTarget = target.GetComponent<PlayerHero>();
         if (boostedTarget != null && boostedTarget.IsBoosted)
             amount *= NanoBoostAbility.DamageTakenMultiplier;

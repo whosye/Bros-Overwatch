@@ -3,13 +3,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Maxova ultimatka (Q): Vpad do stinu. Zamiri na nepritele do 'range' m a zmizi v nem - je neviditelny
-// a nezranitelny, kamera jede za obeti. Po 'duration' s (nebo driv levym tlacitkem) vyrazi ven: 'power' + 25 %
-// max. zdravi obeti poskozeni, objevi se kousek za ni. Kdyz obet mezitim zemre, Max se jen objevi.
+// a nezranitelny, kamera jede za obeti. Po 'duration' s (nebo driv levym tlacitkem) vyrazi ven: 'power'
+// poskozeni, objevi se kousek za ni. Kdyz obet mezitim zemre, Max se jen objevi.
 public class TrespassAbility : NetworkBehaviour
 {
     public AbilityDefinition ability;
 
-    const float MaxHealthShare = 0.25f;
+    const float MaxHealthShare = 0f;   // (drive 25 % max. zdravi obeti - ted pevne poskozeni)
     const float AimRadius = 0.6f;
 
     FirstPersonController fpc;

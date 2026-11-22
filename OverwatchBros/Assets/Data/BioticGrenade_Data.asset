@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
   m_Name: BioticGrenade_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
-  abilityName: "Biotick\xFD gran\xE1t"
-  description: "Gran\u00e1t vybuchne po dopadu: spoluhr\u00e1\u010de (i tebe) v okruhu vyl\u00e9\u010d\u00ed, nep\u0159\u00e1tele zran\u00ed a na chv\u00edli jim zablokuje l\u00e9\u010den\u00ed."
+  abilityName: "Zelen\u00fd Monster"
+  description: "Hod\u00ed\u0161 klasick\u00fd ZELEN\u00dd Monster - vybuchne po dopadu: spoluhr\u00e1\u010de (i tebe) v okruhu vyl\u00e9\u010d\u00ed a na 4 s pos\u00edl\u00ed (+20 % po\u0161kozen\u00ed, slab\u0161\u00ed ne\u017e B\u00edl\u00fd Monster), nep\u0159\u00e1tele zran\u00ed, na 2 s zpomal\u00ed a na chv\u00edli jim zablokuje l\u00e9\u010den\u00ed."
   icon: {fileID: 2800000, guid: 88ab6343a7ee1194c9683f905ee63deb, type: 3}
   cooldown: 10
   ultCost: 0

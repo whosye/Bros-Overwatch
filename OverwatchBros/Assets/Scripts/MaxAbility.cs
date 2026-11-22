@@ -5,13 +5,11 @@ using UnityEngine.InputSystem;
 
 // Max - Shift, E a prave tlacitko v jedne komponente:
 //   Shift (Rozpolceni): vypad 'range' metru ve smeru pohledu a na konci otocka kosou - 'power' vsem v okruhu
-//     'radius' a omraceni na 0.5 s. Za kazdeho zasazeneho nepritele se cooldown zkrati o 1 s. Ma-li Max animaci skoku s uderem
+//     'radius' a omraceni na 0.2 s. Ma-li Max animaci skoku s uderem
 //     (animations.shiftAbility), misto rychleho vypadu skoci (LeapTime) a kosou udere shora do zeme pri dopadu.
 //   E (Stinova forma): az 'duration' s je Max stin - neviditelny (jen fialovy kour), nezranitelny, bez kolize
 //     a chodi skrz zdi. Forma skonci utokem (LMB, PTM, Shift, Q), dalsim E nebo vyprsenim casu; kdyz konci ve zdi,
 //     vystrci ho to na nejblizsi volne misto. Cooldown bezi az od konce formy.
-//   Uder ze stinu: utok, kterym Max stinovou formu ukonci, da dvojnasobne poskozeni (prvni zasah do
-//     StrikeWindow s po vystupu - vsem, koho ten utok zasahne).
 //   Odolnost pri vypadu: behem Shiftu a GuardAfter s po nem dostava Max o GuardReduction mene poskozeni.
 //   PTM (Otocka kosou): Max se s kosou roztoci o 360 st. - 'power' poskozeni vsem nepratelum v okruhu 'radius'
 //     kolem sebe (ne pres zdi). Behem otocky jde pomaleji.
@@ -24,12 +22,9 @@ public class MaxAbility : NetworkBehaviour
     public static readonly Color ShadowColor = new Color(0.55f, 0.18f, 0.85f, 1f);
 
     const float DashTime = 0.18f;
-    public const float StrikeMultiplier = 2f;
-    const float StrikeWindow = 1.2f;        // jak dlouho po vystupu ze stinu utokem plati dvojnasobne poskozeni
-    const float StrikeSpread = 0.12f;       // po prvnim zasahu jeste chvili (vic cilu jednim utokem)
     public const float GuardReduction = 0.4f;
     const float GuardAfter = 1f;
-    const float ReapStun = 0.5f;          // zasazene Rozpolcenim omraci
+    const float ReapStun = 0.2f;          // zasazene Rozpolcenim omraci
     // Skok s uderem: usek animace od odrazu (0,73 s) po podrep po uderu; uder do zeme (1,67 s) prijde pri dopadu.
     const float LeapTime = 0.5f;
     const float LeapHeight = 2.2f;   // vrchol skoku nad mistem odrazu
@@ -170,44 +165,18 @@ public class MaxAbility : NetworkBehaviour
         if (visual != null) PlayLeap(visual);
     }
 
-    // ---------------- server: uder ze stinu a odolnost ----------------
+    // ---------------- server: odolnost pri vypadu ----------------
 
-    float strikeUntil = -1f;   // server: do kdy plati dvojnasobne poskozeni
-    bool strikeHit;
     float guardUntil = -1f;    // server: do kdy dostava mene poskozeni
 
     [ServerRpc]
     void ReapGuardServerRpc(float seconds) => guardUntil = Mathf.Max(guardUntil, Time.time + Mathf.Clamp(seconds, 0f, 1f) + GuardAfter);
-
-    // Nasobek poskozeni, ktere 'attacker' prave zpusobuje (Combat.DamagePlayer, jen server).
-    public static float OutgoingScale(GameObject attacker, Vector3 at)
-    {
-        if (attacker == null || !attacker.TryGetComponent<MaxAbility>(out var max) || !max.isActiveAndEnabled) return 1f;
-        if (Time.time >= max.strikeUntil) return 1f;
-        if (!max.strikeHit)
-        {
-            max.strikeHit = true;
-            max.strikeUntil = Mathf.Min(max.strikeUntil, Time.time + StrikeSpread);
-            max.StrikeFxClientRpc(at);
-        }
-        return StrikeMultiplier;
-    }
 
     // Nasobek poskozeni, ktere 'target' prave dostava (odolnost pri vypadu).
     public static float IncomingScale(GameObject target)
     {
         if (target == null || !target.TryGetComponent<MaxAbility>(out var max) || !max.isActiveAndEnabled) return 1f;
         return Time.time < max.guardUntil ? 1f - GuardReduction : 1f;
-    }
-
-    [ClientRpc]
-    void StrikeFxClientRpc(Vector3 at)
-    {
-        Fx.Sparks(at, ShadowColor);
-        Fx.Sparks(at + Vector3.up * 0.3f, new Color(0.9f, 0.5f, 1f));
-        ProceduralSfx.Play(ProceduralSfx.ShadowStrike, at, 1f, 45f);
-        var body = CollectedAudioBank.Pick("combat_melee_body");
-        if (body != null) ProceduralSfx.Play(body, at, 0.8f, 30f);
     }
 
     // Vystup ze stinu utokem: temne nasati (vlastnik hned, ostatni pres server).
@@ -268,9 +237,6 @@ public class MaxAbility : NetworkBehaviour
             Fx.Sparks(position + new Vector3(Mathf.Cos(a), 1f, Mathf.Sin(a)) * (reap != null ? reap.radius * 0.7f : 2f), ShadowColor);
         }
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Hit, position, 0.9f);
-        // za kazdeho zasazeneho o sekundu kratsi cooldown
-        if (IsOwner && hits > 0)
-            nextReap = Mathf.Max(Time.time, nextReap - hits);
     }
 
     // ---------------- E: Stinova forma ----------------
@@ -512,11 +478,7 @@ public class MaxAbility : NetworkBehaviour
         shadowForm.Value = false;
         health.ServerClearInvulnerable();
         if (byAttack)
-        {
-            strikeUntil = Time.time + StrikeWindow;   // uder ze stinu
-            strikeHit = false;
             EmergeClientRpc();
-        }
     }
 
     // ---------------- PTM: Otocka kosou ----------------

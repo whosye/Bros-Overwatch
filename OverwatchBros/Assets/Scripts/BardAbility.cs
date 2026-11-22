@@ -796,6 +796,8 @@ public class BardAbility : NetworkBehaviour
     {
         // Jiskry podel vlny.
         var color = new Color(0.75f, 0.5f, 1f);
+        // viditelna tlakova vlna (kruhy do kuzele, chveni vzduchu, zablesk)
+        BassWaveFx.Play(origin, forward, range, color);
         for (int i = 1; i <= 4; i++)
             Fx.Sparks(origin + forward * (range * i / 4f), i % 2 == 0 ? color : Color.white);
         if (!IsOwner)

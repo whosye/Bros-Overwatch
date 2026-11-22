@@ -19,6 +19,7 @@ MonoBehaviour:
   maxHealth: 100
   healingScale: 1
   scopeAimPose: 0
+  hipFire: 1
   weapon: {fileID: 11400000, guid: c0a64531a1b9ffd4bbe5f837139b5fdf, type: 2}
   abilityKind: 9
   ability: {fileID: 11400000, guid: 0959ed83f75436a4b830c2dc9916b19b, type: 2}

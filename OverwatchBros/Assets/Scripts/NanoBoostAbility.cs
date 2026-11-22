@@ -246,7 +246,7 @@ public class MonsterCan : MonoBehaviour
     Vector3 from;
     Transform target;
     float flight, age;
-    static Material bodyMaterial, lidMaterial;
+    static Material whiteBody, greenBody, lidMaterial;
 
     public static void Throw(Vector3 from, Transform target, float flight)
     {
@@ -259,29 +259,46 @@ public class MonsterCan : MonoBehaviour
         Build(go.transform);
     }
 
-    // Plechovka 500 ml: telo s texturou (Resources/Textures/monster_can), stribrna vicka.
-    public static void Build(Transform root)
+    // Plechovka 500 ml: telo s texturou, stribrna vicka. Bila (Monster Ultra, Resources/Textures/monster_can) = Davidova
+    // ultimatka (Q); zelena (klasicky cerny Monster se zelenymi drapy, Resources/Textures/monster_green) = biotický granat (E).
+    public static void Build(Transform root, bool green = false)
     {
-        if (bodyMaterial == null)
+        if (lidMaterial == null)
         {
-            bodyMaterial = Fx.NewLit(Color.white);
-            var texture = Resources.Load<Texture2D>("Textures/monster_can");
-            if (texture != null)
-            {
-                bodyMaterial.mainTexture = texture;
-                if (bodyMaterial.HasProperty("_BaseMap")) bodyMaterial.SetTexture("_BaseMap", texture);
-                bodyMaterial.mainTextureScale = new Vector2(2f, 1f);   // predek plechovky dvakrat dokola
-                if (bodyMaterial.HasProperty("_BaseMap")) bodyMaterial.SetTextureScale("_BaseMap", new Vector2(2f, 1f));
-            }
-            if (bodyMaterial.HasProperty("_Smoothness")) bodyMaterial.SetFloat("_Smoothness", 0.75f);
-            if (bodyMaterial.HasProperty("_Metallic")) bodyMaterial.SetFloat("_Metallic", 0.4f);
             lidMaterial = Fx.NewLit(new Color(0.78f, 0.8f, 0.83f));
             if (lidMaterial.HasProperty("_Metallic")) lidMaterial.SetFloat("_Metallic", 0.8f);
         }
-        Part(root, Vector3.zero, new Vector3(0.066f, 0.084f, 0.066f), bodyMaterial);           // telo (vyska 16,8 cm)
+        if (green && greenBody == null) greenBody = BodyMaterial("Textures/monster_green", false);
+        if (!green && whiteBody == null) whiteBody = BodyMaterial("Textures/monster_can", true);
+        Part(root, Vector3.zero, new Vector3(0.066f, 0.084f, 0.066f), green ? greenBody : whiteBody);   // telo (vyska 16,8 cm)
         Part(root, new Vector3(0f, 0.086f, 0f), new Vector3(0.058f, 0.004f, 0.058f), lidMaterial);  // horni vicko
         Part(root, new Vector3(0f, -0.086f, 0f), new Vector3(0.058f, 0.004f, 0.058f), lidMaterial); // dno
         root.localScale = Vector3.one * 1.6f;   // o kus vetsi, at je v letu videt
+    }
+
+    static Material BodyMaterial(string path, bool white)
+    {
+        var material = Fx.NewLit(Color.white);
+        var texture = Resources.Load<Texture2D>(path);
+        if (texture != null)
+        {
+            material.mainTexture = texture;
+            if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", texture);
+            material.mainTextureScale = new Vector2(2f, 1f);   // predek plechovky dvakrat dokola
+            if (material.HasProperty("_BaseMap")) material.SetTextureScale("_BaseMap", new Vector2(2f, 1f));
+        }
+        // (kovovy lesk bez odrazu plechovku ztmavil - bila pusobila sede; ted barvy jako na fotce)
+        if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", 0.55f);
+        if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", 0f);
+        if (white && texture != null && material.HasProperty("_EmissionColor"))
+        {
+            // bila plechovka lehce sviti vlastni texturou - at je i ve stinu jasne bila
+            material.EnableKeyword("_EMISSION");
+            material.SetTexture("_EmissionMap", texture);
+            material.SetTextureScale("_EmissionMap", new Vector2(2f, 1f));
+            material.SetColor("_EmissionColor", new Color(0.35f, 0.35f, 0.35f));
+        }
+        return material;
     }
 
     static void Part(Transform root, Vector3 position, Vector3 scale, Material material)

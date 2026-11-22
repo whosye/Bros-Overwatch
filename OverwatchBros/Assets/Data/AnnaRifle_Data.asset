@@ -30,7 +30,7 @@ MonoBehaviour:
   farFalloffMin: 0.2
   maxDamageRange: 90
   allyHeal: 45
-  scopeFov: 32
+  scopeFov: 20
   scopedChargeTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
@@ -39,7 +39,7 @@ MonoBehaviour:
   scopedMoveSpeed: 0.5
   proximityRadius: 0
   fireMode: 1
-  projectileSpeed: 125
+  projectileSpeed: 300
   projectileGravity: 0
   projectileRadius: 0.12
   explosionRadius: 0
