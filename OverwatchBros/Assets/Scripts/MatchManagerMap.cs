@@ -28,7 +28,15 @@ public partial class MatchManager
     public NetworkVariable<int> mapIndex = new NetworkVariable<int>(MapDomasov);
 
     public int MapIndex => Mathf.Clamp(mapIndex.Value, 0, MapNames.Length - 1);
-    public string MapName => MapNames[MapIndex];
+    public string MapName => MapLabel(MapIndex);
+
+    // Jak mapy vidi hrac: kopie Domasova pro Tlacenici je proste "Domasov" - v nabidce map neni zvlast,
+    // tlacitko Domasov v rezimu Tlacenice vybere ji (MapFor).
+    public static string MapLabel(int map) => MapNames[ListedMap(Mathf.Clamp(map, 0, MapNames.Length - 1))];
+    public static bool MapListed(int map) => map != MapDomasovPush;
+    public static int ListedMap(int map) => map == MapDomasovPush ? MapDomasov : map;
+    public static int MapFor(int listed, int mode) => listed == MapDomasov && mode == ModePush ? MapDomasovPush : listed;
+    public static bool MapPlayable(int listed, int mode) => MapReady(MapFor(listed, mode)) && MapSupportsMode(MapFor(listed, mode), mode);
 
     public void SetMap(int index)
     {

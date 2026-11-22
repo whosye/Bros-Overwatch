@@ -148,7 +148,8 @@ public static class PushSetup
             Undo.RecordObject(boundary, "Tlacenice");
             boundary.car = null;
         }
-        // rolba: jen kulisa (Tractor se pripojuje podle jmena a jeho stav je jeden pro celou hru)
+        // rolba: prejmenovat (editorove nastroje Domasova hledaji "SneznaRolba" - nesmi najit kopii); ve hre ji
+        // Tractor najde i pod jmenem _Kulisa a vrata RolbaGate si prida sam (plati rolba a vrata zapnute mapy)
         foreach (var t in copy.GetComponentsInChildren<Transform>(true))
             if (t.name == "SneznaRolba" || t.name == "TraktorSVlekem")
             {

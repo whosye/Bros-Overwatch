@@ -21,7 +21,7 @@ public class Boiler : MonoBehaviour
     public Vector3 heatMin, heatMax; // oblast hornich pater (svet) - kde prehrati boli
 
     const float LeverIdle = -30f, LeverPulled = 45f;
-    static readonly Color HeatColor = new Color(1f, 0.55f, 0.2f);
+    public static readonly Color HeatColor = new Color(1f, 0.55f, 0.2f);
 
     public static Boiler Instance { get; private set; }
 
@@ -80,7 +80,25 @@ public class Boiler : MonoBehaviour
 
     public Vector3 LeverPoint => lever != null ? lever.position : transform.position;
 
-    public bool InHeatZone(Vector3 feet) =>
+    // heatMin/heatMax jsou ve svete puvodniho Domasova - kopie mapy pro Tlacenici je posunuta o DomasovPushOrigin
+    Vector3 zoneOffset;
+    bool zoneOffsetSet;
+
+    Vector3 ZoneOffset
+    {
+        get
+        {
+            if (zoneOffsetSet) return zoneOffset;
+            zoneOffsetSet = true;
+            for (var t = transform; t != null; t = t.parent)
+                if (t.name == "Map_DomasovPush") { zoneOffset = MatchManager.DomasovPushOrigin; break; }
+            return zoneOffset;
+        }
+    }
+
+    public bool InHeatZone(Vector3 feet) => InZone(feet - ZoneOffset);
+
+    bool InZone(Vector3 feet) =>
         feet.x >= heatMin.x && feet.x <= heatMax.x && feet.y >= heatMin.y && feet.y <= heatMax.y && feet.z >= heatMin.z && feet.z <= heatMax.z;
 
     void Update()
@@ -169,10 +187,7 @@ public class Boiler : MonoBehaviour
         if (lever != null) Debug.Log($"[Kotel] Zatopeno - packa je na {lever.position}, kotel na {transform.position}.", this);
         ProceduralSfx.Play(ProceduralSfx.Explosion, LeverPoint, 0.45f);
         ProceduralSfx.Play(ProceduralSfx.Reload, LeverPoint, 0.9f);
-        var match = MatchManager.Instance;
-        bool pellets = match != null && match.boilerWithPellets.Value;
-        CaptureUI.Announce(pellets ? "Někdo zatopil v kotli s peletami - horní patro chaty je peklo!"
-            : "Někdo zatopil v kotli - horní patro chaty se přehřívá!", HeatColor, 3f);
+        // (oznameni dostane jen ten, kdo zatopil - MatchManager.BoilerLitClientRpc)
 
         if (heatHaze == null) BuildHaze();
         if (roar == null)
@@ -198,7 +213,7 @@ public class Boiler : MonoBehaviour
     {
         var go = new GameObject("FX_Horko");
         go.transform.SetParent(transform, false);
-        go.transform.SetPositionAndRotation(new Vector3((heatMin.x + heatMax.x) * 0.5f, heatMin.y + 0.6f, (heatMin.z + heatMax.z) * 0.5f),
+        go.transform.SetPositionAndRotation(ZoneOffset + new Vector3((heatMin.x + heatMax.x) * 0.5f, heatMin.y + 0.6f, (heatMin.z + heatMax.z) * 0.5f),
             Quaternion.Euler(-90f, 0f, 0f));
         heatHaze = go.AddComponent<ParticleSystem>();
         heatHaze.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);

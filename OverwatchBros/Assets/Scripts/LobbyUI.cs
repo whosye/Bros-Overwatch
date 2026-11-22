@@ -218,7 +218,7 @@ public class LobbyUI
 
     void SetMapPreview(int map)
     {
-        UiKit.SetButtonLabel(mapButton,MatchManager.MapNames[map]);
+        UiKit.SetButtonLabel(mapButton,MatchManager.MapLabel(map));
         mapPreview.sprite=MenuStyle.MapPreview(map);
         // Cover the rounded viewport without stretching or leaving empty side gutters.
         if(mapPreview.sprite==null)return;
@@ -266,8 +266,13 @@ public class LobbyUI
     {
         var match=MatchManager.Instance;
         if(match==null)return;
-        OpenChoices(mapButton,MatchManager.MapNames,match.MapIndex,index=>match.SetMap(index),
-            index=>MatchManager.MapReady(index)&&MatchManager.MapSupportsMode(index,match.gameMode.Value));
+        // (kopie Domasova pro Tlacenici v nabidce neni - v rezimu Tlacenice ji vybere polozka Domasov)
+        var maps=new System.Collections.Generic.List<int>();
+        for(int i=0;i<MatchManager.MapNames.Length;i++)if(MatchManager.MapListed(i))maps.Add(i);
+        var labels=maps.ConvertAll(i=>MatchManager.MapNames[i]).ToArray();
+        int mode=match.gameMode.Value;
+        OpenChoices(mapButton,labels,maps.IndexOf(MatchManager.ListedMap(match.MapIndex)),index=>match.SetMap(MatchManager.MapFor(maps[index],match.gameMode.Value)),
+            index=>MatchManager.MapPlayable(maps[index],mode));
     }
 
     void OpenModes()

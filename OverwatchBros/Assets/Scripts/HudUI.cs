@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +32,11 @@ public class HudUI
     Image healthFill;
     Image shieldFill;
     RectTransform healthBar;
+    // zivoty rolby (jen ridic a spolujezdec) - nad zivoty hrace, stejny vzhled
+    GameObject rolbaPanel;
+    TextMeshProUGUI rolbaText;
+    Image rolbaFill;
+    const float RolbaPerSegment = 250f;
     readonly List<GameObject> separators = new List<GameObject>();
     float separatorsFor = -1f;
     readonly Slot[] slots = new Slot[MaxSlots];
@@ -239,6 +245,25 @@ public class HudUI
         shieldFill = UiKit.MakeImage(healthBar, "Shield", new Color(Health.ShieldColor.r, Health.ShieldColor.g, Health.ShieldColor.b, 0.85f),
             bottomLeft, new Vector2(3f, 3f), new Vector2(0f, 24f));
         shieldFill.rectTransform.pivot = new Vector2(0f, 0f);
+
+        // Zivoty rolby: nad jmenem hrdiny, jako zivoty hrace (cislo + pruh s dilky po 250 HP).
+        rolbaPanel = new GameObject("RolbaHealth", typeof(RectTransform));
+        rolbaPanel.transform.SetParent(root.transform, false);
+        UiKit.Stretch((RectTransform)rolbaPanel.transform);
+        UiKit.MakeText(rolbaPanel.transform, "Label", "SNĚŽNÁ FRÉZA", 26, TextAlignmentOptions.BottomLeft, bottomLeft,
+            new Vector2(hx + 2f, 286f), new Vector2(700f, 36f), UiKit.Muted);
+        rolbaText = UiKit.MakeText(rolbaPanel.transform, "Health", "", 64, TextAlignmentOptions.BottomLeft, bottomLeft,
+            new Vector2(hx, 220f), new Vector2(500f, 76f));
+        var rolbaBar = UiKit.MakeImage(rolbaPanel.transform, "Bar", Dark, bottomLeft, new Vector2(hx, 188f), new Vector2(HealthBarWidth + 6f, 30f));
+        rolbaFill = UiKit.MakeImage(rolbaBar.rectTransform, "Fill", HealthColor, bottomLeft, new Vector2(3f, 3f), new Vector2(HealthBarWidth, 24f));
+        rolbaFill.rectTransform.pivot = new Vector2(0f, 0f);
+        for (float at = RolbaPerSegment; at < MatchManager.TractorMaxHealth - 0.5f; at += RolbaPerSegment)
+        {
+            var line = UiKit.MakeImage(rolbaBar.rectTransform, "Segment", new Color(0.05f, 0.07f, 0.10f, 1f), new Vector2(0f, 0f),
+                new Vector2(3f + HealthBarWidth * at / MatchManager.TractorMaxHealth - 1.5f, 3f), new Vector2(3f, 24f));
+            line.rectTransform.pivot = new Vector2(0f, 0f);
+        }
+        rolbaPanel.SetActive(false);
 
         // Schopnosti vpravo dole (zprava doleva), munice nad nimi.
         var bottomRight = new Vector2(1f, 0f);
@@ -647,6 +672,7 @@ public class HudUI
     void Render(HudData d)
     {
         UpdateHealth(d);
+        UpdateRolba();
         UpdateRapidPips(d);
         UpdateBeat(d);
         UpdateVignette(d);
@@ -731,6 +757,26 @@ public class HudUI
                 separators.Add(line.gameObject);
             }
         }
+    }
+
+    // Zivoty rolby: jen kdyz ji mistni hrac ridi nebo na ni jede.
+    void UpdateRolba()
+    {
+        var match = MatchManager.Instance;
+        var network = NetworkManager.Singleton;
+        var local = network != null && network.LocalClient != null ? network.LocalClient.PlayerObject : null;
+        bool show = match != null && match.IsSpawned && local != null && match.TractorRunning && !match.tractorDestroyed.Value
+            && (match.IsDriving(local.NetworkObjectId) || match.IsRiding(local.NetworkObjectId)) && !ReplayPlayer.Active;
+        if (rolbaPanel.activeSelf != show) rolbaPanel.SetActive(show);
+        if (!show) return;
+
+        float max = MatchManager.TractorMaxHealth;
+        float current = Mathf.Clamp(match.tractorHealth.Value, 0f, max);
+        float fraction = current / max;
+        rolbaText.text = $"{Mathf.CeilToInt(current)}<size=45%> / {max:0}</size>";
+        rolbaText.color = fraction < 0.3f ? LowColor : Color.white;
+        rolbaFill.rectTransform.sizeDelta = new Vector2(HealthBarWidth * fraction, 24f);
+        rolbaFill.color = fraction < 0.3f ? LowColor : HealthColor;
     }
 
     void UpdateVignette(HudData d)

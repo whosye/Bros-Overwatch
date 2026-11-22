@@ -75,6 +75,10 @@ public static class Combat
         if (boostedTarget != null && boostedTarget.IsBoosted)
             amount *= NanoBoostAbility.DamageTakenMultiplier;
 
+        // posadka jedouci rolby: poskozeni bere rolba (2000 HP; pri zniceni posadka umre) - MatchManagerTractor
+        if (match != null && attacker != target.gameObject && match.ServerTractorAbsorbs(attacker, target, amount))
+            return;
+
 
         float before = target.Effective;   // vcetne stitu (zasah do stitu se taky pocita)
         bool wasAlive = target.currentHealth.Value > 0f;

@@ -66,18 +66,36 @@ public class Tractor : MonoBehaviour
     float wheelAngle;
     bool driven;
 
+    // Rolba na Domasove a v kopii mapy pro Tlacenici (tam se jmenuje "..._Kulisa" - PushSetup). Plati vzdy ta
+    // z prave zapnute mapy (Instance se nastavi v OnEnable) - stav jizdy v MatchManageru je jeden, mapa hraje vzdy jen jedna.
+    static readonly string[] RolbaNames = { "SneznaRolba", "TraktorSVlekem", "SneznaRolba_Kulisa", "TraktorSVlekem_Kulisa" };
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Attach()
     {
         PromptText = "";
-        var go = GameObject.Find("SneznaRolba") ?? GameObject.Find("TraktorSVlekem");
-        if (go != null && go.GetComponent<Tractor>() == null)
-            go.AddComponent<Tractor>();
+        foreach (var t in FindObjectsByType<Transform>(FindObjectsInactive.Include))
+        {
+            if (System.Array.IndexOf(RolbaNames, t.name) < 0 || !t.gameObject.scene.IsValid()) continue;
+            if (t.GetComponent<Tractor>() == null) t.gameObject.AddComponent<Tractor>();
+            // vrata garaze v kopii mapy (PushSetup z nich RolbaGate odebral) - jen na mape, kde je i rolba
+            var map = t.root;
+            foreach (var gate in map.GetComponentsInChildren<Transform>(true))
+                if (gate.name == "VrataRolby" && gate.GetComponent<RolbaGate>() == null)
+                    gate.gameObject.AddComponent<RolbaGate>();
+        }
+    }
+
+    void OnEnable() => Instance = this;
+
+    void OnDisable()
+    {
+        if (Instance == this) Instance = null;
+        PromptText = "";
     }
 
     void Awake()
     {
-        Instance = this;
         homePosition = transform.position;
         homeRotation = transform.rotation;
         GetComponentsInChildren(true, colliders);
@@ -124,7 +142,8 @@ public class Tractor : MonoBehaviour
     void Update()
     {
         var match = MatchManager.Instance;
-        var driver = match != null && match.IsSpawned ? Driver(match) : null;
+        // (v lobby se nejezdi - i kdyby v MatchManageru zustal ridic z minule hry)
+        var driver = match != null && match.IsSpawned && !match.IsLobby ? Driver(match) : null;
 
         if (driver != null)
         {
@@ -144,15 +163,79 @@ public class Tractor : MonoBehaviour
         {
             driven = nowDriven;
             foreach (var c in colliders)
-                if (c != null) c.enabled = !driven;
-            if (driven) StartEngine();
+                if (c != null) c.enabled = !driven && !wrecked;
+            if (driven)
+            {
+                StartEngine();
+                PlayStartSong();
+            }
         }
+
+        UpdateHitbox(driver, match);
+        UpdateWreck(match != null && match.IsSpawned && match.tractorDestroyed.Value);
 
         float speed = Time.deltaTime > 0f ? Vector3.Distance(transform.position, lastPosition) / Time.deltaTime : 0f;
         float forward = Vector3.Dot(transform.position - lastPosition, transform.right) >= 0f ? 1f : -1f;
         lastPosition = transform.position;
         UpdateEffects(speed, forward);
         UpdatePrompt(match);
+    }
+
+    // ---------------- zivoty: kolize za jizdy, vrak ----------------
+
+    // Za jizdy ma rolba vypnute kolize (ridic by se o ne zasekl), strely by jí prolétaly. Proto kvadr obrysu rolby,
+    // ktery je za jizdy pripnuty k postave ridice: zbrane, projektily i vybuchy ho berou jako zasah ridice
+    // (jeho Health) a Combat.DamagePlayer poskozeni prevede na rolbu. Ridicovy vlastni strely ho ignoruji (vlastni
+    // NetworkObject), posadka v nem do niceho nenarazi (IgnoreCollision).
+    BoxCollider hitbox;
+
+    void UpdateHitbox(NetworkObject driver, MatchManager match)
+    {
+        if (driver == null)
+        {
+            if (hitbox != null) Destroy(hitbox.gameObject);
+            hitbox = null;
+            return;
+        }
+        if (hitbox == null || hitbox.transform.parent != driver.transform)
+        {
+            if (hitbox != null) Destroy(hitbox.gameObject);
+            var go = new GameObject("RolbaHitbox");
+            go.transform.SetParent(driver.transform, false);
+            hitbox = go.AddComponent<BoxCollider>();
+            hitbox.center = (HullMin + HullMax) * 0.5f;
+            hitbox.size = HullMax - HullMin;
+        }
+        hitbox.transform.SetPositionAndRotation(transform.position, transform.rotation);
+        hitbox.transform.localScale = Vector3.one;
+        // posadka (a ostatni hraci - rolba je pri jizde neprojde, ty prejede server) do kvadru nenarazi
+        foreach (var fpc in FirstPersonController.All)
+        {
+            if (fpc == null) continue;
+            var body = fpc.GetComponent<CharacterController>();
+            if (body != null) Physics.IgnoreCollision(hitbox, body, true);
+        }
+    }
+
+    // Znicena rolba zmizi (vybuch a kour ukaze TractorDestroyedClientRpc), dokud se po 1:20 neobnovi u garaze.
+    bool wrecked;
+    readonly List<Renderer> wreckRenderers = new List<Renderer>();
+
+    void UpdateWreck(bool destroyed)
+    {
+        if (destroyed == wrecked) return;
+        wrecked = destroyed;
+        if (wreckRenderers.Count == 0) GetComponentsInChildren(true, wreckRenderers);
+        foreach (var r in wreckRenderers)
+            if (r != null && !(r is ParticleSystemRenderer)) r.enabled = !destroyed;
+        foreach (var c in colliders)
+            if (c != null) c.enabled = !destroyed && !driven;
+        if (destroyed)
+        {
+            if (engine != null) engine.Stop();
+            if (exhaust != null) exhaust.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            if (snow != null) snow.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
     }
 
     NetworkObject Driver(MatchManager match)
@@ -179,13 +262,13 @@ public class Tractor : MonoBehaviour
         int left = Mathf.CeilToInt(match.tractorLeft.Value);
         if (match.IsDriving(local.NetworkObjectId))
         {
-            PromptText = $"[R] Vystoupit z rolby  ·  karburátor vydrží {left} s";
+            PromptText = $"[R] Vystoupit z frézy  ·  karburátor vydrží {left} s";
             if (pressed) match.TractorRpc();
             return;
         }
         if (match.IsRiding(local.NetworkObjectId))
         {
-            PromptText = $"[R] Seskočit z rolby  ·  jede ještě {left} s";
+            PromptText = $"[R] Seskočit z frézy  ·  jede ještě {left} s";
             if (pressed) match.TractorRpc();
             return;
         }
@@ -197,23 +280,38 @@ public class Tractor : MonoBehaviour
         {
             var driverObj = Driver(match);
             bool friend = driverObj != null && Combat.SameTeam(driverObj.gameObject, local.gameObject);
-            if (!friend) { PromptText = "Rolbu řídí nepřítel"; return; }
-            if (match.tractorPassenger.Value != ulong.MaxValue) { PromptText = "Na rolbě už někdo stojí"; return; }
-            PromptText = "[R] Naskočit na rolbu (střílíš za jízdy)";
+            if (!friend) { PromptText = "Frézu řídí nepřítel"; return; }
+            if (match.tractorPassenger.Value != ulong.MaxValue) { PromptText = "Na fréze už někdo stojí"; return; }
+            PromptText = "[R] Naskočit na frézu (střílíš za jízdy)";
             if (pressed && !fpc.InputBlocked) match.TractorRpc();
             return;
         }
         if (!nearCab) return;
-        if (!match.HasCarburetor(local.NetworkObjectId))
+        if (match.tractorDestroyed.Value)
         {
-            PromptText = "Rolba nejde nastartovat - chybí Honzův karburátor";
+            PromptText = $"Fréza je zničená - nová bude za {Mathf.CeilToInt(match.tractorRespawnLeft.Value)} s";
             return;
         }
-        PromptText = "[R] Nastartovat rolbu (Honzův karburátor)";
+        if (!match.HasCarburetor(local.NetworkObjectId))
+        {
+            PromptText = "Fréza nejde nastartovat - chybí Honzův karburátor";
+            return;
+        }
+        PromptText = "[R] Nastartovat sněžnou frézu (Honzův karburátor)";
         if (pressed && !fpc.InputBlocked) match.TractorRpc();
     }
 
     // ---------------- motor, kour, kola ----------------
+
+    // Pri nastartovani rolby hraje pisnicka (Resources/Audio/rolba_tomasek) - vsem hracum na mape stejne nahlas
+    // (ne prostorove). Startuje se na kazdem pocitaci zvlast, kdyz rolba dostane ridice.
+    static AudioClip startSong;
+
+    void PlayStartSong()
+    {
+        if (startSong == null) startSong = Resources.Load<AudioClip>("Audio/rolba_tomasek");
+        if (startSong != null) ProceduralSfx.Play(startSong, CabPosition, 0.9f, 1000f, spatial: false);
+    }
 
     void StartEngine()
     {

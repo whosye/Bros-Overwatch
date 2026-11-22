@@ -33,6 +33,11 @@ public static class MapPreviewMenu
     [MenuItem(MenuPath + "Domasov (Tlacenice)", false, 4)] static void Push() => Show(MatchManager.MapDomasovPush);
     [MenuItem(MenuPath + "Sapa", false, 5)] static void Sapa() => Show(MatchManager.MapSapa);
 
+    // i vedle "Dust II - ukazat" / "Hanamura - ukazat" v menu Mapa: zpet na Domasov (ostatni mapy se skryji)
+    [MenuItem("BrosOverwatch/Mapa/Domasov - ukazat")] static void DomasovFromMapMenu() => Show(MatchManager.MapDomasov);
+    [MenuItem("BrosOverwatch/Mapa/Domasov (Tlacenice) - ukazat")] static void PushFromMapMenu() => Show(MatchManager.MapDomasovPush);
+    [MenuItem("BrosOverwatch/Mapa/Domasov (Tlacenice) - ukazat", true)] static bool PushFromMapMenuCheck() => FindRoot(Roots[MatchManager.MapDomasovPush]) != null;
+
     [MenuItem(MenuPath + "Domasov", true)] static bool DomasovCheck() => Check(MatchManager.MapDomasov);
     [MenuItem(MenuPath + "Hanamura", true)] static bool HanamuraCheck() => Check(MatchManager.MapHanamura);
     [MenuItem(MenuPath + "Dust II", true)] static bool Dust2Check() => Check(MatchManager.MapDust2);

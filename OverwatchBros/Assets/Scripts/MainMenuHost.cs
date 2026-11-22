@@ -36,11 +36,16 @@ public partial class MainMenuUI
         MenuStyle.Text(host.transform,"MapLabel","MAPA",new Vector2(420,230),new Vector2(680,50),27,MenuStyle.Muted);
         mapPreview=MenuStyle.Box(host.transform,"MapPreview",new Vector2(420,60),new Vector2(680,265));
         mapPreview.type=Image.Type.Simple; mapPreview.color=Color.white; mapPreview.preserveAspect=true;
-        for(int i=0;i<mapButtons.Length;i++)
+        // (kopie Domasova pro Tlacenici nema vlastni tlacitko - v rezimu Tlacenice ji vybere tlacitko Domasov)
+        int listed=0;
+        for(int i=0;i<mapButtons.Length;i++)if(MatchManager.MapListed(i))listed++;
+        float step=680f/listed;
+        for(int i=0,slot=0;i<mapButtons.Length;i++)
         {
-            // (mapa Tlacenice ma na tlacitku kratsi jmeno; cele jmeno je pod nahledem)
-            int map=i; float step=680f/mapButtons.Length;
-            mapButtons[i]=MenuStyle.Button(host.transform,map==MatchManager.MapDomasovPush?"Tlačenice":MatchManager.MapNames[i],new Vector2(80+step*(i+.5f),-130),new Vector2(step-12,60),()=>{ HostOptions.Map=map; RefreshHost(); },false,mapButtons.Length>3?21:24);
+            if(!MatchManager.MapListed(i))continue;
+            int map=i;
+            mapButtons[i]=MenuStyle.Button(host.transform,MatchManager.MapNames[i],new Vector2(80+step*(slot+.5f),-130),new Vector2(step-12,60),()=>{ HostOptions.Map=MatchManager.MapFor(map,HostOptions.Mode); RefreshHost(); },false,listed>3?21:24);
+            slot++;
         }
         mapSummary=MenuStyle.Text(host.transform,"MapSummary","",new Vector2(420,-220),new Vector2(680,70),26,MenuStyle.Cream,TextAlignmentOptions.Center);
         MenuStyle.Rule(host.transform,new Vector2(0,-310),1520);
@@ -72,14 +77,15 @@ public partial class MainMenuUI
         ruleValue.text=pushing?$"{MatchManager.PushMatchSeconds/60f:0} min":capture?HostOptions.CaptureSeconds+" s":HostOptions.Kills.ToString();
         for(int i=0;i<mapButtons.Length;i++)
         {
-            mapButtons[i].interactable=MatchManager.MapReady(i)&&MatchManager.MapSupportsMode(i,HostOptions.Mode);
-            SelectButton(mapButtons[i],HostOptions.Map==i);
+            if(mapButtons[i]==null)continue;
+            mapButtons[i].interactable=MatchManager.MapPlayable(i,HostOptions.Mode);
+            SelectButton(mapButtons[i],MatchManager.ListedMap(HostOptions.Map)==i);
         }
         bool ready=MatchManager.MapReady(HostOptions.Map)&&MatchManager.MapSupportsMode(HostOptions.Map,HostOptions.Mode);
         create.interactable=ready;
         mapPreview.sprite=MenuStyle.MapPreview(HostOptions.Map);
         mapPreview.gameObject.SetActive(mapPreview.sprite!=null);
-        mapSummary.text=MatchManager.MapNames[HostOptions.Map]+" · "+(pushing?"Tlačenice":capture?"Dobývání":"Team deathmatch")
+        mapSummary.text=MatchManager.MapLabel(HostOptions.Map)+" · "+(pushing?"Tlačenice":capture?"Dobývání":"Team deathmatch")
             +(MatchManager.MapReady(HostOptions.Map)?"":HostOptions.Map==MatchManager.MapDomasovPush
                 ?"\n<size=75%>Mapa ještě není postavená - v editoru BrosOverwatch › Tlacenice › kroky 1 a 2, pak uložit scénu.</size>"
                 :"\n<size=75%>Mapa ještě není postavená.</size>");

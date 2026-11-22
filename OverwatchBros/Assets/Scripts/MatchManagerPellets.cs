@@ -8,7 +8,7 @@ using UnityEngine;
 // Kdo pelety nese, vi server a ten hrac (ClientRpc); plny feeder a topeni s peletami vidi vsichni.
 public partial class MatchManager
 {
-    public const float PelletTotalDamage = 180f;   // za Boiler.HeatSeconds (bez pelet Boiler.TotalDamage)
+    public const float PelletTotalDamage = 1500f;   // za Boiler.HeatSeconds = 10 s -> 300 zivotu za 2 s (bez pelet Boiler.TotalDamage)
 
     public NetworkVariable<bool> feederLoaded = new NetworkVariable<bool>(false);
     public NetworkVariable<bool> boilerWithPellets = new NetworkVariable<bool>(false);   // prave se topi s peletami
@@ -81,8 +81,10 @@ public partial class MatchManager
         if (IsLocalPlayer(playerId)) LocalHasPellets = false;
         var feeder = PelletFeeder.Instance;
         if (feeder != null) ProceduralSfx.Play(ProceduralSfx.Reload, feeder.UsePoint, 0.9f);
-        CaptureUI.Announce($"{NameOfPlayer(playerId)} nasypal pelety do podavače - kotel bude pálit {PelletTotalDamage:0} HP!",
-            PickupSpot.KindColor(PickupKind.Pellets), 3f);
+        // oznameni jen tomu, kdo je nasypal (ostatni o tom nevi - jen zvuk u podavace)
+        if (IsLocalPlayer(playerId))
+            CaptureUI.Announce($"Nasypal jsi pelety do podavače - kotel bude pálit {PelletTotalDamage:0} HP!",
+                PickupSpot.KindColor(PickupKind.Pellets), 3f);
     }
 
     // Pelety pryc (smrt / novy kolo); Nobody = u vsech.

@@ -176,7 +176,7 @@ public partial class MatchManager
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.KangarooSkin)
             CaptureUI.Announce("Oblékl sis klokaní kůži - +100 štítu", PickupSpot.KindColor(kind), 3f);
         if (local != null && local.NetworkObjectId == playerId && kind == PickupKind.Carburetor)
-            CaptureUI.Announce($"Máš Honzův karburátor - nastartuj rolbu u chaty [R] ({CarburetorSeconds:0} s)", PickupSpot.KindColor(kind), 4f);
+            CaptureUI.Announce($"Máš Honzův karburátor - nastartuj sněžnou frézu u chaty [R] ({CarburetorSeconds:0} s)", PickupSpot.KindColor(kind), 4f);
         Fx.Sparks(position + Vector3.up * 0.8f, PickupSpot.KindColor(kind));
         bool heal = kind == PickupKind.Health || kind == PickupKind.BigHealth || kind == PickupKind.Tramal
             || kind == PickupKind.Lasagne || kind == PickupKind.KangarooSkin;

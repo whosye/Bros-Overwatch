@@ -371,8 +371,7 @@ public partial class MatchManager
             var hero = player.GetComponent<PlayerHero>();
             var team = player.GetComponent<PlayerTeam>();
             if (health == null || team == null || health.currentHealth.Value <= 0f || (hero != null && hero.IsJoining)) continue;
-            // kdo sedi ve snezne rolbe, bod nezabira ani neblokuje
-            if (IsDriving(player.NetworkObjectId) || IsRiding(player.NetworkObjectId)) continue;
+            // (posadka snezne rolby bod zabira i blokuje jako ostatni - rolba uz neni nesmrtelna, ma 2000 HP)
 
             if (!InCaptureArea(player.transform.position)) continue;
 

@@ -16,9 +16,16 @@ public class RolbaGate : MonoBehaviour
     bool initialized;
     CharacterController ignored;
 
+    // (vrata jsou i v kopii mapy pro Tlacenici - plati ta z prave zapnute mapy)
+    void OnEnable() => Instance = this;
+
+    void OnDisable()
+    {
+        if (Instance == this) Instance = null;
+    }
+
     void Awake()
     {
-        Instance = this;
         foreach (Transform t in transform)
             if (t.name.StartsWith("Kridlo")) leaves.Add(t);
         foreach (var leaf in leaves)

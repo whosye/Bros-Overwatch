@@ -26,6 +26,14 @@ public partial class MatchManager
     public NetworkVariable<Vector4> tractorPose = new NetworkVariable<Vector4>();
     // vrata garaze rolby (RolbaGate) prorazila rolba
     public NetworkVariable<bool> rolbaGateBroken = new NetworkVariable<bool>(false);
+    // zivoty rolby (bere je jen za jizdy - zasahy do rolby i do posadky); znicena = vrak do konce kola
+    public const float TractorMaxHealth = 2000f;
+    public NetworkVariable<float> tractorHealth = new NetworkVariable<float>(TractorMaxHealth);
+    public NetworkVariable<bool> tractorDestroyed = new NetworkVariable<bool>(false);
+    // znicena rolba se po 'TractorRespawnSeconds' objevi opravena na svem miste (zbyva sekund - pro vyzvu u vraku)
+    public const float TractorRespawnSeconds = 80f;
+    public NetworkVariable<float> tractorRespawnLeft = new NetworkVariable<float>(0f);
+    float tractorRespawnAt;
 
     float carburetorEnd;
     float tractorEnd, nextTractorSync;
@@ -62,6 +70,9 @@ public partial class MatchManager
         tractorLeft.Value = 0f;
         tractorMoved.Value = false;
         rolbaGateBroken.Value = false;
+        tractorHealth.Value = TractorMaxHealth;
+        tractorDestroyed.Value = false;
+        tractorRespawnLeft.Value = 0f;
         hasLastTractorPos = false;
         runOverAt.Clear();
     }
@@ -103,6 +114,7 @@ public partial class MatchManager
         var tractor = Tractor.Instance;
         var health = player.GetComponent<Health>();
         if (tractor == null || health == null || health.currentHealth.Value <= 0f) return;
+        if (tractorDestroyed.Value) return;   // vrak
 
         // naskocit na vlek (jen spoluhrac ridice)
         if (tractorDriver.Value != Nobody)
@@ -136,7 +148,7 @@ public partial class MatchManager
         if (tractor == null) return;
         ProceduralSfx.Play(ProceduralSfx.Explosion, tractor.CabPosition, 0.35f);
         string name = NameOfPlayer(driverId);
-        CaptureUI.Announce($"{name} nastartoval rolbu!", new Color(0.85f, 0.25f, 0.15f), 2.5f);
+        CaptureUI.Announce($"{name} nastartoval sněžnou frézu!", new Color(0.85f, 0.25f, 0.15f), 2.5f);
     }
 
     static string NameOfPlayer(ulong networkObjectId)
@@ -175,7 +187,7 @@ public partial class MatchManager
         if (tractor == null) return;
         ProceduralSfx.Play(ProceduralSfx.Explosion, tractor.CabPosition, 0.5f);
         Fx.Sparks(tractor.CabPosition + Vector3.up * 2f, new Color(0.3f, 0.3f, 0.32f));
-        CaptureUI.Announce("Honzův karburátor se rozbil - rolba stojí", new Color(0.95f, 0.45f, 0.15f), 3f);
+        CaptureUI.Announce("Honzův karburátor se rozbil - fréza stojí", new Color(0.95f, 0.45f, 0.15f), 3f);
     }
 
     void ServerTractorTick()
@@ -195,6 +207,22 @@ public partial class MatchManager
                 nextCarburetorSync = Time.time + 0.5f;
                 carburetorLeft.Value = Mathf.Max(0f, carburetorEnd - Time.time);
             }
+        }
+
+        // vrak: po 1:20 nova rolba na puvodnim miste
+        if (tractorDestroyed.Value)
+        {
+            float wait = Mathf.Max(0f, tractorRespawnAt - Time.time);
+            if (wait <= 0f)
+            {
+                tractorDestroyed.Value = false;
+                tractorHealth.Value = TractorMaxHealth;
+                tractorRespawnLeft.Value = 0f;
+                tractorMoved.Value = false;   // zpet na domovske misto
+                TractorRespawnedClientRpc();
+            }
+            else if (Mathf.CeilToInt(wait) != Mathf.CeilToInt(tractorRespawnLeft.Value))
+                tractorRespawnLeft.Value = wait;
         }
 
         if (tractorDriver.Value == Nobody) return;
@@ -270,6 +298,85 @@ public partial class MatchManager
     {
         ProceduralSfx.Play(ProceduralSfx.Hit, position, 1f);
         Fx.Sparks(position + Vector3.up, new Color(0.85f, 0.25f, 0.15f));
+    }
+
+    // ---------------- zivoty rolby ----------------
+
+    // Combat.DamagePlayer: zasah do posadky jedouci rolby (i do jeji kolize - Tractor ji za jizdy pripne k ridici)
+    // bere zivoty rolbe, ne posadce. True = poskozeni prevzala rolba.
+    public bool ServerTractorAbsorbs(GameObject attacker, Health target, float amount)
+    {
+        if (!IsServer || target == null || tractorDriver.Value == Nobody || tractorDestroyed.Value) return false;
+        var crew = target.GetComponent<NetworkObject>();
+        if (crew == null || (crew.NetworkObjectId != tractorDriver.Value && crew.NetworkObjectId != tractorPassenger.Value)) return false;
+        if (amount <= 0f) return true;
+
+        float before = tractorHealth.Value;
+        tractorHealth.Value = Mathf.Max(0f, before - amount);
+        bool destroyed = tractorHealth.Value <= 0f;
+
+        var attackerHero = attacker != null ? attacker.GetComponent<PlayerHero>() : null;
+        if (attackerHero != null && attacker != target.gameObject)
+        {
+            attackerHero.ServerNotifyHit(destroyed);
+            attackerHero.ServerAddUltCharge((before - tractorHealth.Value) * 0.5f);
+        }
+        if (destroyed) ServerDestroyTractor(attacker);
+        return true;
+    }
+
+    // Rolba znicena: vybuch, kdo v ni je (ridic a spolujezdec), umre s ni - zabiti dostane ten, kdo ji znicil.
+    void ServerDestroyTractor(GameObject attacker)
+    {
+        var tractor = Tractor.Instance;
+        Vector3 at = tractor != null ? tractor.CabPosition : Vector3.zero;
+        var crew = new System.Collections.Generic.List<NetworkObject>();
+        foreach (var id in new[] { tractorDriver.Value, tractorPassenger.Value })
+        {
+            var member = id != Nobody ? SpawnedPlayer(id) : null;
+            if (member != null) crew.Add(member);
+        }
+        tractorDestroyed.Value = true;
+        tractorHealth.Value = 0f;
+        tractorRespawnAt = Time.time + TractorRespawnSeconds;
+        tractorRespawnLeft.Value = TractorRespawnSeconds;
+        ServerParkTractor(false);
+        TractorDestroyedClientRpc(at);
+
+        foreach (var member in crew)
+        {
+            var health = member.GetComponent<Health>();
+            if (health == null || health.currentHealth.Value <= 0f) continue;
+            health.ServerClearInvulnerable();
+            var hero = member.GetComponent<PlayerHero>();
+            if (attacker != null && attacker != member.gameObject)
+                Combat.DamagePlayer(attacker, health, 100000f, "env:rolba");
+            if (health.currentHealth.Value > 0f)
+            {
+                // (bez vraha, nebo ho poskozeni nezabilo - napr. blok)
+                if (hero != null) hero.ServerDeathCause = "env:rolba";
+                health.Kill();
+            }
+        }
+        Debug.Log($"[Rolba] Znicena ({(attacker != null ? attacker.name : "?")}) - posadka: {crew.Count}.");
+    }
+
+    [ClientRpc]
+    void TractorDestroyedClientRpc(Vector3 position)
+    {
+        ProceduralSfx.Play(ProceduralSfx.Explosion, position, 1f);
+        ProceduralSfx.Play(ProceduralSfx.Explosion, position + Vector3.up, 0.7f);
+        Fx.Sparks(position + Vector3.up * 1.5f, new Color(1f, 0.5f, 0.15f));
+        Fx.Sparks(position + Vector3.up * 0.8f, new Color(0.25f, 0.25f, 0.27f));
+        CaptureUI.Announce("Sněžná fréza byla zničena!", new Color(0.85f, 0.25f, 0.15f), 3f);
+    }
+
+    [ClientRpc]
+    void TractorRespawnedClientRpc()
+    {
+        var tractor = Tractor.Instance;
+        if (tractor != null) Fx.Sparks(tractor.CabPosition + Vector3.up, new Color(0.95f, 0.75f, 0.2f));
+        CaptureUI.Announce("Sněžná fréza je zase připravená u garáže", new Color(0.85f, 0.25f, 0.15f), 3f);
     }
 
     NetworkObject SpawnedPlayer(ulong id)

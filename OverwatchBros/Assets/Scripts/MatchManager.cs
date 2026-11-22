@@ -77,6 +77,10 @@ public partial class MatchManager : NetworkBehaviour
         }
 
         testCooldowns.Value = PendingTestCooldowns;
+        // MatchManager je objekt sceny - hodnoty z minule hry v nem zustanou. Ridic rolby z minula by v nove hre
+        // "ridil" hrace se stejnym ID (rolba by jela a hrala pisnicka uz v lobby).
+        ServerResetTractor();
+        ServerResetBoiler();
 
         scoreToWinSynced.Value = Mathf.Max(1, scoreToWin);
         gameName.Value = new FixedString64Bytes(string.IsNullOrWhiteSpace(PendingGameName) ? "Hra" : PendingGameName);

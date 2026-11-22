@@ -54,6 +54,16 @@ public partial class MatchManager
         nextBoilerTick = Time.time + BoilerTickInterval;
         nextBoilerSync = 0f;
         Debug.Log($"[Kotel] Zatopeno ({player.name}{(boilerWithPellets.Value ? ", s peletami" : "")}) - horni patra se prehrivaji {Boiler.HeatSeconds} s.");
+        BoilerLitClientRpc(player.NetworkObjectId, boilerWithPellets.Value);
+    }
+
+    // Oznameni jen tomu, kdo zatopil (ostatni kotel jen slysi a vidi).
+    [ClientRpc]
+    void BoilerLitClientRpc(ulong playerId, bool pellets)
+    {
+        if (!IsLocalPlayer(playerId)) return;
+        CaptureUI.Announce(pellets ? "Zatopil jsi v kotli s peletami - horní patro chaty je peklo!"
+            : "Zatopil jsi v kotli - horní patro chaty se přehřívá!", Boiler.HeatColor, 3f);
     }
 
     void ServerBoilerTick()

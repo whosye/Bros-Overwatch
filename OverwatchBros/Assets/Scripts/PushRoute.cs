@@ -33,6 +33,8 @@ public class PushRoute : MonoBehaviour
     {
         Active = this;
         built = false;
+        // ve hre: jemne tyrkysove cary trasy a checkpointu na zemi
+        if (Application.isPlaying && GetComponent<PushRouteMarks>() == null) gameObject.AddComponent<PushRouteMarks>();
     }
 
     void OnDisable()

@@ -316,7 +316,7 @@ public static class ProceduralSfx
     // Reloads retain the source so interruptions can stop the complete assembled sequence.
     public static AudioSource PlayTracked(AudioClip clip, Vector3 position, float volume, float maxDistance, bool spatial = true, float pitch = 1f)
     {
-        if (clip == null) return null;
+        if (clip == null || GameAudioLock.Locked) return null;   // v menu zadne zvuky ze hry
         ReplayLog.Sfx(clip, position, volume, maxDistance, pitch);
 
         var go = new GameObject("SFX_" + clip.name);

@@ -264,12 +264,13 @@ public class SpawnBarn : MonoBehaviour
                 break;
             }
         int phase = match.roundPhase.Value;
-        // priprava: zavrena jen stodola utocniku (obranci se rozestavuji);
-        // mezi body (po dobyti, nez se dalsi bod odemkne): zavrene obe
-        bool setup = phase == MatchManager.RoundSetup && owner == match.attackTeam.Value;
+        // priprava i mezi body (po dobyti, nez se dalsi bod odemkne): zavrena jen stodola utocniku -
+        // obranci smi ven a maji naskok, aby se stihli rozestavit na dalsim bodu (napr. C a D u spawnu obrany)
+        bool attackers = owner == match.attackTeam.Value;
+        bool setup = phase == MatchManager.RoundSetup;
         bool betweenPoints = match.pointIndex.Value > 0 && match.lockSecondsLeft.Value > 0
             && (phase == MatchManager.RoundAttack || phase == MatchManager.RoundOvertime);
-        setupLock = owner >= 0 && match.IsAttackMode && (setup || betweenPoints);
+        setupLock = owner >= 0 && attackers && match.IsAttackMode && (setup || betweenPoints);
     }
 
     // Po pohybu postav (LateUpdate): nepovoleny prechod hranou stodoly = zpet.

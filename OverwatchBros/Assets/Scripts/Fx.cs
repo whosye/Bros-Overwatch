@@ -331,7 +331,7 @@ public static class Fx
 
     public static void PlaySpatial(AudioClip clip, Vector3 position, float volume, float minDistance = 4f, float maxDistance = 30f, bool spatial = true)
     {
-        if (clip == null) return;
+        if (clip == null || GameAudioLock.Locked) return;   // v menu zadne zvuky ze hry
         ReplayLog.SpatialSound(clip, position, volume, minDistance, maxDistance);
 
         var go = new GameObject("SFX_" + clip.name);
@@ -354,7 +354,7 @@ public static class Fx
     // Zvuk pres celou mapu (ultimatky): bez prostoroveho utlumu, kazdy hrac ho slysi stejne hlasite.
     public static void PlayGlobal(AudioClip clip, float volume)
     {
-        if (clip == null) return;
+        if (clip == null || GameAudioLock.Locked) return;
         ReplayLog.GlobalSound(clip, volume);
 
         var go = new GameObject("SFX_Global_" + clip.name);

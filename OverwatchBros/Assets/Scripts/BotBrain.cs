@@ -1933,6 +1933,24 @@ public static class BotNavigation
         int openGates = sources.RemoveAll(src => src.component is Collider c && c.GetComponentInParent<ZoneGate>() is ZoneGate gate
             && ZoneGate.ShouldBeOpen(gate.unlockAfter));
         if (openGates > 0) Debug.Log($"[Boti] Otevrene brany zon - vynechano kolizi: {openGates}.");
+        // Mesh Collider s modelem bez Read/Write (rucne pridane kolize, napr. gauc s Maxem): stavitel site by hlasil
+        // chybu (a v buildu by ho vynechal) - misto nej se do site da kvadr jeho obrysu.
+        var unreadable = new List<string>();
+        for (int i = 0; i < sources.Count; i++)
+        {
+            var src = sources[i];
+            if (src.shape != NavMeshBuildSourceShape.Mesh || !(src.sourceObject is Mesh mesh) || mesh.isReadable) continue;
+            if (!(src.component is Collider col)) continue;
+            Bounds b = col.bounds;
+            src.shape = NavMeshBuildSourceShape.Box;
+            src.sourceObject = null;
+            src.transform = Matrix4x4.TRS(b.center, Quaternion.identity, Vector3.one);
+            src.size = b.size;
+            sources[i] = src;
+            if (unreadable.Count < 12) unreadable.Add(col.name);
+        }
+        if (unreadable.Count > 0)
+            Debug.Log($"[Boti] Kolize s modelem bez Read/Write (v siti jako kvadr): {string.Join(", ", unreadable)}.");
         Bounds bounds = new Bounds();
         bool any = false;
         foreach (var src in sources)

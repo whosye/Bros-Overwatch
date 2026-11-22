@@ -337,7 +337,10 @@ public partial class MatchManager
             float t = ab.sqrMagnitude > 1e-4f ? Mathf.Clamp01(Vector3.Dot(p - a, ab) / ab.sqrMagnitude) : 0f;
             if (Vector3.Distance(p, a + ab * t) > PushRadius) continue;
             float groundY = Mathf.Lerp(robot.y, car.y, t);
-            if (feet.y < groundY - 1.5f || feet.y > groundY + PushHeight) continue;
+            // kdo stoji na strese Yarisu (nebo na Honzovi), je u nej taky - i kdyz je vys nez PushHeight
+            bool onTop = feet.y > groundY + PushHeight && feet.y < groundY + 8f
+                && PushRobot.Instance != null && PushRobot.Instance.Occupies(feet, 0.3f);
+            if (feet.y < groundY - 1.5f || (feet.y > groundY + PushHeight && !onTop)) continue;
 
             if (team.teamId.Value == 0) team0++;
             else team1++;
