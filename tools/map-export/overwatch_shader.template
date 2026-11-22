@@ -1,0 +1,125 @@
+Shader "BrosOverwatch/Sapa"
+{
+    Properties
+    {
+        _Style("OWM style", Float) = 0
+        _Cutoff("Alpha cutoff", Float) = 0.01
+        _DebugSurface("Debug albedo", Float) = 0
+        [MainTexture] _BaseMap("Main texture", 2D) = "white" {}
+        [MainColor] _BaseColor("Main color", Color) = (1,1,1,1)
+        [HideInInspector] _SrcBlend("Source blend", Float) = 1
+        [HideInInspector] _DstBlend("Destination blend", Float) = 0
+        [HideInInspector] _ZWrite("Depth write", Float) = 1
+        [HideInInspector] _Cull("Cull", Float) = 0
+        /* GENERATED_PROPERTIES */
+    }
+    SubShader
+    {
+        Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" "Queue"="Geometry" }
+        Pass
+        {
+            Name "ForwardLit"
+            Tags { "LightMode"="UniversalForward" }
+            Blend [_SrcBlend] [_DstBlend]
+            ZWrite [_ZWrite]
+            Cull [_Cull]
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex Vert
+            #pragma fragment Frag
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
+            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            #pragma multi_compile_fog
+            #pragma multi_compile_instancing
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "SapaSurface.hlsl"
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float3 normalOS : NORMAL;
+                float4 tangentOS : TANGENT;
+                float2 uv0 : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+                float2 uv2 : TEXCOORD2;
+                float4 color : COLOR;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD0;
+                float3 normalWS : TEXCOORD1;
+                float4 tangentWS : TEXCOORD2;
+                float2 uv0 : TEXCOORD3;
+                float2 uv1 : TEXCOORD4;
+                float2 uv2 : TEXCOORD5;
+                float4 color : COLOR;
+                float fog : TEXCOORD6;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+            Varyings Vert(Attributes IN)
+            {
+                Varyings OUT=(Varyings)0;
+                UNITY_SETUP_INSTANCE_ID(IN);
+                UNITY_TRANSFER_INSTANCE_ID(IN,OUT);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
+                VertexPositionInputs p=GetVertexPositionInputs(IN.positionOS.xyz);
+                VertexNormalInputs n=GetVertexNormalInputs(IN.normalOS,IN.tangentOS);
+                OUT.positionCS=p.positionCS;
+                OUT.positionWS=p.positionWS;
+                OUT.normalWS=n.normalWS;
+                OUT.tangentWS=float4(n.tangentWS,IN.tangentOS.w*GetOddNegativeScale());
+                OUT.uv0=IN.uv0; OUT.uv1=IN.uv1; OUT.uv2=IN.uv2; OUT.color=IN.color;
+                OUT.fog=ComputeFogFactor(p.positionCS.z);
+                return OUT;
+            }
+            half4 Frag(Varyings IN, bool frontFace : SV_IsFrontFace) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(IN);
+                SapaInput sampleInput;
+                sampleInput.uv0=IN.uv0; sampleInput.uv1=IN.uv1; sampleInput.uv2=IN.uv2;
+                sampleInput.color=IN.color;
+                SapaSurface source=EvaluateSapa(sampleInput);
+                clip(source.alpha-_Cutoff);
+                if (_DebugSurface > 0.5) return half4(source.color,source.alpha);
+                half3 normal=NormalizeNormalPerPixel(IN.normalWS)*(frontFace?1.0:-1.0);
+                half3 tangent=SafeNormalize(IN.tangentWS.xyz);
+                half3 bitangent=cross(normal,tangent)*IN.tangentWS.w;
+                InputData input=(InputData)0;
+                input.positionWS=IN.positionWS;
+                input.normalWS=NormalizeNormalPerPixel(TransformTangentToWorld(source.normal,half3x3(tangent,bitangent,normal)));
+                input.viewDirectionWS=GetWorldSpaceNormalizeViewDir(IN.positionWS);
+                input.shadowCoord=TransformWorldToShadowCoord(IN.positionWS);
+                input.fogCoord=IN.fog;
+                input.vertexLighting=VertexLighting(IN.positionWS,input.normalWS);
+                input.bakedGI=SampleSH(input.normalWS);
+                input.normalizedScreenSpaceUV=GetNormalizedScreenSpaceUV(IN.positionCS);
+                input.shadowMask=half4(1,1,1,1);
+                SurfaceData surface=(SurfaceData)0;
+                surface.albedo=max(source.color,0.0);
+                surface.metallic=saturate(source.metallic);
+                surface.specular=half3(.04,.04,.04);
+                surface.smoothness=1.0-saturate(source.roughness);
+                surface.normalTS=source.normal;
+                surface.emission=max(source.emission,0.0);
+                surface.occlusion=1;
+                surface.alpha=saturate(source.alpha);
+                half4 color=UniversalFragmentPBR(input,surface);
+                color.rgb=MixFog(color.rgb,input.fogCoord);
+                color.a=surface.alpha;
+                return color;
+            }
+            ENDHLSL
+        }
+        UsePass "Universal Render Pipeline/Lit/ShadowCaster"
+        UsePass "Universal Render Pipeline/Lit/DepthOnly"
+        UsePass "Universal Render Pipeline/Lit/DepthNormals"
+    }
+    FallBack "Hidden/Universal Render Pipeline/FallbackError"
+}

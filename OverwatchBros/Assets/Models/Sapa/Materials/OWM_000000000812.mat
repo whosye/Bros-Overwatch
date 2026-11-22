@@ -1,0 +1,253 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: OWM_000000000812
+  m_Shader: {fileID: 4800000, guid: 052cd6082e0d0a54caee9a85bc20137d, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: d50cfadcf1463614aaaf37be7517d2da, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_AO:
+        m_Texture: {fileID: 2800000, guid: 7e077112a06fe754595d5cb1a4034951, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Alpha:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Alpha_B:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Alpha_Divisor:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Blend:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Blend_Factor:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Cloth_Mask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Color:
+        m_Texture: {fileID: 2800000, guid: d50cfadcf1463614aaaf37be7517d2da, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Color_B:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Color_C:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Dirt:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Dirt_Color:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Dirt_Factor:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Dirt_Power:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Dirt_Strength:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Emission:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Emission_B:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Emission_Color:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Emission_Power:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Emission_Strength:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Emission_Tint:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Emission_Tint_Amount:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Material:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Normal:
+        m_Texture: {fileID: 2800000, guid: 32b11caac336f794089a2160d97c0ef9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Normal_B:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Normal_B_Strength:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Normal_Strength:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_Opacity:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_PBR:
+        m_Texture: {fileID: 2800000, guid: b84ce48993012384284caf018340514e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OW_PBR_B:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Cull: 0
+    - _Cutoff: 0.01
+    - _DebugSurface: 0
+    - _DstBlend: 0
+    - _OW_AOMode: 1
+    - _OW_AOUV: 1
+    - _OW_AlphaMode: 0
+    - _OW_AlphaUV: 0
+    - _OW_Alpha_BMode: 0
+    - _OW_Alpha_BUV: 0
+    - _OW_Alpha_DivisorMode: 0
+    - _OW_Alpha_DivisorUV: 0
+    - _OW_BlendMode: 0
+    - _OW_BlendUV: 0
+    - _OW_Blend_FactorMode: 0
+    - _OW_Blend_FactorUV: 0
+    - _OW_Cloth_MaskMode: 0
+    - _OW_Cloth_MaskUV: 0
+    - _OW_ColorMode: 1
+    - _OW_ColorUV: 0
+    - _OW_Color_BMode: 0
+    - _OW_Color_BUV: 0
+    - _OW_Color_CMode: 0
+    - _OW_Color_CUV: 0
+    - _OW_DirtMode: 0
+    - _OW_DirtUV: 0
+    - _OW_Dirt_ColorMode: 0
+    - _OW_Dirt_ColorUV: 0
+    - _OW_Dirt_FactorMode: 0
+    - _OW_Dirt_FactorUV: 0
+    - _OW_Dirt_PowerMode: 0
+    - _OW_Dirt_PowerUV: 0
+    - _OW_Dirt_StrengthMode: 0
+    - _OW_Dirt_StrengthUV: 0
+    - _OW_EmissionMode: 0
+    - _OW_EmissionUV: 0
+    - _OW_Emission_BMode: 0
+    - _OW_Emission_BUV: 0
+    - _OW_Emission_ColorMode: 0
+    - _OW_Emission_ColorUV: 0
+    - _OW_Emission_PowerMode: 0
+    - _OW_Emission_PowerUV: 0
+    - _OW_Emission_StrengthMode: 0
+    - _OW_Emission_StrengthUV: 0
+    - _OW_Emission_TintMode: 0
+    - _OW_Emission_TintUV: 0
+    - _OW_Emission_Tint_AmountMode: 0
+    - _OW_Emission_Tint_AmountUV: 0
+    - _OW_MaterialMode: 0
+    - _OW_MaterialUV: 0
+    - _OW_NormalMode: 1
+    - _OW_NormalUV: 0
+    - _OW_Normal_BMode: 0
+    - _OW_Normal_BUV: 0
+    - _OW_Normal_B_StrengthMode: 0
+    - _OW_Normal_B_StrengthUV: 0
+    - _OW_Normal_StrengthMode: 0
+    - _OW_Normal_StrengthUV: 0
+    - _OW_OpacityMode: 0
+    - _OW_OpacityUV: 0
+    - _OW_PBRMode: 1
+    - _OW_PBRUV: 0
+    - _OW_PBR_BMode: 0
+    - _OW_PBR_BUV: 0
+    - _SrcBlend: 1
+    - _Style: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_AOValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_AlphaValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Alpha_BValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Alpha_DivisorValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_BlendValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Blend_FactorValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Cloth_MaskValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_ColorValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Color_BValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Color_CValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_DirtValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Dirt_ColorValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Dirt_FactorValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Dirt_PowerValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Dirt_StrengthValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_EmissionValue: {r: 0, g: 0, b: 0, a: 0}
+    - _OW_Emission_BValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Emission_ColorValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Emission_PowerValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Emission_StrengthValue: {r: 0, g: 0, b: 0, a: 0}
+    - _OW_Emission_TintValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Emission_Tint_AmountValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_MaterialValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_NormalValue: {r: 0.5, g: 0.5, b: 0, a: 1}
+    - _OW_Normal_BValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Normal_B_StrengthValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_Normal_StrengthValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_OpacityValue: {r: 1, g: 1, b: 1, a: 1}
+    - _OW_PBRValue: {r: 0, g: 1, b: 1, a: 1}
+    - _OW_PBR_BValue: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

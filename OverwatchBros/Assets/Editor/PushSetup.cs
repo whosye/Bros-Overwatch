@@ -976,14 +976,14 @@ public static class PushSetup
         void Require(bool ok, string message) { if (!ok) errors.Add(message); }
 
         // deathmatch a utok: stejne jako pred tlacenici
-        foreach (int map in new[] { MatchManager.MapDomasov, MatchManager.MapHanamura })
+        foreach (int map in new[] { MatchManager.MapDomasov, MatchManager.MapHanamura, MatchManager.MapSapa })
             foreach (int mode in new[] { MatchManager.ModeDeathmatch, MatchManager.ModeAttack })
                 Require(MatchManager.MapSupportsMode(map, mode), $"{MatchManager.MapNames[map]} ztratil podporu rezimu {mode}.");
         Require(MatchManager.MapSupportsMode(MatchManager.MapDust2, MatchManager.ModeDeathmatch), "Dust II ztratil deathmatch.");
         Require(!MatchManager.MapSupportsMode(MatchManager.MapDust2, MatchManager.ModeAttack), "Dust II nesmi mit utok.");
-        Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeAttack) == MatchManager.MapDomasov, "Utok: po Hanamure ma prijit Domasov.");
+        Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeAttack) == MatchManager.MapSapa, "Utok: po Hanamure ma prijit Sapa.");
         Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeDeathmatch) == MatchManager.MapDust2, "Deathmatch: po Hanamure ma prijit Dust II.");
-        Require(MatchManager.NextMapForMode(MatchManager.MapDust2, MatchManager.ModeDeathmatch) == MatchManager.MapDomasov, "Deathmatch: nova mapa se nesmi nabizet.");
+        Require(MatchManager.NextMapForMode(MatchManager.MapDust2, MatchManager.ModeDeathmatch) == MatchManager.MapSapa, "Deathmatch: po Dust II ma prijit Sapa.");
         // tlacenice jen na nove mape, nova mapa jen pro tlacenici
         for (int map = 0; map < MatchManager.MapNames.Length; map++)
         {

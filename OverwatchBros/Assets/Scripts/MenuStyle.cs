@@ -69,12 +69,12 @@ public static class MenuStyle
     }
     public static void Rule(Transform parent,Vector2 pos,float width)
         =>UiKit.MakeImage(parent,"Divider",new Color(.69f,.77f,.68f,.24f),Center,pos,new Vector2(width,1));
-    static readonly Sprite[] mapPreviews=new Sprite[4];
+    static readonly Sprite[] mapPreviews=new Sprite[MatchManager.MapNames.Length];
     public static Sprite MapPreview(int index)
     {
         if(index<0||index>=mapPreviews.Length)return null;
         if(mapPreviews[index]!=null)return mapPreviews[index];
-        string[] names={"cottage-evening","hanamura-lan","prdust-lan","cottage-evening"};   // (4 = Domasov - Tlacenice)
+        string[] names={"cottage-evening","hanamura-lan","prdust-lan","cottage-evening","sapa"};
         var texture=Resources.Load<Texture2D>("UI/"+names[index]);
         if(texture==null)return null;
         return mapPreviews[index]=Sprite.Create(texture,new Rect(0,0,texture.width,texture.height),Center);

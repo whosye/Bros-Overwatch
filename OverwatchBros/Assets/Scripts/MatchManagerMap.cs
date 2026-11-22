@@ -11,16 +11,19 @@ public partial class MatchManager
     public const int MapHanamura = 1;
     public const int MapDust2 = 2;
     public const int MapDomasovPush = 3;   // kopie Domasova jen pro rezim Tlacenice (PushSetup)
+    public const int MapSapa = 4;
 
-    public static readonly string[] MapNames = { "Domašov", "Hanamura", "Dust II", "Domašov (Tlačenice)" };
+    public static readonly string[] MapNames = { "Domašov", "Hanamura", "Dust II", "Domašov (Tlačenice)", "Sapa" };
     // Korenovy objekt mapy ve scene (prazdny = puvodni mapa, ta je ve scene vzdy).
-    static readonly string[] MapRoots = { "", "Map_Hanamura", "Map_Dust2", "Map_DomasovPush" };
+    static readonly string[] MapRoots = { "", "Map_Hanamura", "Map_Dust2", "Map_DomasovPush", "Map_Sapa" };
     const string DomasovRoot = "Map-Domasov";
     public static readonly Vector3 HanamuraOrigin = new Vector3(1000f, 0f, 0f);   // Hanamura stoji stranou od chat
     // Cela mapa i KillPlane lezi nad nulou, mimo vyskovy bonus tunelu na Domasove.
     public static readonly Vector3 Dust2Origin = new Vector3(2000f, 50f, 0f);
     // Kopie Domasova pro Tlacenici: stejna vyska (tunel pod zemi funguje stejne), jen o 3 km stranou.
     public static readonly Vector3 DomasovPushOrigin = new Vector3(3000f, 0f, 0f);
+    // Importovana mapa vcetne pozadi je nad nulou, mimo vyskovy bonus tunelu.
+    public static readonly Vector3 SapaOrigin = new Vector3(4000f, 200f, 0f);
 
     public NetworkVariable<int> mapIndex = new NetworkVariable<int>(MapDomasov);
 
@@ -90,13 +93,17 @@ public partial class MatchManager
     {
         if (!MapReady(index)) index = MapDomasov;
         bool changed = appliedMap != index;
+        // Nejdriv obnovit prostredi predchozi mapy, potom zapnout nove.
+        // Jinak OnDisable stare mapy prepise svetla prave zapnute mapy.
         for (int map = 0; map < MapNames.Length; map++)
         {
+            if (map == index) continue;
             var root = FindRoot(map == MapDomasov ? DomasovRoot : MapRoots[map]);
             if (root == null) continue;
-            bool active = map == index;
-            if (root.activeSelf != active) { root.SetActive(active); changed = true; }
+            if (root.activeSelf) { root.SetActive(false); changed = true; }
         }
+        var selected = FindRoot(index == MapDomasov ? DomasovRoot : MapRoots[index]);
+        if (selected != null && !selected.activeSelf) { selected.SetActive(true); changed = true; }
         appliedMap = index;
         if (!changed) return;
 
@@ -116,7 +123,7 @@ public partial class MatchManager
     {
         get
         {
-            if (appliedMap == MapDust2 && MapSpawnPoints.TryGetBounds(out var bounds)) return bounds;
+            if ((appliedMap == MapDust2 || appliedMap == MapSapa) && MapSpawnPoints.TryGetBounds(out var bounds)) return bounds;
             if (appliedMap == MapHanamura)
                 return new Bounds(HanamuraOrigin + new Vector3(0f, 20f, 75f), new Vector3(240f, 120f, 280f));
             if (appliedMap == MapDomasovPush)

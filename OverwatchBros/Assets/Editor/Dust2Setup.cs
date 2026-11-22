@@ -282,7 +282,7 @@ public static class Dust2Setup
         Require(MatchManager.MapReady(MatchManager.MapDust2), "Mapa se neobjevila v registru.");
         Require(MatchManager.MapSupportsMode(MatchManager.MapDust2, MatchManager.ModeDeathmatch), "Deathmatch neni povoleny.");
         Require(!MatchManager.MapSupportsMode(MatchManager.MapDust2, MatchManager.ModeAttack), "Dust II nesmi podporovat dobyvani.");
-        Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeAttack) == MatchManager.MapDomasov,
+        Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeAttack) == MatchManager.MapSapa,
             "Dobyvani nepreskocilo Dust II.");
         Require(MatchManager.NextMapForMode(MatchManager.MapHanamura, MatchManager.ModeDeathmatch) == MatchManager.MapDust2,
             "Deathmatch nenabizi Dust II.");

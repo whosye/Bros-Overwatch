@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 public static class MapPreviewMenu
 {
     // poradi jako MatchManager.MapNames (indexy map)
-    static readonly string[] Roots = { "Map-Domasov", "Map_Hanamura", "Map_Dust2", "Map_DomasovPush" };
+    static readonly string[] Roots = { "Map-Domasov", "Map_Hanamura", "Map_Dust2", "Map_DomasovPush", "Map_Sapa" };
     const string MenuPath = "BrosOverwatch/Nahled mapy/";
     const string PreviewKey = "BrosOverwatch.MapPreview";
 
@@ -31,11 +31,13 @@ public static class MapPreviewMenu
     [MenuItem(MenuPath + "Hanamura", false, 2)] static void Hanamura() => Show(MatchManager.MapHanamura);
     [MenuItem(MenuPath + "Dust II", false, 3)] static void Dust2() => Show(MatchManager.MapDust2);
     [MenuItem(MenuPath + "Domasov (Tlacenice)", false, 4)] static void Push() => Show(MatchManager.MapDomasovPush);
+    [MenuItem(MenuPath + "Sapa", false, 5)] static void Sapa() => Show(MatchManager.MapSapa);
 
     [MenuItem(MenuPath + "Domasov", true)] static bool DomasovCheck() => Check(MatchManager.MapDomasov);
     [MenuItem(MenuPath + "Hanamura", true)] static bool HanamuraCheck() => Check(MatchManager.MapHanamura);
     [MenuItem(MenuPath + "Dust II", true)] static bool Dust2Check() => Check(MatchManager.MapDust2);
     [MenuItem(MenuPath + "Domasov (Tlacenice)", true)] static bool PushCheck() => Check(MatchManager.MapDomasovPush);
+    [MenuItem(MenuPath + "Sapa", true)] static bool SapaCheck() => Check(MatchManager.MapSapa);
 
     // Zaskrtnuti u mapy, ktera je videt; mapa, ktera ve scene neni (jeste nepostavena), je sediva.
     static bool Check(int map)
@@ -44,7 +46,7 @@ public static class MapPreviewMenu
         return !EditorApplication.isPlayingOrWillChangePlaymode && FindRoot(Roots[map]) != null;
     }
 
-    static string MenuName(int map) => map == MatchManager.MapDomasovPush ? "Domasov (Tlacenice)" : map == MatchManager.MapDust2 ? "Dust II" : map == MatchManager.MapHanamura ? "Hanamura" : "Domasov";
+    static string MenuName(int map) => map == MatchManager.MapSapa ? "Sapa" : map == MatchManager.MapDomasovPush ? "Domasov (Tlacenice)" : map == MatchManager.MapDust2 ? "Dust II" : map == MatchManager.MapHanamura ? "Hanamura" : "Domasov";
 
     static void Show(int map)
     {
@@ -72,9 +74,14 @@ public static class MapPreviewMenu
     {
         for (int i = 0; i < Roots.Length; i++)
         {
+            if (i == map) continue;
             var root = FindRoot(Roots[i]);
-            if (root != null && root.activeSelf != (i == map)) root.SetActive(i == map);
+            if (root != null && root.activeSelf) root.SetActive(false);
         }
+        var selected = FindRoot(Roots[map]);
+        if (selected != null && !selected.activeSelf) selected.SetActive(true);
+        if (map == MatchManager.MapSapa)
+            FindRoot(Roots[map])?.GetComponent<MapEnvironment>()?.Apply();
     }
 
     static int Current()

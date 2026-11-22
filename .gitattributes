@@ -150,3 +150,5 @@ Packages/packages-lock.json linguist-generated
 # Exceptions for .asset files such as lightning pre-baking
 LightingData.asset     binary
 *.png filter=lfs diff=lfs merge=lfs -text
+# Full-detail Sapa transport model (kept at original geometry precision).
+OverwatchBros/Assets/Models/Sapa/Sapa.glb lfs
