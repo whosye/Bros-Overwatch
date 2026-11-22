@@ -16,6 +16,7 @@ public static class HeroInput
     {
         var bot = Bot(c);
         if (bot != null) return bot.ConsumePress(key);
+        if (TextChatUI.BlocksGameplayInput) return false;
         switch (key)
         {
             case Key.Q: return Keyboard.current.qKey.wasPressedThisFrame;
@@ -31,6 +32,7 @@ public static class HeroInput
     {
         var bot = Bot(c);
         if (bot != null) return bot.IsHeld(key);
+        if (TextChatUI.BlocksGameplayInput) return false;
         switch (key)
         {
             case Key.Q: return Keyboard.current.qKey.isPressed;
@@ -47,6 +49,7 @@ public static class HeroInput
     {
         var bot = Bot(c);
         if (bot != null) return bot.Move;
+        if (TextChatUI.BlocksGameplayInput) return Vector2.zero;
         Vector2 input = Vector2.zero;
         if (Keyboard.current.wKey.isPressed) input.y += 1f;
         if (Keyboard.current.sKey.isPressed) input.y -= 1f;

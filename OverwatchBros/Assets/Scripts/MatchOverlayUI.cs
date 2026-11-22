@@ -455,7 +455,7 @@ public class MatchOverlayUI
 
     void UpdateBoard(PlayerHero local, bool playing, MatchManager match, bool always)
     {
-        bool show = playing && match != null && (always || (Keyboard.current != null && Keyboard.current.tabKey.isPressed));
+        bool show = playing && match != null && (always || (!TextChatUI.BlocksGameplayInput && Keyboard.current != null && Keyboard.current.tabKey.isPressed));
         if (board.activeSelf != show)
         {
             board.SetActive(show);

@@ -49,7 +49,7 @@ public class Killcam : MonoBehaviour
         // konec: dohrano, hrac uz zije (oziveni), konec zapasu nebo mezernik
         var match = MatchManager.Instance;
         bool alive = LocalAlive();
-        bool skip = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        bool skip = !TextChatUI.BlocksGameplayInput && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
         if (ReplayPlayer.Finished || alive || skip || match == null || match.IsOver || match.IsLobby)
             ReplayPlayer.Stop();
     }

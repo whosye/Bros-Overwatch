@@ -48,8 +48,8 @@ public class SettingsMenuUI
             new[]{"WASD","Mezerník","Ctrl","Shift","Levé tlačítko","Pravé tlačítko","E","Q"},
             new[]{"Pohyb","Skok","Dřep","Pohyb / schopnost","Útok","Alt. útok / míření","Schopnost","Ultimátka"});
         ControlGroup(pages[3].transform,275,"DALŠÍ KLÁVESY",
-            new[]{"R","Tab","F1","F2","Esc"},
-            new[]{"Přebití","Tabulka hráčů","Změna hrdiny","Schopnosti hrdiny","Nastavení / zpět"});
+            new[]{"R","Tab","F1","F2","Enter","Esc"},
+            new[]{"Přebití","Tabulka hráčů","Změna hrdiny","Schopnosti hrdiny","Chat (Tab: kanál)","Nastavení / zpět"});
         MenuStyle.Rule(panel.transform,new Vector2(0,-290),1100);
         hint=MenuStyle.Text(panel.transform,"SettingsHint","",new Vector2(0,-255),new Vector2(1100,42),23,MenuStyle.Muted,TextAlignmentOptions.Center);
         closeButton=MenuStyle.Button(panel.transform,"POKRAČOVAT",new Vector2(-250,-355),new Vector2(490,74),CloseAndResume,true,30);

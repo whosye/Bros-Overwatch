@@ -315,7 +315,7 @@ public class LobbyUI
     public void Tick(PlayerHero localHero, bool joining = false)
     {
         MainMenuUI.RefreshMusicToggle(musicButton);
-        if(Root!=null&&Root.activeSelf&&Keyboard.current!=null)
+        if(Root!=null&&Root.activeSelf&&Keyboard.current!=null&&!TextChatUI.BlocksGameplayInput)
         {
             if(Keyboard.current.escapeKey.wasPressedThisFrame&&choices!=null)CloseChoices();
             else if(Keyboard.current.f2Key.wasPressedThisFrame)SetView(activeView==1?0:1);

@@ -367,8 +367,9 @@ public class BoulderAbility : NetworkBehaviour
             recorder.ServerNoteUltimate();
 
         Vector3 center = point + Vector3.up * boulderRadius;
-        Combat.Explode(gameObject, center, ability.radius, ability.power, EdgeDamage, null, Combat.AbilitySource(ability));
-        Combat.Knockback(gameObject, center, ability.radius, ability.knockback, 1f);
+        Transform casing = boulder != null ? boulder.transform : null;
+        Combat.Explode(gameObject, center, ability.radius, ability.power, EdgeDamage, null, Combat.AbilitySource(ability), casing);
+        Combat.Knockback(gameObject, center, ability.radius, ability.knockback, 1f, casing);
         ExplodeFxClientRpc(center);
     }
 

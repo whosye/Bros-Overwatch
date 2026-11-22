@@ -192,7 +192,8 @@ public class FirstPersonController : NetworkBehaviour
         || (MatchManager.Instance != null && MatchManager.Instance.CaptureCombatPaused);
     public bool InputBlocked => ShootBlocked || Silenced || riding;
     // Strelba (a pribliseni): jako InputBlocked, ale vystraseny hrac strilet muze.
-    public bool ShootBlocked => CannotAct || AbilityActive || UltCasting;
+    bool ChatInputBlocked => IsOwner && Bot == null && TextChatUI.BlocksGameplayInput;
+    public bool ShootBlocked => CannotAct || AbilityActive || UltCasting || ChatInputBlocked;
 
     // Vystraseni (Sindeluv "Say what again?!"): chvili nejde pouzivat schopnosti. Hlida vlastnik.
     float silencedUntil;
@@ -677,7 +678,7 @@ public class FirstPersonController : NetworkBehaviour
             return;
         }
 
-        if (Keyboard.current.escapeKey.wasPressedThisFrame && !SettingsMenuUI.EscapeHandledThisFrame)
+        if (Keyboard.current.escapeKey.wasPressedThisFrame && !SettingsMenuUI.EscapeHandledThisFrame && !TextChatUI.BlocksGameplayInput)
             Cursor.lockState = CursorLockMode.None;
 
         UpdateDriving();
@@ -1117,7 +1118,7 @@ public class FirstPersonController : NetworkBehaviour
         if (AbilityActive || Joining) return;
         if (TickMantle()) return;
 
-        bool frozen = CannotAct;
+        bool frozen = CannotAct || ChatInputBlocked;
 
         bool isGrounded = controller.isGrounded;
         if (isGrounded && verticalVelocity < 0)

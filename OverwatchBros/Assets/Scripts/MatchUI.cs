@@ -12,6 +12,8 @@ public class MatchUI : MonoBehaviour
 {
     readonly MainMenuUI menu = new MainMenuUI();
     readonly LobbyUI lobby = new LobbyUI();
+    public bool ChatAvailable => !settings.IsOpen && !heroPicker.IsOpen && !heroInfo.IsOpen
+        && !ReplayPlayer.Active && !PotgUI.IsShowing && !PotgIntro.Active;
 
     TextMeshProUGUI scoreText;
     TextMeshProUGUI infoText;
@@ -151,6 +153,7 @@ public class MatchUI : MonoBehaviour
         // karta hrdiny (klik na hrdinu v lobby, F2 ve hre) - nad lobby
         heroInfo.Build(root);
         settings.Build(root, () => Cursor.lockState = CursorLockMode.Locked, LeaveGame);
+        TextChatUI.Build(root,this);
         menu.OnSettings = () => settings.Open(false);
 
         var connecting = UiKit.MakeImage(root, "ConnectingOverlay", MenuStyle.Ink, center, Vector2.zero, Vector2.zero);
@@ -322,10 +325,10 @@ public class MatchUI : MonoBehaviour
         endPanel.SetActive(over && !replay && !PotgIntro.Active);
 
         // Zmena hrdiny behem zapasu (F1).
-        heroPicker.Tick(localHero, playing && !over && !PotgUI.IsShowing);
+        heroPicker.Tick(localHero, playing && !over && !PotgUI.IsShowing && !TextChatUI.BlocksGameplayInput);
 
         // Karta hrdiny se schopnostmi (F2; v lobby i kliknutim na hrdinu).
-        heroInfo.Tick(hasPlayer && playing && !inLobby && !over && !replay && !PotgUI.IsShowing,
+        heroInfo.Tick(hasPlayer && playing && !inLobby && !over && !replay && !PotgUI.IsShowing && !TextChatUI.BlocksGameplayInput,
             localHero != null ? localHero.heroId.Value : PlayerHero.PreferredHero);
 
         UpdateCursor(hasPlayer, inLobby, over || heroPicker.IsOpen || heroInfo.IsOpen);
@@ -358,7 +361,7 @@ public class MatchUI : MonoBehaviour
         crosshair.SetActive(crosshairFade.alpha > 0.005f && ((playing && !over && locked && !replay) || (replay && ReplayPlayer.Frame != null && (killcam || !ReplayPlayer.Frame.thirdPerson))));
         UpdateBlockBar(localHero, playing && !over);
 
-        bool showSettings = playing && !over && !locked && !heroPicker.IsOpen && !heroInfo.IsOpen && !replay && !PotgUI.IsShowing;
+        bool showSettings = playing && !over && !locked && !heroPicker.IsOpen && !heroInfo.IsOpen && !replay && !PotgUI.IsShowing && !TextChatUI.BlocksGameplayInput;
         if (showSettings && !settings.IsOpen) settings.Open(true);
         if (settings.IsOpen && ((settings.InGame && !showSettings) || (connected && !playing))) settings.Close();
         settings.Tick();
@@ -450,9 +453,16 @@ public class MatchUI : MonoBehaviour
     }
 
     // V lobby a na konci zapasu musi byt kurzor volny; pri navratu do hry se znovu zamkne.
+    void LateUpdate()
+    {
+        // Apply after chat, gameplay and menus have chosen the cursor lock.
+        // An explicit hide must never persist into an unlocked menu.
+        Cursor.visible = Cursor.lockState != CursorLockMode.Locked;
+    }
+
     void UpdateCursor(bool hasPlayer, bool inLobby, bool over)
     {
-        bool needsFree = hasPlayer && (inLobby || over);
+        bool needsFree = hasPlayer && (inLobby || over || TextChatUI.IsTyping);
         if (needsFree)
             Cursor.lockState = CursorLockMode.None;
         else if (wasCursorFree && hasPlayer)
@@ -507,7 +517,7 @@ public class MatchUI : MonoBehaviour
             ? "Stiskni R pro nový zápas, nebo se vrať do lobby změnit tým / hrdinu"
             : "Čekáme, až host rozhodne, co dál…";
 
-        if (isHost && Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+        if (isHost && Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame && !TextChatUI.BlocksGameplayInput)
             RestartMatch();
     }
 

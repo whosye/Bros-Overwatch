@@ -13,7 +13,7 @@ public static class Combat
     }
 
     // Vybuch nejde skrz zdi: musi byt primy vyhled z mista vybuchu na cil.
-    public static bool HasLineOfSight(Vector3 from, Collider target)
+    public static bool HasLineOfSight(Vector3 from, Collider target, Transform ignoredOccluder = null)
     {
         Vector3 to = target.bounds.center;
         if (Vector3.Distance(from, to) < 1.5f) return true;
@@ -25,6 +25,7 @@ public static class Combat
         var targetOwner = target.GetComponentInParent<NetworkObject>();
         foreach (var hit in hits)
         {
+            if (ignoredOccluder != null && hit.collider.transform.IsChildOf(ignoredOccluder)) continue;
             if (hit.collider == target) return true;
             if (targetOwner != null && hit.collider.GetComponentInParent<NetworkObject>() == targetOwner) return true;
             if (hit.collider.GetComponentInParent<PlayerHero>() != null) continue;
@@ -164,7 +165,7 @@ public static class Combat
 
     // Plosny vybuch (jen server): damage klesa od stredu (100 %) po okraj (edgeFactor), neprochazi zdmi, nevraci vlastni tym.
     // 'direct' = hrac, ktereho projektil trefil primo: dostane plne poskozeni bez ohledu na vzdalenost od stredu.
-    public static void Explode(GameObject attacker, Vector3 position, float radius, float damage, float edgeFactor, Health direct = null, string source = "")
+    public static void Explode(GameObject attacker, Vector3 position, float radius, float damage, float edgeFactor, Health direct = null, string source = "", Transform ignoredOccluder = null)
     {
         var network = NetworkManager.Singleton;
         if (network == null || !network.IsServer) return;
@@ -191,9 +192,10 @@ public static class Combat
                 GollumHitbox.Damage(attacker, damage);
 
             var health = col.GetComponentInParent<Health>();
-            if (health == null || !damaged.Add(health)) continue;
+            if (health == null || damaged.Contains(health)) continue;
             if (SameTeam(attacker, health.gameObject)) continue;
-            if (!HasLineOfSight(position + Vector3.up * 0.6f, col)) continue;
+            if (!HasLineOfSight(position + Vector3.up * 0.6f, col, ignoredOccluder)) continue;
+            damaged.Add(health);
 
             float distance = Vector3.Distance(position, health.transform.position);
             float scaled = health == direct ? damage : damage * Mathf.Lerp(1f, edgeFactor, Mathf.Clamp01(distance / radius));
@@ -211,7 +213,7 @@ public static class Combat
     }
 
     // Odhozeni hracu vybuchem (jen server): neprochazi zdmi, spoluhrace neodhazuje, utocnika sameho ano (selfScale).
-    public static void Knockback(GameObject attacker, Vector3 position, float radius, float force, float selfScale)
+    public static void Knockback(GameObject attacker, Vector3 position, float radius, float force, float selfScale, Transform ignoredOccluder = null)
     {
         var network = NetworkManager.Singleton;
         if (network == null || !network.IsServer || force <= 0f) return;
@@ -223,12 +225,13 @@ public static class Combat
         foreach (var col in Physics.OverlapSphere(position, radius, ~0, QueryTriggerInteraction.Ignore))
         {
             var health = col.GetComponentInParent<Health>();
-            if (health == null || !pushed.Add(health) || health.currentHealth.Value <= 0f) continue;
+            if (health == null || pushed.Contains(health) || health.currentHealth.Value <= 0f) continue;
 
             bool self = health.gameObject == attacker;
             if (!self && SameTeam(attacker, health.gameObject)) continue;
             if (self && selfScale <= 0f) continue;
-            if (!HasLineOfSight(position + Vector3.up * 0.3f, col)) continue;
+            if (!HasLineOfSight(position + Vector3.up * 0.3f, col, ignoredOccluder)) continue;
+            pushed.Add(health);
 
             var controller = health.GetComponent<FirstPersonController>();
             if (controller == null) continue;

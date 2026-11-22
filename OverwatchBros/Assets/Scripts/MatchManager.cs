@@ -47,6 +47,7 @@ public partial class MatchManager : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
+        chatSentAt.Clear();
         ApplyMap(MapDomasov);   // po odpojeni zpet puvodni mapa (menu, dalsi hra)
         testCooldowns.OnValueChanged -= OnTestCooldownsChanged;
         AbilityDefinition.TestCooldowns = false;
@@ -62,6 +63,7 @@ public partial class MatchManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        chatSentAt.Clear();
         testCooldowns.OnValueChanged += OnTestCooldownsChanged;
         AbilityDefinition.TestCooldowns = testCooldowns.Value;
 

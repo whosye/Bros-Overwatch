@@ -6,7 +6,7 @@ public static class GameSettings
     // Pouze pro automaticke testy (v headless rezimu nejde zamknout kurzor).
     public static bool ForceCursorLocked;
 
-    public static bool CursorLocked => ForceCursorLocked || Cursor.lockState == CursorLockMode.Locked;
+    public static bool CursorLocked => !TextChatUI.BlocksGameplayInput && (ForceCursorLocked || Cursor.lockState == CursorLockMode.Locked);
 
     const string SensitivityKey = "settings.sensitivity";
     const string VolumeKey = "settings.volume";
