@@ -36,6 +36,8 @@ public class WeaponDefinition : ScriptableObject
     public float reloadTime = 1.5f;
     [Tooltip("Vlastni animace prebijeni zbrane v ruce (granatomet). Vypnuto = zbran se jen skloni a vrati.")]
     public bool reloadAnimation = false;
+    [Tooltip("Revolver: aim-corrected grip and swing-out cylinder reload instead of a magazine animation.")]
+    public bool revolverReload;
 
     // Hitscan: dosah okamziteho paprsku. Projectile: nejvetsi vzdalenost, kterou projektil preleti.
     public float range = 100f;

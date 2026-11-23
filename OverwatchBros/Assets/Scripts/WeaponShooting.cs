@@ -6,6 +6,9 @@ public class WeaponShooting : NetworkBehaviour
 {
     public WeaponDefinition weapon;
     public Camera playerCamera;
+    public NetworkVariable<float> presentationPitch = new NetworkVariable<float>(0f,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    float nextPresentationPitch;
 
     int currentAmmo;
     float nextFireTime;
@@ -160,6 +163,13 @@ public class WeaponShooting : NetworkBehaviour
     {
         if (!IsOwner) return;
         if (weapon == null) return;
+
+        if (weapon.revolverReload && IsSpawned && playerCamera != null && Time.time >= nextPresentationPitch)
+        {
+            nextPresentationPitch = Time.time + 0.05f;
+            float pitch = Mathf.DeltaAngle(0f, playerCamera.transform.localEulerAngles.x);
+            if (Mathf.Abs(pitch - presentationPitch.Value) > 0.25f) presentationPitch.Value = pitch;
+        }
 
         // Prebijeni dobehne, i kdyz hrac zrovna nemuze strilet (schopnost, blok).
         if (reloading)

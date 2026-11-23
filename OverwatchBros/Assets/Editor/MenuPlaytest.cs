@@ -37,14 +37,14 @@ public static class MenuPlaytest
     [MenuItem("BrosOverwatch/Menu/Build Windows Game")]
     public static void BuildGame()
     {
-        string executable = Path.Combine(Output,"Build/BrosOverwatch.exe");
+        string executable = Path.Combine(Output,"Build/OverwatchBros.exe");
         var args = Environment.GetCommandLineArgs();
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] != "-brosBuildOutput") continue;
             if (i + 1 >= args.Length || string.IsNullOrWhiteSpace(args[i + 1]) || args[i + 1].StartsWith("-"))
                 throw new ArgumentException("-brosBuildOutput requires an output directory.");
-            executable = Path.Combine(Path.GetFullPath(args[++i]), "BrosOverwatch.exe");
+            executable = Path.Combine(Path.GetFullPath(args[++i]), "OverwatchBros.exe");
         }
         Directory.CreateDirectory(Path.GetDirectoryName(executable));
         MenuTypography.EnsureFonts();

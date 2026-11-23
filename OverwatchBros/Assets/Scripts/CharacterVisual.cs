@@ -306,14 +306,43 @@ public class CharacterVisual : MonoBehaviour
     public bool AimOnScope;
 
     // Poza strelby (prvni snimek), podle ni se usadi zbran do ruky.
-    public void EvaluateShootPose()
+    public void EvaluateShootPose(bool correctFacing = false)
     {
         if (!graph.IsValid()) return;
 
         EvaluateIdlePose();
-        shootPlayable.SetTime(0f);
         layers.SetInputWeight(2, 1f);
+        float poseTime = 0f;
+        if (correctFacing && heroClips != null && ModelRoot != null)
+        {
+            // The pistol clip starts with the hand down. Calibrate its grip on an
+            // actual raised shooting frame, not on that introductory frame.
+            float best = float.NegativeInfinity;
+            for (int i = 1; i <= 15; i++)
+            {
+                float time = shootPlayable.GetAnimationClip().length * i / 20f;
+                shootPlayable.SetTime(time);
+                graph.Evaluate(0f);
+                CorrectWeaponPoseFacing();
+                var wrist = GetBone(HumanBodyBones.RightHand);
+                var elbow = GetBone(HumanBodyBones.RightLowerArm);
+                var shoulder = GetBone(HumanBodyBones.RightUpperArm);
+                if (wrist == null || elbow == null || shoulder == null) continue;
+                float score = Vector3.Dot((wrist.position - elbow.position).normalized, ModelRoot.forward)
+                    - Mathf.Abs(Vector3.Dot(wrist.position - shoulder.position, ModelRoot.up)) * .3f;
+                if (score > best) { best = score; poseTime = time; }
+            }
+        }
+        shootPlayable.SetTime(poseTime);
         graph.Evaluate(0f);
+        if (correctFacing) CorrectWeaponPoseFacing();
+    }
+
+    void CorrectWeaponPoseFacing()
+    {
+        if (heroClips == null || ModelRoot == null) return;
+        var spine = GetBone(HumanBodyBones.Spine);
+        if (spine != null) spine.rotation = Quaternion.AngleAxis(heroClips.shootYaw, ModelRoot.up) * spine.rotation;
     }
 
     // Poza bloku (ruce vpredu), podle ni se pocita, kde sekyry v bloku v rukou drzi.

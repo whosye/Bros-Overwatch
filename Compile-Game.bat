@@ -29,6 +29,7 @@ if not exist "%UNITY_EXE%" (
 echo Unity:   %UNITY_VERSION%
 echo Project: "%PROJECT%"
 echo Output:  "%OUTPUT%"
+echo Game:    "%OUTPUT%\OverwatchBros.exe"
 echo Log:     "%BUILD_LOG%"
 if /i "%~1"=="--check" exit /b 0
 echo.
@@ -38,10 +39,10 @@ echo.
 
 start "" /b /wait "%UNITY_EXE%" -batchmode -quit -projectPath "%PROJECT%" -buildTarget StandaloneWindows64 -executeMethod MenuPlaytest.BuildGame -brosBuildOutput "%OUTPUT%" -logFile "%BUILD_LOG%"
 if errorlevel 1 goto :buildFailed
-if not exist "%OUTPUT%\BrosOverwatch.exe" goto :buildFailed
+if not exist "%OUTPUT%\OverwatchBros.exe" goto :buildFailed
 
 echo.
-echo SUCCESS: "%OUTPUT%\BrosOverwatch.exe"
+echo SUCCESS: "%OUTPUT%\OverwatchBros.exe"
 echo To share the game, copy the entire "compiled game" folder.
 if /i not "%~1"=="--no-pause" pause
 exit /b 0

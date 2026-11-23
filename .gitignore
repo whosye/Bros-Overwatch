@@ -12,3 +12,8 @@
 # Optional local build launched from Compile-Game.bat in the repository root.
 /compiled game/
 /compile-game.log
+
+# Local revolver diagnostics and geometry regeneration intermediate.
+/artifacts/HolyRevolver/
+/OverwatchBros/Assets/Models/Weapons/HolyRevolver/HolyRevolver.obj
+/OverwatchBros/Assets/Models/Weapons/HolyRevolver/HolyRevolver.obj.meta

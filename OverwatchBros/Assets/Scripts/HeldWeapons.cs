@@ -2,13 +2,14 @@ using UnityEngine;
 
 // Zbrane drzene v rukou (1 nebo 2 podle WeaponDefinition.dualWield). Majitel je vidi u kamery (first person),
 // ostatni na tele hrace. Model se sklada z kostek (placeholder), nebo se pouzije WeaponDefinition.heldPrefab.
-public class HeldWeapons : MonoBehaviour
+public partial class HeldWeapons : MonoBehaviour
 {
     PlayerHero heroComponent;
     PlayerHero CurrentHeroComponent => heroComponent != null ? heroComponent : (heroComponent = GetComponent<PlayerHero>());
     class Hand
     {
         public Transform holder;
+        public RevolverVisual revolver;
         public float side;
         public Vector3 restPosition;
         public Vector3 restEuler;
@@ -386,6 +387,7 @@ public class HeldWeapons : MonoBehaviour
         UpdateCarry();
         UpdateDartPistol();
         UpdateAmpGesture();
+        UpdateBodyRevolver();
         if (bodySupportArm == null || visual == null || visual.ModelRoot == null) return;
         if (builtModel == HeldModel.Bow)
         {
@@ -534,7 +536,9 @@ public class HeldWeapons : MonoBehaviour
         reloadElapsed = 0f;
 
         if (visual != null && visual.HasModel)
-            visual.PlayReload(reloadDuration);
+        {
+            if (!UsesRevolver) visual.PlayReload(reloadDuration);
+        }
     }
 
     public void StopReload()
@@ -736,6 +740,8 @@ public class HeldWeapons : MonoBehaviour
                 Animate(t, ref position, ref euler);
             }
 
+            if (UsesRevolver) euler *= 0.2f;
+
             if (reloadElapsed < reloadDuration)
                 AnimateReload(reloadElapsed / reloadDuration, hand.side, ref position, ref euler);
 
@@ -805,6 +811,8 @@ public class HeldWeapons : MonoBehaviour
             }
 
             Quaternion rotation = Quaternion.Euler(euler);
+            if (UsesRevolver && reloadElapsed >= reloadDuration && tauntElapsed >= TauntDuration && throwElapsed >= ThrowDuration && !ultCasting)
+                rotation = Quaternion.LookRotation(Vector3.forward * 30f - position - new Vector3(0f, -0.015f, 0.36f)) * rotation;
 
             // Blok: sekyry se zkrizi pred hracem.
             if (blockBlend > 0.001f)
@@ -815,12 +823,19 @@ public class HeldWeapons : MonoBehaviour
 
             hand.holder.localPosition = position;
             hand.holder.localRotation = rotation;
+            UpdateRevolverParts(hand);
 
             if (fpArms != null)
             {
                 fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, builtModel == HeldModel.Bow);   // (luk v natazene ruce)
                 if (hand.twoHanded)
                     fpArms.Solve(false, hand.holder.TransformPoint(hand.foregrip), hand.holder, root.transform, true);
+                if (UsesRevolver && hand.revolver != null)
+                {
+                    if (reloadElapsed < reloadDuration)
+                        fpArms.Solve(false, hand.revolver.SupportPoint.position, hand.revolver.SupportPoint, root.transform, true, true);
+                    else fpArms.ResetArm(false);
+                }
 
                 // luk: pri natahovani drzi prava ruka tetivu za konec sipu a tahne ji s nim dozadu
                 if (builtModel == HeldModel.Bow && hand.side < 0f && hand.hasNock)
@@ -1052,6 +1067,13 @@ public class HeldWeapons : MonoBehaviour
 
     void AnimateReload(float t, float side, ref Vector3 position, ref Vector3 euler)
     {
+        if (UsesRevolver)
+        {
+            RevolverVisual.ReloadPose(t, out var offset, out var turn);
+            position += offset;
+            euler += turn;
+            return;
+        }
         // Plynuly prechod do polohy prebijeni a zpet.
         float blend = Mathf.Min(Mathf.SmoothStep(0f, 1f, t / 0.18f), Mathf.SmoothStep(0f, 1f, (1f - t) / 0.18f));
 
@@ -1249,6 +1271,18 @@ public class HeldWeapons : MonoBehaviour
                     bodyMainArm = FirstPersonArms.BuildArm(visual.BodyAnimator, true);
                     bodySupportArm = FirstPersonArms.BuildArm(visual.BodyAnimator, false);
                     visual.GripLeft = true;
+                }
+                else if (UsesRevolver && visual.BodyAnimator != null && visual.HasHeroShoot)
+                {
+                    hand.grip = GripInWeapon(weapon, model);
+                    visual.HoldShootPose = true;
+                    visual.EvaluateShootPose(true);
+                    AttachToBone(hand, weapon, model, true);
+                    // Keep wrist IK from rotating the prop a second time.
+                    holder.SetParent(visual.ModelRoot, true);
+                    bodyMainArm = FirstPersonArms.BuildArm(visual.BodyAnimator, true);
+                    bodySupportArm = FirstPersonArms.BuildArm(visual.BodyAnimator, false);
+                    visual.EvaluateIdlePose();
                 }
                 else
                     AttachToBone(hand, weapon, model);

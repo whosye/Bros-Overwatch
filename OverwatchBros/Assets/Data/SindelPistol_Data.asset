@@ -22,6 +22,7 @@ MonoBehaviour:
   burstInterval: 0.07
   reloadTime: 1.5
   reloadAnimation: 0
+  revolverReload: 1
   range: 120
   chargeTime: 0
   minChargeDamage: 20
@@ -68,7 +69,7 @@ MonoBehaviour:
   dualWield: 0
   twoHanded: 0
   heldScale: 1
-  heldPrefab: {fileID: 1089338439108150065, guid: bfc2c4c036df15142822d8d8a476dac7, type: 3}
+  heldPrefab: {fileID: 7010214678788692143, guid: 9d46873d369911e4aaec14475e2d0d1c, type: 3}
   fireSound: {fileID: 8300000, guid: 8deb837c113386440bfc30a207fb6918, type: 3}
   scopedFireSound: {fileID: 0}
   bulletImpactSound: {fileID: 0}
