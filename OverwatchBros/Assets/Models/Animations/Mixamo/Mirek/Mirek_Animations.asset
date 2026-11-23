@@ -14,14 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimSet
   idle: {fileID: -203655887218126122, guid: 5db8bd348a7a76e408106744e28a66ab, type: 3}
   walk: {fileID: 0}
-  jog: {fileID: 0}
-  sprint: {fileID: 0}
-  jump: {fileID: 0}
-  death: {fileID: 0}
+  jog: {fileID: -203655887218126122, guid: 3fb9e8cd19a388443bcc25babc9a22cc, type: 3}
+  sprint: {fileID: -203655887218126122, guid: 282be554d25d0b24496f437eb24a01e0, type: 3}
+  runUpright: 15
+  jump: {fileID: -203655887218126122, guid: a7b64dea7d71f994aa04237f3fab0f6f, type: 3}
+  death: {fileID: -203655887218126122, guid: f41f58c82373be54f878449570a3c855, type: 3}
   meleeAttack: {fileID: 0}
   meleeFullBody: 0
-  shoot: {fileID: 0}
-  shootYaw: 0
+  shoot: {fileID: -203655887218126122, guid: 1337c5d87289687448b72b83cd9b0d56, type: 3}
+  shootYaw: 90
   shootHeadYaw: 0
   reload: {fileID: 0}
   blockPose: {fileID: 0}
@@ -33,5 +34,15 @@ MonoBehaviour:
   shiftTo: 0
   rmbAbility: {fileID: 0}
   eAbility: {fileID: 0}
+  strafeLeft: {fileID: -203655887218126122, guid: 9c40d802b51db9a4ea99a019d2918b16, type: 3}
+  strafeRight: {fileID: -203655887218126122, guid: eb1ed4363b9db734aa666e8af4390252, type: 3}
+  crouchWalk: {fileID: -203655887218126122, guid: a851ea075904ee144926e394e1bfacec, type: 3}
+  crouchHeadPitch: 31.2
+  jumpStart: {fileID: -203655887218126122, guid: f0fac3e4759c2704dbb2b4601ad69b29, type: 3}
+  landIdle: {fileID: -203655887218126122, guid: 4380898155ca5d34d90948d1d60ea1c2, type: 3}
+  landRun: {fileID: -203655887218126122, guid: 8e7c21475ba793b4b9ca94f770e1e924, type: 3}
+  climb: {fileID: -203655887218126122, guid: 7684d1f5891abbf479f092a2ec72953f, type: 3}
+  bowHold: {fileID: -203655887218126122, guid: 2772044518c9d29489c2440b8417e02c, type: 3}
+  bowTilt: 66.8
   sitIdle: {fileID: 0}
   hitChest: {fileID: 0}

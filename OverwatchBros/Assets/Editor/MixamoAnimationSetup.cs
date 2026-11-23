@@ -13,13 +13,13 @@ public class MixamoAnimationSetup : AssetPostprocessor
     const string Root = "Assets/Models/Animations/Mixamo";
     const string HeroDir = "Assets/Resources/Heroes";
 
-    static readonly string[] Looping = { "idle", "walk", "jog", "sprint", "jump" };
+    static readonly string[] Looping = { "idle", "walk", "jog", "sprint", "jump", "strafeleft", "straferight", "crouchwalk", "bowhold" };
     // Animace se skokem dopredu (skok s uderem): posun dopredu i vyska skoku se z pozy vyjmou (chodidla zustanou
     // u zeme, skok i pohyb ridi hra), drep a skrceni nohou ve vzduchu zustanou.
-    static readonly string[] InPlace = { "shiftability" };
+    static readonly string[] InPlace = { "shiftability", "jumpstart", "climb" };
     // Chuze a beh: posun dopredu se do pozy NEzapeka (jinak klip bez "In Place" postavu po krocich posouva
     // dopredu a na konci smycky ji cukne zpet - sekany pohyb). Posun jde do root motion, ktery hra zahazuje.
-    static readonly string[] Locomotion = { "walk", "jog", "sprint" };
+    static readonly string[] Locomotion = { "walk", "jog", "sprint", "strafeleft", "straferight", "crouchwalk", "landrun" };
 
     static bool InRoot(string path) => path.StartsWith(Root + "/") && path.EndsWith(".fbx", System.StringComparison.OrdinalIgnoreCase);
 
@@ -63,6 +63,8 @@ public class MixamoAnimationSetup : AssetPostprocessor
             clip.keepOriginalPositionY = !inPlace;
             clip.heightFromFeet = inPlace;
             clip.keepOriginalPositionXZ = true;
+            // ukrok doprava = zrcadlovy ukrok doleva (stejne FBX)
+            clip.mirror = Slot(assetPath).ToLowerInvariant() == "straferight";
         }
         importer.clipAnimations = clips;
     }
@@ -133,6 +135,7 @@ public class MixamoAnimationSetup : AssetPostprocessor
             if (created) set = ScriptableObject.CreateInstance<CharacterAnimSet>();
 
             bool changed = false;
+            string newShoot = null;
             foreach (var field in typeof(CharacterAnimSet).GetFields())
             {
                 if (field.FieldType != typeof(AnimationClip)) continue;
@@ -140,6 +143,7 @@ public class MixamoAnimationSetup : AssetPostprocessor
                 if ((AnimationClip)field.GetValue(set) == clip) continue;
                 field.SetValue(set, clip);
                 changed = true;
+                if (field.Name == "shoot") newShoot = AssetDatabase.GetAssetPath(clip);
             }
             foreach (var slot in clips.Keys)
                 if (typeof(CharacterAnimSet).GetField(slot, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
@@ -160,7 +164,28 @@ public class MixamoAnimationSetup : AssetPostprocessor
 
             if (created || changed)
                 Debug.Log($"[MixamoAnimationSetup] {heroName}: {string.Join(", ", clips.Keys)} -> {setPath}");
+            // nova animace strelby: samo zmerit, o kolik se ma trup pri strelbe dotocit (postava v klipu muze stat bokem)
+            if (!string.IsNullOrEmpty(newShoot))
+            {
+                string shootPath = newShoot;
+                EditorApplication.delayCall += () => ShootClipTrim.MeasureYawFor(shootPath);
+            }
         }
         AssetDatabase.SaveAssets();
+    }
+
+    // Za behu hry se prirazeni preskakuje (soubory importovane behem hry by zustaly neprirazene) - po skonceni hry znovu.
+    [InitializeOnLoadMethod]
+    static void HookPlayMode()
+    {
+        EditorApplication.playModeStateChanged -= OnPlayMode;
+        EditorApplication.playModeStateChanged += OnPlayMode;
+    }
+
+    static void OnPlayMode(PlayModeStateChange state)
+    {
+        if (state != PlayModeStateChange.EnteredEditMode) return;
+        EditorApplication.delayCall -= Apply;
+        EditorApplication.delayCall += Apply;
     }
 }

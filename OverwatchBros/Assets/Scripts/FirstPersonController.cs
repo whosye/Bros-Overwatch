@@ -95,6 +95,14 @@ public class FirstPersonController : NetworkBehaviour
     public NetworkVariable<bool> scoped = new NetworkVariable<bool>(false,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+    // Vytahovani na hranu (Mirek) - ostatni vidi animaci splhani (CharacterVisual). Zapisuje vlastnik.
+    public NetworkVariable<bool> climbing = new NetworkVariable<bool>(false,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    // Drep - ostatni vidi postavu v drepu (CharacterVisual: chuze v drepu). Zapisuje vlastnik.
+    public NetworkVariable<bool> crouched = new NetworkVariable<bool>(false,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     // Jede z toboganu po vode - vidi vsichni (splouchani, WaterSplashFx). Zapisuje vlastnik.
     public NetworkVariable<bool> waterSurfing = new NetworkVariable<bool>(false,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -653,6 +661,9 @@ public class FirstPersonController : NetworkBehaviour
         UpdateCorpseCollisions();
 
         if (!IsOwner) return;
+        // vytahovani na hranu (ne hak Kondulice) - vidi ostatni
+        bool climbNow = mantling && grappleMantlePath == null;
+        if (IsSpawned && climbing.Value != climbNow) climbing.Value = climbNow;
 
         if (MatchManager.Instance != null && MatchManager.Instance.CaptureCombatPaused)
         {
@@ -1169,6 +1180,7 @@ public class FirstPersonController : NetworkBehaviour
 
         Vector3 move = transform.right * input.x + transform.forward * input.y;
         crouching = crouch;
+        if (IsOwner && IsSpawned && crouched.Value != crouch) crouched.Value = crouch;
         move = Vector3.ClampMagnitude(move, 1f);
 
         // Na zebriku (Ladder) se leze: W nahoru, S dolu; vodorovne jen pomalu, at se z nej hned nesejde.
