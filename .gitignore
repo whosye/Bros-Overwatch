@@ -8,3 +8,7 @@
 # Local Unity menu builds, captures and validation logs.
 /artifacts/Menu/
 /menu-*.log
+
+# Optional local build launched from Compile-Game.bat in the repository root.
+/compiled game/
+/compile-game.log

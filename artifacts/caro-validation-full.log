@@ -1,0 +1,514 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.5/staging' branch; Version is '6000.5.9f1 (b57deb96f08d) revision 11894251'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26300) Professional' Language: 'cs' Physical Memory: 31801 MB
+[Licensing::IpcConnector] Channel LicenseClient-lenit doesn't exist
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-11-23T21:49:26Z
+[Licensing::Module] Successfully launched the LicensingClient (PId: 26884)
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Unity.exe
+-batchmode
+-projectPath
+C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros
+-executeMethod
+CaroVisualCheck.Run
+-logFile
+C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/artifacts/caro-validation-full.log
+Successfully changed project path to: C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros
+C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-remapper-allocator-initial-capacity=32768"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [29268]  Target information:
+
+Player connection [29268]  * "[IP] 192.168.0.129 [Port] 55504 [Flags] 2 [Guid] 716610235 [EditorId] 716610235 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-4KINKII) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [29268]  * "[IP] 172.20.64.1 [Port] 55504 [Flags] 2 [Guid] 716610235 [EditorId] 716610235 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-4KINKII) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [29268] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [29268] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-lenit" at "2026-11-23T21:49:26.434139Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 26884, path: "C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              0f418b34ab8946969673af9884cd4783
+  Correlation Id:          7e99a6be54f07ac65922d35a82ad1e51
+  External correlation Id: 4481707334755963769
+  Machine Id:              70eBWWns6fsGXv/M3Ubo6CM9Uco=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-lenit" (connect: 0.24s, validation: 0.03s, handshake: 0.02s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-lenit-notifications" at "2026-11-23T21:49:26.4868223Z"
+[Licensing::Module] Connected to LicensingClient (PId: 26884, launch time: 0.01, total connection time: 0.30s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 7972627692131-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.32s
+[Package Manager] Connected to IPC stream "Upm-2040" after 0.2 seconds.
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Initialize engine version: 6000.5.9f1 (b57deb96f08d)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        NVIDIA GeForce RTX 4070 Ti (ID=0x2782)
+    Vendor:          NVIDIA
+    VRAM:            11994 MB
+    App VRAM Budget: 11226 MB
+    Driver:          32.0.16.1714
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56040
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.001928 seconds.
+Native extension for WindowsStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.327 seconds
+Domain Reload Profiling: 702ms
+	BeginReloadAssembly (107ms)
+		CreateAndSetChildDomain (21ms)
+	RebuildCommonClasses (3ms)
+	RebuildNativeTypeToScriptingClass (14ms)
+	initialDomainReloadingComplete (49ms)
+	LoadAllAssembliesAndSetupDomain (201ms)
+		LoadAssemblies (83ms)
+		AnalyzeDomain (145ms)
+			TypeCache.Refresh (144ms)
+				TypeCache.ScanAssembly (134ms)
+	FinalizeReload (328ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (58ms)
+			ProcessInitializeOnLoadAttributes (62ms)
+			ProcessInitializeOnLoadMethodAttributes (157ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 62 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.ai.navigation@2.0.14 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ai.navigation@134dd6a3b97b)
+    com.unity.cloud.gltfast@6.20.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.cloud.gltfast@11ddc2436f97)
+    com.unity.collab-proxy@2.13.6 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4)
+    com.unity.ide.rider@3.0.38 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ide.rider@1f60b3138684)
+    com.unity.ide.visualstudio@2.0.26 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ide.visualstudio@a99d56dec63f)
+    com.unity.inputsystem@1.20.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.inputsystem@7a4e1a2a8194)
+    com.unity.netcode.gameobjects@2.13.1 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17)
+    com.unity.probuilder@6.1.2 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.12 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.visualscripting@4edfcc09512f)
+    com.unity.settings-manager@2.1.1 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.settings-manager@0b8638c5ce86)
+    com.unity.nuget.mono-cecil@1.11.6 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.burst@1.8.30 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.burst@2f3d916873ea)
+    com.unity.searcher@4.9.5 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.searcher@a463122f2c00)
+    com.unity.test-framework.performance@3.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.test-framework.performance@8b56083ec0f0)
+  Built-in packages:
+    com.unity.multiplayer.center@1.0.1 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.render-pipelines.universal@d7774c218bdf)
+    com.unity.test-framework@1.7.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ugui@1c4864518158)
+    com.unity.modules.accessibility@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.physics2d)
+    com.unity.modules.physicscore2d@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.1.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.render-pipelines.core@a4c9a9793789)
+    com.unity.shadergraph@17.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.shadergraph@8d7376ec43ee)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.transport@6.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.transport@0c07c94c2861)
+    com.unity.collections@6.5.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.collections@ec2c217e4cb2)
+    com.unity.mathematics@1.4.0 (location: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\OverwatchBros\Library\PackageCache\com.unity.mathematics@981956d94fb6)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.02 seconds
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 2s790ms
+[ 905/1168  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[1164/1168  1s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+Assets\Editor\BigLezAudioSetup.cs(33,97): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+
+Assets\Editor\BigLezAudioSetup.cs(33,21): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+
+Assets\Editor\DistanceLayeredLoopChecks.cs(115,73): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+
+Assets\Editor\DistanceLayeredLoopChecks.cs(115,27): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+
+Assets\Editor\DistanceLayeredLoopChecks.cs(137,73): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+
+Assets\Editor\DistanceLayeredLoopChecks.cs(137,33): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+
+Assets\Editor\PlaytestFeedbackChecks.cs(293,73): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+
+Assets\Editor\PlaytestFeedbackChecks.cs(293,34): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+[1165/1168  0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp-Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll, with 140 defines and 374 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Netcode.Editor.CodeGen.INetworkMessageILPP, Unity.Netcode.Editor.CodeGen.INetworkSerializableILPP, Unity.Netcode.Editor.CodeGen.NetworkBehaviourILPP, Unity.Netcode.Editor.CodeGen.RuntimeAccessModifiersILPP, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running Unity.Netcode.Editor.CodeGen.INetworkMessageILPP
+
+running Unity.Netcode.Editor.CodeGen.INetworkSerializableILPP
+
+running Unity.Netcode.Editor.CodeGen.NetworkBehaviourILPP
+
+running Unity.Netcode.Editor.CodeGen.RuntimeAccessModifiersILPP
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1166/1168  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[1167/1168  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (2.77 seconds), 5 items updated, 1168 evaluated
+Assets\Editor\BigLezAudioSetup.cs(33,97): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets\Editor\BigLezAudioSetup.cs(33,21): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets\Editor\DistanceLayeredLoopChecks.cs(115,73): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets\Editor\DistanceLayeredLoopChecks.cs(115,27): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets\Editor\DistanceLayeredLoopChecks.cs(137,73): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets\Editor\DistanceLayeredLoopChecks.cs(137,33): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets\Editor\PlaytestFeedbackChecks.cs(293,73): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets\Editor\PlaytestFeedbackChecks.cs(293,34): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Total cache size 99039916
+Total cache size after purge 99039916, took 00:00:00.1562899
+AssetDatabase: script compilation time: 3.275920s
+Begin MonoManager ReloadAssembly
+Refreshing native plugins compatible for Editor in 2.18 ms, found 4 plugins.
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 2.58 ms, found 4 plugins.
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-OverwatchBros
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  2.222 seconds
+Domain Reload Profiling: 2971ms
+	BeginReloadAssembly (175ms)
+		DisableScriptedObjects (18ms)
+		CreateAndSetChildDomain (42ms)
+	RebuildCommonClasses (7ms)
+	RebuildNativeTypeToScriptingClass (12ms)
+	initialDomainReloadingComplete (52ms)
+	LoadAllAssembliesAndSetupDomain (502ms)
+		LoadAssemblies (281ms)
+		AnalyzeDomain (200ms)
+			TypeCache.Refresh (127ms)
+				TypeCache.ScanAssembly (118ms)
+			BuildScriptInfoCaches (66ms)
+			ResolveRequiredComponents (5ms)
+	FinalizeReload (2223ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (59ms)
+			ProcessInitializeOnLoadAttributes (1601ms)
+			ProcessInitializeOnLoadMethodAttributes (307ms)
+			AfterProcessingInitializeOnLoad (7ms)
+		AwakeInstancesAfterBackupRestoration (20ms)
+Starting new worker id: 0 with log in C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros/Logs/AssetImportWorkerHW0.log
+Refreshing native plugins compatible for Editor in 2.19 ms, found 4 plugins.
+
+Asset Pipeline Refresh (id=6c40c159dd8e91447b749dd6478a24da): Total: 6.995 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=2677 ms
+		Asset DB Callback time: managed=146 ms, native=31 ms
+		Scripting: domain reloads=1, domain reload time=804 ms, compile time=3278 ms, other=56 ms
+		Project Asset Count: scripts=1897, non-scripts=6735
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokePackagesCallback: 19.299ms
+	ApplyChangesToAssetFolders: 0.480ms
+	Scan: 89.907ms
+	Collect global state as custom dependencies: 14.959ms
+	OnSourceAssetsModified: 0.505ms
+	CategorizeScriptCompilationAssets: 36.735ms
+	ProcessAssetsWithTransientArtifactChanges: 61.757ms
+	CategorizeAssets: 58.251ms
+	CompileScripts: 3277.846ms
+	ImportOutOfDateAssets: 2296.856ms (2240.210ms without children)
+		UnloadImportedAssets: 4.132ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.783ms
+		ImportSchedulerStart: 51.689ms
+	PostProcessAllAssets: 154.230ms
+		VCAutoAddAssetPostprocess 6.860ms
+		XRBuildSystem.XRAssetImported 0.631ms
+		MonoPostProcessAllAssets: 146.392ms
+			AssetPostprocessor.OnPostprocessAllAssets 79.044ms
+			NetworkPrefabProcessor.OnPostprocessAllAssets 15.314ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 12.547ms
+			SyncVS.PostprocessSyncProject 7.979ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 7.855ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 3.564ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 1.429ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 1.221ms
+			AssetChangedListener.OnPostprocessAllAssets 1.153ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 1.055ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 0.846ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.824ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.816ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 0.642ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.464ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.375ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.336ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.333ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.265ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.248ms
+			PostProcessor.OnPostprocessAllAssets 0.242ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.233ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.218ms
+			AvatarImportWatcher.OnPostprocessAllAssets 0.217ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.208ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.169ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.164ms
+			AssetEvents.OnPostprocessAllAssets 0.152ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.151ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.110ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.108ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.105ms
+			MixamoAnimationSetup.OnPostprocessAllAssets 0.092ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.092ms
+			VoiceLineSetup.OnPostprocessAllAssets 0.091ms
+			AssetReloadNotifier.OnPostprocessAllAssets 0.072ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.069ms
+			AudioContainerPostProcessor.OnPostprocessAllAssets 0.059ms
+	PostAssetChangesProfiler: 5.904ms
+	UnloadStreamsBegin: 2.973ms
+	PersistCurrentRevisions: 0.169ms
+	GenerateScriptTypeHashes: 1.722ms
+	GenerateScriptTypeSerializationHashes: 3.160ms
+	Untracked: 970.229ms
+
+Application.AssetDatabase Initial Refresh End
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
+Scanning for USB devices : 19.253ms
+Initializing Unity extensions:
+Unloading 36 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 8084 unused Assets / (5.8 MB). Loaded Objects now: 9245.
+Memory consumption went from 487.6 MB to 481.8 MB.
+Total: 11.749600 ms (FindLiveObjects: 0.616800 ms CreateObjectMapping: 1.513200 ms MarkObjects: 4.984700 ms  DeleteObjects: 4.632800 ms)
+
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 1 unused Assets / (5.4 KB). Loaded Objects now: 9247.
+Memory consumption went from 461.8 MB to 461.7 MB.
+Total: 8.284700 ms (FindLiveObjects: 0.228600 ms CreateObjectMapping: 3.690700 ms MarkObjects: 4.352800 ms  DeleteObjects: 0.011800 ms)
+
+[Caro material] CaroLabel shader=Universal Render Pipeline/Lit color=RGBA(1.000, 1.000, 1.000, 1.000) base=RGBA(1.000, 1.000, 1.000, 1.000) texture=CaroLabel (UnityEngine.Texture2D)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+CaroVisualCheck:Run () (at Assets/Editor/CaroVisualCheck.cs:23)
+
+(Filename: Assets/Editor/CaroVisualCheck.cs Line: 23)
+
+[Caro material] MetalBase shader=Universal Render Pipeline/Lit color=RGBA(0.680, 0.700, 0.720, 1.000) base=RGBA(0.680, 0.700, 0.720, 1.000) texture=
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+CaroVisualCheck:Run () (at Assets/Editor/CaroVisualCheck.cs:23)
+
+(Filename: Assets/Editor/CaroVisualCheck.cs Line: 23)
+
+[Caro material] RedPlasticLid shader=Universal Render Pipeline/Lit color=RGBA(0.720, 0.025, 0.045, 1.000) base=RGBA(0.720, 0.025, 0.045, 1.000) texture=
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+CaroVisualCheck:Run () (at Assets/Editor/CaroVisualCheck.cs:23)
+
+(Filename: Assets/Editor/CaroVisualCheck.cs Line: 23)
+
+[Caro material] LidInset shader=Universal Render Pipeline/Lit color=RGBA(0.720, 0.025, 0.045, 1.000) base=RGBA(0.720, 0.025, 0.045, 1.000) texture=
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+CaroVisualCheck:Run () (at Assets/Editor/CaroVisualCheck.cs:23)
+
+(Filename: Assets/Editor/CaroVisualCheck.cs Line: 23)
+
+[Project] Loading completed in 9.461 seconds
+	Project init time: 				9.063 seconds
+		Template init time: 		0.000 seconds
+		Package Manager init time: 		0.172 seconds
+		Asset Database init time: 		0.207 seconds
+		Global illumination init time: 	0.002 seconds
+		Assemblies load time: 			0.740 seconds
+		Unity extensions init time: 	0.015 seconds
+		Asset Database refresh time: 	6.995 seconds
+	Scene opening time: 			0.288 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1795470575640,"processId":2040,"projectLoad":9.4610322,"projectInit":9.0628755,"templateInit":0.0,"packageManagerInit":0.1716536,"assetDatabaseInit":0.2065985,"globalIlluminationInit":0.0015563,"assembliesLoad":0.7396441,"unityExtensionsInit":0.0153216,"assetDatabaseRefresh":6.9953297,"sceneOpening":0.2884632}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1795470575640,"processId":2040,"editorVersion":"6000.5.9f1 (b57deb96f08d)","branch":"6000.5/staging","buildType":"Release","platform":"Windows"}
+[Licensing::Client] Successfully resolved entitlement details
+[Music] Hudba v menu a lobby pripravena. Uloz scenu (Ctrl+S).
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+VillageAmbientSetup:SetupMusic () (at Assets/Editor/VillageAmbientSetup.cs:120)
+VillageAmbientSetup:Setup () (at Assets/Editor/VillageAmbientSetup.cs:47)
+UnityEditor.EditorApplication:Internal_CallDelayFunctions ()
+
+(Filename: Assets/Editor/VillageAmbientSetup.cs Line: 120)
+
+Start Indexing on Editor startup
+[Indexing] Starting Initial Indexing for Assets
+Worker ready: AssetImportWorkerHW0 0
+Request Asset Garbage Collect because used heap size increased from 461.9 MB to 0.82 GB, exceeding the threshold of 256.0 MB.
+[UnityConnectServicesConfig] config is NOT valid, switching to default
+Created GICache directory at C:/Users/lenit/AppData/LocalLow/Unity/Caches/GiCache. Took: 0.021s, timestamps: [9.463 - 9.484]
+Unloading 407 Unused Serialized files (Serialized files now loaded: 0)
+[AudioStatus] PlayMode=False; musicEnabled=True; musicObject=True; clip=bros_overwatch_live_improv; playing=False; volume=-1; master=1; paused=False.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+VillageAmbientSetup:LogAudioStatus () (at Assets/Editor/VillageAmbientSetup.cs:31)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+(Filename: Assets/Editor/VillageAmbientSetup.cs Line: 31)
+
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+Unloading 7843 unused Assets / (43.2 MB). Loaded Objects now: 9331.
+Memory consumption went from 0.82 GB to 0.78 GB.
+Total: 14.413100 ms (FindLiveObjects: 0.834700 ms CreateObjectMapping: 1.516200 ms MarkObjects: 6.565700 ms  DeleteObjects: 5.495500 ms)
+
+[Licensing::Client] Successfully resolved entitlement details
+[Caro] PASS: compiled, label loaded, URP shader, single-wrap UVs, no colliders. Preview: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\artifacts\Caro
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+CaroVisualCheck:Capture () (at Assets/Editor/CaroVisualCheck.cs:80)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+(Filename: Assets/Editor/CaroVisualCheck.cs Line: 80)
+
+MonoPathRemapper: Attempts to remap: 37805; Successful remaps: 2
+Serialized file version minimum: 23, current 23
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-lenit-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-lenit channel disconnected successfully.
+Lingering sessions upon destruction of worker manager
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+CodeReloadManager destroyed
+Checking for leaked weakptr:
+  Found no leaked weakptrs.
+[Package Manager] Server process was shutdown
+##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1795470580529,"processId":2040,"allocatedMemory":22501774,"memoryLabels":[{"Default":249849},{"Permanent":15516},{"NewDelete":67141},{"Thread":4205176},{"Manager":819269},{"VertexData":8},{"Geometry":816},{"Texture":24},{"Shader":853608},{"Material":24},{"GfxDevice":58208},{"Animation":952},{"Audio":1544},{"FreeType":8},{"FontEngine":736},{"Physics":2146},{"Physics2D":16},{"Serialization":1304},{"Input":42840},{"JobScheduler":256},{"TextLib":280},{"Mono":310},{"MonoCode":64},{"ScriptingNativeRuntime":1625388},{"BaseObject":1621896},{"Resource":1208},{"Renderer":3080},{"Transform":4685},{"File":1032},{"WebCam":616},{"Culling":32},{"Terrain":11442},{"Wind":24},{"STL":40},{"String":29819},{"StaticString":3808},{"Utility":2672694},{"Curl":4238},{"PoolAlloc":2552},{"AI":80},{"TypeTree":14869},{"CodeReload":448},{"RuntimeInitializeOnLoadManager":64},{"Sprites":102},{"SpriteAtlas":120},{"GI":7816},{"Director":8296},{"CloudService":9512},{"WebRequest":552},{"VR":47114},{"SceneManager":608},{"Video":208},{"LazyScriptCache":32},{"Camera":17},{"Secure":2377},{"SerializationCache":1576},{"APIUpdating":10320},{"Subsystems":336},{"VirtualTexturing":57888},{"StaticSafetyDebugInfo":278528},{"Analytics":552},{"Hierarchy":1176},{"UIElements":72},{"CoreStats":13688},{"Identifiers":6768},{"Gui":128},{"EditorUtility":137738},{"VersionControl":8},{"Undo":931},{"AssetDatabase":9540763},{"AssetImporter":40},{"EditorGi":328},{"UnityConnect":38929},{"Upm":1912},{"UpmDiagnostics":8},{"AssetCompliance":64},{"DrivenProperties":72},{"LocalIPC":211},{"ProfilerEditor":9746},{"CoreBusinessMetrics":3480},{"Windowing":456},{"Licensing":1232},{"AssetReference":32},{"IPCStream":32}]}

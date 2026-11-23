@@ -37,11 +37,21 @@ public static class MenuPlaytest
     [MenuItem("BrosOverwatch/Menu/Build Windows Game")]
     public static void BuildGame()
     {
+        string executable = Path.Combine(Output,"Build/BrosOverwatch.exe");
+        var args = Environment.GetCommandLineArgs();
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] != "-brosBuildOutput") continue;
+            if (i + 1 >= args.Length || string.IsNullOrWhiteSpace(args[i + 1]) || args[i + 1].StartsWith("-"))
+                throw new ArgumentException("-brosBuildOutput requires an output directory.");
+            executable = Path.Combine(Path.GetFullPath(args[++i]), "BrosOverwatch.exe");
+        }
+        Directory.CreateDirectory(Path.GetDirectoryName(executable));
         MenuTypography.EnsureFonts();
         var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions
         {
             scenes=new[]{"Assets/Scenes/SampleScene.unity"},
-            locationPathName=Path.Combine(Output,"Build/BrosOverwatch.exe"),
+            locationPathName=executable,
             target=BuildTarget.StandaloneWindows64, options=BuildOptions.CompressWithLz4
         });
         if(report.summary.result!=BuildResult.Succeeded)throw new Exception("Game build failed: "+report.summary.result);

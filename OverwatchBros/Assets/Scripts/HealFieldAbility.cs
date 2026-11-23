@@ -157,13 +157,8 @@ public class HealFieldAbility : NetworkBehaviour
         discRenderer.sharedMaterial = material;
         discRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
-        // Vysilac uprostred.
-        var emitter = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        DestroyImmediate(emitter.GetComponent<Collider>());
-        emitter.transform.SetParent(visual.transform, false);
-        emitter.transform.localPosition = new Vector3(0f, 0.14f, 0f);
-        emitter.transform.localScale = new Vector3(0.22f, 0.14f, 0.22f);
-        Fx.Paint(emitter, FieldColor);
+        // Doza Caro uprostred leciveho pole.
+        CaroHealCan.Create(visual.transform);
 
         var lightObject = new GameObject("Glow");
         lightObject.transform.SetParent(visual.transform, false);
