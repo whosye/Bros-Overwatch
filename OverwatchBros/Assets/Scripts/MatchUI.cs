@@ -414,7 +414,7 @@ public class MatchUI : MonoBehaviour
     {
         var scope = allowed && localHero != null ? localHero.GetComponent<ScopeZoom>() : null;
         var fpc = scope != null ? localHero.GetComponent<FirstPersonController>() : null;
-        float blend = scope != null && scope.isActiveAndEnabled && fpc != null && !fpc.IsDead && !fpc.ThirdPerson
+        float blend = scope != null && scope.isActiveAndEnabled && fpc != null && !fpc.IsDead && !fpc.ThirdPerson && !ThirdPersonPreview.Active
             ? scope.ScopeBlend : 0f;
         // POTG already records the camera FOV. Killcam uses its own unzoomed camera.
         if (ReplayPlayer.Active && !ReplayPlayer.IsKillcam && ReplayPlayer.Frame != null && ReplayPlayer.Camera != null)

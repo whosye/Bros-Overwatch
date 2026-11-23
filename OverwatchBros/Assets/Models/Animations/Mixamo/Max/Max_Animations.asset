@@ -12,19 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce56b11b14db7ad40835bae89995055d, type: 3}
   m_Name: Max_Animations
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimSet
-  idle: {fileID: 0}
-  walk: {fileID: 0}
-  jog: {fileID: 0}
-  sprint: {fileID: 0}
+  idle: {fileID: -203655887218126122, guid: b3939b6e1deba9d4dbdc92d4f65f637b, type: 3}
+  walk: {fileID: -203655887218126122, guid: e002bb6758fc31942af10105920cf16e, type: 3}
+  jog: {fileID: -203655887218126122, guid: 18fd1a34cd91ef4459483f93b7f39f54, type: 3}
+  sprint: {fileID: -203655887218126122, guid: c893c321f9381cd409552fd59b6cfdf6, type: 3}
   jump: {fileID: 0}
   death: {fileID: 0}
   meleeAttack: {fileID: -203655887218126122, guid: 709d0d25e90293e43a5bd2a7d0900e4c, type: 3}
+  meleeFullBody: 1
   shoot: {fileID: 0}
+  shootYaw: 0
+  shootHeadYaw: 0
   reload: {fileID: 0}
   blockPose: {fileID: 0}
   dashPose: {fileID: 0}
   ultimate: {fileID: 0}
   shiftAbility: {fileID: -203655887218126122, guid: 97f876207fe68604382f1b9e4ab6a389, type: 3}
+  shiftFrom: 0
+  shiftImpact: 0
+  shiftTo: 0
   rmbAbility: {fileID: -203655887218126122, guid: 18d6fbef2bed0ce40b96defc5bd8d983, type: 3}
+  eAbility: {fileID: 0}
   sitIdle: {fileID: 0}
   hitChest: {fileID: 0}

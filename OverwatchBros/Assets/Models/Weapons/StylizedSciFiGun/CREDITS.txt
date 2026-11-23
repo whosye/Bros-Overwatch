@@ -1,0 +1,14 @@
+Model Information:
+* title:	Stylized Sci-Fi gun (Game Ready)
+* source:	https://sketchfab.com/3d-models/stylized-sci-fi-gun-game-ready-675c90504af641bb9068aeead2314fc1
+* author:	Cyril Margalin (https://sketchfab.com/Cyril.Margalin)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+* note:	the model page is tagged "NoAI" - not to be used in datasets for, development of, or as inputs to generative AI.
+
+Used in the game as Sindel's weapon (Assets/Editor/SciFiGunSetup.cs -> Prefab/Weapons/Held_SciFiGun.prefab).
+The KB_GUN_low_MetallicSmoothness.png texture is generated from the original Metallic and Roughness maps.
+
+This work is based on "Stylized Sci-Fi gun (Game Ready)" (https://sketchfab.com/3d-models/stylized-sci-fi-gun-game-ready-675c90504af641bb9068aeead2314fc1) by Cyril Margalin (https://sketchfab.com/Cyril.Margalin) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

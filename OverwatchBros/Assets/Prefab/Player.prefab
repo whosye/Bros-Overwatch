@@ -342,6 +342,7 @@ MonoBehaviour:
   abilityRisingGravityScale: 1.5
   abilityFallingGravityScale: 1.8
   mouseSensitivity: 2
+  directionChangeSeconds: 0.12
   standHeight: 2
   crouchHeight: 1
   eyeHeight: 1.62

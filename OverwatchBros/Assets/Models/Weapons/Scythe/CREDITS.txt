@@ -1,0 +1,13 @@
+Model Information:
+* title:	Scythe
+* source:	https://sketchfab.com/3d-models/scythe-3286bd5abfce43a2ada69c6528fd6175
+* author:	Ovesis (https://sketchfab.com/ovesis)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+Used in the game as Max's scythe (Assets/Editor/ScytheSetup.cs -> Prefab/Weapons/Held_Scythe.prefab).
+Scythe_MetallicSmoothness.png is generated from the original Metallic and Roughness maps.
+
+This work is based on "Scythe" (https://sketchfab.com/3d-models/scythe-3286bd5abfce43a2ada69c6528fd6175) by Ovesis (https://sketchfab.com/ovesis) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

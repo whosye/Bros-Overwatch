@@ -349,8 +349,41 @@ public class HeldWeapons : MonoBehaviour
         }
     }
 
+    // Kosa (Max) pri behu: plynule se natoci do "nesene" polohy vuci telu - nasada sikmo, cepel dovnitr pres telo
+    // (CarryRotation; otaci se kolem rukojeti, porad v dlani). Pri uderu a schopnostech podle animace.
+    float carryBlend;
+    const float CarrySpeed = 2.5f;   // od jake rychlosti (m/s) se kosa srovnava
+    // Jak Max nese kosu pri behu (stupne, pro kosu v prave ruce; v leve zrcadlove):
+    const float CarryBladeYaw = -10f;  // cepel rukojeti otocena dovnitr pres telo (0 = dopredu, -90 = k leve strane tela)
+    const float CarryLean = -30f;      // nasada sikmo: horni konec vyklopeny ven do strany (0 = svisle)
+    const float CarryTilt = -10f;       // horni konec lehce dopredu (+) / dozadu (-)
+
+    static Quaternion CarryRotation(float side) =>
+        Quaternion.AngleAxis(CarryTilt, Vector3.right) * Quaternion.AngleAxis(CarryLean * side, Vector3.forward)
+        * Quaternion.AngleAxis(CarryBladeYaw * side, Vector3.up);
+
+    void UpdateCarry()
+    {
+        if (builtModel != HeldModel.Scythe || visual == null || visual.ModelRoot == null) return;
+        bool carry = visual.MoveSpeed > CarrySpeed && !visual.ActionPlaying;
+        carryBlend = Mathf.MoveTowards(carryBlend, carry ? 1f : 0f, Time.deltaTime * (carry ? 3f : 8f));
+        float k = Mathf.SmoothStep(0f, 1f, carryBlend);
+        foreach (var hand in bodyHands)
+        {
+            if (hand.holder == null || hand.twoHanded || hand.hasBlockPose || !hand.holder.gameObject.activeInHierarchy) continue;
+            hand.holder.localPosition = hand.idlePosition;
+            hand.holder.localRotation = hand.idleRotation;
+            if (k <= 0.001f) continue;
+            Vector3 pivot = hand.holder.TransformPoint(hand.grip);
+            Quaternion want = visual.ModelRoot.rotation * CarryRotation(hand.side);
+            hand.holder.rotation = Quaternion.Slerp(hand.holder.rotation, want, k);
+            hand.holder.position += pivot - hand.holder.TransformPoint(hand.grip);
+        }
+    }
+
     void LateUpdate()
     {
+        UpdateCarry();
         UpdateDartPistol();
         UpdateAmpGesture();
         if (bodySupportArm == null || visual == null || visual.ModelRoot == null) return;
@@ -600,7 +633,8 @@ public class HeldWeapons : MonoBehaviour
             Rebuild(owner);
 
         bool dead = ghost ? GhostDead : fpc != null && fpc.IsDead;
-        bool thirdPerson = ghost ? GhostThirdPerson : fpc != null && fpc.ThirdPerson;
+        // (F6 nahled ze 3. osoby: vlastni postava se zbrani jako ji vidi ostatni)
+        bool thirdPerson = ghost ? GhostThirdPerson : fpc != null && (fpc.ThirdPerson || (ThirdPersonPreview.Active && fpc.IsOwner && fpc.Bot == null));
 
         if (reloadElapsed < reloadDuration)
             reloadElapsed += Time.deltaTime;

@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Sindel
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: "\u0160indel"
-  description: "Pistoln\u00edk. P\u0159esn\u00e1 pistole, svat\u00fd gran\u00e1t a ultim\u00e1tka, kter\u00e1 zas\u00e1hne celou v\u00fd\u0161ku domu."
+  description: "Pistoln\xEDk. P\u0159esn\xE1 pistole, svat\xFD gran\xE1t a ultim\xE1tka,
+    kter\xE1 zas\xE1hne celou v\xFD\u0161ku domu."
   color: {r: 0.85, g: 0.7, b: 0.3, a: 1}
   maxHealth: 100
+  healingScale: 1
+  scopeAimPose: 0
+  hipFire: 0
   weapon: {fileID: 11400000, guid: 2c41b1fd8923d4943a3171e611c4f207, type: 2}
   abilityKind: 29
   ability: {fileID: 11400000, guid: 5edecbcd316748e4aa6a22c62a5d71ae, type: 2}
@@ -36,6 +40,7 @@ MonoBehaviour:
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 903988112565318085, guid: f4bc1276d3327cf48ad692f996539397, type: 3}
   tintCharacter: 0
+  animations: {fileID: 11400000, guid: 271628b5ecf29f440b56b5434bee3389, type: 2}
   sleeveColor: {r: 0.07, g: 0.07, b: 0.08, a: 1}
   skinColor: {r: 0.88, g: 0.72, b: 0.6, a: 1}
   spawnLines:
@@ -55,6 +60,12 @@ MonoBehaviour:
   snareLines:
   - {fileID: 8300000, guid: 97386fd59f9840749949630399594e56, type: 3}
   - {fileID: 8300000, guid: 7803c5aa0e6670342b3fa327746b554b, type: 3}
+  attackLines: []
+  healLines: []
+  headshotLines: []
+  missLines: []
+  scopeLines: []
+  healedLines: []
   ultVoiceEcho: 0
   ultVoiceMaxSeconds: 3
   ultVoiceSpeed: 1

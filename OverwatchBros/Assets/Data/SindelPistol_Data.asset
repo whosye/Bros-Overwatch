@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: SindelPistol_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: "Dev\xEDtka"
-  description: "P\u0159esn\u00e1 pistole. Ka\u017ed\u00fd t\u0159et\u00ed v\u00fdst\u0159el ze z\u00e1sobn\u00edku je pos\u00edlen\u00fd (zbra\u0148 zrudne) a d\u00e1 v\u00edc po\u0161kozen\u00ed."
+  description: "P\u0159esn\xE1 pistole. Ka\u017Ed\xFD t\u0159et\xED v\xFDst\u0159el
+    ze z\xE1sobn\xEDku je pos\xEDlen\xFD (zbra\u0148 zrudne) a d\xE1 v\xEDc po\u0161kozen\xED."
   damage: 38
   fireRate: 1.4285715
   maxAmmo: 9
+  burstCount: 1
+  burstInterval: 0.07
   reloadTime: 1.5
   reloadAnimation: 0
   range: 120
@@ -32,10 +35,14 @@ MonoBehaviour:
   allyHeal: 0
   scopeFov: 0
   scopedChargeTime: 0
+  boltCycleTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
   headshotMultiplier: 2
   hitscanRadius: 0.12
+  scopedFalloffStart: 0
+  scopedFalloffEnd: 0
+  scopedFalloffMin: 0.4
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0
@@ -50,11 +57,20 @@ MonoBehaviour:
   projectileTrail: 1
   projectilePrefab: {fileID: 0}
   meleeRadius: 0.6
+  meleeArc: 55
+  comboFinisherDamage: 0
+  comboFinisherArc: 60
+  comboFinisherKnockback: 0
   powerShotEvery: 3
   powerShotDamageScale: 1.25
   powerShotColor: {r: 1, g: 0.12, b: 0.06, a: 1}
   heldModel: 2
   dualWield: 0
+  twoHanded: 0
+  heldScale: 1
   heldPrefab: {fileID: 1089338439108150065, guid: bfc2c4c036df15142822d8d8a476dac7, type: 3}
   fireSound: {fileID: 8300000, guid: 8deb837c113386440bfc30a207fb6918, type: 3}
   scopedFireSound: {fileID: 0}
+  bulletImpactSound: {fileID: 0}
+  bulletImpactVolume: 0.5
+  bulletHoles: 1

@@ -44,6 +44,9 @@ public class CharacterVisual : MonoBehaviour
     readonly float[] stateWeights = new float[StateCount];
     readonly float[] stateTimes = new float[StateCount];
     AnimationClipPlayable meleePlayable, shootPlayable;
+    // utok zblizka pres cele telo ve stoji (CharacterAnimSet.meleeFullBody) - posledni vrstva
+    AnimationClipPlayable meleeBodyPlayable;
+    const int MeleeBodyLayer = AbilityLayer + AbilityAnimCount;
     AvatarMask upperBody;
 
     readonly float[] target = new float[StateCount];
@@ -289,6 +292,7 @@ public class CharacterVisual : MonoBehaviour
         layers.SetInputWeight(4, 0f);
         for (int i = 0; i < AbilityAnimCount; i++)
             layers.SetInputWeight(AbilityLayer + i, 0f);
+        layers.SetInputWeight(MeleeBodyLayer, 0f);
         graph.Evaluate(0f);
     }
 
@@ -364,7 +368,7 @@ public class CharacterVisual : MonoBehaviour
             upperBody.SetHumanoidBodyPartActive(part, active);
         }
 
-        layers = AnimationLayerMixerPlayable.Create(graph, AbilityLayer + AbilityAnimCount);
+        layers = AnimationLayerMixerPlayable.Create(graph, MeleeBodyLayer + 1);
         graph.Connect(locomotion, 0, layers, 0);
         layers.SetInputWeight(0, 1f);
 
@@ -378,6 +382,14 @@ public class CharacterVisual : MonoBehaviour
         layers.SetInputWeight(2, 0f);
         layers.SetLayerMaskFromAvatarMask(1, upperBody);
         layers.SetLayerMaskFromAvatarMask(2, upperBody);
+        meleeBodyPlayable = default;
+        if (heroClips != null && heroClips.meleeFullBody && heroClips.meleeAttack != null)
+        {
+            meleeBodyPlayable = AnimationClipPlayable.Create(graph, heroClips.meleeAttack);
+            meleeBodyPlayable.SetSpeed(0);
+            graph.Connect(meleeBodyPlayable, 0, layers, MeleeBodyLayer);
+        }
+        layers.SetInputWeight(MeleeBodyLayer, 0f);
 
         // Poza bloku: ruce vpredu (drzeny na posledni snimek kratke animace), sekyry se v nich zkrizi.
         var blockClip = Pick(s => s.blockPose) ?? idle;
@@ -525,6 +537,19 @@ public class CharacterVisual : MonoBehaviour
     readonly OneShot[] abilityAnims = { new OneShot(), new OneShot(), new OneShot() };
 
     public bool HasAbilityAnimation(AbilityAnim which) => abilityAnims[(int)which].clip != null;
+
+    // Rychlost pohybu postavy (vyhlazena, m/s) a zda prave bezi utok nebo animace schopnosti (HeldWeapons: kosa pri behu).
+    public float MoveSpeed => smoothedSpeed;
+    public bool ActionPlaying
+    {
+        get
+        {
+            if (attackTime >= 0f || UltimateActive) return true;
+            foreach (var anim in abilityAnims)
+                if (anim.time >= 0f) return true;
+            return false;
+        }
+    }
     public float AbilityClipLength(AbilityAnim which) => abilityAnims[(int)which].clip != null ? abilityAnims[(int)which].clip.length : 0f;
 
     // Prehraje usek klipu od 'from' do 'to' (sekundy klipu) za 'duration' sekund.
@@ -568,9 +593,15 @@ public class CharacterVisual : MonoBehaviour
     {
         if (!graph.IsValid()) return;
 
-        reloadDuration = Mathf.Max(0.1f, duration);
+        // Prebiti hned po poslednim vystrelu: animace prebijeni pocka, az dobehne animace strelby (jinak ji hned
+        // prebije), a stihne se ve zbylem case - celkova doba prebiti se nemeni.
+        float wait = attackTime >= 0f && !attackMelee ? Mathf.Max(0f, attackDuration - attackTime) : 0f;
+        wait = Mathf.Min(wait, duration * 0.5f);
+        reloadDelay = wait;
+        reloadDuration = Mathf.Max(0.1f, duration - wait);
         reloadTime = 0f;
     }
+    float reloadDelay;
 
     // ---------------- kop (sniperovo odkopnuti) ----------------
     // Knihovna animaci kop nema, tak se po animaci natoci kosti prave nohy (a trup lehce dozadu).
@@ -636,9 +667,48 @@ public class CharacterVisual : MonoBehaviour
 
     void LateUpdate()
     {
+        TwistForShoot();
         LateKick();
         ApplyGrip();
         GroundDeathPose();
+    }
+
+    // Animace strelby mirici do strany (CharacterAnimSet.shootYaw): horni polovina tela se pri strelbe dotoci,
+    // aby zbran mirila dopredu (nohy zustavaji podle chuze/klidu).
+    float shootLayerWeight;
+
+    // smer "dopredu" hlavy v jejich mistnich osach (zmeri se v klidu, kdy se postava diva rovne)
+    Vector3 headForwardLocal;
+    bool headForwardKnown;
+    Transform headForwardFor;
+
+    void TwistForShoot()
+    {
+        if (heroClips == null || Mathf.Abs(heroClips.shootYaw) < 0.5f || ModelRoot == null) return;
+        var head = GetBone(HumanBodyBones.Head);
+        if (head != headForwardFor) { headForwardKnown = false; headForwardFor = head; }
+        if (shootLayerWeight <= 0.001f)
+        {
+            // v klidu (bez strelby, stoji) si zapamatovat, kam hlava hledi
+            if (head != null && smoothedSpeed < 0.4f && attackTime < 0f)
+            {
+                headForwardLocal = Quaternion.Inverse(head.rotation) * ModelRoot.forward;
+                headForwardKnown = true;
+            }
+            return;
+        }
+        var spine = GetBone(HumanBodyBones.Spine);
+        if (spine == null) return;
+        spine.rotation = Quaternion.AngleAxis(heroClips.shootYaw * shootLayerWeight, ModelRoot.up) * spine.rotation;
+
+        // hlava: divat se tam, kam postava miri (dopredu) + rucni korekce
+        if (head == null || !headForwardKnown) return;
+        Vector3 up = ModelRoot.up;
+        Vector3 looking = Vector3.ProjectOnPlane(head.rotation * headForwardLocal, up);
+        Vector3 wanted = Quaternion.AngleAxis(heroClips.shootHeadYaw, up) * Vector3.ProjectOnPlane(ModelRoot.forward, up);
+        if (looking.sqrMagnitude < 1e-4f || wanted.sqrMagnitude < 1e-4f) return;
+        float turn = Vector3.SignedAngle(looking, wanted, up) * shootLayerWeight;
+        head.rotation = Quaternion.AngleAxis(turn, up) * head.rotation;
     }
 
     // Lezici telo na zem: animace smrti (a uspani) drzi boky ve vysce pasu (svisly pohyb korene se z klipu nebere),
@@ -730,7 +800,7 @@ public class CharacterVisual : MonoBehaviour
         if (hero == null && !IsGhost) hero = GetComponent<PlayerHero>();
         bool hidden = hero != null && hero.IsSpawned && hero.IsHidden;   // Max uvnitr obeti
         bool ring = hero != null && hero.IsSpawned && hero.HiddenFromLocal;   // nepritel s nasazenym prstenem
-        bool visible = IsGhost ? !GhostHidden : (!owner || fpc.ThirdPerson) && !ReplayPlayer.Active && !hidden && !ring;
+        bool visible = IsGhost ? !GhostHidden : (!owner || fpc.ThirdPerson || ThirdPersonPreview.Active) && !ReplayPlayer.Active && !hidden && !ring;
         foreach (var r in renderers)
             if (r != null && r.enabled != visible)
                 r.enabled = visible;
@@ -833,7 +903,9 @@ public class CharacterVisual : MonoBehaviour
         ModelRoot.localRotation = Quaternion.Euler(DashLean * dashWeight, 0f, 0f);
         // Prebijeni: animace se roztahne na dobu prebiti; pri smrti, bloku a vypadu se nepouzije.
         float reloadWeight = 0f;
-        if (reloadTime >= 0f)
+        if (reloadTime >= 0f && reloadDelay > 0f && !dead)
+            reloadDelay -= dt;   // (jeste dobiha strelba)
+        else if (reloadTime >= 0f)
         {
             reloadTime += dt;
             float t = reloadTime / reloadDuration;
@@ -856,6 +928,7 @@ public class CharacterVisual : MonoBehaviour
             layers.SetInputWeight(1, 0f);
             layers.SetInputWeight(2, 0f);
             layers.SetInputWeight(3, 0f);
+            layers.SetInputWeight(MeleeBodyLayer, 0f);
             reloadWeight = 0f;
         }
 
@@ -917,6 +990,14 @@ public class CharacterVisual : MonoBehaviour
 
         layers.SetInputWeight(1, melee);
         layers.SetInputWeight(2, shoot);
+        shootLayerWeight = shoot;
+        if (meleeBodyPlayable.IsValid())
+        {
+            // ve stoji cele telo (nohy z animace uderu), pri pohybu jen horni polovina
+            float still = 1f - Mathf.Clamp01((smoothedSpeed - 0.3f) / 1.2f);
+            meleeBodyPlayable.SetTime(meleePlayable.GetTime());
+            layers.SetInputWeight(MeleeBodyLayer, melee * still);
+        }
     }
 
     static float attackClipLengthOf(AnimationClipPlayable playable)

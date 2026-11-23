@@ -28,8 +28,19 @@ public class MaxAbility : NetworkBehaviour
     // Skok s uderem: usek animace od odrazu (0,73 s) po podrep po uderu; uder do zeme (1,67 s) prijde pri dopadu.
     const float LeapTime = 0.5f;
     const float LeapHeight = 2.2f;   // vrchol skoku nad mistem odrazu
+    // vychozi casy puvodniho klipu; jiny klip ma sve casy v sade animaci (CharacterAnimSet.shiftFrom/Impact/To)
     const float LeapClipFrom = 0.73f, LeapClipImpact = 1.67f, LeapClipTo = 2.19f;
-    static float LeapAnimSeconds => LeapTime * (LeapClipTo - LeapClipFrom) / (LeapClipImpact - LeapClipFrom);
+
+    void LeapClip(out float from, out float impact, out float to)
+    {
+        var set = hero != null && hero.Hero != null ? hero.Hero.animations : null;
+        if (set != null && set.shiftImpact > set.shiftFrom + 0.05f && set.shiftTo >= set.shiftImpact)
+        {
+            from = set.shiftFrom; impact = set.shiftImpact; to = set.shiftTo;
+            return;
+        }
+        from = LeapClipFrom; impact = LeapClipImpact; to = LeapClipTo;
+    }
 
     FirstPersonController fpc;
     PlayerHero hero;
@@ -151,8 +162,12 @@ public class MaxAbility : NetworkBehaviour
         return best;
     }
 
-    static void PlayLeap(CharacterVisual visual) =>
-        visual.PlayAbility(CharacterVisual.AbilityAnim.Shift, LeapClipFrom, LeapClipTo, LeapAnimSeconds);
+    // usek od odrazu po konec; dopad (uder) prijde presne na konci skoku (LeapTime)
+    void PlayLeap(CharacterVisual visual)
+    {
+        LeapClip(out float from, out float impact, out float to);
+        visual.PlayAbility(CharacterVisual.AbilityAnim.Shift, from, to, LeapTime * (to - from) / (impact - from));
+    }
 
     [ServerRpc]
     void LeapServerRpc() => LeapClientRpc();

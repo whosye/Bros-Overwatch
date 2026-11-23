@@ -211,8 +211,7 @@ public class SindelAbility : NetworkBehaviour
             var eye = fpc.playerCamera.transform;
             ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
             hero.SayAbility(grenade);
-            var held = GetComponent<HeldWeapons>();
-            if (held != null) held.PlayThrow();
+            PlayGrenadeThrow();
             ThrowServerRpc(eye.position + eye.forward * 0.5f, eye.forward);
         }
 
@@ -371,14 +370,29 @@ public class SindelAbility : NetworkBehaviour
             ProceduralSfx.Play(ProceduralSfx.LeapStart, point, 0.5f);
     }
 
+    // Hod granatu: ma-li Sindel animaci hodu (sada animaci, policko eAbility - Mixamo Goalie Throw), prehraje se pres
+    // cele telo; jinak jen mavnuti paze (HeldWeapons.PlayThrow).
+    const float GrenadeThrowSpeed = 2f;     // klip hodu dvakrat rychleji (hod ma byt svizny; klip oriznuty na samotny hod)
+    const float GrenadeThrowMax = 0.5f;
+
+    void PlayGrenadeThrow()
+    {
+        var visual = GetComponent<CharacterVisual>();
+        if (visual != null && visual.HasAbilityAnimation(CharacterVisual.AbilityAnim.E))
+        {
+            float length = visual.AbilityClipLength(CharacterVisual.AbilityAnim.E);
+            visual.PlayAbility(CharacterVisual.AbilityAnim.E, 0f, length, Mathf.Min(GrenadeThrowMax, length / GrenadeThrowSpeed));
+            return;
+        }
+        var held = GetComponent<HeldWeapons>();
+        if (held != null) held.PlayThrow();
+    }
+
     [ClientRpc]
     void ThrownClientRpc(Vector3 origin, Vector3 velocity, float flight, Vector3 landing, float fuse)
     {
         if (!IsOwner)
-        {
-            var held = GetComponent<HeldWeapons>();
-            if (held != null) held.PlayThrow();
-        }
+            PlayGrenadeThrow();
 
         // Zlaty granat s krizkem nahore (jako "svaty granat").
         var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);

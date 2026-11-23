@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: Mirek
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Mirek
-  description: "Lukost\u0159elec. Dvojit\u00fd skok, vy\u0161plh\u00e1 se na hrany a odhaluje nep\u0159\u00e1tele p\u0159es zdi."
+  description: "Lukost\u0159elec. Dvojit\xFD skok, vy\u0161plh\xE1 se na hrany a
+    odhaluje nep\u0159\xE1tele p\u0159es zdi."
   color: {r: 0.6, g: 0.45, b: 0.9, a: 1}
   maxHealth: 100
   healingScale: 1
   scopeAimPose: 0
+  hipFire: 0
   weapon: {fileID: 11400000, guid: e1024bdb9bec1d6469758999e3c4fbbf, type: 2}
   abilityKind: 13
   ability: {fileID: 11400000, guid: c6b229434130d8345beedf8b5864bb28, type: 2}
@@ -38,7 +40,7 @@ MonoBehaviour:
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 2586593088354091029, guid: 0cc33c2ed00a1c94cbba8b317e596345, type: 3}
   tintCharacter: 0
-  animations: {fileID: 0}
+  animations: {fileID: 11400000, guid: e295ac7d660191741a634014d16948cb, type: 2}
   sleeveColor: {r: 0.9, g: 0.9, b: 0.88, a: 1}
   skinColor: {r: 0.82, g: 0.62, b: 0.52, a: 1}
   spawnLines:
@@ -67,6 +69,7 @@ MonoBehaviour:
   headshotLines: []
   missLines: []
   scopeLines: []
+  healedLines: []
   ultVoiceEcho: 0
   ultVoiceMaxSeconds: 0
   ultVoiceSpeed: 1

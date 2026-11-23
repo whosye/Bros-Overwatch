@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: Scythe_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Kosa
-  description: "Kosa na blízko. Široký úder zasáhne všechny před Maxem."
+  description: "Kosa na bl\xEDzko. \u0160irok\xFD \xFAder zas\xE1hne v\u0161echny
+    p\u0159ed Maxem."
   damage: 25
   fireRate: 1
   maxAmmo: 0
+  burstCount: 1
+  burstInterval: 0.07
   reloadTime: 1.5
   reloadAnimation: 0
   range: 4.2
@@ -32,9 +35,11 @@ MonoBehaviour:
   allyHeal: 0
   scopeFov: 0
   scopedChargeTime: 0
+  boltCycleTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
   headshotMultiplier: 2
+  hitscanRadius: 0
   scopedFalloffStart: 0
   scopedFalloffEnd: 0
   scopedFalloffMin: 0.4
@@ -56,8 +61,16 @@ MonoBehaviour:
   comboFinisherDamage: 0
   comboFinisherArc: 90
   comboFinisherKnockback: 0
+  powerShotEvery: 0
+  powerShotDamageScale: 1.25
+  powerShotColor: {r: 1, g: 0.12, b: 0.06, a: 1}
   heldModel: 5
   dualWield: 0
+  twoHanded: 0
+  heldScale: 1
   heldPrefab: {fileID: 0}
   fireSound: {fileID: 0}
   scopedFireSound: {fileID: 0}
+  bulletImpactSound: {fileID: 0}
+  bulletImpactVolume: 0.5
+  bulletHoles: 1
