@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc0a3068725e49540a9bd9f0bf6ee625, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DistanceLayeredLoop
-  clip: {fileID: 8300000, guid: edb345200cb02684b8dfc6838cf59218, type: 3}
+  clip: {fileID: 8300000, guid: ecb81101269609d42ae0dc54c453d581, type: 3}
   emitterOffset: {x: 0, y: 1.02, z: 0}
   volume: 0.85
   ambientBoost: 3

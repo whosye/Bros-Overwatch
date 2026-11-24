@@ -20,9 +20,18 @@ public static class DistanceLayeredLoopChecks
     public static void Run()
     {
         if(!Application.isBatchMode) throw new InvalidOperationException("Use an isolated batch editor.");
+        SessionState.SetFloat(Key+"lodBias",QualitySettings.lodBias);
         Directory.CreateDirectory(Output);
         EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity");
-        BigLezAudioSetup.Setup();
+        BigLezAudioSetup.PrepareClip();
+        var savedLoop=Object.FindAnyObjectByType<DistanceLayeredLoop>();
+        if(savedLoop==null || savedLoop.clip==null)
+            throw new InvalidOperationException("Saved BigLez scene has a missing audio reference; the playback test must not silently repair it.");
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/BigLez/BigLez.prefab");
+        var prefabLoop=prefab!=null?prefab.GetComponent<DistanceLayeredLoop>():null;
+        if(prefabLoop==null || prefabLoop.clip!=savedLoop.clip)
+            throw new InvalidOperationException("Saved BigLez prefab must reference the same existing clip as the placed model.");
+        Debug.Log("[BigLezAudio] Saved scene and prefab references verified before playback; no scene repair performed.");
         SessionState.SetBool(Key+"active",true);SessionState.SetBool(Key+"started",false);SessionState.SetBool(Key+"exiting",false);
         SessionState.SetFloat(Key+"time",(float)EditorApplication.timeSinceStartup);
         EditorApplication.update-=Tick;EditorApplication.update+=Tick;
@@ -34,6 +43,7 @@ public static class DistanceLayeredLoopChecks
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode) return;
             SessionState.SetBool(Key+"active",false);EditorApplication.update-=Tick;
+            QualitySettings.lodBias=SessionState.GetFloat(Key+"lodBias",QualitySettings.lodBias);
             int code=SessionState.GetInt(Key+"exit",1);
             if(code==0)
             {
@@ -121,7 +131,10 @@ public sealed class DistanceLoopDriver:MonoBehaviour
         {
             Vector2 mix=loop.MixAt(d);float power=mix.magnitude;
             Assert.LessOrEqual(power,previousPower+.0001f);Assert.GreaterOrEqual(mix.x,0);Assert.GreaterOrEqual(mix.y,0);
-            float ratio=mix.y/Mathf.Max(.000001f,mix.x+mix.y);
+            float total=mix.x+mix.y;
+            // At the audible cutoff both gains tend to zero. A denominator floor would
+            // invent a falling wet ratio even though the actual crossfade remains monotonic.
+            float ratio=total>0f?mix.y/total:previousRatio;
             Assert.GreaterOrEqual(ratio,previousRatio-.0001f);previousPower=power;previousRatio=ratio;
         }
         yield return null;Assert.IsFalse(loop.Running,"Main menu must be silent.");

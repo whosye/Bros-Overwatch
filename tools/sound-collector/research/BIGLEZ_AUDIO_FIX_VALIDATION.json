@@ -1,0 +1,16 @@
+{
+  "fix": "Saved scene and prefab clip GUID repaired; mono/preloaded import retained; missing BigLez clip rejects build.",
+  "clip_guid": "ecb81101269609d42ae0dc54c453d581",
+  "source_recording_unchanged": true,
+  "scene_repaired_during_test": false,
+  "playback_result": "PASS: actual placed BigLez, mono shared clip, synchronized playback, clean/blended/wet/distant gains, ambient mute, disable/restart, map switch and disconnect; runtime errors=0",
+  "build_result": "Succeeded errors=0 bytes=995453104",
+  "executable": "C:\\myDev_\\games\\bros-overwatch-dir\\Bros-Overwatch\\compiled game\\OverwatchBros.exe",
+  "deployed_executable": "C:\\myDev_\\games\\bros-overwatch-dir\\compiled game\\OverwatchBros.exe",
+  "deployment": {
+    "files_verified_sha256": 194,
+    "hash_mismatches": 0,
+    "bytes": 996018126,
+    "canonical_build_output": "C:\\myDev_\\games\\bros-overwatch-dir\\compiled game"
+  }
+}

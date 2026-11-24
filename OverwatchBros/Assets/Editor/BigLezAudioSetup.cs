@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class BigLezAudioSetup
 {
@@ -14,21 +17,7 @@ public static class BigLezAudioSetup
     public static void Setup()
     {
         if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Save in Edit mode first.");
-        AssetDatabase.ImportAsset(ClipPath,ImportAssetOptions.ForceSynchronousImport);
-        var importer=(AudioImporter)AssetImporter.GetAtPath(ClipPath);
-        var settings=importer.defaultSampleSettings;
-        settings.loadType=AudioClipLoadType.CompressedInMemory;
-        settings.compressionFormat=AudioCompressionFormat.Vorbis;
-        settings.quality=.7f;
-        settings.sampleRateSetting=AudioSampleRateSetting.OverrideSampleRate;
-        settings.sampleRateOverride=44100;
-        settings.preloadAudioData=true;
-        importer.forceToMono=true;
-        importer.loadInBackground=true;
-        importer.defaultSampleSettings=settings;
-        importer.SaveAndReimport();
-        var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(ClipPath);
-        if(clip==null) throw new Exception("Big Lez audio import failed.");
+        var clip=PrepareClip();
         var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
         var targets=UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include,FindObjectsSortMode.None)
             .Where(t=>t.gameObject.scene==scene && t.name=="BigLez"
@@ -51,6 +40,28 @@ public static class BigLezAudioSetup
         AssetDatabase.SaveAssets();
     }
 
+    // Imports audio only. Checks must validate saved references before repairing any scene/prefab.
+    public static AudioClip PrepareClip()
+    {
+        AssetDatabase.ImportAsset(ClipPath,ImportAssetOptions.ForceSynchronousImport);
+        var importer=AssetImporter.GetAtPath(ClipPath) as AudioImporter;
+        if(importer==null) throw new Exception("Big Lez audio file is missing or has no AudioImporter: "+ClipPath);
+        var settings=importer.defaultSampleSettings;
+        settings.loadType=AudioClipLoadType.CompressedInMemory;
+        settings.compressionFormat=AudioCompressionFormat.Vorbis;
+        settings.quality=.7f;
+        settings.sampleRateSetting=AudioSampleRateSetting.OverrideSampleRate;
+        settings.sampleRateOverride=44100;
+        settings.preloadAudioData=true;
+        importer.forceToMono=true;
+        importer.loadInBackground=true;
+        importer.defaultSampleSettings=settings;
+        importer.SaveAndReimport();
+        var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(ClipPath);
+        if(clip==null) throw new Exception("Big Lez audio import failed.");
+        return clip;
+    }
+
     static void Configure(GameObject target,AudioClip clip)
     {
         var loop=target.GetComponent<DistanceLayeredLoop>();
@@ -67,5 +78,19 @@ public static class BigLezAudioSetup
         }
         EditorUtility.SetDirty(loop);
         if(PrefabUtility.IsPartOfPrefabInstance(target)) PrefabUtility.RecordPrefabInstancePropertyModifications(loop);
+    }
+}
+
+// Reject the dangling clip reference that previously produced a successful but silent build.
+public sealed class BigLezAudioBuildCheck : IProcessSceneWithReport
+{
+    public int callbackOrder => 0;
+
+    public void OnProcessScene(Scene scene, BuildReport report)
+    {
+        foreach(var root in scene.GetRootGameObjects())
+            foreach(var loop in root.GetComponentsInChildren<DistanceLayeredLoop>(true))
+                if(loop.name=="BigLez" && loop.clip==null)
+                    throw new BuildFailedException("BigLez has no valid audio clip in "+scene.path+". Repair its saved audio reference before building.");
     }
 }

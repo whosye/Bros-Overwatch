@@ -2,10 +2,14 @@
 setlocal EnableExtensions DisableDelayedExpansion
 title Bros Overwatch - Build
 
-rem Works next to the repository, or from the repository root.
+rem Both launcher locations build into the same folder next to the repository.
 set "PROJECT=%~dp0Bros-Overwatch\OverwatchBros"
-if not exist "%PROJECT%\ProjectSettings\ProjectVersion.txt" set "PROJECT=%~dp0OverwatchBros"
 set "OUTPUT=%~dp0compiled game"
+if not exist "%PROJECT%\ProjectSettings\ProjectVersion.txt" (
+    set "PROJECT=%~dp0OverwatchBros"
+    set "OUTPUT=%~dp0..\compiled game"
+)
+for %%I in ("%OUTPUT%") do set "OUTPUT=%%~fI"
 set "BUILD_LOG=%~dp0compile-game.log"
 
 if not exist "%PROJECT%\ProjectSettings\ProjectVersion.txt" (
