@@ -26,6 +26,7 @@ MonoBehaviour:
   secondaryAbilityKind: 1
   secondaryAbility: {fileID: 11400000, guid: c274d57a1a9868941ae150d04588a291, type: 2}
   blockAbility: {fileID: 0}
+  counterAbility: {fileID: 0}
   altAbilityKind: 7
   altAbility: {fileID: 11400000, guid: f3b3b34683619c34cac755477d895447, type: 2}
   rmbAbilityKind: 8
@@ -35,6 +36,7 @@ MonoBehaviour:
   moveSpeed: 1
   lifesteal: 0
   takedownCooldownCut: 0
+  takedownKillsOnly: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
@@ -59,13 +61,20 @@ MonoBehaviour:
   - {fileID: 8300000, guid: f722b914cab92044895f766d0ae12ac8, type: 3}
   - {fileID: 8300000, guid: 5a3d864b8ae29684ab824b6ae5745230, type: 3}
   - {fileID: 8300000, guid: c714061c08ab64d499273cba039825a1, type: 3}
+  - {fileID: 8300000, guid: c2cd4ee2c725e9d4689028833a3a89e4, type: 3}
+  - {fileID: 8300000, guid: 2be9f0824afd2814fb267bb576c08978, type: 3}
+  - {fileID: 8300000, guid: 63867bf51ff5f6f4780e9ca6944987b4, type: 3}
+  - {fileID: 8300000, guid: 78d49518c13280742a1c750c6e7fef46, type: 3}
   idleLines:
   - {fileID: 8300000, guid: d0cc161946dfc4847a8504898fd934ea, type: 3}
   - {fileID: 8300000, guid: 2827768468c64af4397900b3ddb9afc5, type: 3}
   - {fileID: 8300000, guid: e18e9e51d9d398347b200cf52d850911, type: 3}
+  - {fileID: 8300000, guid: 1b73547c108f81548941608ba613d984, type: 3}
+  - {fileID: 8300000, guid: 9e17a85819033234d9385a1ad3dc4dfb, type: 3}
   snareLines:
   - {fileID: 8300000, guid: a990250b84d0f3045a6a97ff4f416b37, type: 3}
-  attackLines: []
+  attackLines:
+  - {fileID: 8300000, guid: f1837e069442adc42b485493ea2b8314, type: 3}
   healLines: []
   headshotLines: []
   missLines: []

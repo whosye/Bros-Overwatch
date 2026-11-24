@@ -1083,9 +1083,14 @@ public class PlayerHero : NetworkBehaviour
             }
 
         if (!IsServer || Time.time < nextAttackLine || !HeroVoice.HasLines(Hero, VoiceKind.Attack, 0)) return;
-        nextAttackLine = Time.time + Random.Range(12f, 20f);
-        if (Random.value < 0.45f)
+        // Neuspesny los zkusi znovu za chvili (driv cekal 12-20 s i bez hlasky -> pri strelbe skoro nemluvil).
+        if (Random.value < 0.6f)
+        {
+            nextAttackLine = Time.time + Random.Range(10f, 16f);
             Say(VoiceKind.Attack);
+        }
+        else
+            nextAttackLine = Time.time + Random.Range(2.5f, 4f);
     }
 
     // Obcasna hlaska (leceni, headshot, minuti, scope): s pravdepodobnosti 'chance' a nejvys jednou za minGap-maxGap s.

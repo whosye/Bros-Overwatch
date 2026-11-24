@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: HealField_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
   abilityName: "L\xE9\u010Div\xE9 pole"
-  description: "Polo\u017e\u00ed\u0161 na zem pole, kter\u00e9 n\u011bkolik sekund l\u00e9\u010d\u00ed tebe i spoluhr\u00e1\u010de uvnit\u0159."
+  description: "Polo\u017E\xED\u0161 na zem pole, kter\xE9 n\u011Bkolik sekund l\xE9\u010D\xED
+    tebe i spoluhr\xE1\u010De uvnit\u0159."
   icon: {fileID: 2800000, guid: 3dd6caa8392463149abaaa73aab7a358, type: 3}
   cooldown: 15
   ultCost: 0
@@ -26,6 +27,7 @@ MonoBehaviour:
   sound: {fileID: 0}
   voiceLines:
   - {fileID: 8300000, guid: f34e4d806c92135459c49d0dd9563acd, type: 3}
+  - {fileID: 8300000, guid: c3f8d84987da06444b4f50cce6b31742, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5
