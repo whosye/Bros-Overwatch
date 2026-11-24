@@ -182,6 +182,12 @@ public static class ShootClipTrim
         string path = DefaultLeapPath;
         var selected = Selection.activeObject != null ? AssetDatabase.GetAssetPath(Selection.activeObject) : null;
         if (!string.IsNullOrEmpty(selected) && selected.EndsWith(".fbx", System.StringComparison.OrdinalIgnoreCase)) path = selected;
+        MeasureLeapFor(path);
+    }
+
+    // (vola i MixamoAnimationSetup sam, kdyz hrdina dostane novou animaci na Shift)
+    public static void MeasureLeapFor(string path)
+    {
 
         AnimationClip clip = null;
         foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(path))

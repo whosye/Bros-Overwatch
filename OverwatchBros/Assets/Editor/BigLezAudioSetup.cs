@@ -90,7 +90,21 @@ public sealed class BigLezAudioBuildCheck : IProcessSceneWithReport
     {
         foreach(var root in scene.GetRootGameObjects())
             foreach(var loop in root.GetComponentsInChildren<DistanceLayeredLoop>(true))
-                if(loop.name=="BigLez" && loop.clip==null)
+            {
+                if(loop.name!="BigLez" || loop.clip!=null) continue;
+                // Unity vola kontrolu i pri vstupu do Play modu (report == null) - tam hru nezastavovat:
+                // zvuk se doplni ze souboru (jen v kopii sceny pro hrani, nic se neuklada) a vypise se varovani.
+                var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(BigLezAudioSetup.ClipPath);
+                if(clip!=null)
+                {
+                    loop.clip=clip;
+                    Debug.LogWarning("[BigLezAudio] BigLez ve scene nemel ulozeny zvuk - doplnen z "+BigLezAudioSetup.ClipPath
+                        +". Trvale opravit: BrosOverwatch/Mapa/Pripravit Big Lez audio (v Edit modu) a ulozit scenu.");
+                    continue;
+                }
+                if(report!=null)
                     throw new BuildFailedException("BigLez has no valid audio clip in "+scene.path+". Repair its saved audio reference before building.");
+                Debug.LogWarning("[BigLezAudio] BigLez nema zvuk a soubor "+BigLezAudioSetup.ClipPath+" chybi - hra pobezi bez nej.");
+            }
     }
 }

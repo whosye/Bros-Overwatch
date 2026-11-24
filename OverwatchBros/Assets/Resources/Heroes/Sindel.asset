@@ -39,6 +39,10 @@ MonoBehaviour:
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 903988112565318085, guid: f4bc1276d3327cf48ad692f996539397, type: 3}
+  backPrefab: {fileID: 0}
+  backOffset: {x: 0.05, y: 0, z: -0.17}
+  backEuler: {x: 0, y: 0, z: -25}
+  backScale: 1
   tintCharacter: 0
   animations: {fileID: 11400000, guid: 271628b5ecf29f440b56b5434bee3389, type: 2}
   sleeveColor: {r: 0.07, g: 0.07, b: 0.08, a: 1}
@@ -52,18 +56,22 @@ MonoBehaviour:
   hurtLines:
   - {fileID: 8300000, guid: 5b1a70576af8a45498f323cb0b94556b, type: 3}
   - {fileID: 8300000, guid: 980eb342a35f0ad47a764b82014da725, type: 3}
+  - {fileID: 8300000, guid: 5a86768cbd6dd6d48b83dd7ee904ef55, type: 3}
   idleLines:
   - {fileID: 8300000, guid: b51d19d482685514f994fab41c962bb2, type: 3}
   - {fileID: 8300000, guid: 98389558563b39f46985956a12484224, type: 3}
   - {fileID: 8300000, guid: 04cbda7ba510393498c300beeee4d143, type: 3}
   - {fileID: 8300000, guid: 6307bc6ae2c4d3f4aa2351a014fbf4b6, type: 3}
+  - {fileID: 8300000, guid: 530ae7ba0907afe4e9833f64dc217323, type: 3}
   snareLines:
   - {fileID: 8300000, guid: 97386fd59f9840749949630399594e56, type: 3}
   - {fileID: 8300000, guid: 7803c5aa0e6670342b3fa327746b554b, type: 3}
-  attackLines: []
+  attackLines:
+  - {fileID: 8300000, guid: b93606ff210d4a14db3341cfb3bcab61, type: 3}
   healLines: []
   headshotLines: []
-  missLines: []
+  missLines:
+  - {fileID: 8300000, guid: cc62b9c1ce3886d4288c4d507487efce, type: 3}
   scopeLines: []
   healedLines: []
   ultVoiceEcho: 0

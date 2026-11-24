@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Sekyrky
   description: "Dv\u011b sekyrky na bl\u00edzko, \u00fadery se st\u0159\u00eddaj\u00ed."
-  damage: 28
-  fireRate: 2.2
+  damage: 20
+  fireRate: 1.8
   maxAmmo: 0
   range: 2.1
   fireMode: 2

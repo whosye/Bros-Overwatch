@@ -188,6 +188,7 @@ GameObject:
   - component: {fileID: 53562669911337371}
   - component: {fileID: 8013583674131917789}
   - component: {fileID: 2910593085831879148}
+  - component: {fileID: 6504596797753602775}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1066,5 +1067,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15db7f26a74cf894da0005263737468c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrespassAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  ability: {fileID: 0}
+--- !u!114 &6504596797753602775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016190855652883934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 743e717038d3edd489b80733b31f2646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TripleSlashAbility
   ShowTopMostFoldoutHeaderGroup: 1
   ability: {fileID: 0}

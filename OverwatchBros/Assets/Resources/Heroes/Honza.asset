@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Honza
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Honza
-  description: "V\u00fdbu\u0161niny a pasti. Ovl\u00e1d\u00e1 prostor gran\u00e1ty, n\u00e1lo\u017e\u00ed a past\u00ed. Po smrti z n\u011bj vypadnou gran\u00e1ty."
+  description: "V\xFDbu\u0161niny a pasti. Ovl\xE1d\xE1 prostor gran\xE1ty, n\xE1lo\u017E\xED
+    a past\xED. Po smrti z n\u011Bj vypadnou gran\xE1ty."
   color: {r: 0.45, g: 0.8, b: 0.4, a: 1}
   maxHealth: 110
+  healingScale: 1
+  scopeAimPose: 0
+  hipFire: 0
   weapon: {fileID: 11400000, guid: 5fafac1122454c7429625a40f68d3e02, type: 2}
   abilityKind: 6
   ability: {fileID: 11400000, guid: 069f02c7a6ed80945a6c6744ff4c36ee, type: 2}
@@ -35,7 +39,12 @@ MonoBehaviour:
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 7741774874685919537, guid: 66c3458da6154b64eb8bc50b90793943, type: 3}
+  backPrefab: {fileID: 0}
+  backOffset: {x: 0.05, y: 0, z: -0.17}
+  backEuler: {x: 0, y: 0, z: -25}
+  backScale: 1
   tintCharacter: 0
+  animations: {fileID: 0}
   sleeveColor: {r: 0.7, g: 0.8, b: 0.92, a: 1}
   skinColor: {r: 0.82, g: 0.63, b: 0.52, a: 1}
   spawnLines:
@@ -52,9 +61,21 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 20d59beb4e2cc834fa6ff5ae75eb82d3, type: 3}
   - {fileID: 8300000, guid: 9e76a89fd1acc3049b12fec83376e599, type: 3}
   - {fileID: 8300000, guid: 8ad21ca0b3f5cbc49a0b21a18caacfd3, type: 3}
-  idleLines: []
+  idleLines:
+  - {fileID: 8300000, guid: 292418ca695b483409c094facbd542b7, type: 3}
   snareLines: []
   attackLines:
+  - {fileID: 8300000, guid: aa76ae584a247e74b87962a97d089ffd, type: 3}
   - {fileID: 8300000, guid: f67cd20aa0a5cbd4b8ef32da44e90060, type: 3}
   - {fileID: 8300000, guid: 2281cb020c956b746ba181819661b857, type: 3}
   - {fileID: 8300000, guid: f8588ddf49458544d857fd3b41efed9f, type: 3}
+  healLines: []
+  headshotLines: []
+  missLines: []
+  scopeLines: []
+  healedLines:
+  - {fileID: 8300000, guid: 4ae68e49cb7bb614e9e945a33f1badae, type: 3}
+  ultVoiceEcho: 1
+  ultVoiceMaxSeconds: 0
+  ultVoiceSpeed: 1
+  ultVoiceNormalTail: 0

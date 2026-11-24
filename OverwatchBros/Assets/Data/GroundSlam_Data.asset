@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
+  m_Name: GroundSlam_Data
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
+  abilityName: "Drtiv\xFD skok"
+  description: "Vysko\u010D\xED\u0161 na m\xEDsto v zam\u011B\u0159ova\u010Di (a\u017E
+    16 m) a dopadne\u0161 \xFAderem do zem\u011B: nep\u0159\xE1tele kolem zran\xED\u0161,
+    zpomal\xED\u0161 a nadhod\xED\u0161."
+  icon: {fileID: 2800000, guid: d1995361282ce8b469cad6238c80d1ed, type: 3}
+  cooldown: 8
+  ultCost: 0
+  power: 40
+  duration: 0.6
+  radius: 3.5
+  range: 16
+  knockback: 0
+  charges: 1
+  sound: {fileID: 0}
+  voiceLines:
+  - {fileID: 8300000, guid: 75765e1e0804e0543828c707bb0e27cd, type: 3}
+  - {fileID: 8300000, guid: 2dadc4080bb743b44bc9bf89b9e4fbf3, type: 3}
+  blockAbsorb: 0.8
+  blockSpeed: 0.5
+  regenDelay: 5
+  regenTime: 6
+  speed: 14
+  tickInterval: 0.25
+  healRatio: 1

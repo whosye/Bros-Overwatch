@@ -491,7 +491,17 @@ public class CharacterVisual : MonoBehaviour
         for (int i = 0; i < AbilityAnimCount; i++)
         {
             var anim = abilityAnims[i];
-            anim.clip = Pick(i == (int)AbilityAnim.Shift ? s => s.shiftAbility : i == (int)AbilityAnim.RightMouse ? s => s.rmbAbility : s => s.eAbility);
+            System.Func<CharacterAnimSet, AnimationClip> field;
+            switch ((AbilityAnim)i)
+            {
+                case AbilityAnim.Shift: field = s => s.shiftAbility; break;
+                case AbilityAnim.RightMouse: field = s => s.rmbAbility; break;
+                case AbilityAnim.Combo1: field = s => s.combo1; break;
+                case AbilityAnim.Combo2: field = s => s.combo2; break;
+                case AbilityAnim.Combo3: field = s => s.combo3; break;
+                default: field = s => s.eAbility; break;
+            }
+            anim.clip = Pick(field);
             anim.playable = AnimationClipPlayable.Create(graph, anim.clip ?? idle);
             anim.playable.SetSpeed(0);
             graph.Connect(anim.playable, 0, layers, AbilityLayer + i);
@@ -585,8 +595,8 @@ public class CharacterVisual : MonoBehaviour
 
     // ---------------- schopnosti pres cele telo (Maxuv skok s uderem na Shift, otocka na PTM) ----------------
 
-    public enum AbilityAnim { Shift, RightMouse, E }
-    const int AbilityLayer = 7, AbilityAnimCount = 3;
+    public enum AbilityAnim { Shift, RightMouse, E, Combo1, Combo2, Combo3 }
+    const int AbilityLayer = 7, AbilityAnimCount = 6;
 
     class OneShot
     {
@@ -594,7 +604,7 @@ public class CharacterVisual : MonoBehaviour
         public AnimationClipPlayable playable;
         public float time = -1f, from, to, duration = 1f;
     }
-    readonly OneShot[] abilityAnims = { new OneShot(), new OneShot(), new OneShot() };
+    readonly OneShot[] abilityAnims = { new OneShot(), new OneShot(), new OneShot(), new OneShot(), new OneShot(), new OneShot() };
 
     public bool HasAbilityAnimation(AbilityAnim which) => abilityAnims[(int)which].clip != null;
 

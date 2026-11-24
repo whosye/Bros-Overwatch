@@ -17,7 +17,7 @@ MonoBehaviour:
   icon: {fileID: 2800000, guid: ca735fa3a1b6aac47bd0fb711e528395, type: 3}
   cooldown: 25
   ultCost: 260
-  power: 60
+  power: 80
   duration: 5
   radius: 7
   range: 25

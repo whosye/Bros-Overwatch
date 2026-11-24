@@ -39,6 +39,10 @@ MonoBehaviour:
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 6597849430519105893, guid: 59332dacda2a5b54fbcb0c50d60d4657, type: 3}
+  backPrefab: {fileID: 0}
+  backOffset: {x: 0.05, y: 0, z: -0.17}
+  backEuler: {x: 0, y: 0, z: -25}
+  backScale: 1
   tintCharacter: 0
   animations: {fileID: 11400000, guid: bb720d23a57263c40a302bfe3fc1ae98, type: 2}
   sleeveColor: {r: 0.1, g: 0.1, b: 0.12, a: 1}
@@ -52,6 +56,7 @@ MonoBehaviour:
   deathLines:
   - {fileID: 8300000, guid: dac50d304e2b6da4bbc9e2dac37ca3ef, type: 3}
   hurtLines:
+  - {fileID: 8300000, guid: f722b914cab92044895f766d0ae12ac8, type: 3}
   - {fileID: 8300000, guid: 5a3d864b8ae29684ab824b6ae5745230, type: 3}
   - {fileID: 8300000, guid: c714061c08ab64d499273cba039825a1, type: 3}
   idleLines:

@@ -30,6 +30,7 @@ public class ThirdPersonPreview : MonoBehaviour
 
     static int view;
     static float zoom = 1f;
+    const float MinZoom = 0.4f, MaxZoom = 8f;   // vzdalenost kamery: 0,4x az 8x vychozi
 
     Camera moved;
     Vector3 savedPosition;
@@ -86,7 +87,14 @@ public class ThirdPersonPreview : MonoBehaviour
         {
             // Alt + kolecko: blize / dal
             float scroll = Mouse.current.scroll.ReadValue().y;
-            if (Mathf.Abs(scroll) > 0.01f) zoom = Mathf.Clamp(zoom * (scroll > 0f ? 0.9f : 1.1f), 0.4f, 2.5f);
+            if (Mathf.Abs(scroll) > 0.01f) zoom = Mathf.Clamp(zoom * (scroll > 0f ? 0.9f : 1.1f), MinZoom, MaxZoom);
+        }
+        // PageUp / PageDown (nebo + / - na numericke klavesnici): bliz / dal, Home: zpet na vychozi vzdalenost
+        if (Active)
+        {
+            if (keyboard.pageDownKey.isPressed || keyboard.numpadMinusKey.isPressed) zoom = Mathf.Min(MaxZoom, zoom * (1f + 1.5f * Time.unscaledDeltaTime));
+            if (keyboard.pageUpKey.isPressed || keyboard.numpadPlusKey.isPressed) zoom = Mathf.Max(MinZoom, zoom / (1f + 1.5f * Time.unscaledDeltaTime));
+            if (keyboard.homeKey.wasPressedThisFrame) zoom = 1f;
         }
         if (Active && LocalPlayer() == null) Active = false;
     }
@@ -100,7 +108,8 @@ public class ThirdPersonPreview : MonoBehaviour
 
         var player = fpc.transform;
         var v = Views[view];
-        Vector3 offset = new Vector3(v.offset.x * zoom, v.offset.y, v.offset.z * zoom);
+        // pri oddaleni i o kus vys (at je videt postava i okoli shora)
+        Vector3 offset = new Vector3(v.offset.x * zoom, v.offset.y + (zoom > 1f ? (zoom - 1f) * 0.8f : 0f), v.offset.z * zoom);
         Vector3 target = player.position + Vector3.up * v.lookHeight;
         Vector3 position = player.TransformPoint(offset);
 
@@ -129,6 +138,6 @@ public class ThirdPersonPreview : MonoBehaviour
             style.normal.textColor = new Color(0.4f, 1f, 0.95f);
         }
         GUI.Label(new Rect(20f, 20f, 900f, 30f),
-            $"NÁHLED 3. OSOBA – {Views[view].name}   (F6 vypnout, F7 další úhel, Alt+kolečko vzdálenost)", style);
+            $"NÁHLED 3. OSOBA – {Views[view].name}   (F6 vypnout, F7 další úhel, Alt+kolečko / PageUp-PageDown vzdálenost, Home zpět)", style);
     }
 }

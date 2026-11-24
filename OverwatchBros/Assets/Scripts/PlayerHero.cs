@@ -95,9 +95,10 @@ public class PlayerHero : NetworkBehaviour
     }
 
     // Zabiti nebo asistence: zkratit zbyvajici cooldowny (Pova). Cooldowny drzi vlastnik hrace.
-    public void ServerTakedownRefund()
+    public void ServerTakedownRefund(bool assist = false)
     {
         if (!IsServer || Hero == null || Hero.takedownCooldownCut <= 0f) return;
+        if (assist && Hero.takedownKillsOnly) return;
         TakedownRefundClientRpc(Hero.takedownCooldownCut);
     }
 
@@ -263,6 +264,7 @@ public class PlayerHero : NetworkBehaviour
     DashAbility dash;
     LeapStrikeAbility leap;
     RushAbility rush;
+    TripleSlashAbility tripleSlash;
     BlockAbility block;
     MineAbility mine;
     TrapAbility trap;
@@ -297,6 +299,7 @@ public class PlayerHero : NetworkBehaviour
         dash = GetComponent<DashAbility>();
         leap = GetComponent<LeapStrikeAbility>();
         rush = GetComponent<RushAbility>();
+        tripleSlash = GetComponent<TripleSlashAbility>();
         block = GetComponent<BlockAbility>();
         mine = GetComponent<MineAbility>();
         trap = GetComponent<TrapAbility>();
@@ -688,9 +691,20 @@ public class PlayerHero : NetworkBehaviour
             rush.enabled = hasRush;
         }
 
+        // Trojsek: zakladni utok zbrane s rotaci tri uderu (WeaponDefinition.comboRotation)
+        bool hasTripleSlash = definition.weapon != null && definition.weapon.comboRotation;
+        bool hasGroundSlam = definition.secondaryAbilityKind == AbilityKind.GroundSlam && definition.secondaryAbility != null;
+        if (tripleSlash != null)
+        {
+            tripleSlash.Configure(hasTripleSlash ? definition.weapon : null);
+            tripleSlash.ConfigureSlam(hasGroundSlam ? definition.secondaryAbility : null);
+            tripleSlash.enabled = hasTripleSlash || hasGroundSlam;
+        }
+
         if (block != null)
         {
             block.Configure(definition.blockAbility);
+            block.ConfigureCounter(definition.blockAbility != null ? definition.counterAbility : null);
             block.enabled = definition.blockAbility != null;
         }
 
@@ -815,7 +829,7 @@ public class PlayerHero : NetworkBehaviour
         var controller = GetComponent<FirstPersonController>();
         if (controller != null)
         {
-            controller.ShiftReserved = hasMaxReap || hasRush || hasMine || dashOnShift || hasSleepDart || hasGrapple || hasBlink || hasBard || hasSindelLeap;
+            controller.ShiftReserved = hasMaxReap || hasRush || hasGroundSlam || hasMine || dashOnShift || hasSleepDart || hasGrapple || hasBlink || hasBard || hasSindelLeap;
             controller.DoubleJump = definition.doubleJump;
             controller.HeroSpeedScale = Mathf.Max(0.5f, definition.moveSpeed);
             controller.LedgeClimb = definition.ledgeClimb;
@@ -951,9 +965,17 @@ public class PlayerHero : NetworkBehaviour
 
         if (Hero.blockAbility != null && block != null)
             slots.Add(new AbilitySlot { key = "PTM", ability = Hero.blockAbility, remaining = 0f, active = block.IsBlocking, charge = block.Fraction });
+        if (Hero.blockAbility != null && Hero.counterAbility != null && block != null)
+            // Odveta: bar = hnev (pod minimem jako nepripravena), svitit = ted jde vratit ranu
+            slots.Add(new AbilitySlot { key = "LTM", ability = Hero.counterAbility, remaining = block.CounterCooldownRemaining, active = block.CounterWindow,
+                charge = block.CounterReady ? block.Rage / BlockAbility.MaxRage : Mathf.Min(0.01f, block.Rage / BlockAbility.MaxRage),
+                count = Mathf.RoundToInt(block.Rage) });   // cislo = kolik hnevu je v sekyrkach
 
         if (Hero.secondaryAbilityKind == AbilityKind.Rush && rush != null && Hero.secondaryAbility != null)
             slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = rush.CooldownRemaining, active = rush.IsActive, charge = -1f, count = rush.HasSeveralCharges ? rush.Charges : 0 });
+
+        if (Hero.secondaryAbilityKind == AbilityKind.GroundSlam && tripleSlash != null && Hero.secondaryAbility != null)
+            slots.Add(new AbilitySlot { key = "SHIFT", ability = Hero.secondaryAbility, remaining = tripleSlash.SlamRemaining, active = tripleSlash.Slamming, charge = -1f });
 
         if (Hero.altAbilityKind == AbilityKind.Hook && hook != null && Hero.altAbility != null)
             slots.Add(new AbilitySlot { key = "E", ability = Hero.altAbility, remaining = hook.CooldownRemaining, active = hook.IsActive, charge = -1f });
@@ -1041,8 +1063,25 @@ public class PlayerHero : NetworkBehaviour
     // Hlaska k utoku (vola server pri zasahu nepritele zbrani): obcas, nejvys jednou za 12-20 s, at to neotravuje.
     float nextAttackLine;
 
-    public void ServerAttackLine()
+    float nextTargetLine;
+    const float TargetLineChance = 0.5f;
+
+    public void ServerAttackLine(PlayerHero target = null)
     {
+        // hlaska na konkretniho soupere (MatchManager.TargetLines), napr. Viktor strili na Povu
+        if (IsServer && target != null && target.Hero != null && Hero != null && Time.time >= nextTargetLine)
+            foreach (var (attacker, victim, folder) in MatchManager.TargetLines)
+            {
+                if (Hero.name != attacker || target.Hero.name != victim) continue;
+                nextTargetLine = Time.time + Random.Range(15f, 25f);
+                if (Random.value >= TargetLineChance) break;
+                int count = Resources.LoadAll<AudioClip>("Banter/" + folder).Length;
+                if (count == 0) break;
+                nextAttackLine = Mathf.Max(nextAttackLine, Time.time + 8f);   // (at hned nenavaze obecna hlaska)
+                SayBanterClientRpc(folder, Random.Range(0, count));
+                return;
+            }
+
         if (!IsServer || Time.time < nextAttackLine || !HeroVoice.HasLines(Hero, VoiceKind.Attack, 0)) return;
         nextAttackLine = Time.time + Random.Range(12f, 20f);
         if (Random.value < 0.45f)

@@ -164,7 +164,7 @@ public partial class MatchManager : NetworkBehaviour
             {
                 if (assister == killer || Combat.SameTeam(assister, victim)) continue;
                 var assistHero = assister.GetComponent<PlayerHero>();
-                if (assistHero != null) assistHero.ServerTakedownRefund();
+                if (assistHero != null) assistHero.ServerTakedownRefund(true);
             }
             victimHero.ServerClearAttackers();
         }

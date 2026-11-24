@@ -100,7 +100,7 @@ public static class Combat
                 attackerHero.ServerAddUltCharge(before - target.Effective);
                 // zasah zbrani: obcas hlaska k utoku (pri zabiti mluvi hlaska k zabiti)
                 if (!killed && source != null && source.StartsWith("weapon:"))
-                    attackerHero.ServerAttackLine();
+                    attackerHero.ServerAttackLine(target.GetComponent<PlayerHero>());
             }
 
             var recorder = attacker.GetComponent<PotgRecorder>();

@@ -36,7 +36,9 @@ public enum AbilityKind
     ShadowStep,    // Max: Stinovy krok - pruchod zdi (E)
     MaxSlash,      // Max: Otocka kosou - 360 st. kolem sebe (prave tlacitko)
     Trespass,      // Max: Vpad do stinu - zmizi v nepriteli a vyrazi ven (Q)
-    SayWhat        // Sindel: "Say what again?!" - vykrik do kuzele, nepratele zpomali a umlci (prave tlacitko)
+    SayWhat,       // Sindel: "Say what again?!" - vykrik do kuzele, nepratele zpomali a umlci (prave tlacitko)
+    TripleSlash,   // Pova: Trojsek (drivejsi pokus na Shiftu; ted zakladni utok - WeaponDefinition.comboRotation)
+    GroundSlam     // Pova: Drtivy skok - vyskok na misto v zamerovaci a uder do zeme (Shift)
 }
 
 [CreateAssetMenu(fileName = "NewHero", menuName = "BrosOverwatch/Hero")]
@@ -63,6 +65,9 @@ public class HeroDefinition : ScriptableObject
 
     [Header("Blok (pravé tlačítko myši, prázdné = hrdina neblokuje)")]
     public AbilityDefinition blockAbility;
+    [Tooltip("Odveta (jen s blokem): levym tlacitkem behem bloku nebo chvili po nem vrati ranu - power = zaklad, "
+        + "range = dosah, duration = okno po pusteni bloku. Bonus z hnevu (vyblokovane poskozeni) pocita BlockAbility.")]
+    public AbilityDefinition counterAbility;
 
     [Header("Třetí schopnost (klávesa E, např. past)")]
     public AbilityKind altAbilityKind = AbilityKind.None;
@@ -85,6 +90,8 @@ public class HeroDefinition : ScriptableObject
     [Range(0f, 1f)] public float lifesteal = 0f;
     [Tooltip("Zabiti nebo asistence zkrati zbyvajici cooldowny schopnosti o tento podil.")]
     [Range(0f, 1f)] public float takedownCooldownCut = 0f;
+    [Tooltip("Zkraceni cooldownu jen za vlastni zabiti (asistence se nepocita).")]
+    public bool takedownKillsOnly = false;
 
     [Header("Pasivní: granáty po smrti (0 = žádné)")]
     public int deathGrenades = 0;

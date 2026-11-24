@@ -64,7 +64,8 @@ public class MixamoAnimationSetup : AssetPostprocessor
             clip.heightFromFeet = inPlace;
             clip.keepOriginalPositionXZ = true;
             // ukrok doprava = zrcadlovy ukrok doleva (stejne FBX)
-            clip.mirror = Slot(assetPath).ToLowerInvariant() == "straferight";
+            // (Trojsek: druhy uder = zrcadlovy prvni - sek levou rukou)
+            clip.mirror = Slot(assetPath).ToLowerInvariant() == "straferight" || Slot(assetPath).ToLowerInvariant() == "combo2";
         }
         importer.clipAnimations = clips;
     }
@@ -135,7 +136,7 @@ public class MixamoAnimationSetup : AssetPostprocessor
             if (created) set = ScriptableObject.CreateInstance<CharacterAnimSet>();
 
             bool changed = false;
-            string newShoot = null;
+            string newShoot = null, newLeap = null;
             foreach (var field in typeof(CharacterAnimSet).GetFields())
             {
                 if (field.FieldType != typeof(AnimationClip)) continue;
@@ -144,6 +145,7 @@ public class MixamoAnimationSetup : AssetPostprocessor
                 field.SetValue(set, clip);
                 changed = true;
                 if (field.Name == "shoot") newShoot = AssetDatabase.GetAssetPath(clip);
+                if (field.Name == "shiftAbility") newLeap = AssetDatabase.GetAssetPath(clip);
             }
             foreach (var slot in clips.Keys)
                 if (typeof(CharacterAnimSet).GetField(slot, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance
@@ -165,6 +167,12 @@ public class MixamoAnimationSetup : AssetPostprocessor
             if (created || changed)
                 Debug.Log($"[MixamoAnimationSetup] {heroName}: {string.Join(", ", clips.Keys)} -> {setPath}");
             // nova animace strelby: samo zmerit, o kolik se ma trup pri strelbe dotocit (postava v klipu muze stat bokem)
+            // nova animace skoku s uderem (Shift): samo zmerit odraz / uder / konec (shiftFrom/Impact/To)
+            if (!string.IsNullOrEmpty(newLeap))
+            {
+                string leapPath = newLeap;
+                EditorApplication.delayCall += () => ShootClipTrim.MeasureLeapFor(leapPath);
+            }
             if (!string.IsNullOrEmpty(newShoot))
             {
                 string shootPath = newShoot;

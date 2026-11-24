@@ -73,7 +73,8 @@ MonoBehaviour:
   headshotLines: []
   missLines: []
   scopeLines: []
-  healedLines: []
+  healedLines:
+  - {fileID: 8300000, guid: db88b273c81d16d4eaa756688e04286e, type: 3}
   ultVoiceEcho: 0
   ultVoiceMaxSeconds: 0
   ultVoiceSpeed: 1

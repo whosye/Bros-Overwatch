@@ -13,8 +13,17 @@ using UnityEngine.InputSystem;
 //   Odolnost pri vypadu: behem Shiftu a GuardAfter s po nem dostava Max o GuardReduction mene poskozeni.
 //   PTM (Otocka kosou): Max se s kosou roztoci o 360 st. - 'power' poskozeni vsem nepratelum v okruhu 'radius'
 //     kolem sebe (ne pres zdi). Behem otocky jde pomaleji.
-public class MaxAbility : NetworkBehaviour
+public class MaxAbility : NetworkBehaviour, ICooldownCut
 {
+    // Zabiti (HeroDefinition.takedownCooldownCut, u Maxe jen za zabiti): zkrati zbyvajici cooldown Rozpolceni (Shift)
+    // a Stinove formy (E) o dany podil - napr. 50 %: zbyvaji 4 s -> 2 s. Otocka kosou (PTM) se nezkracuje.
+    public void CutCooldown(float fraction)
+    {
+        float keep = 1f - Mathf.Clamp01(fraction);
+        if (nextReap > Time.time) nextReap = Time.time + (nextReap - Time.time) * keep;
+        if (!inShadow && nextStep > Time.time) nextStep = Time.time + (nextStep - Time.time) * keep;
+    }
+
     public AbilityDefinition reap;    // Shift
     public AbilityDefinition step;    // E
     public AbilityDefinition slash;   // PTM

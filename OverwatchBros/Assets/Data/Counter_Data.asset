@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
+  m_Name: Counter_Data
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
+  abilityName: Odveta
+  description: "Blokem (prav\u00e9 tla\u010d\u00edtko) sb\u00edr\u00e1\u0161 hn\u011bv z vyblokovan\u00e9ho po\u0161kozen\u00ed a sekyrky za\u010dnou \u017ehnout. Nabit\u00e9 sekyrky dr\u017e\u00ed energii, dokud nezas\u00e1hne\u0161 nep\u0159\u00edtele: prvn\u00ed z\u00e1sah lev\u00fdm ji uvoln\u00ed \u00faderem do k\u0159\u00ed\u017ee - \u010d\u00edm v\u00edc hn\u011bvu, t\u00edm siln\u011bj\u0161\u00ed, nep\u0159\u00e1tele odhod\u00ed. Sek do pr\u00e1zdna energii nespot\u0159ebuje."
+  icon: {fileID: 2800000, guid: d7b212322e4b23b4eba0272a450e8362, type: 3}
+  cooldown: 5
+  ultCost: 0
+  power: 20
+  duration: 1.2
+  radius: 3.4
+  range: 3.4
+  knockback: 0
+  charges: 1
+  sound: {fileID: 0}
+  voiceLines: []
+  blockAbsorb: 0.8
+  blockSpeed: 0.5
+  regenDelay: 5
+  regenTime: 6
+  speed: 14
+  tickInterval: 0.25
+  healRatio: 1

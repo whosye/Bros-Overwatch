@@ -103,6 +103,140 @@ public partial class HeldWeapons : MonoBehaviour
         powerShown = on;
     }
 
+    // Odveta (Pova): sekyrky zhnou podle hnevu z bloku (vidi vsichni). Slabe oranzove -> od pripravenosti pulzuji
+    // (cim vic hnevu, tim rychleji) -> pri ~60 % hnevu z cepeli slehaji plameny. V okne na Odvetu (tesne po bloku)
+    // zablesknou naplno. Puvodni emise materialu se po vyprchani vrati.
+    static readonly Color RageGlowColor = new Color(1f, 0.38f, 0.06f, 1f);
+    BlockAbility rageBlock;
+    System.Collections.Generic.List<Material> rageMaterials;
+    System.Collections.Generic.List<(Texture map, Color color, bool keyword)> rageOriginals;
+    System.Collections.Generic.List<ParticleSystem> rageFlames;
+    bool rageShown;
+    float rageLevel;
+
+    void UpdateRageGlow()
+    {
+        if (rageBlock == null) rageBlock = GetComponent<BlockAbility>();
+        float target = !ghost && rageBlock != null && rageBlock.HasCounter ? rageBlock.Rage / BlockAbility.MaxRage : 0f;
+        rageLevel = Mathf.MoveTowards(rageLevel, target, Time.deltaTime * 2.5f);
+        bool on = rageLevel > 0.01f;
+        if (!on && !rageShown) return;
+
+        if (rageMaterials == null)
+        {
+            rageMaterials = new System.Collections.Generic.List<Material>();
+            rageOriginals = new System.Collections.Generic.List<(Texture map, Color color, bool keyword)>();
+            rageFlames = new System.Collections.Generic.List<ParticleSystem>();
+            for (int g = 0; g < 2; g++)
+                foreach (var hand in g == 0 ? hands : bodyHands)
+                {
+                    if (hand.holder == null) continue;
+                    // plameny jen u sekyrek postavy (vidi ostatni / 3. osoba) - u kamery by zakryvaly vyhled
+                    bool flames = g == 1 || (visual == null || !visual.HasModel) && !builtAsOwner;
+                    var bounds = new Bounds();
+                    bool any = false;
+                    foreach (var renderer in hand.holder.GetComponentsInChildren<Renderer>(true))
+                    {
+                        if (renderer is ParticleSystemRenderer) continue;
+                        if (any) bounds.Encapsulate(renderer.bounds); else { bounds = renderer.bounds; any = true; }
+                        foreach (var material in renderer.materials)
+                        {
+                            rageOriginals.Add((material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null,
+                                material.HasProperty("_EmissionColor") ? material.GetColor("_EmissionColor") : Color.black,
+                                material.IsKeywordEnabled("_EMISSION")));
+                            rageMaterials.Add(material);
+                        }
+                    }
+                    // plameny u cepele: horni cast zbrane (stred zbrane posunuty od uchopu dal)
+                    if (any && flames)
+                    {
+                        Vector3 center = hand.holder.InverseTransformPoint(bounds.center);
+                        Vector3 head = center * 1.35f;
+                        rageFlames.Add(CreateRageFlame(hand.holder, head, bounds.extents.magnitude));
+                    }
+                }
+            if (rageMaterials.Count == 0) { rageMaterials = null; return; }   // zbrane jeste nejsou postavene - zkusit znovu
+        }
+
+        bool ready = rageBlock != null && rageBlock.CounterReady;
+        bool window = false;   // (drive okno po bloku - ted sekyrky drzi energii do prvniho zasahu)
+        float pulse = ready ? 0.75f + 0.25f * Mathf.Sin(Time.time * Mathf.Lerp(5f, 16f, rageLevel)) : 1f;
+        // (zare pres texturu sekyrek - detaily zustanou, jen rozzhavene; s hnevem jasnejsi)
+        float intensity = on ? Mathf.Lerp(0.12f, 1.6f, rageLevel) * pulse * (window ? 1.4f : 1f) : 0f;
+        for (int i = 0; i < rageMaterials.Count; i++)
+        {
+            var material = rageMaterials[i];
+            if (material == null) continue;
+            var original = rageOriginals[i];
+            if (on)
+            {
+                material.EnableKeyword("_EMISSION");
+                if (material.HasProperty("_EmissionMap"))
+                {
+                    var baseMap = material.HasProperty("_BaseMap") ? material.GetTexture("_BaseMap")
+                        : material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
+                    material.SetTexture("_EmissionMap", baseMap != null ? baseMap : Texture2D.whiteTexture);
+                }
+                material.SetColor("_EmissionColor", RageGlowColor * intensity);
+            }
+            else
+            {
+                if (material.HasProperty("_EmissionMap")) material.SetTexture("_EmissionMap", original.map);
+                material.SetColor("_EmissionColor", original.color);
+                if (!original.keyword) material.DisableKeyword("_EMISSION");
+            }
+        }
+        // plameny od ~55 % hnevu, s hnevem silni
+        float flame = Mathf.Clamp01((rageLevel - 0.55f) / 0.45f);
+        foreach (var ps in rageFlames)
+        {
+            if (ps == null) continue;
+            var emission = ps.emission;
+            emission.rateOverTime = flame > 0f ? Mathf.Lerp(8f, 45f, flame) * (window ? 1.5f : 1f) : 0f;
+            if (flame > 0f && !ps.isPlaying) ps.Play();
+            else if (flame <= 0f && ps.isPlaying) ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+        rageShown = on;
+    }
+
+    static ParticleSystem CreateRageFlame(Transform parent, Vector3 localPosition, float size)
+    {
+        var go = new GameObject("FX_RageFlame");
+        go.transform.SetParent(parent, false);
+        go.transform.localPosition = localPosition;
+        var ps = go.AddComponent<ParticleSystem>();
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        var main = ps.main;
+        main.loop = true;
+        main.playOnAwake = false;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.25f, 0.5f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(0.2f, 0.6f);
+        float s = Mathf.Clamp(size, 0.1f, 0.4f);
+        main.startSize = new ParticleSystem.MinMaxCurve(s * 0.25f, s * 0.5f);
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(1f, 0.8f, 0.3f, 1f), new Color(1f, 0.3f, 0.02f, 1f));
+        main.gravityModifier = -0.6f;   // plameny stoupaji
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        var emission = ps.emission;
+        emission.rateOverTime = 0f;
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = s * 0.35f;
+        var color = ps.colorOverLifetime;
+        color.enabled = true;
+        var gradient = new Gradient();
+        gradient.SetKeys(
+            new[] { new GradientColorKey(new Color(1f, 0.9f, 0.55f), 0f), new GradientColorKey(new Color(1f, 0.3f, 0f), 0.6f), new GradientColorKey(new Color(0.3f, 0.05f, 0f), 1f) },
+            new[] { new GradientAlphaKey(0.9f, 0f), new GradientAlphaKey(0.6f, 0.5f), new GradientAlphaKey(0f, 1f) });
+        color.color = new ParticleSystem.MinMaxGradient(gradient);
+        var sizeOver = ps.sizeOverLifetime;
+        sizeOver.enabled = true;
+        sizeOver.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 0.2f)));
+        var renderer = go.GetComponent<ParticleSystemRenderer>();
+        renderer.material = Fx.ParticleMaterial;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        return ps;
+    }
+
     void UpdateStorm()
     {
         if (builtModel != HeldModel.Bow || hands.Length == 0 || hands[0].holder == null) return;
@@ -114,21 +248,42 @@ public partial class HeldWeapons : MonoBehaviour
         if (stormMaterials == null)
         {
             stormMaterials = new System.Collections.Generic.List<Material>();
+            stormOriginals = new System.Collections.Generic.List<(Texture map, Color color, bool keyword)>();
             foreach (var renderer in holder.GetComponentsInChildren<Renderer>(true))
                 if (!(renderer is ParticleSystemRenderer))
                     foreach (var material in renderer.materials)
                     {
-                        material.EnableKeyword("_EMISSION");
+                        // puvodni emise (Black Bow ma vlastni emisni texturu se svitivymi detaily) - po salve se vrati
+                        stormOriginals.Add((material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null,
+                            material.HasProperty("_EmissionColor") ? material.GetColor("_EmissionColor") : Color.black,
+                            material.IsKeywordEnabled("_EMISSION")));
                         stormMaterials.Add(material);
                     }
         }
         float pulse = 0.65f + 0.35f * Mathf.Sin(Time.time * 14f);
         // (jen luk sam - zare a svetlo kolem by hraci zakryvaly vyhled)
-        Color emission = on ? StormColor * (1.1f * pulse) : Color.black;
-        foreach (var material in stormMaterials)
-            if (material != null) material.SetColor("_EmissionColor", emission);
+        for (int i = 0; i < stormMaterials.Count; i++)
+        {
+            var material = stormMaterials[i];
+            if (material == null) continue;
+            var original = stormOriginals[i];
+            if (on)
+            {
+                // emisni textura by modrou nasobila (u tmave textury by nebyla videt) - po dobu salvy bila
+                material.EnableKeyword("_EMISSION");
+                if (material.HasProperty("_EmissionMap")) material.SetTexture("_EmissionMap", Texture2D.whiteTexture);
+                material.SetColor("_EmissionColor", StormColor * (1.1f * pulse));
+            }
+            else
+            {
+                if (material.HasProperty("_EmissionMap")) material.SetTexture("_EmissionMap", original.map);
+                material.SetColor("_EmissionColor", original.color);
+                if (!original.keyword) material.DisableKeyword("_EMISSION");
+            }
+        }
         stormShown = on;
     }
+    System.Collections.Generic.List<(Texture map, Color color, bool keyword)> stormOriginals;
     FirstPersonArms.Arm bodySupportArm;   // leva paze postavy u zbrane obema rukama
     FirstPersonArms.Arm bodyMainArm;      // prava paze (rukojet) u zbrane obema rukama
 
@@ -666,6 +821,7 @@ public partial class HeldWeapons : MonoBehaviour
             UpdateStorm();
         }
         UpdatePowerGlow();
+        UpdateRageGlow();
 
         // Zbrane u kamery (majitel v 1. osobe) a zbrane v rukou postavy (ostatni, majitel ve 3. osobe).
         // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
@@ -1134,6 +1290,9 @@ public partial class HeldWeapons : MonoBehaviour
         stormShown = false;
         powerMaterials = null;
         powerShown = false;
+        rageMaterials = null;
+        rageFlames = null;
+        rageShown = false;
         built = true;
         builtVersion = visual != null ? visual.Version : 0;
         builtWeapon = CurrentWeapon;

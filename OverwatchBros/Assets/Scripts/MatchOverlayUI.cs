@@ -432,7 +432,7 @@ public class MatchOverlayUI
         {
             string assetName = key.Substring(8);
             foreach (var hero in HeroRegistry.All)
-                foreach (var ability in new[] { hero.ability, hero.secondaryAbility, hero.altAbility, hero.rmbAbility, hero.blockAbility })
+                foreach (var ability in new[] { hero.ability, hero.secondaryAbility, hero.altAbility, hero.rmbAbility, hero.blockAbility, hero.counterAbility })
                     if (ability != null && ability.name == assetName && ability.icon != null)
                         texture = ability.icon;
         }

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 // munice nad nimi a cervene okraje obrazovky pri zasahu. Cele se stavi kodem (viz MatchUI).
 public class HudUI
 {
-    const int MaxSlots = 4;
+    const int MaxSlots = 5;
     const float HealthBarWidth = 380f;
     const float HealthPerSegment = 25f;
 
@@ -154,6 +154,8 @@ public class HudUI
         public Vector3 lockPoint;
         public Camera camera;
         public int rapidShots = -1;   // zbyvajici sipy rychlopalby (-1 = neni aktivni)
+        public float rage = -1f;      // Pova: hnev v sekyrkach (Odveta) 0-1, -1 = nema
+        public bool rageReady;        // hnev staci na Odvetu
         public bool beat;             // Bard: ukazat takt
         public float stun, stunTotal = 1f; // omraceni: zbyva / celkem (s); 0 = neni
         public bool stunSleep;
@@ -577,6 +579,9 @@ public class HudUI
         d.shield = health != null ? health.shield.Value : 0f;
         hero.GetAbilitySlots(d.slots);
         d.charge = weapon != null ? weapon.ChargeFraction : 0f;
+        var rageBlock = hero.GetComponent<BlockAbility>();
+        d.rage = rageBlock != null && rageBlock.HasCounter ? rageBlock.Rage / BlockAbility.MaxRage : -1f;
+        d.rageReady = rageBlock != null && rageBlock.CounterReady;
         d.weapon = weapon != null ? weapon.weapon : null;
         d.ammo = weapon != null ? weapon.CurrentAmmo : 0;
         d.maxAmmo = weapon != null ? weapon.MaxAmmo : 0;
@@ -687,12 +692,19 @@ public class HudUI
         // Natazeni luku: pruh pod zamerovacem.
         float charge = d.charge;
         bool showCharge = charge > 0.01f;
-        if (chargeBar.activeSelf != showCharge)
-            chargeBar.SetActive(showCharge);
+        if (chargeBar.activeSelf != (showCharge || d.rage > 0.005f))
+            chargeBar.SetActive(showCharge || d.rage > 0.005f);
         if (showCharge)
         {
             chargeFill.rectTransform.sizeDelta = new Vector2(156f * charge, 6f);
             chargeFill.color = charge >= 0.999f ? UiKit.Accent : Color.white;
+        }
+        // Pova (Odveta): stejny pruh oranzove = kolik hnevu je v sekyrkach; nabito = pulzuje
+        else if (d.rage > 0.005f)
+        {
+            chargeFill.rectTransform.sizeDelta = new Vector2(156f * Mathf.Clamp01(d.rage), 6f);
+            float pulse = d.rageReady ? 0.75f + 0.25f * Mathf.Sin(Time.unscaledTime * Mathf.Lerp(5f, 14f, d.rage)) : 0.45f;
+            chargeFill.color = new Color(1f, Mathf.Lerp(0.55f, 0.35f, d.rage), 0.1f, pulse);
         }
 
         // Mosinuv tanec: pruh se vyprazdnuje; posledni 1,5 s blika

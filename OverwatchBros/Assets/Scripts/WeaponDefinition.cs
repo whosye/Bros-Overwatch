@@ -150,6 +150,9 @@ public class WeaponDefinition : ScriptableObject
     public float heldScale = 1f;
     [Tooltip("Volitelny vlastni model zbrane. Kdyz je prazdny, pouzije se model z kostek.")]
     public GameObject heldPrefab;
+    [Tooltip("Trojsek: zakladni utok je rotace tri uderu (sek pravou, sek levou, vyskok s uderem do zeme) - TripleSlashAbility. "
+        + "Poskozeni z 'damage' (1. uder), dalsi udery silnejsi.")]
+    public bool comboRotation;
 
     [Header("Zvuk výstřelu")]
     [Tooltip("Vlastni zvuk vystrelu. Prazdne = generovany zastupny vystrel.")]

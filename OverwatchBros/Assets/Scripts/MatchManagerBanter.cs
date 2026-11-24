@@ -12,6 +12,14 @@ public partial class MatchManager
     static readonly (string first, string second, string folder)[] Banters =
     {
         ("Max", "Honza", "max_honza"),
+        ("Viktor", "Ayran", "viktor_pova"),   // Viktor zacne, Pova (Jamn) odpovi
+    };
+
+    // Hlaska pri zasahu konkretniho soupere zbrani (strelec, zasazeny - jmena hero assetu, slozka v Resources/Banter
+    // s jednou nebo vic nahravkami - vybere se nahodne). Obcas, vlastni odpocet (PlayerHero.ServerAttackLine).
+    public static readonly (string attacker, string target, string folder)[] TargetLines =
+    {
+        ("Viktor", "Ayran", "viktor_strili_pova"),   // Viktor strili na Povu (Jamna)
     };
 
     const float BanterDistance = 7f;        // jak blizko u sebe musi stat

@@ -191,6 +191,13 @@ public class HeroInfoUI
             var e = AbilityEntry("PRAVÉ TL.", hero.blockAbility);
             e.stats = $"blokuje {hero.blockAbility.blockAbsorb * 100f:0} % poškození  ·  pohyb {hero.blockAbility.blockSpeed * 100f:0} %";
             list.Add(e);
+            if (hero.counterAbility != null)
+            {
+                var c = AbilityEntry("LEVÉ TL.\n<size=70%>nabité</size>", hero.counterAbility);
+                c.stats = $"poškození {hero.counterAbility.power:0} + až {BlockAbility.MaxRage * BlockAbility.RageDamage:0} z hněvu  ·  uvolní se při prvním zásahu"
+                    + (hero.counterAbility.cooldown > 0f ? $"  ·  cooldown {hero.counterAbility.cooldown:0.#} s" : "");
+                list.Add(c);
+            }
         }
         if (hero.rmbAbility != null)
             list.Add(AbilityEntry("PRAVÉ TL.", hero.rmbAbility));
@@ -262,7 +269,10 @@ public class HeroInfoUI
         var parts = new List<string> { $"<color=#FFFFFF>{hero.maxHealth:0} HP</color>" };
         if (Mathf.Abs(hero.moveSpeed - 1f) > 0.01f) parts.Add($"rychlost {(hero.moveSpeed - 1f) * 100f:+0;-0} %");
         if (hero.lifesteal > 0f) parts.Add($"léčí se z {hero.lifesteal * 100f:0} % poškození");
-        if (hero.takedownCooldownCut > 0f) parts.Add($"zabití zkrátí cooldowny o {hero.takedownCooldownCut * 100f:0} %");
+        if (hero.takedownCooldownCut > 0f)
+            parts.Add(hero.takedownKillsOnly
+                ? $"zabití zkrátí zbývající cooldowny o {hero.takedownCooldownCut * 100f:0} %"
+                : $"zabití i asistence zkrátí cooldowny o {hero.takedownCooldownCut * 100f:0} %");
         if (hero.doubleJump) parts.Add("dvojitý skok");
         if (hero.ledgeClimb) parts.Add("vyšplhá na hrany");
         if (hero.deathGrenades > 0) parts.Add($"po smrti {hero.deathGrenades} granáty");

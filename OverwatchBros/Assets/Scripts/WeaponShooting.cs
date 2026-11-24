@@ -228,6 +228,13 @@ public class WeaponShooting : NetworkBehaviour
             return;
         }
 
+        // Trojsek (Pova): utoky ridi TripleSlashAbility
+        if (weapon.comboRotation) return;
+
+        // Odveta (Pova): leve tlacitko tesne po bloku vrati ranu (BlockAbility) - obycejny sek se nespusti
+        if (counterBlock == null) counterBlock = GetComponent<BlockAbility>();
+        if (counterBlock != null && counterBlock.CounterBusy) return;
+
         // Luk: drzenim se natahuje, pustenim vystreli.
         if (weapon.IsCharged)
         {
@@ -422,6 +429,7 @@ public class WeaponShooting : NetworkBehaviour
     }
     float chargeStart;
     RapidFireAbility rapid;
+    BlockAbility counterBlock;
 
     // Jak moc je luk natazeny (0-1), pro HUD a model zbrane.
     public float ChargeFraction => Mathf.Max(Mathf.Max(Mathf.Max(ForcedCharge, scopedCharge), Mathf.Max(RapidDraw, RemoteDraw)), charging && weapon != null && weapon.chargeTime > 0f

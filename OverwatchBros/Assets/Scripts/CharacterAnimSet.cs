@@ -39,6 +39,8 @@ public class CharacterAnimSet : ScriptableObject
     public AnimationClip rmbAbility;
     // Schopnost na E pres cele telo (Kondulic: kop), prehrava se cela.
     public AnimationClip eAbility;
+    // Trojsek (Pova, Shift): tri udery komba pres cele telo (combo2 = zrcadlovy combo1 - leva ruka).
+    public AnimationClip combo1, combo2, combo3;
 
     // Pohyb navic (jen postava - 3. osoba a ostatni hraci); prazdne = jako dosud (chuze/beh).
     [Header("Pohyb navic (volitelne)")]

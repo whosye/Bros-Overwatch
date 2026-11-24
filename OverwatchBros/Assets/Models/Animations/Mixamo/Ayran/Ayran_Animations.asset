@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce56b11b14db7ad40835bae89995055d, type: 3}
+  m_Name: Ayran_Animations
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimSet
+  idle: {fileID: 0}
+  walk: {fileID: 0}
+  jog: {fileID: 0}
+  sprint: {fileID: 0}
+  runUpright: 0
+  jump: {fileID: 0}
+  death: {fileID: 0}
+  meleeAttack: {fileID: 0}
+  meleeFullBody: 0
+  shoot: {fileID: 0}
+  shootYaw: 0
+  shootHeadYaw: 0
+  reload: {fileID: 0}
+  blockPose: {fileID: 0}
+  dashPose: {fileID: 0}
+  ultimate: {fileID: 0}
+  shiftAbility: {fileID: -203655887218126122, guid: 10d0a664abe00504bbabe7e91debd8b9, type: 3}
+  shiftFrom: 0.5
+  shiftImpact: 2.1
+  shiftTo: 2.6
+  rmbAbility: {fileID: 0}
+  eAbility: {fileID: 0}
+  combo1: {fileID: -203655887218126122, guid: efba80b5f15e9a94393c0de7c75d20a1, type: 3}
+  combo2: {fileID: -203655887218126122, guid: 598a0cf91c76ff04c84ac916062e425b, type: 3}
+  combo3: {fileID: -203655887218126122, guid: dfb0939201ad6a441af2c8e6318e2a15, type: 3}
+  strafeLeft: {fileID: 0}
+  strafeRight: {fileID: 0}
+  crouchWalk: {fileID: 0}
+  crouchHeadPitch: 0
+  jumpStart: {fileID: 0}
+  landIdle: {fileID: 0}
+  landRun: {fileID: 0}
+  climb: {fileID: 0}
+  bowHold: {fileID: 0}
+  bowTilt: 0
+  sitIdle: {fileID: 0}
+  hitChest: {fileID: 0}
