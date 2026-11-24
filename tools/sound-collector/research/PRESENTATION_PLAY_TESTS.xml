@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-24 16:27:39Z" end-time="2026-11-24 16:27:43Z" duration="4,3150322">
+  <test-suite type="TestSuite" id="1000" name="OverwatchBros" fullname="OverwatchBros" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-11-24 16:27:39Z" end-time="2026-11-24 16:27:43Z" duration="4.315032" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1015" name="Assembly-CSharp-Editor.dll" fullname="C:/myDev_/games/bros-overwatch-dir/Bros-Overwatch/OverwatchBros/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-11-24 16:27:39Z" end-time="2026-11-24 16:27:43Z" duration="3.836557" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10412" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestFixture" id="1011" name="PresentationPlaytestChecks" fullname="PresentationPlaytestChecks" classname="PresentationPlaytestChecks" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-24 16:27:39Z" end-time="2026-11-24 16:27:43Z" duration="3.834722" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1012" name="CompactChatAndTexturedCriticalRevolver" fullname="PresentationPlaytestChecks.CompactChatAndTexturedCriticalRevolver" methodname="CompactChatAndTexturedCriticalRevolver" classname="PresentationPlaytestChecks" runstate="Runnable" seed="118564551" result="Passed" start-time="2026-11-24 16:27:28Z" end-time="2026-11-24 16:27:43Z" duration="14.914979" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: Doplnek
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+There are 2 audio listeners in the scene. Please ensure there is always exactly one audio listener in the scene.
+Reduced additional punctual light shadows resolution by 4 to make 63 shadow maps fit in the 2048x2048 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+Saving results to: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\tools\sound-collector\research\PRESENTATION_PLAY_TESTS.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

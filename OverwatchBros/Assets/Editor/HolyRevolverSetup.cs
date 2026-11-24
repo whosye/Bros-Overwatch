@@ -12,6 +12,14 @@ public static class HolyRevolverSetup
     const string PrefabPath = "Assets/Prefab/Weapons/Held_HolyRevolver_v3.prefab";
     const string WeaponPath = "Assets/Data/SindelPistol_Data.asset";
 
+    [MenuItem("BrosOverwatch/Zbrane/Sindel - opravit materialy")]
+    public static void RepairMaterials()
+    {
+        Material("Material.001");
+        Material("Material.002");
+        AssetDatabase.SaveAssets();
+    }
+
     [MenuItem("BrosOverwatch/Zbrane/Sindel - Holy Revolver")]
     public static void Build()
     {
@@ -182,6 +190,7 @@ public static class HolyRevolverSetup
         // with a neutral steel base rather than applying the unrelated .001 UV atlas.
         var albedo = Texture(prefix + "_albedo");
         material.SetTexture("_BaseMap", albedo);
+        if(material.HasProperty("_MainTex")) material.SetTexture("_MainTex",albedo);
         material.SetColor("_BaseColor", albedo != null ? Color.white : new Color(.68f, .7f, .72f));
         material.SetTexture("_BumpMap", Texture(prefix + "_normal", true, true));
         material.EnableKeyword("_NORMALMAP");
@@ -209,6 +218,14 @@ public static class HolyRevolverSetup
         material.SetTexture("_MetallicGlossMap", Texture(prefix + "_MetallicSmoothness", true));
         material.SetFloat("_Smoothness", 1f);
         material.EnableKeyword("_METALLICSPECGLOSSMAP");
+        // Keep the emissive Lit variant in player builds. A keyword enabled only on
+        // runtime material instances is otherwise stripped while the base material is black.
+        // URP validates keywords again on import. Keep a visually negligible
+        // authored emission so the charged-shot variant survives player stripping.
+        // HeldWeapons sets the instance to black while the shot is not charged.
+        material.SetColor("_EmissionColor",new Color(.0001f,.0001f,.0001f,1f));
+        material.globalIlluminationFlags=MaterialGlobalIlluminationFlags.BakedEmissive;
+        material.EnableKeyword("_EMISSION");
         var ao = Texture(prefix + "_AO", true);
         if (ao != null) material.SetTexture("_OcclusionMap", ao);
         EditorUtility.SetDirty(material);

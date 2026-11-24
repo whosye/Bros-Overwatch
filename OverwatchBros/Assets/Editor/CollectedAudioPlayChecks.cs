@@ -128,6 +128,12 @@ public static class CollectedAudioPlayCheckBatch
         Start("SelectedAudioIntegrationChecks.SelectedSoundsReachTheirGameplayEvents", "SELECTED_AUDIO_PLAY_TESTS.xml");
     }
 
+    public static void RunPresentation()
+    {
+        HolyRevolverSetup.RepairMaterials();
+        Start("PresentationPlaytestChecks.CompactChatAndTexturedCriticalRevolver", "PRESENTATION_PLAY_TESTS.xml");
+    }
+
     static void Start(string test, string resultFile)
     {
         if (!Application.isBatchMode)

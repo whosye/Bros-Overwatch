@@ -16,7 +16,7 @@ public sealed class PickupRespawnAudioChecks
     static void BatchInput()
     {
         string test = SessionState.GetString("CollectedAudio.PlayCheck.Active.Test", "");
-        if (!Application.isBatchMode || !(test.StartsWith("PickupRespawnAudioChecks.") || test.StartsWith("SelectedAudioIntegrationChecks."))) return;
+        if (!Application.isBatchMode || !(test.StartsWith("PickupRespawnAudioChecks.") || test.StartsWith("SelectedAudioIntegrationChecks.") || test.StartsWith("PresentationPlaytestChecks."))) return;
         // A hidden batch editor has no physical input devices; gameplay expects both to exist.
         if (Keyboard.current == null) InputSystem.AddDevice<Keyboard>();
         if (Mouse.current == null) InputSystem.AddDevice<Mouse>();
