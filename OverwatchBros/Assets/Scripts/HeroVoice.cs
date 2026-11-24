@@ -245,12 +245,15 @@ public class HeroVoice : MonoBehaviour
         // Hudbu jizdy z toboganu prebije jen ultimatka.
         if (busy && playingRide && !ult) return;
 
-        // Proti zvukovemu chaosu, kdyz mluvi vic postav u sebe: mene dulezite hlasky (spawn, chuze, zraneni, past)
-        // se preskoci, kdyz uz mluvi nekdo jiny; schopnosti a zabiti hraji nejvys dve naraz. Ultimatka a smrt vzdy.
+        // Mene dulezite hlasky cekaji, kdyz nekdo mluvi. Odpoved na zasah ale musi
+        // smet zaznit pres bolest obeti: Combat ji spousti az po TakeDamage.
+        // Jinak bolest odpoved zahodi, i kdyz uz utocnik dostal dlouhy cooldown.
+        // Odpovedi, schopnosti a zabiti hraji nejvys dve naraz. Ultimatka a smrt vzdy.
         if (!ult && kind != VoiceKind.Death)
         {
             int others = OthersAudible();
-            if (priority < 4 ? others > 0 : others >= 2) return;
+            int limit = kind == VoiceKind.Attack || priority >= 4 ? 2 : 1;
+            if (others >= limit) return;
         }
 
         EnsureSource();

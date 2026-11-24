@@ -25,6 +25,51 @@ public sealed class SelectedAudioIntegrationChecks
     }
 
     [UnityTest]
+    public IEnumerator WeaponHitResponseCanOverlapVictimHurt()
+    {
+        EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity");
+        yield return new EnterPlayMode();
+        var mirek = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Mirek.asset");
+        var viktor = AssetDatabase.LoadAssetAtPath<HeroDefinition>("Assets/Resources/Heroes/Viktor.asset");
+        Assert.IsNotEmpty(mirek.attackLines);
+        var ear = Object.FindAnyObjectByType<AudioListener>();
+        var objects = new[] { new GameObject("HitResponseAttacker"), new GameObject("HitResponseVictim"), new GameObject("HitResponseBystander") };
+        foreach (var go in objects) go.transform.position = ear != null ? ear.transform.position : Vector3.zero;
+        var attacker = objects[0].AddComponent<HeroVoice>();
+        var victim = objects[1].AddComponent<HeroVoice>();
+        var bystander = objects[2].AddComponent<HeroVoice>();
+        try
+        {
+            HeroVoice.SilenceAll();
+            // Damage publishes the victim's Hurt RPC before the attacker's Attack RPC.
+            victim.Play(viktor, VoiceKind.Hurt, 0, 0);
+            var hurt = Field<AudioSource>(victim, "source");
+            Assert.IsNotNull(hurt);
+            Assert.IsTrue(hurt.isPlaying);
+            attacker.Play(mirek, VoiceKind.Attack, 0, 0);
+            var response = Field<AudioSource>(attacker, "source");
+            Assert.IsNotNull(response, "Victim pain must not discard Mirek's hit response.");
+            Assert.IsTrue(response.isPlaying);
+            Assert.AreEqual(mirek.attackLines[0], response.clip);
+            Assert.IsTrue(hurt.isPlaying, "The response must not stop the victim's pain.");
+
+            response.Stop();
+            bystander.PlayLine(viktor.hurtLines[0], 4);
+            Assert.IsTrue(Field<AudioSource>(bystander, "source").isPlaying);
+            attacker.Play(mirek, VoiceKind.Attack, 0, 0);
+            Assert.IsFalse(response.isPlaying, "Two other speakers must still suppress another hit response.");
+            attacker.Play(mirek, VoiceKind.Idle, 0, 0);
+            Assert.IsFalse(response.isPlaying, "Idle chatter must retain its existing speech limit.");
+            yield return null;
+        }
+        finally
+        {
+            foreach (var go in objects) Object.DestroyImmediate(go);
+        }
+        yield return new ExitPlayMode();
+    }
+
+    [UnityTest]
     public IEnumerator SelectedSoundsReachTheirGameplayEvents()
     {
         EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity");
