@@ -92,11 +92,20 @@ public static class WeaponModelSetup
                 AssetDatabase.DeleteAsset(OldPrefabPath(gun));
     }
 
-    // Starsi verze prefabu z tohoto skriptu (rucne prirazene modely se neprepisuji).
+    // Starsi verze prefabu z tohoto skriptu (Held_<model> nebo Held_<model>_v<cislo>). Jine prefaby (rucne prirazene,
+    // z jinych skriptu - napr. Held_BlackBow, Held_Scythe) se neprepisuji, i kdyz zacinaji "Held_".
     static bool IsOld(GameObject prefab)
     {
         string path = AssetDatabase.GetAssetPath(prefab);
-        return path.StartsWith(PrefabDir + "/Held_") && !path.EndsWith(Version + ".prefab");
+        if (!path.StartsWith(PrefabDir + "/Held_") || path.EndsWith(Version + ".prefab")) return false;
+        string name = System.IO.Path.GetFileNameWithoutExtension(path);
+        foreach (var gun in Guns)
+        {
+            string own = "Held_" + gun.model;
+            if (name == own) return true;
+            if (name.StartsWith(own + "_v") && name.Length > own.Length + 2 && char.IsDigit(name[own.Length + 2])) return true;
+        }
+        return false;
     }
 
     // Nepruhledna kopie materialu z FBX (stejna barva, alfa 1).

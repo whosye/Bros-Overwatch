@@ -35,22 +35,32 @@ public static class MirekGearSetup
         EditorApplication.playModeStateChanged += s => { if (s == PlayModeStateChange.EnteredEditMode) EditorApplication.delayCall += AutoSetup; };
     }
 
-    static bool rebuildQuiver;
+    // Verze prefabu (ulozena v .meta prefabu jako userData): jina verze -> prefab se sam prestavi (prepis na miste,
+    // stejne GUID - prirazeni a nastaveni polohy na hrdinovi zustanou). v3: otoceny hrot sipu (luk, letici sip).
+    const string GearVersion = "v4";   // v4: 3 sipy v toulci, mensi textury
+    static bool rebuildAll;
+
+    static bool Current(string path) => File.Exists(path) && AssetImporter.GetAtPath(path) is AssetImporter i && i.userData == GearVersion;
+
+    static void MarkCurrent(string path)
+    {
+        var importer = AssetImporter.GetAtPath(path);
+        if (importer == null || importer.userData == GearVersion) return;
+        importer.userData = GearVersion;
+        importer.SaveAndReimport();
+    }
 
     static void AutoSetup()
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating) return;
         if (!File.Exists(Dir + "/BlackBow.fbx")) return;
-        // toulec z drivejsi verze bez sipu -> vytvorit znovu (prirazeni i nastaveni polohy na hrdinovi zustanou)
-        var oldQuiver = AssetDatabase.LoadAssetAtPath<GameObject>(QuiverPrefab);
-        rebuildQuiver = oldQuiver != null && oldQuiver.transform.Find(QuiverArrowsGroup) == null;
-        bool missing = !File.Exists(BowPrefab) || !File.Exists(ArrowPrefab) || !File.Exists(QuiverPrefab) || rebuildQuiver;
-        if (!missing) { Assign(false); return; }
+        rebuildAll = !Current(BowPrefab) || !Current(ArrowPrefab) || !Current(QuiverPrefab);
+        if (!rebuildAll) { Assign(false); return; }
         Build();
     }
 
     [MenuItem("BrosOverwatch/Zbrane/Mirek - luk, sip a toulec znovu vytvorit")]
-    static void Rebuild() { Build(); Assign(true); }
+    static void Rebuild() { rebuildAll = true; Build(); Assign(true); }
 
     static void Build()
     {
@@ -58,11 +68,12 @@ public static class MirekGearSetup
         if (!AssetDatabase.IsValidFolder(PrefabDir)) AssetDatabase.CreateFolder("Assets/Prefab", "Weapons");
 
         var arrowMat = Material("Arrow");
-        if (!File.Exists(BowPrefab)) BuildBow(Material("BlackBow"), arrowMat);
-        if (!File.Exists(ArrowPrefab)) BuildArrowProjectile(arrowMat);
-        if (!File.Exists(QuiverPrefab) || rebuildQuiver) BuildQuiver(Material("Quiver"), arrowMat);   // (prepis na miste - stejne GUID)
-        rebuildQuiver = false;
+        if (rebuildAll || !File.Exists(BowPrefab)) BuildBow(Material("BlackBow"), arrowMat);
+        if (rebuildAll || !File.Exists(ArrowPrefab)) BuildArrowProjectile(arrowMat);
+        if (rebuildAll || !File.Exists(QuiverPrefab)) BuildQuiver(Material("Quiver"), arrowMat);
+        rebuildAll = false;
         AssetDatabase.SaveAssets();
+        foreach (var path in new[] { BowPrefab, ArrowPrefab, QuiverPrefab }) MarkCurrent(path);
         Assign(false);
     }
 
@@ -102,18 +113,21 @@ public static class MirekGearSetup
             if (importer.importAnimation) { importer.importAnimation = false; dirty = true; }
             if (dirty) importer.SaveAndReimport();
         }
-        Texture($"{Dir}/{model}_BaseColor.png", TextureImporterType.Default, true);
-        Texture($"{Dir}/{model}_Normal.png", TextureImporterType.NormalMap, false);
-        Texture($"{Dir}/{model}_MetallicSmoothness.png", TextureImporterType.Default, false);
-        Texture($"{Dir}/{model}_Emission.png", TextureImporterType.Default, true);
+        // male predmety: textury staci mensi (sip je tenky - 512, luk a toulec 1024)
+        int size = model == "Arrow" ? 512 : 1024;
+        Texture($"{Dir}/{model}_BaseColor.png", TextureImporterType.Default, true, size);
+        Texture($"{Dir}/{model}_Normal.png", TextureImporterType.NormalMap, false, size);
+        Texture($"{Dir}/{model}_MetallicSmoothness.png", TextureImporterType.Default, false, size);
+        Texture($"{Dir}/{model}_Emission.png", TextureImporterType.Default, true, Mathf.Min(size, 512));
     }
 
-    static void Texture(string path, TextureImporterType type, bool srgb)
+    static void Texture(string path, TextureImporterType type, bool srgb, int maxSize)
     {
         if (!(AssetImporter.GetAtPath(path) is TextureImporter t)) return;
-        if (t.textureType == type && t.sRGBTexture == srgb) return;
+        if (t.textureType == type && t.sRGBTexture == srgb && t.maxTextureSize == maxSize) return;
         t.textureType = type;
         t.sRGBTexture = srgb;
+        t.maxTextureSize = maxSize;
         t.SaveAndReimport();
     }
 
@@ -227,7 +241,8 @@ public static class MirekGearSetup
         float max = 0f; foreach (var w in width) max = Mathf.Max(max, w);
         int fromLow = 0; while (fromLow < slices && width[fromLow] > max * 0.5f) fromLow++;
         int fromHigh = 0; while (fromHigh < slices && width[slices - 1 - fromHigh] > max * 0.5f) fromHigh++;
-        Vector3 forward = fromLow <= fromHigh ? -along : along;   // kratsi siroky usek = hrot
+        // (puvodni odhad "kratsi siroky usek = hrot" byl u Hanzova sipu obracene - overeno ve hre)
+        Vector3 forward = fromLow <= fromHigh ? along : -along;
         Vector3 up = Mathf.Abs(Vector3.Dot(forward, Vector3.up)) < 0.9f ? Vector3.up : Vector3.forward;
         Orient(arrow.transform, forward, up);
         b = BoundsOf(Points(arrow));
@@ -296,8 +311,6 @@ public static class MirekGearSetup
         (0f, 0f, 0f, 0f, 0.26f),
         (0.035f, 0.015f, -3f, -6f, 0.23f),
         (-0.035f, 0.012f, -2f, 6f, 0.24f),
-        (0.018f, -0.025f, 5f, -3f, 0.21f),
-        (-0.02f, -0.022f, 4f, 4f, 0.25f),
     };
 
     // nazev skupiny sipu = verze toulce (jina verze -> toulec se sam prestavi)
@@ -361,9 +374,6 @@ public static class MirekGearSetup
                 var arrow = Instance("Arrow", root.transform, arrowMat, "Arrow");
                 PlaceArrow(arrow, ArrowLength, Vector3.zero);
                 arrow.transform.SetParent(holder, false);
-                // obracene (na prani): druhy konec sipu nahoru z toulce
-                arrow.transform.localRotation = Quaternion.AngleAxis(180f, Vector3.right) * arrow.transform.localRotation;
-                arrow.transform.localPosition = Quaternion.AngleAxis(180f, Vector3.right) * arrow.transform.localPosition;
                 // stred sipu pod okrajem tak, aby letky vycnivaly o 'above'
                 arrow.transform.localPosition += Vector3.forward * (ArrowLength * 0.5f - a.above);
             }

@@ -70,7 +70,7 @@ MonoBehaviour:
   dualWield: 0
   twoHanded: 0
   heldScale: 1
-  heldPrefab: {fileID: 1693860406041823042, guid: 2b8678a10d3c1184db3fa62700057fd4, type: 3}
+  heldPrefab: {fileID: 330845420022688089, guid: 9f0fa76a508bcec4bb662f686adf3528, type: 3}
   fireSound: {fileID: 0}
   scopedFireSound: {fileID: 0}
   bulletImpactSound: {fileID: 0}
