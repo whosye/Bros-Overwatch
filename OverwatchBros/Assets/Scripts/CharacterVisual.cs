@@ -10,7 +10,10 @@ using UnityEngine.Playables;
 public class CharacterVisual : MonoBehaviour
 {
     PlayerHero hero;
-    const int Idle = 0, Walk = 1, Jog = 2, Sprint = 3, Jump = 4, Death = 5, StateCount = 6;
+    const int Idle = 0, Walk = 1, Jog = 2, Sprint = 3, Jump = 4, Death = 5,
+        StrafeLeft = 6, StrafeRight = 7, Crouch = 8, LandIdle = 9, LandRun = 10, JumpStart = 11, Climb = 12, StateCount = 13;
+    // ktere volitelne pohyby ma hrdina (CharacterAnimSet) - jinak se pouzije chuze/beh jako dosud
+    bool hasStrafe, hasCrouch, hasLandIdle, hasLandRun, hasJumpStart, hasClimb;
 
     public int Version { get; private set; }
 
@@ -375,7 +378,16 @@ public class CharacterVisual : MonoBehaviour
         var output = AnimationPlayableOutput.Create(graph, "Animation", animator);
 
         locomotion = AnimationMixerPlayable.Create(graph, StateCount);
-        var stateClips = new[] { idle, Pick(s => s.walk), Pick(s => s.jog), Pick(s => s.sprint), Pick(s => s.jump), Pick(s => s.death) };
+        var stateClips = new[] { idle, Pick(s => s.walk), Pick(s => s.jog), Pick(s => s.sprint), Pick(s => s.jump), Pick(s => s.death),
+            Pick(s => s.strafeLeft), Pick(s => s.strafeRight), Pick(s => s.crouchWalk), Pick(s => s.landIdle), Pick(s => s.landRun), Pick(s => s.jumpStart),
+            Pick(s => s.climb) };
+        hasClimb = stateClips[Climb] != null;
+        hasStrafe = stateClips[StrafeLeft] != null && stateClips[StrafeRight] != null;
+        hasCrouch = stateClips[Crouch] != null;
+        hasLandIdle = stateClips[LandIdle] != null;
+        hasLandRun = stateClips[LandRun] != null;
+        hasJumpStart = stateClips[JumpStart] != null;
+        oneShot = -1;
         for (int i = 0; i < StateCount; i++)
         {
             var clip = stateClips[i] != null ? stateClips[i] : idle;
@@ -406,7 +418,25 @@ public class CharacterVisual : MonoBehaviour
         meleePlayable.SetSpeed(0);
         shootPlayable.SetSpeed(0);
         graph.Connect(meleePlayable, 0, layers, 1);
-        graph.Connect(shootPlayable, 0, layers, 2);
+        // luk: natahovani (klip Shoot podle sily natazeni) a drzeni plne natazeneho luku (bowHold) v jedne vrstve
+        var holdClip = heroClips != null ? heroClips.bowHold : null;
+        if (holdClip != null)
+        {
+            shootMixer = AnimationMixerPlayable.Create(graph, 2);
+            bowHoldPlayable = AnimationClipPlayable.Create(graph, holdClip);
+            bowHoldPlayable.SetSpeed(0);
+            graph.Connect(shootPlayable, 0, shootMixer, 0);
+            graph.Connect(bowHoldPlayable, 0, shootMixer, 1);
+            shootMixer.SetInputWeight(0, 1f);
+            shootMixer.SetInputWeight(1, 0f);
+            graph.Connect(shootMixer, 0, layers, 2);
+        }
+        else
+        {
+            shootMixer = default;
+            bowHoldPlayable = default;
+            graph.Connect(shootPlayable, 0, layers, 2);
+        }
         layers.SetInputWeight(1, 0f);
         layers.SetInputWeight(2, 0f);
         layers.SetLayerMaskFromAvatarMask(1, upperBody);
@@ -696,7 +726,10 @@ public class CharacterVisual : MonoBehaviour
 
     void LateUpdate()
     {
+        CalibrateHead();
+        RunUpright();
         TwistForShoot();
+        LevelHeadInCrouch();
         LateKick();
         ApplyGrip();
         GroundDeathPose();
@@ -711,9 +744,66 @@ public class CharacterVisual : MonoBehaviour
     bool headForwardKnown;
     Transform headForwardFor;
 
+    // Luk (HeldWeapons): luk je pripevneny k hrudi a ruce k nemu tahne IK - smer urcuje jen hrudnik. Pri natahovani
+    // se trup dotoci tak, aby osa ramen mirila presne dopredu (animace lukostrelce stoji bokem); nemeri se predem.
+    public bool TwistShoulders;
+    public CharacterAnimSet HeroClips => heroClips;
+
+    // V klidu (stoji, nestrili) si zapamatovat, kam hlava hledi "rovne" - pro srovnani hlavy pri strelbe a v drepu.
+    void CalibrateHead()
+    {
+        if (ModelRoot == null || !graph.IsValid()) return;
+        var head = GetBone(HumanBodyBones.Head);
+        if (head != headForwardFor) { headForwardKnown = false; headForwardFor = head; }
+        if (head == null || stateWeights[Idle] < 0.9f || shootLayerWeight > 0.001f || attackTime >= 0f) return;
+        headForwardLocal = Quaternion.Inverse(head.rotation) * ModelRoot.forward;
+        headForwardKnown = true;
+    }
+
+    // Beh: narovnani trupu proti predklonu z animace (CharacterAnimSet.runUpright) - dve tretiny pater, tretina hrud.
+    void RunUpright()
+    {
+        if (heroClips == null || ModelRoot == null || Mathf.Abs(heroClips.runUpright) < 0.1f) return;
+        float w = Mathf.Clamp01(stateWeights[Jog] + stateWeights[Sprint]);
+        if (w < 0.01f) return;
+        var spine = GetBone(HumanBodyBones.Spine);
+        var chest = GetBone(HumanBodyBones.Chest);
+        Vector3 axis = ModelRoot.right;
+        float angle = -heroClips.runUpright * w;   // (zaklon = zaporne kolem osy doprava)
+        if (spine != null) spine.rotation = Quaternion.AngleAxis(angle * (chest != null ? 0.66f : 1f), axis) * spine.rotation;
+        if (chest != null) chest.rotation = Quaternion.AngleAxis(angle * (spine != null ? 0.34f : 1f), axis) * chest.rotation;
+    }
+
+    // Drep: animace chuze v drepu skloni hlavu k zemi - hlava (a krk) se srovna do vodorovneho pohledu dopredu
+    // (+ rucni zvednuti brady CharacterAnimSet.crouchHeadPitch).
+    void LevelHeadInCrouch()
+    {
+        float w = hasCrouch ? Mathf.Clamp01(stateWeights[Crouch]) : 0f;
+        if (w < 0.01f || !headForwardKnown || heroClips == null || ModelRoot == null) return;
+        var head = GetBone(HumanBodyBones.Head);
+        if (head == null) return;
+        Vector3 up = ModelRoot.up;
+        Vector3 look = head.rotation * headForwardLocal;
+        Vector3 flat = Vector3.ProjectOnPlane(look, up);
+        if (flat.sqrMagnitude < 1e-4f) flat = Vector3.ProjectOnPlane(ModelRoot.forward, up);
+        Vector3 side = Vector3.Cross(up, flat.normalized);
+        Vector3 wanted = Quaternion.AngleAxis(-heroClips.crouchHeadPitch, side) * flat.normalized;
+        var turn = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(look, wanted), w);
+        // pulka na krk, pulka na hlavu (prirozenejsi nez vse jen v hlave)
+        var neck = GetBone(HumanBodyBones.Neck);
+        if (neck != null)
+        {
+            var half = Quaternion.Slerp(Quaternion.identity, turn, 0.5f);
+            neck.rotation = half * neck.rotation;
+            look = head.rotation * headForwardLocal;
+            turn = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(look, wanted), w);
+        }
+        head.rotation = turn * head.rotation;
+    }
+
     void TwistForShoot()
     {
-        if (heroClips == null || Mathf.Abs(heroClips.shootYaw) < 0.5f || ModelRoot == null) return;
+        if (heroClips == null || ModelRoot == null || (!TwistShoulders && Mathf.Abs(heroClips.shootYaw) < 0.5f)) return;
         var head = GetBone(HumanBodyBones.Head);
         if (head != headForwardFor) { headForwardKnown = false; headForwardFor = head; }
         if (shootLayerWeight <= 0.001f)
@@ -728,7 +818,19 @@ public class CharacterVisual : MonoBehaviour
         }
         var spine = GetBone(HumanBodyBones.Spine);
         if (spine == null) return;
-        spine.rotation = Quaternion.AngleAxis(heroClips.shootYaw * shootLayerWeight, ModelRoot.up) * spine.rotation;
+        float yaw = heroClips.shootYaw;
+        if (TwistShoulders)
+        {
+            var leftArm = GetBone(HumanBodyBones.LeftUpperArm);
+            var rightArm = GetBone(HumanBodyBones.RightUpperArm);
+            if (leftArm == null || rightArm == null) return;
+            Vector3 chestForward = Vector3.Cross(rightArm.position - leftArm.position, ModelRoot.up);
+            chestForward = Vector3.ProjectOnPlane(chestForward, ModelRoot.up);
+            Vector3 forward = Vector3.ProjectOnPlane(ModelRoot.forward, ModelRoot.up);
+            yaw = (chestForward.sqrMagnitude > 1e-6f ? Vector3.SignedAngle(chestForward, forward, ModelRoot.up) : 0f)
+                + heroClips.shootYaw;   // (+ rucni doladeni)
+        }
+        spine.rotation = Quaternion.AngleAxis(yaw * shootLayerWeight, ModelRoot.up) * spine.rotation;
 
         // hlava: divat se tam, kam postava miri (dopredu) + rucni korekce
         if (head == null || !headForwardKnown) return;
@@ -851,6 +953,8 @@ public class CharacterVisual : MonoBehaviour
         wasDead = down;
 
         bool grounded = IsGrounded();
+        UpdateOneShots(grounded, down);
+        bool crouched = !IsGhost && fpc != null && fpc.IsSpawned && fpc.crouched.Value;
 
         // Modry plamen: vypad v utocne poze.
         bool frenzy = !dead && (IsGhost ? GhostFrenzy : rush != null && rush.enabled && rush.IsSpawned && rush.IsRushing);
@@ -865,9 +969,26 @@ public class CharacterVisual : MonoBehaviour
         {
             target[Death] = 1f;
         }
+        else if (oneShot >= 0)
+        {
+            target[oneShot] = 1f;   // odraz / dopad / splhani
+            rate[oneShot] = oneShotRate;
+        }
         else if (!grounded)
         {
             target[Jump] = 1f;
+        }
+        else if (crouched && hasCrouch && !frenzy)
+        {
+            // drep: chuze v drepu, ve stoji zamrzly snimek
+            target[Crouch] = 1f;
+            rate[Crouch] = smoothedSpeed < 0.3f ? 0f : Mathf.Clamp(smoothedSpeed / 1.4f, 0.6f, 1.6f);
+        }
+        else if (hasStrafe && !frenzy && smoothedSpeed >= 0.4f && Mathf.Abs(smoothedSide) > 0.65f)
+        {
+            int side = smoothedSide < 0f ? StrafeLeft : StrafeRight;
+            target[side] = 1f;
+            rate[side] = Mathf.Clamp(smoothedSpeed / 2f, 0.6f, 2.2f);
         }
         else if (frenzy)
         {
@@ -1017,6 +1138,27 @@ public class CharacterVisual : MonoBehaviour
             shoot = aimWeight;
         }
 
+        // luk: poza natahovani podle sily natazeni, po plnem natazeni drzeni (bowHold)
+        if (bowDrawWeight > 0.001f && heroClips != null && heroClips.shoot != null && attackTime < 0f && !dead)
+        {
+            shootPlayable.SetTime(bowDrawT * shootPlayable.GetAnimationClip().length);
+            if (shootMixer.IsValid())
+            {
+                bowHoldMix = Mathf.MoveTowards(bowHoldMix, bowDrawT >= 0.97f ? 1f : 0f, dt * 5f);
+                bowHoldTime += dt;
+                bowHoldPlayable.SetTime(Mathf.Repeat(bowHoldTime, Mathf.Max(0.05f, bowHoldPlayable.GetAnimationClip().length)));
+                shootMixer.SetInputWeight(0, 1f - bowHoldMix);
+                shootMixer.SetInputWeight(1, bowHoldMix);
+            }
+            shoot = Mathf.Max(shoot, bowDrawWeight);
+        }
+        else if (shootMixer.IsValid())
+        {
+            bowHoldMix = 0f;
+            shootMixer.SetInputWeight(0, 1f);
+            shootMixer.SetInputWeight(1, 0f);
+        }
+
         layers.SetInputWeight(1, melee);
         layers.SetInputWeight(2, shoot);
         shootLayerWeight = shoot;
@@ -1045,6 +1187,82 @@ public class CharacterVisual : MonoBehaviour
         // Teleport (respawn, reset kola) neni beh.
         float raw = delta.magnitude > 3f ? 0f : new Vector2(delta.x, delta.z).magnitude / dt;
         smoothedSpeed = Mathf.Lerp(smoothedSpeed, raw, 1f - Mathf.Exp(-10f * dt));
+        verticalSpeed = delta.magnitude > 3f ? 0f : delta.y / dt;
+        // smer pohybu vuci postave (-1 doleva, +1 doprava) - ukroky
+        Vector3 flat = new Vector3(delta.x, 0f, delta.z);
+        float side = flat.sqrMagnitude > 1e-8f && delta.magnitude <= 3f ? Vector3.Dot(flat.normalized, transform.right) : 0f;
+        smoothedSide = Mathf.Lerp(smoothedSide, side, 1f - Mathf.Exp(-8f * dt));
+    }
+
+    float smoothedSide, verticalSpeed;
+
+    // ---------------- odraz a dopad (jednorazove klipy v pohybu) ----------------
+    const float JumpStartMax = 0.45f;   // jak dlouho se prehrava odraz (pak smycka ve vzduchu)
+    const float LandMax = 0.6f;         // jak dlouho se prehrava dopad
+    const float LandMinAir = 0.3f;      // dopad jen po delsim pobytu ve vzduchu (ne schod)
+    int oneShot = -1;
+    float oneShotUntil, airborneSince;
+    bool wasGroundedAnim = true;
+
+    // Splhani na hranu: vytazeni trva ~0,6 s - cely klip se zrychli tak, aby skoncil za ClimbSeconds (dobiha uz nahore).
+    const float ClimbSeconds = 0.9f;
+    float oneShotRate = 1f;
+    bool wasClimbing;
+
+    void UpdateOneShots(bool grounded, bool down)
+    {
+        bool climbing = !IsGhost && fpc != null && fpc.IsSpawned && fpc.climbing.Value;
+        if (climbing && !wasClimbing && hasClimb && !down)
+        {
+            float length = states[Climb].GetAnimationClip().length;
+            StartOneShot(Climb, ClimbSeconds);
+            oneShotRate = Mathf.Max(1f, length / ClimbSeconds);
+            oneShotUntil = Time.time + ClimbSeconds;
+        }
+        wasClimbing = climbing;
+        if (oneShot == Climb)
+        {
+            wasGroundedAnim = grounded;   // (dopad na hrane se nehraje - konec splhani)
+            if (down || Time.time >= oneShotUntil) oneShot = -1;
+            return;
+        }
+
+        if (!down)
+        {
+            if (wasGroundedAnim && !grounded)
+            {
+                airborneSince = Time.time;
+                if (hasJumpStart && smoothedSpeed > 2f && verticalSpeed > 1.5f) StartOneShot(JumpStart, JumpStartMax);
+            }
+            else if (!wasGroundedAnim && grounded && Time.time - airborneSince > LandMinAir)
+            {
+                int land = smoothedSpeed > 2f && hasLandRun ? LandRun : hasLandIdle ? LandIdle : hasLandRun ? LandRun : -1;
+                if (land >= 0) StartOneShot(land, LandMax);
+            }
+        }
+        wasGroundedAnim = grounded;
+        if (oneShot >= 0 && (down || Time.time >= oneShotUntil || (oneShot == JumpStart && grounded && Time.time - airborneSince > 0.1f)))
+            oneShot = -1;
+    }
+
+    void StartOneShot(int state, float max)
+    {
+        oneShot = state;
+        oneShotRate = 1f;
+        stateTimes[state] = 0f;
+        oneShotUntil = Time.time + Mathf.Min(states[state].GetAnimationClip().length, max);
+    }
+
+    // ---------------- luk: natahovani a drzeni (HeldWeapons) ----------------
+    AnimationMixerPlayable shootMixer;
+    AnimationClipPlayable bowHoldPlayable;
+    float bowDrawT, bowDrawWeight, bowHoldMix, bowHoldTime;
+
+    // Sila natazeni (0-1) a vaha pozy natahovani; prehrava se klip Shoot hrdiny, po plnem natazeni bowHold.
+    public void SetBowDraw(float drawn, float weight)
+    {
+        bowDrawT = Mathf.Clamp01(drawn);
+        bowDrawWeight = Mathf.Clamp01(weight);
     }
 
     bool IsGrounded()

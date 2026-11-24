@@ -194,6 +194,8 @@ public partial class HeldWeapons : MonoBehaviour
         hand.hasAimPose = true;
     }
 
+    float lastDrawn;   // posledni sila natazeni luku (poza natahovani na postave)
+
     // Luk u postavy: po vystrelu chvili v poze natahovani, pak zpet do klidu.
     const float BowAimHoldSeconds = 0.5f;
 
@@ -202,6 +204,14 @@ public partial class HeldWeapons : MonoBehaviour
         var body = visual.ModelRoot;
         hand.holder.localPosition = Vector3.Lerp(hand.idlePosition, hand.aimPosition, aimK);
         hand.holder.localRotation = Quaternion.Slerp(hand.idleRotation, hand.aimRotation, aimK);
+        // naklon luku do strany pri natahovani (CharacterAnimSet.bowTilt) - kolem osy sipu (+Z drzaku), ve madle
+        var clips = visual.HeroClips;
+        if (clips != null && Mathf.Abs(clips.bowTilt) > 0.01f && aimK > 0.001f)
+        {
+            Vector3 pivot = hand.holder.TransformPoint(hand.grip);
+            hand.holder.rotation = hand.holder.rotation * Quaternion.AngleAxis(-clips.bowTilt * aimK, Vector3.forward);
+            hand.holder.position += pivot - hand.holder.TransformPoint(hand.grip);
+        }
 
         // leva paze drzi madlo (loket dolu a ven)
         FirstPersonArms.SolveArm(bodySupportArm, hand.holder.TransformPoint(hand.grip), hand.holder,
@@ -394,6 +404,9 @@ public partial class HeldWeapons : MonoBehaviour
             float charge = ghost ? GhostCharge : shooting != null ? shooting.ChargeFraction : 0f;
             bool drawing = charge > 0.01f || Time.time - lastShotTime < BowAimHoldSeconds;
             aimBlend = Mathf.MoveTowards(aimBlend, drawing ? 1f : 0f, Time.deltaTime * (drawing ? 7f : 2.5f));
+            // postava: animace natahovani podle sily natazeni (po vystrelu chvili drzi posledni pozu)
+            if (charge > 0.01f) lastDrawn = charge;
+            visual.SetBowDraw(lastDrawn, Mathf.SmoothStep(0f, 1f, aimBlend));
             foreach (var hand in bodyHands)
                 if (hand.holder != null && hand.bowBody && hand.holder.gameObject.activeInHierarchy)
                     SolveBodyBow(hand, Mathf.SmoothStep(0f, 1f, aimBlend));
@@ -1116,7 +1129,7 @@ public partial class HeldWeapons : MonoBehaviour
         if (dartPistol != null) { Destroy(dartPistol.gameObject); dartPistol = null; }
         bodySupportArm = null;
         bodyMainArm = null;
-        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; visual.AimOnScope = false; }
+        if (visual != null) { visual.GripRight = false; visual.GripLeft = false; visual.HoldShootPose = false; visual.AimOnScope = false; visual.TwistShoulders = false; }
         stormMaterials = null;
         stormShown = false;
         powerMaterials = null;
@@ -1235,6 +1248,7 @@ public partial class HeldWeapons : MonoBehaviour
                 if (bowBody)
                 {
                     hand.bowBody = true;
+                    visual.TwistShoulders = true;   // pri natahovani trup celem dopredu (luk na hrudi)
                     hand.grip = GripInWeapon(weapon, model);
                     AttachBowAtChest(hand);
                     bodySupportArm = FirstPersonArms.BuildArm(visual.BodyAnimator, false);   // madlo

@@ -258,6 +258,81 @@ public static class ShootClipTrim
                   $"konec {set.shiftTo:0.00} s (zbran nahore {raised / Fps:0.00} s, vrchol skoku {peak / Fps:0.00} s) -> {set.name}.");
     }
 
+    // ---------------- natoceni pri strelbe bez orezu (luk) ----------------
+
+    const string DefaultBowPath = "Assets/Models/Animations/Mixamo/Mirek/Mirek_Shoot.fbx";
+
+    // Animace strelby/natahovani, kde postava stoji bokem (lukostrelec): na poslednim snimku (plne natazeno) se zjisti,
+    // kam miri vic natazena paze (u luku leva s lukem) vuci bokum, a zapise se do sady jako shootYaw. Klip se neorezava.
+    [MenuItem("BrosOverwatch/Animace/Zmerit natoceni strelby (bez orezu)")]
+    static void MeasureYaw()
+    {
+        string path = DefaultBowPath;
+        var selected = Selection.activeObject != null ? AssetDatabase.GetAssetPath(Selection.activeObject) : null;
+        if (!string.IsNullOrEmpty(selected) && selected.EndsWith(".fbx", System.StringComparison.OrdinalIgnoreCase)) path = selected;
+        MeasureYawFor(path);
+    }
+
+    // (vola i MixamoAnimationSetup sam, kdyz hrdina dostane novou animaci strelby)
+    public static void MeasureYawFor(string path)
+    {
+        {
+            string heroName = Path.GetFileName(Path.GetDirectoryName(path));
+            var hero = AssetDatabase.LoadAssetAtPath<HeroDefinition>($"Assets/Resources/Heroes/{heroName}.asset");
+            if (hero != null && hero.weapon != null && hero.weapon.heldModel == HeldModel.Bow)
+            {
+                Debug.Log($"[Natoceni] {heroName}: luk - trup se pri natahovani srovnava sam podle ramen, nic se nemeri.");
+                return;
+            }
+        }
+        AnimationClip clip = null;
+        foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(path))
+            if (asset is AnimationClip c && !c.name.StartsWith("__preview__")) { clip = c; break; }
+        var character = CharacterFor(path);
+        var set = AnimSetFor(path);
+        if (clip == null || character == null || set == null) { Debug.LogError("[Natoceni] Chybi klip, postava nebo sada animaci: " + path); return; }
+
+        var instance = (GameObject)Object.Instantiate(character);
+        instance.hideFlags = HideFlags.HideAndDontSave;
+        float yaw = 0f;
+        string arm = "";
+        try
+        {
+            var animator = instance.GetComponentInChildren<Animator>();
+            if (animator == null || !animator.isHuman) { Debug.LogError("[Natoceni] Postava nema humanoidni kostru."); return; }
+            Transform B(HumanBodyBones b) => animator.GetBoneTransform(b);
+            bool started = AnimationMode.InAnimationMode();
+            if (!started) AnimationMode.StartAnimationMode();
+            try
+            {
+                AnimationMode.BeginSampling();
+                AnimationMode.SampleAnimationClip(animator.gameObject, clip, clip.length);
+                AnimationMode.EndSampling();
+                Vector3 hipsForward = Vector3.Cross(B(HumanBodyBones.RightUpperLeg).position - B(HumanBodyBones.LeftUpperLeg).position, Vector3.up);
+                hipsForward.y = 0f;
+                Vector3 left = Vector3.ProjectOnPlane(B(HumanBodyBones.LeftHand).position - B(HumanBodyBones.LeftUpperArm).position, Vector3.up);
+                Vector3 right = Vector3.ProjectOnPlane(B(HumanBodyBones.RightHand).position - B(HumanBodyBones.RightUpperArm).position, Vector3.up);
+                Vector3 aim = left.sqrMagnitude >= right.sqrMagnitude ? left : right;
+                arm = left.sqrMagnitude >= right.sqrMagnitude ? "leva" : "prava";
+                yaw = Vector3.SignedAngle(aim, hipsForward, Vector3.up);
+            }
+            finally
+            {
+                if (!started) AnimationMode.StopAnimationMode();
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+
+        Undo.RecordObject(set, "Natoceni strelby");
+        set.shootYaw = Mathf.Abs(yaw) < 15f ? 0f : Mathf.Round(yaw);
+        EditorUtility.SetDirty(set);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"[Natoceni] {Path.GetFileName(path)}: {arm} paze mirila {yaw:0} st. vedle -> {set.name}.shootYaw = {set.shootYaw}.");
+    }
+
     [MenuItem("BrosOverwatch/Animace/Vratit celou strelbu (zrusit oriznuti)")]
     static void Untrim()
     {
