@@ -13,12 +13,17 @@ MonoBehaviour:
   m_Name: Bow_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Luk
-  description: "Dr\u017een\u00edm lev\u00e9ho tla\u010d\u00edtka natahuje\u0161, pu\u0161t\u011bn\u00edm vyst\u0159el\u00ed\u0161. Pln\u011b nata\u017een\u00fd \u0161\u00edp let\u00ed d\u00e1l a v\u00edc zran\u00ed. \u0160\u00edpy padaj\u00ed obloukem."
+  description: "Dr\u017Een\xEDm lev\xE9ho tla\u010D\xEDtka natahuje\u0161, pu\u0161t\u011Bn\xEDm
+    vyst\u0159el\xED\u0161. Pln\u011B nata\u017Een\xFD \u0161\xEDp let\xED d\xE1l
+    a v\xEDc zran\xED. \u0160\xEDpy padaj\xED obloukem."
   damage: 75
   fireRate: 2.5
   maxAmmo: 0
+  burstCount: 1
+  burstInterval: 0.07
   reloadTime: 1.5
   reloadAnimation: 0
+  revolverReload: 0
   range: 160
   chargeTime: 0.5
   minChargeDamage: 20
@@ -32,9 +37,14 @@ MonoBehaviour:
   allyHeal: 0
   scopeFov: 0
   scopedChargeTime: 0
+  boltCycleTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
   headshotMultiplier: 2.25
+  hitscanRadius: 0
+  scopedFalloffStart: 0
+  scopedFalloffEnd: 0
+  scopedFalloffMin: 0.4
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0
@@ -47,8 +57,22 @@ MonoBehaviour:
   projectileFuse: 1
   projectileColor: {r: 0.55, g: 0.85, b: 1, a: 1}
   projectileTrail: 1
-  projectilePrefab: {fileID: 7717565737963506589, guid: 9f9b3767e4f1f4a498aa7a7c1eef792b, type: 3}
+  projectilePrefab: {fileID: 669959930767781050, guid: dd7f11ac8833a7a4c9bea269ac286fe9, type: 3}
   meleeRadius: 0.6
+  meleeArc: 55
+  comboFinisherDamage: 0
+  comboFinisherArc: 60
+  comboFinisherKnockback: 0
+  powerShotEvery: 0
+  powerShotDamageScale: 1.25
+  powerShotColor: {r: 1, g: 0.12, b: 0.06, a: 1}
   heldModel: 4
   dualWield: 0
+  twoHanded: 0
+  heldScale: 1
   heldPrefab: {fileID: 1693860406041823042, guid: 2b8678a10d3c1184db3fa62700057fd4, type: 3}
+  fireSound: {fileID: 0}
+  scopedFireSound: {fileID: 0}
+  bulletImpactSound: {fileID: 0}
+  bulletImpactVolume: 0.5
+  bulletHoles: 1

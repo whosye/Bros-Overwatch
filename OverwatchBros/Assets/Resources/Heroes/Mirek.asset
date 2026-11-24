@@ -39,6 +39,10 @@ MonoBehaviour:
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 2586593088354091029, guid: 0cc33c2ed00a1c94cbba8b317e596345, type: 3}
+  backPrefab: {fileID: 7479935417286063306, guid: 669e022f86309ae4eb8b0af89fcaa569, type: 3}
+  backOffset: {x: 0.05, y: 0, z: -0.17}
+  backEuler: {x: 0, y: 0, z: -25}
+  backScale: 1
   tintCharacter: 0
   animations: {fileID: 11400000, guid: e295ac7d660191741a634014d16948cb, type: 2}
   sleeveColor: {r: 0.9, g: 0.9, b: 0.88, a: 1}

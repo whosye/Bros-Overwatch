@@ -353,6 +353,16 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  climbing:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  crouched:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   waterSurfing:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -378,6 +388,11 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   weapon: {fileID: 11400000, guid: c0a64531a1b9ffd4bbe5f837139b5fdf, type: 2}
   playerCamera: {fileID: 4723832114344736642}
+  presentationPitch:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &8912812493316825607
 MonoBehaviour:
   m_ObjectHideFlags: 0

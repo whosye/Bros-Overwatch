@@ -119,6 +119,7 @@ public class CharacterVisual : MonoBehaviour
                 DestroyImmediate(collider);
 
             renderers = instance.GetComponentsInChildren<Renderer>();
+            AttachBackItem(prefab, instance);
             // Modely podle fotky maji po importu male bounds a updateWhenOffscreen (jinak by postava mizela). Ten ale
             // kazdy snimek prepocitava bounds a skinuje i postavy mimo obraz. Pevne velke bounds (5 m kolem korenove
             // kosti) pokryji kazdou pozu, takze postava nemizi a mimo obraz je zadarmo.
@@ -724,8 +725,52 @@ public class CharacterVisual : MonoBehaviour
         values = vals.ToArray();
     }
 
+    // ---------------- vec na zadech (Mirek: toulec) ----------------
+    // Pripevni se k hrudniku (sleduje ohyb trupu); poloha a natoceni z HeroDefinition (backOffset/backEuler) kazdy snimek,
+    // takze jdou ladit za behu hry. Patri k modelu postavy - skryva se s ni (1. osoba, replay).
+    HeroDefinition backHero;
+    Transform backItem, backBone;
+    Quaternion backBoneToBody = Quaternion.identity;
+
+    void AttachBackItem(GameObject characterPrefab, GameObject instance)
+    {
+        backItem = null;
+        backHero = null;
+        backBone = null;
+        foreach (var hero in HeroRegistry.All)
+            if (hero != null && hero.characterPrefab == characterPrefab && hero.backPrefab != null) { backHero = hero; break; }
+        if (backHero == null) return;
+        var bodyAnimator = instance.GetComponentInChildren<Animator>();
+        if (bodyAnimator == null || !bodyAnimator.isHuman) return;
+        var bone = bodyAnimator.GetBoneTransform(HumanBodyBones.UpperChest);
+        if (bone == null) bone = bodyAnimator.GetBoneTransform(HumanBodyBones.Chest);
+        if (bone == null) bone = bodyAnimator.GetBoneTransform(HumanBodyBones.Spine);
+        if (bone == null) return;
+
+        var item = Instantiate(backHero.backPrefab, bone);
+        item.name = "NaZadech";
+        foreach (var collider in item.GetComponentsInChildren<Collider>()) DestroyImmediate(collider);
+        backItem = item.transform;
+        backBone = bone;
+        backBoneToBody = Quaternion.Inverse(bone.rotation) * instance.transform.rotation;
+        var list = new System.Collections.Generic.List<Renderer>(renderers);
+        list.AddRange(item.GetComponentsInChildren<Renderer>());
+        renderers = list.ToArray();
+        PlaceBackItem();
+    }
+
+    void PlaceBackItem()
+    {
+        if (backItem == null || backHero == null || backBone == null) return;
+        Quaternion frame = backBone.rotation * backBoneToBody;
+        backItem.SetPositionAndRotation(backBone.position + frame * backHero.backOffset, frame * Quaternion.Euler(backHero.backEuler));
+        float parentScale = Mathf.Max(1e-4f, backBone.lossyScale.x);
+        backItem.localScale = Vector3.one * (Mathf.Max(0.01f, backHero.backScale) / parentScale);
+    }
+
     void LateUpdate()
     {
+        PlaceBackItem();
         CalibrateHead();
         RunUpright();
         TwistForShoot();

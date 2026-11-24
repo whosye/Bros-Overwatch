@@ -93,6 +93,14 @@ public class HeroDefinition : ScriptableObject
 
     [Tooltip("3D model postavy (prefab s Animatorem a Humanoid avatarem). Kdyz je prazdny, hrac je kapsle.")]
     public GameObject characterPrefab;
+    [Header("Na zádech (např. toulec)")]
+    [Tooltip("Model nošený na zádech postavy (Mirek: toulec). Prefab: +Y = nahoru (horní konec), +Z = strana k zádům. Prázdné = nic.")]
+    public GameObject backPrefab;
+    [Tooltip("Posun od hrudníku v metrech (x vpravo, y nahoru, z dopředu - záporné = za zády). Lze ladit za běhu hry (F6).")]
+    public Vector3 backOffset = new Vector3(0.05f, 0f, -0.17f);
+    [Tooltip("Natočení ve stupních (z = náklon do strany, např. -25 = horní konec přes pravé rameno). Lze ladit za běhu hry.")]
+    public Vector3 backEuler = new Vector3(0f, 0f, -25f);
+    public float backScale = 1f;
     [Tooltip("Zabarvit telo postavy barvou hrdiny. Vypnout u postav s vlastnimi texturami (napr. podle fotky).")]
     public bool tintCharacter = true;
     [Tooltip("Vlastni animace hrdiny (napr. strelba z luku). Prazdna policka = spolecna sada Resources/Characters/CharacterAnimations.")]

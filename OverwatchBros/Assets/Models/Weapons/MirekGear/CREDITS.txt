@@ -1,0 +1,20 @@
+Mirek's gear (bow, arrow, quiver) - all from Sketchfab under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/):
+
+* "Black Bow" by Havoc / havoctheXIII
+  https://sketchfab.com/3d-models/black-bow-cb01d00f8b4244d4af308d0a092518da  (BlackBow.fbx, BlackBow_*.png)
+
+* "Overwatch - Hanzo's Arrow" by beyondmatter (https://sketchfab.com/beyondmatter)
+  https://sketchfab.com/3d-models/overwatch-hanzos-arrow-824c3488aa25429a964ed337e58cdd38  (Arrow.fbx, Arrow_*.png)
+
+* "Overwatch - Hanzos Quiver" by beyondmatter (https://sketchfab.com/beyondmatter)
+  https://sketchfab.com/3d-models/overwatch-hanzos-quiver-18f417b0a4254b80a7ba96317a5eec62  (Quiver.fbx, Quiver_*.png)
+
+Note: the arrow and the quiver are fan art of Hanzo's items from Overwatch (design by Blizzard Entertainment).
+The CC-BY license covers the fan artist's model, not Blizzard's design - fine for a private LAN game, but replace
+them before any public release.
+
+Changes: *_MetallicSmoothness.png combine the original Metallic and Roughness maps (A = 1 - roughness),
+Arrow_Normal.png is downscaled to 2048 px. Prefabs are built by Assets/Editor/MirekGearSetup.cs.
+
+This work is based on "Black Bow" by havoctheXIII, "Overwatch - Hanzo's Arrow" and "Overwatch - Hanzos Quiver"
+by beyondmatter (https://sketchfab.com/beyondmatter), licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
