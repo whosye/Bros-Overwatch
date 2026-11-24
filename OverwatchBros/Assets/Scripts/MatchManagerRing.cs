@@ -14,8 +14,8 @@ using UnityEngine.AI;
 // Kdyz ho nikdo nevezme (nebo ho dřív sebere Glum), zmizi a za 'ReturnSeconds' s se objevi zpatky v jeskyni.
 public partial class MatchManager
 {
-    public const float GollumThreshold = 15f;     // s nasazeni, nez prijde Glum
-    const float GollumFullAnger = 75f;            // za kolik dalsich s nasazeni je Glum nejvic nastvany
+    public const float GollumThreshold = 10f;     // s nasazeni, nez prijde Glum (drive 15)
+    const float GollumFullAnger = 50f;            // za kolik dalsich s nasazeni je Glum nejvic nastvany (drive 75)
     // Krivka: zpocatku mirny, ke konci prudce horsi - nejvic nastvany Glum je skoro nehratelny (nejde utect,
     // zabije za par ran, skoro nejde zahnat a hned je zpatky).
     static float Fury(float anger, float power) => Mathf.Pow(Mathf.Clamp01(anger), power);
