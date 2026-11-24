@@ -43,6 +43,29 @@ public class WeaponShooting : NetworkBehaviour
 
     HeldWeapons held;
     AudioSource reloadAudio;
+    AudioSource bowDrawAudio;
+
+    void StopBowDrawAudio()
+    {
+        if (bowDrawAudio != null)
+        {
+            bowDrawAudio.Stop();
+            Destroy(bowDrawAudio.gameObject);
+        }
+        bowDrawAudio = null;
+    }
+
+    void PlayBowDrawAudio(bool shortDraw = false)
+    {
+        StopBowDrawAudio();
+        var clip = shortDraw ? CollectedAudioBank.Pick("mirek_weapon.draw.short") : null;
+        if (clip == null) clip = CollectedAudioBank.Pick("mirek_weapon.draw");
+        if (clip == null) return;
+        float duration = shortDraw && rapid != null ? rapid.interval : weapon != null ? weapon.chargeTime : clip.length;
+        bowDrawAudio = ProceduralSfx.PlayTracked(clip, transform.position, 0.5f, 22f,
+            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip.length / Mathf.Max(0.05f, duration));
+        if (bowDrawAudio != null) bowDrawAudio.transform.SetParent(transform, true);
+    }
 
     void StopReloadAudio()
     {
@@ -144,6 +167,7 @@ public class WeaponShooting : NetworkBehaviour
         if (newWeapon == null) return;
 
         charging = false;
+        StopBowDrawAudio();
         scopedCharge = 0f;
         weapon = newWeapon;
         burstLeft = 0;
@@ -199,6 +223,7 @@ public class WeaponShooting : NetworkBehaviour
         {
             if (charging) DrawServerRpc(false);   // (ostatni: luk zase povolit)
             charging = false;
+            StopBowDrawAudio();
             burstLeft = 0;
             return;
         }
@@ -392,6 +417,7 @@ public class WeaponShooting : NetworkBehaviour
     void OnDisable()
     {
         charging = false;
+        StopBowDrawAudio();
         StopReloadAudio();
     }
     float chargeStart;
@@ -408,13 +434,15 @@ public class WeaponShooting : NetworkBehaviour
         ? Mathf.Clamp01((Time.time - remoteDrawStart) / weapon.chargeTime) : 0f;
 
     [ServerRpc]
-    void DrawServerRpc(bool on) => DrawClientRpc(on);
+    void DrawServerRpc(bool on, bool shortDraw = false) => DrawClientRpc(on, shortDraw);
 
     [ClientRpc]
-    void DrawClientRpc(bool on)
+    void DrawClientRpc(bool on, bool shortDraw)
     {
         if (IsOwner) return;
         remoteDrawStart = on ? Time.time : -1f;
+        if (on) PlayBowDrawAudio(shortDraw);
+        else StopBowDrawAudio();
     }
 
     // Rychlopalba: kazdy sip se rychle natahne (za 'interval') a hned vyleti - jen pro vzhled natahovani.
@@ -439,17 +467,27 @@ public class WeaponShooting : NetworkBehaviour
             charging = false;
             if (!down)
             {
+                StopBowDrawAudio();
                 rapidDrawStart = -1f;
                 return;
             }
             if (rapidDrawStart < 0f)
+            {
                 rapidDrawStart = Time.time;
+                PlayBowDrawAudio(true);
+                DrawServerRpc(true, true);
+            }
             if (Time.time - rapidDrawStart >= rapid.interval && Time.time >= nextFireTime)
             {
                 nextFireTime = Time.time + rapid.interval * 0.5f;
                 FireArrow(1f, true);
                 rapid.ConsumeShot();
                 rapidDrawStart = rapid.IsActive ? Time.time : -1f;   // hned dalsi sip
+                if (rapidDrawStart >= 0f)
+                {
+                    PlayBowDrawAudio(true);
+                    DrawServerRpc(true, true);
+                }
             }
             return;
         }
@@ -461,6 +499,7 @@ public class WeaponShooting : NetworkBehaviour
             {
                 charging = true;
                 chargeStart = Time.time;
+                PlayBowDrawAudio();
                 DrawServerRpc(true);
             }
         }
@@ -475,6 +514,7 @@ public class WeaponShooting : NetworkBehaviour
 
     void FireArrow(float charge, bool rapidShot)
     {
+        StopBowDrawAudio();
         ProceduralSfx.PlayForActor(this, ProceduralSfx.BowRelease, playerCamera.transform.position,
             0.45f + 0.3f * charge, 30f);
         ShotFxServerRpc(true, false, false);
@@ -821,7 +861,11 @@ public class WeaponShooting : NetworkBehaviour
     AudioClip ShotClip(bool scoped)
     {
         var clip = weapon != null ? weapon.ShotSound(scoped) : null;
-        if (clip == null || clip.name == "gun_viktor" || clip.name == "gun_anna" || clip.name == "gun_sindel"
+        string heroCue = CollectedAudioBank.WeaponCue(weapon);
+        string alias = heroCue == "kondulic" ? "sniper" : heroCue;
+        bool chosenReplacement = CollectedAudioBank.Has("existing_gun_" + alias)
+            || heroCue == "mosino" && CollectedAudioBank.Has("mosino_fire");
+        if (chosenReplacement || clip == null || clip.name == "gun_viktor" || clip.name == "gun_anna" || clip.name == "gun_sindel"
             || clip.name == "gun_sniper_smg" || clip.name == "gun_sniper_scoped")
             clip = CollectedAudioBank.ForActor(this, CollectedAudioBank.WeaponCue(weapon)
                 + (scoped ? "_fire_scoped" : "_fire"), clip);
@@ -831,6 +875,8 @@ public class WeaponShooting : NetworkBehaviour
     // Zvuk vystrelu: vlastni nahravka zbrane (WeaponDefinition.fireSound), jinak generovany zastupny.
     void PlayShot(Vector3 position, bool scoped, float volume)
     {
+        if (CollectedAudioBank.WeaponCue(weapon) == "david")
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("david_impact.fire"), position, 0.4f, WeaponDefinition.FireSoundRange);
         var clip = ShotClip(scoped);
         if (clip != null)
         {
@@ -853,6 +899,7 @@ public class WeaponShooting : NetworkBehaviour
     void ShotFxClientRpc(bool melee, bool scoped, bool power)
     {
         if (IsOwner) return;
+        StopBowDrawAudio();
         remoteDrawStart = -1f;   // (sip vyletel - tetiva povolena)
         held.Swing(power ? 2.4f : 1f);
         if (power)

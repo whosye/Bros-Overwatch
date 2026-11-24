@@ -1,0 +1,1665 @@
+﻿TF2 – kandidáti pro Bros Overwatch
+============================================================
+
+Zdroj: C:\myDev_\audio\sounds\tf2\sound
+Prohlédnuty rekurzivně všechny složky, názvy souborů a metadata kandidátů.
+Výběr podle názvů a rolí v catalog.json. Zvuky NEBYLY poslechnuty.
+A = přímý kandidát; B = alternativa / vrstva; C = experimentální doplněk.
+Samotný skener audio nekopíruje a nemění přiřazení uživatele.
+Umístění místní knihovny: C:\myDev_\games\bros-overwatch-dir\Bros-Overwatch\_MIMO_GIT_K_PRESUNU\TF2_kandidati
+Import / obnova zvuků: python tools/sound-collector/import_tf2.py (ověřuje SHA-256).
+Server a export podporují tuto knihovnu přes stabilní odkazy tf2:… .
+Poslech a přiřazení: http://127.0.0.1:8765/?view=candidates&source=tf2
+Licence zdrojů: nedoložena; původ evidován jako uživatelem dodaná knihovna TF2.
+
+SOUHRN
+{
+  "total_files": 3230,
+  "audio_files": 3229,
+  "subfolders": 82,
+  "total_mib": 1336.73,
+  "candidates": 487,
+  "candidate_mib": 145.13,
+  "tiers": {
+    "A": 248,
+    "B": 224,
+    "C": 15
+  },
+  "categories": {
+    "Hitmarkery a UI": 63,
+    "Honza – granátomet a výbušniny": 36,
+    "Hák a řetěz": 7,
+    "Kroky a pohyb": 80,
+    "Mirek – luk": 27,
+    "Mošino – energie a rytmus": 26,
+    "Pickupy a pití": 18,
+    "Pova – oheň": 12,
+    "Prostředí – stroje a vozidla": 31,
+    "Prostředí – venek a tunel": 34,
+    "Prostředí – voda a oheň": 27,
+    "Sekery, kosa a kontakty": 63,
+    "Stavy, léčení a schopnosti": 36,
+    "Střelné zbraně a přebíjení": 27
+  },
+  "mapped_items": 117
+}
+
+POKRYTÍ SLOŽEK (počty souborů přímo ve složce, podsložky jsou samostatné)
+.: 0 souborů, 0 kandidátů
+ambient: 163 souborů, 35 kandidátů
+ambient/alarms: 1 souborů, 1 kandidátů
+ambient/cp_harbor: 33 souborů, 12 kandidátů
+ambient/grinder: 6 souborů, 0 kandidátů
+ambient/halloween: 75 souborů, 6 kandidátů
+ambient/hell: 8 souborů, 1 kandidátů
+ambient/lair: 94 souborů, 3 kandidátů
+ambient/mvm_warehouse: 26 souborů, 7 kandidátů
+ambient/rottenburg: 25 souborů, 6 kandidátů
+ambient/spacebase: 16 souborů, 0 kandidátů
+ambient/water: 3 souborů, 3 kandidátů
+ambient_mp3: 90 souborů, 0 kandidátů
+ambient_mp3/alarms: 1 souborů, 0 kandidátů
+ambient_mp3/cp_harbor: 17 souborů, 0 kandidátů
+ambient_mp3/grinder: 5 souborů, 0 kandidátů
+ambient_mp3/halloween: 69 souborů, 0 kandidátů
+ambient_mp3/hell: 7 souborů, 0 kandidátů
+ambient_mp3/lair: 87 souborů, 6 kandidátů
+ambient_mp3/mvm_warehouse: 22 souborů, 0 kandidátů
+ambient_mp3/rottenburg: 21 souborů, 0 kandidátů
+ambient_mp3/spacebase: 13 souborů, 0 kandidátů
+ambient_mp3/water: 3 souborů, 0 kandidátů
+coach: 5 souborů, 0 kandidátů
+commentary: 49 souborů, 0 kandidátů
+doors: 3 souborů, 1 kandidátů
+items: 56 souborů, 11 kandidátů
+items/football_manager: 17 souborů, 0 kandidátů
+items/halloween: 22 souborů, 0 kandidátů
+items/japan_fundraiser: 14 souborů, 0 kandidátů
+items/samurai: 7 souborů, 0 kandidátů
+items/summer: 4 souborů, 0 kandidátů
+items/taunts: 0 souborů, 0 kandidátů
+items/taunts/badpipes: 5 souborů, 0 kandidátů
+items/taunts/borrowed_bones: 3 souborů, 0 kandidátů
+items/taunts/killer_solo: 5 souborů, 0 kandidátů
+items/taunts/scout_boston_breakdance: 4 souborů, 0 kandidátů
+items/taunts/spy_travel_agent: 1 souborů, 0 kandidátů
+midi: 1 souborů, 0 kandidátů
+misc: 134 souborů, 7 kandidátů
+misc/halloween: 49 souborů, 8 kandidátů
+misc/halloween/skeletons: 32 souborů, 0 kandidátů
+misc/halloween_eyeball: 4 souborů, 0 kandidátů
+misc/jingle_bells: 5 souborů, 0 kandidátů
+misc/octosteps: 6 souborů, 0 kandidátů
+music: 45 souborů, 0 kandidátů
+mvm: 27 souborů, 9 kandidátů
+mvm/ambient_mp3: 1 souborů, 0 kandidátů
+mvm/giant_common: 10 souborů, 0 kandidátů
+mvm/giant_demoman: 6 souborů, 0 kandidátů
+mvm/giant_heavy: 10 souborů, 0 kandidátů
+mvm/giant_pyro: 7 souborů, 0 kandidátů
+mvm/giant_scout: 5 souborů, 0 kandidátů
+mvm/giant_soldier: 9 souborů, 0 kandidátů
+mvm/melee_impacts: 26 souborů, 4 kandidátů
+mvm/physics: 18 souborů, 4 kandidátů
+mvm/player: 0 souborů, 0 kandidátů
+mvm/player/footsteps: 18 souborů, 0 kandidátů
+mvm/sentrybuster: 8 souborů, 0 kandidátů
+passtime: 31 souborů, 6 kandidátů
+physics: 0 souborů, 0 kandidátů
+physics/body: 13 souborů, 13 kandidátů
+physics/concrete: 4 souborů, 4 kandidátů
+pl_hoodoo: 2 souborů, 1 kandidátů
+plats: 1 souborů, 1 kandidátů
+player: 416 souborů, 45 kandidátů
+player/footsteps: 88 souborů, 62 kandidátů
+player/sleigh_bells: 20 souborů, 0 kandidátů
+replay: 25 souborů, 0 kandidátů
+ui: 342 souborů, 51 kandidátů
+ui/holiday: 4 souborů, 0 kandidátů
+weapons: 767 souborů, 136 kandidátů
+weapons/breadmonster: 0 souborů, 0 kandidátů
+weapons/breadmonster/gloves: 7 souborů, 0 kandidátů
+weapons/breadmonster/sapper: 10 souborů, 8 kandidátů
+weapons/breadmonster/throwable: 32 souborů, 0 kandidátů
+weapons/fx: 0 souborů, 0 kandidátů
+weapons/fx/nearmiss: 11 souborů, 4 kandidátů
+weapons/fx/rics: 23 souborů, 18 kandidátů
+weapons/halloween_boss: 2 souborů, 2 kandidátů
+weapons/pan: 7 souborů, 3 kandidátů
+weapons/rainblower: 5 souborů, 0 kandidátů
+weapons/samurai: 19 souborů, 9 kandidátů
+
+Přehled všech souborů včetně důvodů vyřazení: TF2_INVENTORY.json
+
+KANDIDÁTI
+
+HITMARKERY A UI
+------------------------------------------------------------
+[A] misc/rd_finale_beep01.wav (0.765 s)
+  Návrh použití: Odpočet a start; Tik zabírání
+  Jednotlivé tikání / pípnutí; odpočet sestavit časováním, nejde o mluvená čísla.
+[A] pl_hoodoo/alarm_clock_ticking_3.wav (2.701 s)
+  Návrh použití: Odpočet a start; Tik zabírání
+  Jednotlivé tikání / pípnutí; odpočet sestavit časováním, nejde o mluvená čísla.
+[A] plats/grandfather_clock_tick.wav (5.982 s)
+  Návrh použití: Odpočet a start; Tik zabírání
+  Jednotlivé tikání / pípnutí; odpočet sestavit časováním, nejde o mluvená čísla.
+[A] ui/buttonclick.wav (0.079 s)
+  Návrh použití: Tlačítka a výběr hrdiny
+  Tlačítka, najetí myší, výběr a otevření/zavření panelu.
+[A] ui/buttonclickrelease.wav (0.065 s)
+  Návrh použití: Tlačítka a výběr hrdiny
+  Tlačítka, najetí myší, výběr a otevření/zavření panelu.
+[A] ui/buttonrollover.wav (0.053 s)
+  Návrh použití: Tlačítka a výběr hrdiny
+  Tlačítka, najetí myší, výběr a otevření/zavření panelu.
+[A] ui/hitsound.wav (1.5 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_beepo.wav (1.192 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_electro1.wav (0.999 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_electro2.wav (0.947 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_electro3.wav (0.997 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_percussion1.wav (1.598 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_percussion2.wav (1.602 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_percussion3.wav (1.602 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_percussion4.wav (1.599 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_percussion5.wav (1.601 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_retro1.wav (0.5 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_retro2.wav (0.496 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_retro3.wav (0.488 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_retro4.wav (0.504 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_retro5.wav (0.503 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_space.wav (0.597 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_squasher.wav (0.352 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_vortex1.wav (1.202 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_vortex2.wav (1.201 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_vortex3.wav (1.198 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_vortex4.wav (1.207 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/hitsound_vortex5.wav (1.224 s)
+  Návrh použití: Zpětná vazba a stavy / Potvrzení zásahu
+  Krátké hitmarkery; vhodnost a ostrost rozhodne poslech.
+[A] ui/killsound.wav (1.501 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/killsound_beepo.wav (1.001 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/killsound_electro.wav (1.0 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/killsound_note.wav (1.0 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/killsound_percussion.wav (0.997 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/killsound_retro.wav (1.333 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/killsound_space.wav (1.0 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/killsound_squasher.wav (1.0 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/killsound_vortex.wav (0.997 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Potvrzení zabití; headshot může potřebovat jinou, rozlišitelnou značku.
+[A] ui/menu_focus.wav (0.027 s)
+  Návrh použití: Tlačítka a výběr hrdiny
+  Tlačítka, najetí myší, výběr a otevření/zavření panelu.
+[A] ui/mm_join.wav (3.004 s)
+  Návrh použití: Lobby · připojení a připravenost
+  Připojení / připravenost nebo ano/ne; porovnat pro lobby.
+[A] ui/panel_close.wav (0.131 s)
+  Návrh použití: Tlačítka a výběr hrdiny
+  Tlačítka, najetí myší, výběr a otevření/zavření panelu.
+[A] ui/panel_open.wav (0.118 s)
+  Návrh použití: Tlačítka a výběr hrdiny
+  Tlačítka, najetí myší, výběr a otevření/zavření panelu.
+[A] ui/trade_ready.wav (1.559 s)
+  Návrh použití: Lobby · připojení a připravenost
+  Připojení / připravenost nebo ano/ne; porovnat pro lobby.
+[A] ui/vote_no.wav (0.798 s)
+  Návrh použití: Lobby · připojení a připravenost
+  Připojení / připravenost nebo ano/ne; porovnat pro lobby.
+[A] ui/vote_yes.wav (0.615 s)
+  Návrh použití: Lobby · připojení a připravenost
+  Připojení / připravenost nebo ano/ne; porovnat pro lobby.
+[B] items/cart_warning_single.wav (3.765 s)
+  Návrh použití: Časové varování a konec
+  Varovný signál: konec času či důležitá událost.
+[B] misc/hud_warning.wav (0.623 s)
+  Návrh použití: Časové varování a konec
+  Varovný signál: konec času či důležitá událost.
+[B] mvm/mvm_warning.wav (3.077 s)
+  Návrh použití: Časové varování a konec
+  Varovný signál: konec času či důležitá událost.
+[B] player/crit_hit.wav (0.93 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Kritický zásah / headshot: alternativa výraznějšího potvrzení.
+[B] player/crit_hit2.wav (0.822 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Kritický zásah / headshot: alternativa výraznějšího potvrzení.
+[B] player/crit_hit3.wav (0.701 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Kritický zásah / headshot: alternativa výraznějšího potvrzení.
+[B] player/crit_hit4.wav (0.841 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Kritický zásah / headshot: alternativa výraznějšího potvrzení.
+[B] player/crit_hit5.wav (0.754 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Kritický zásah / headshot: alternativa výraznějšího potvrzení.
+[B] ui/chime_rd_2base_neg.wav (0.705 s)
+  Návrh použití: Sporný bod / bod soupeře
+  Negativní značka / alarm: porovnat pro sporný bod nebo soupeře.
+[B] ui/chime_rd_2base_pos.wav (0.745 s)
+  Návrh použití: Odemčení bodu; Zabrání bodu
+  Pozitivní krátké potvrzení odemčení či získání bodu; nejde o hotovou herní hlášku.
+[B] ui/quest_turn_in_accepted_light.wav (6.406 s)
+  Návrh použití: Odemčení bodu; Zabrání bodu
+  Pozitivní krátké potvrzení odemčení či získání bodu; nejde o hotovou herní hlášku.
+[B] ui/rd_2base_alarm.wav (0.745 s)
+  Návrh použití: Sporný bod / bod soupeře
+  Negativní značka / alarm: porovnat pro sporný bod nebo soupeře.
+[B] ui/scored.wav (2.996 s)
+  Návrh použití: Odemčení bodu; Zabrání bodu
+  Pozitivní krátké potvrzení odemčení či získání bodu; nejde o hotovou herní hlášku.
+[B] weapons/upgrade_explosive_headshot.wav (0.786 s)
+  Návrh použití: Zpětná vazba a stavy / Headshot a zabití
+  Kritický zásah / headshot: alternativa výraznějšího potvrzení.
+[C] misc/your_team_lost.wav (7.602 s)
+  Návrh použití: Výhra a prohra
+  Výsledková znělka: silná identita TF2, případnou řeč a délku ověřit.
+[C] misc/your_team_stalemate.wav (8.02 s)
+  Návrh použití: Výhra a prohra
+  Výsledková znělka: silná identita TF2, případnou řeč a délku ověřit.
+[C] misc/your_team_won.wav (8.009 s)
+  Návrh použití: Výhra a prohra
+  Výsledková znělka: silná identita TF2, případnou řeč a délku ověřit.
+[C] ui/mm_match_end_lose_music_casual.wav (49.07 s)
+  Návrh použití: Výhra a prohra
+  Výsledková znělka: silná identita TF2, případnou řeč a délku ověřit.
+[C] ui/mm_match_end_win_music_casual.wav (50.282 s)
+  Návrh použití: Výhra a prohra
+  Výsledková znělka: silná identita TF2, případnou řeč a délku ověřit.
+
+HONZA – GRANÁTOMET A VÝBUŠNINY
+------------------------------------------------------------
+[A] weapons/explode1.wav (8.057 s)
+  Návrh použití: Společná knihovna / Malý výbuch; Honza / Nálož · Shift / RMB; Honza / Granáty po smrti; Šindel / Svatý granát · E
+  Výbuch: fyzická vrstva granátu či nálože. Pro svatý granát ponechat samostatnou předvýbuchovou nahrávku.
+[A] weapons/explode2.wav (8.057 s)
+  Návrh použití: Společná knihovna / Malý výbuch; Honza / Nálož · Shift / RMB; Honza / Granáty po smrti; Šindel / Svatý granát · E
+  Výbuch: fyzická vrstva granátu či nálože. Pro svatý granát ponechat samostatnou předvýbuchovou nahrávku.
+[A] weapons/explode3.wav (7.57 s)
+  Návrh použití: Společná knihovna / Malý výbuch; Honza / Nálož · Shift / RMB; Honza / Granáty po smrti; Šindel / Svatý granát · E
+  Výbuch: fyzická vrstva granátu či nálože. Pro svatý granát ponechat samostatnou předvýbuchovou nahrávku.
+[A] weapons/grenade_impact.wav (1.24 s)
+  Návrh použití: Společná knihovna / Odraz granátu; Honza / Granáty po smrti; Honza / Nálož · Shift / RMB
+  Kontakt / odraz granátu nebo bomby. Porovnat jednotlivé varianty.
+[A] weapons/grenade_impact2.wav (1.24 s)
+  Návrh použití: Společná knihovna / Odraz granátu; Honza / Granáty po smrti; Honza / Nálož · Shift / RMB
+  Kontakt / odraz granátu nebo bomby. Porovnat jednotlivé varianty.
+[A] weapons/grenade_impact3.wav (1.24 s)
+  Návrh použití: Společná knihovna / Odraz granátu; Honza / Granáty po smrti; Honza / Nálož · Shift / RMB
+  Kontakt / odraz granátu nebo bomby. Porovnat jednotlivé varianty.
+[A] weapons/grenade_launcher_drum_close.wav (0.554 s)
+  Návrh použití: Honza / Přebití granátometu
+  Skutečný granátomet: otevření, vložení munice, zavření a další fáze přebití. Sestavit podle animace.
+[A] weapons/grenade_launcher_drum_load.wav (0.411 s)
+  Návrh použití: Honza / Přebití granátometu
+  Skutečný granátomet: otevření, vložení munice, zavření a další fáze přebití. Sestavit podle animace.
+[A] weapons/grenade_launcher_drum_open.wav (0.56 s)
+  Návrh použití: Honza / Přebití granátometu
+  Skutečný granátomet: otevření, vložení munice, zavření a další fáze přebití. Sestavit podle animace.
+[A] weapons/grenade_launcher_drum_start.wav (0.313 s)
+  Návrh použití: Honza / Přebití granátometu
+  Skutečný granátomet: otevření, vložení munice, zavření a další fáze přebití. Sestavit podle animace.
+[A] weapons/grenade_launcher_drum_stop.wav (0.266 s)
+  Návrh použití: Honza / Přebití granátometu
+  Skutečný granátomet: otevření, vložení munice, zavření a další fáze přebití. Sestavit podle animace.
+[A] weapons/grenade_launcher_shoot.wav (0.592 s)
+  Návrh použití: Honza · výstřel
+  Alternativní výstřel granátometu; stávající výstřel nepřepisovat bez výběru.
+[A] weapons/grenade_launcher_worldreload.wav (0.411 s)
+  Návrh použití: Honza / Přebití granátometu
+  Skutečný granátomet: otevření, vložení munice, zavření a další fáze přebití. Sestavit podle animace.
+[A] weapons/grenade_throw.wav (0.763 s)
+  Návrh použití: Honza / Nálož · Shift / RMB
+  Detonace nálože, nabíjení nebo hod: každé je jiná fáze schopnosti.
+[A] weapons/loch_n_load_shoot.wav (2.005 s)
+  Návrh použití: Honza · výstřel
+  Alternativní výstřel granátometu; stávající výstřel nepřepisovat bez výběru.
+[A] weapons/loose_cannon_shoot.wav (0.771 s)
+  Návrh použití: Honza · výstřel
+  Alternativní výstřel granátometu; stávající výstřel nepřepisovat bez výběru.
+[A] weapons/pipe_bomb1.wav (4.017 s)
+  Návrh použití: Společná knihovna / Odraz granátu; Honza / Granáty po smrti; Honza / Nálož · Shift / RMB
+  Kontakt / odraz granátu nebo bomby. Porovnat jednotlivé varianty.
+[A] weapons/pipe_bomb2.wav (4.017 s)
+  Návrh použití: Společná knihovna / Odraz granátu; Honza / Granáty po smrti; Honza / Nálož · Shift / RMB
+  Kontakt / odraz granátu nebo bomby. Porovnat jednotlivé varianty.
+[A] weapons/pipe_bomb3.wav (4.017 s)
+  Návrh použití: Společná knihovna / Odraz granátu; Honza / Granáty po smrti; Honza / Nálož · Shift / RMB
+  Kontakt / odraz granátu nebo bomby. Porovnat jednotlivé varianty.
+[A] weapons/rocket_blackbox_explode1.wav (4.086 s)
+  Návrh použití: Společná knihovna / Malý výbuch; Honza / Nálož · Shift / RMB; Honza / Granáty po smrti; Šindel / Svatý granát · E
+  Výbuch: fyzická vrstva granátu či nálože. Pro svatý granát ponechat samostatnou předvýbuchovou nahrávku.
+[A] weapons/rocket_blackbox_explode2.wav (1.989 s)
+  Návrh použití: Společná knihovna / Malý výbuch; Honza / Nálož · Shift / RMB; Honza / Granáty po smrti; Šindel / Svatý granát · E
+  Výbuch: fyzická vrstva granátu či nálože. Pro svatý granát ponechat samostatnou předvýbuchovou nahrávku.
+[A] weapons/rocket_blackbox_explode3.wav (1.772 s)
+  Návrh použití: Společná knihovna / Malý výbuch; Honza / Nálož · Shift / RMB; Honza / Granáty po smrti; Šindel / Svatý granát · E
+  Výbuch: fyzická vrstva granátu či nálože. Pro svatý granát ponechat samostatnou předvýbuchovou nahrávku.
+[A] weapons/stickybomblauncher_charge_up.wav (4.0 s)
+  Návrh použití: Honza / Nálož · Shift / RMB
+  Detonace nálože, nabíjení nebo hod: každé je jiná fáze schopnosti.
+[A] weapons/stickybomblauncher_det.wav (0.159 s)
+  Návrh použití: Honza / Nálož · Shift / RMB
+  Detonace nálože, nabíjení nebo hod: každé je jiná fáze schopnosti.
+[B] misc/halloween/hwn_bomb_attach.wav (1.441 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] mvm/mvm_bomb_explode.wav (5.303 s)
+  Návrh použití: Společná knihovna / Velký výbuch / úder; Honza / Balvan · Q
+  Těžší exploze / koncová vrstva balvanu; nikoli samotné valení kamene.
+[B] mvm/mvm_tank_explode.wav (4.052 s)
+  Návrh použití: Společná knihovna / Velký výbuch / úder; Honza / Balvan · Q
+  Těžší exploze / koncová vrstva balvanu; nikoli samotné valení kamene.
+[B] weapons/breadmonster/sapper/bm_sapper_snap_01.wav (0.423 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] weapons/breadmonster/sapper/bm_sapper_snap_02.wav (0.33 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] weapons/breadmonster/sapper/bm_sapper_snap_03.wav (0.509 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] weapons/breadmonster/sapper/bm_sapper_snap_04.wav (0.483 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] weapons/breadmonster/sapper/bm_sapper_snap_05.wav (0.443 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] weapons/breadmonster/sapper/bm_sapper_snap_06.wav (0.332 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] weapons/breadmonster/sapper/bm_sapper_snap_07.wav (0.309 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] weapons/breadmonster/sapper/bm_sapper_snap_08.wav (0.305 s)
+  Návrh použití: Honza / Past na medvědy · E
+  Pouze alternativa sklapnutí/přichycení; sapper nemusí znít jako kovová past. Ověřit poslechem.
+[B] weapons/loose_cannon_explode.wav (2.004 s)
+  Návrh použití: Společná knihovna / Velký výbuch / úder; Honza / Balvan · Q
+  Těžší exploze / koncová vrstva balvanu; nikoli samotné valení kamene.
+
+HÁK A ŘETĚZ
+------------------------------------------------------------
+[A] weapons/grappling_hook_impact_default.wav (0.9 s)
+  Návrh použití: Pova / Sekera na řetězu · E; Kondulič / Hák · Shift
+  Fáze háku: výstřel, kontakt, navíjení a konec. Ke každé fázi vybírat samostatně; není to automaticky zvuk kovového řetězu.
+[A] weapons/grappling_hook_impact_flesh.wav (1.739 s)
+  Návrh použití: Pova / Sekera na řetězu · E; Kondulič / Hák · Shift
+  Fáze háku: výstřel, kontakt, navíjení a konec. Ke každé fázi vybírat samostatně; není to automaticky zvuk kovového řetězu.
+[A] weapons/grappling_hook_impact_flesh_loop.wav (5.017 s)
+  Návrh použití: Pova / Sekera na řetězu · E; Kondulič / Hák · Shift
+  Fáze háku: výstřel, kontakt, navíjení a konec. Ke každé fázi vybírat samostatně; není to automaticky zvuk kovového řetězu.
+[A] weapons/grappling_hook_reel_start.wav (1.827 s)
+  Návrh použití: Pova / Sekera na řetězu · E; Kondulič / Hák · Shift
+  Fáze háku: výstřel, kontakt, navíjení a konec. Ke každé fázi vybírat samostatně; není to automaticky zvuk kovového řetězu.
+[A] weapons/grappling_hook_reel_stop.wav (0.62 s)
+  Návrh použití: Pova / Sekera na řetězu · E; Kondulič / Hák · Shift
+  Fáze háku: výstřel, kontakt, navíjení a konec. Ke každé fázi vybírat samostatně; není to automaticky zvuk kovového řetězu.
+[A] weapons/grappling_hook_shoot.wav (1.31 s)
+  Návrh použití: Pova / Sekera na řetězu · E; Kondulič / Hák · Shift
+  Fáze háku: výstřel, kontakt, navíjení a konec. Ke každé fázi vybírat samostatně; není to automaticky zvuk kovového řetězu.
+[A] weapons/grappling_hook_wind.wav (4.048 s)
+  Návrh použití: Pova / Sekera na řetězu · E; Kondulič / Hák · Shift
+  Fáze háku: výstřel, kontakt, navíjení a konec. Ke každé fázi vybírat samostatně; není to automaticky zvuk kovového řetězu.
+
+KROKY A POHYB
+------------------------------------------------------------
+[A] player/footsteps/concrete1.wav (0.532 s)
+  Návrh použití: Kroky a dopady / Beton a kámen
+  Beton: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/concrete2.wav (0.623 s)
+  Návrh použití: Kroky a dopady / Beton a kámen
+  Beton: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/concrete3.wav (0.719 s)
+  Návrh použití: Kroky a dopady / Beton a kámen
+  Beton: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/concrete4.wav (0.481 s)
+  Návrh použití: Kroky a dopady / Beton a kámen
+  Beton: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/dirt1.wav (0.496 s)
+  Návrh použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/dirt2.wav (0.859 s)
+  Návrh použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/dirt3.wav (0.859 s)
+  Návrh použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/dirt4.wav (0.615 s)
+  Návrh použití: Kroky a dopady / Hlína
+  Hlína: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/grass1.wav (0.585 s)
+  Návrh použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/grass2.wav (0.451 s)
+  Návrh použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/grass3.wav (0.647 s)
+  Návrh použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/grass4.wav (0.8 s)
+  Návrh použití: Kroky a dopady / Tráva
+  Tráva: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/gravel1.wav (0.487 s)
+  Návrh použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/gravel2.wav (0.387 s)
+  Návrh použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/gravel3.wav (0.546 s)
+  Návrh použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/gravel4.wav (0.349 s)
+  Návrh použití: Kroky a dopady / Štěrk
+  Štěrk: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/ladder1.wav (0.634 s)
+  Návrh použití: Další pohyb / Lezení po žebříku
+  Kontakty při lezení po žebříku.
+[A] player/footsteps/ladder2.wav (0.762 s)
+  Návrh použití: Další pohyb / Lezení po žebříku
+  Kontakty při lezení po žebříku.
+[A] player/footsteps/ladder3.wav (0.813 s)
+  Návrh použití: Další pohyb / Lezení po žebříku
+  Kontakty při lezení po žebříku.
+[A] player/footsteps/ladder4.wav (0.59 s)
+  Návrh použití: Další pohyb / Lezení po žebříku
+  Kontakty při lezení po žebříku.
+[A] player/footsteps/metal1.wav (0.38 s)
+  Návrh použití: Kroky a dopady / Kovový plech
+  Kov: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/metal2.wav (0.444 s)
+  Návrh použití: Kroky a dopady / Kovový plech
+  Kov: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/metal3.wav (0.49 s)
+  Návrh použití: Kroky a dopady / Kovový plech
+  Kov: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/metal4.wav (0.449 s)
+  Návrh použití: Kroky a dopady / Kovový plech
+  Kov: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/metalgrate1.wav (0.679 s)
+  Návrh použití: Kroky a dopady / Kovový plech
+  Kovový rošt: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/metalgrate2.wav (0.798 s)
+  Návrh použití: Kroky a dopady / Kovový plech
+  Kovový rošt: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/metalgrate3.wav (0.725 s)
+  Návrh použití: Kroky a dopady / Kovový plech
+  Kovový rošt: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/metalgrate4.wav (0.713 s)
+  Návrh použití: Kroky a dopady / Kovový plech
+  Kovový rošt: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/sand1.wav (0.337 s)
+  Návrh použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/sand2.wav (0.446 s)
+  Návrh použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/sand3.wav (0.273 s)
+  Návrh použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/sand4.wav (0.346 s)
+  Návrh použití: Kroky a dopady / Písek
+  Písek: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/slosh1.wav (0.844 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Šplouchavé kroky: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/slosh2.wav (0.846 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Šplouchavé kroky: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/slosh3.wav (0.831 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Šplouchavé kroky: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/slosh4.wav (1.01 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Šplouchavé kroky: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/slosh5.wav (1.068 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Šplouchavé kroky: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/slosh6.wav (0.936 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Šplouchavé kroky: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/tile1.wav (0.486 s)
+  Návrh použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/tile2.wav (0.623 s)
+  Návrh použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/tile3.wav (0.719 s)
+  Návrh použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/tile4.wav (0.444 s)
+  Návrh použití: Kroky a dopady / Dlažba a keramika
+  Dlažba: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/wade1.wav (1.173 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Brodění: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/wade2.wav (1.168 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Brodění: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/wade3.wav (0.832 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Brodění: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/wade4.wav (1.045 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Brodění: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/wood1.wav (0.611 s)
+  Návrh použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/wood2.wav (0.334 s)
+  Návrh použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/wood3.wav (0.766 s)
+  Návrh použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/wood4.wav (0.576 s)
+  Návrh použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevo: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/woodpanel1.wav (0.551 s)
+  Návrh použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevěné panely: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/woodpanel2.wav (0.612 s)
+  Návrh použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevěné panely: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/woodpanel3.wav (0.58 s)
+  Návrh použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevěné panely: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[A] player/footsteps/woodpanel4.wav (0.659 s)
+  Návrh použití: Kroky a dopady / Dřevěná podlaha; Kroky a dopady / Pevné dřevo
+  Dřevěné panely: jednotlivé kroky, zachovat varianty pro náhodné střídání.
+[B] passtime/projectile_swoosh1.wav (0.47 s)
+  Návrh použití: Viktor / Úskok · Shift; Mirek / Výskok · Shift; Max / Rozpolcení · Shift
+  Krátký průlet / whoosh. Pro úskok, šíp nebo rychlý přesun porovnat délku a charakter.
+[B] passtime/projectile_swoosh2.wav (0.482 s)
+  Návrh použití: Viktor / Úskok · Shift; Mirek / Výskok · Shift; Max / Rozpolcení · Shift
+  Krátký průlet / whoosh. Pro úskok, šíp nebo rychlý přesun porovnat délku a charakter.
+[B] passtime/projectile_swoosh3.wav (0.508 s)
+  Návrh použití: Viktor / Úskok · Shift; Mirek / Výskok · Shift; Max / Rozpolcení · Shift
+  Krátký průlet / whoosh. Pro úskok, šíp nebo rychlý přesun porovnat délku a charakter.
+[B] passtime/projectile_swoosh4.wav (0.508 s)
+  Návrh použití: Viktor / Úskok · Shift; Mirek / Výskok · Shift; Max / Rozpolcení · Shift
+  Krátký průlet / whoosh. Pro úskok, šíp nebo rychlý přesun porovnat délku a charakter.
+[B] passtime/projectile_swoosh5.wav (0.553 s)
+  Návrh použití: Viktor / Úskok · Shift; Mirek / Výskok · Shift; Max / Rozpolcení · Shift
+  Krátký průlet / whoosh. Pro úskok, šíp nebo rychlý přesun porovnat délku a charakter.
+[B] passtime/projectile_swoosh6.wav (0.553 s)
+  Návrh použití: Viktor / Úskok · Shift; Mirek / Výskok · Shift; Max / Rozpolcení · Shift
+  Krátký průlet / whoosh. Pro úskok, šíp nebo rychlý přesun porovnat délku a charakter.
+[B] player/cyoa_pda_clothes_rustle.wav (0.652 s)
+  Návrh použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Šustění / úchop: pohybová vrstva pro prudký pohyb nebo vytažení na hranu.
+[B] player/cyoa_pda_clothes_rustle_light.wav (0.652 s)
+  Návrh použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Šustění / úchop: pohybová vrstva pro prudký pohyb nebo vytažení na hranu.
+[B] player/cyoa_pda_clothes_rustle_long.wav (1.158 s)
+  Návrh použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Šustění / úchop: pohybová vrstva pro prudký pohyb nebo vytažení na hranu.
+[B] player/cyoa_pda_fly_swoosh.wav (0.398 s)
+  Návrh použití: Viktor / Úskok · Shift; Mirek / Výskok · Shift; Max / Rozpolcení · Shift
+  Krátký průlet / whoosh. Pro úskok, šíp nebo rychlý přesun porovnat délku a charakter.
+[B] player/cyoa_pda_grab.wav (0.054 s)
+  Návrh použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Šustění / úchop: pohybová vrstva pro prudký pohyb nebo vytažení na hranu.
+[B] player/footsteps/mud1.wav (0.349 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Mokré kroky / bláto: doplněk vody a břehu.
+[B] player/footsteps/mud2.wav (0.314 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Mokré kroky / bláto: doplněk vody a břehu.
+[B] player/footsteps/mud3.wav (0.488 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Mokré kroky / bláto: doplněk vody a břehu.
+[B] player/footsteps/mud4.wav (0.569 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Mokré kroky / bláto: doplněk vody a břehu.
+[B] player/footsteps/wet1.wav (0.471 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Mokré kroky / bláto: doplněk vody a břehu.
+[B] player/footsteps/wet2.wav (0.859 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Mokré kroky / bláto: doplněk vody a břehu.
+[B] player/footsteps/wet3.wav (0.809 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Mokré kroky / bláto: doplněk vody a břehu.
+[B] player/footsteps/wet4.wav (0.615 s)
+  Návrh použití: Kroky a dopady / Mělká voda
+  Mokré kroky / bláto: doplněk vody a břehu.
+[B] player/pl_fallpain.wav (0.517 s)
+  Návrh použití: Další pohyb / Odraz a dvojskok; Kroky a dopady / Beton a kámen
+  Dopad po pádu; obecná vrstva, ne sada různých materiálů.
+[B] player/pl_scout_jump1.wav (1.819 s)
+  Návrh použití: Další pohyb / Odraz a dvojskok; Mirek / Výskok · Shift
+  Odraz / dvojskok; ověřit, kolik klipu tvoří hlas postavy.
+[B] player/pl_scout_jump2.wav (1.602 s)
+  Návrh použití: Další pohyb / Odraz a dvojskok; Mirek / Výskok · Shift
+  Odraz / dvojskok; ověřit, kolik klipu tvoří hlas postavy.
+[B] player/pl_scout_jump3.wav (1.514 s)
+  Návrh použití: Další pohyb / Odraz a dvojskok; Mirek / Výskok · Shift
+  Odraz / dvojskok; ověřit, kolik klipu tvoří hlas postavy.
+[B] player/pl_scout_jump4.wav (1.836 s)
+  Návrh použití: Další pohyb / Odraz a dvojskok; Mirek / Výskok · Shift
+  Odraz / dvojskok; ověřit, kolik klipu tvoří hlas postavy.
+[B] player/taunt_clothes_rustle.wav (1.709 s)
+  Návrh použití: Další pohyb / Pohyb oblečení; Další pohyb / Vytažení na hranu
+  Šustění / úchop: pohybová vrstva pro prudký pohyb nebo vytažení na hranu.
+[B] weapons/mantreads.wav (0.679 s)
+  Návrh použití: Další pohyb / Odraz a dvojskok; Kroky a dopady / Beton a kámen
+  Dopad po pádu; obecná vrstva, ne sada různých materiálů.
+
+MIREK – LUK
+------------------------------------------------------------
+[A] weapons/bow_arrow_slide.wav (0.64 s)
+  Návrh použití: Mirek / Luk a šíp
+  Luk: založení šípu, natažení, vypuštění nebo vytažení zbraně podle názvu.
+[A] weapons/bow_shoot.wav (1.11 s)
+  Návrh použití: Mirek / Luk a šíp
+  Luk: založení šípu, natažení, vypuštění nebo vytažení zbraně podle názvu.
+[A] weapons/bow_shoot_pull.wav (0.562 s)
+  Návrh použití: Mirek / Luk a šíp
+  Luk: založení šípu, natažení, vypuštění nebo vytažení zbraně podle názvu.
+[A] weapons/bow_shoot_pull_reverse.wav (0.562 s)
+  Návrh použití: Mirek / Luk a šíp
+  Luk: založení šípu, natažení, vypuštění nebo vytažení zbraně podle názvu.
+[A] weapons/bow_shoot_pull_short.wav (0.422 s)
+  Návrh použití: Mirek / Luk a šíp
+  Luk: založení šípu, natažení, vypuštění nebo vytažení zbraně podle názvu.
+[A] weapons/draw_bow.wav (0.787 s)
+  Návrh použití: Mirek / Luk a šíp
+  Luk: založení šípu, natažení, vypuštění nebo vytažení zbraně podle názvu.
+[A] weapons/fx/nearmiss/arrow_nearmiss.wav (0.412 s)
+  Návrh použití: Mirek / Luk a šíp; Mirek / Průzkumný šíp · E
+  Průlet šípu kolem posluchače; ne zvuk vypuštění z luku.
+[A] weapons/fx/nearmiss/arrow_nearmiss2.wav (0.615 s)
+  Návrh použití: Mirek / Luk a šíp; Mirek / Průzkumný šíp · E
+  Průlet šípu kolem posluchače; ne zvuk vypuštění z luku.
+[A] weapons/fx/nearmiss/arrow_nearmiss3.wav (0.414 s)
+  Návrh použití: Mirek / Luk a šíp; Mirek / Průzkumný šíp · E
+  Průlet šípu kolem posluchače; ne zvuk vypuštění z luku.
+[A] weapons/fx/nearmiss/arrow_nearmiss4.wav (0.518 s)
+  Návrh použití: Mirek / Luk a šíp; Mirek / Průzkumný šíp · E
+  Průlet šípu kolem posluchače; ne zvuk vypuštění z luku.
+[A] weapons/fx/rics/arrow_impact_concrete.wav (0.585 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_concrete2.wav (0.607 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_concrete4.wav (0.601 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_flesh.wav (0.638 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_flesh2.wav (0.685 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_flesh3.wav (0.976 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_flesh4.wav (0.713 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_metal.wav (0.984 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_metal2.wav (0.75 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_metal4.wav (0.713 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_wood.wav (0.849 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_wood2.wav (1.755 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[A] weapons/fx/rics/arrow_impact_wood4.wav (0.974 s)
+  Návrh použití: Společná knihovna / Dopady šípů; Mirek / Luk a šíp
+  Dopad šípu; materiál je uvedený v názvu. Zachovat varianty.
+[B] weapons/recon_ping.wav (2.49 s)
+  Návrh použití: Mirek / Průzkumný šíp · E; Viktor / Taktický zaměřovač · Q
+  Ping / sken: kandidát pro průzkumný šíp či zaměřovač.
+[B] weapons/sentry_scan.wav (3.251 s)
+  Návrh použití: Mirek / Průzkumný šíp · E; Viktor / Taktický zaměřovač · Q
+  Ping / sken: kandidát pro průzkumný šíp či zaměřovač.
+[B] weapons/sentry_scan2.wav (3.378 s)
+  Návrh použití: Mirek / Průzkumný šíp · E; Viktor / Taktický zaměřovač · Q
+  Ping / sken: kandidát pro průzkumný šíp či zaměřovač.
+[B] weapons/sentry_scan3.wav (3.505 s)
+  Návrh použití: Mirek / Průzkumný šíp · E; Viktor / Taktický zaměřovač · Q
+  Ping / sken: kandidát pro průzkumný šíp či zaměřovač.
+
+MOŠINO – ENERGIE A RYTMUS
+------------------------------------------------------------
+[B] weapons/bison_main_shot.wav (1.668 s)
+  Návrh použití: Mošino / Zvukomet · výstřel
+  Energetický výstřel: porovnat jako základ zvukometu, může potřebovat basovou vrstvu a úpravu délky.
+[B] weapons/bison_main_shot_01.wav (1.496 s)
+  Návrh použití: Mošino / Zvukomet · výstřel
+  Energetický výstřel: porovnat jako základ zvukometu, může potřebovat basovou vrstvu a úpravu délky.
+[B] weapons/bison_main_shot_02.wav (1.466 s)
+  Návrh použití: Mošino / Zvukomet · výstřel
+  Energetický výstřel: porovnat jako základ zvukometu, může potřebovat basovou vrstvu a úpravu délky.
+[B] weapons/bison_reload.wav (0.694 s)
+  Návrh použití: Mošino / Přebití zvukometu
+  Stylizované přebití energetické zbraně, nikoli automaticky synchronizovaná hotová sekvence.
+[B] weapons/buffed_off.wav (2.688 s)
+  Návrh použití: Mošino / Přepnutí rytmu · Shift; Mošino / Zesílení · E; Obnovení předmětu / konec buffu; Zpětná vazba a stavy / Léčení a zesílení
+  Přepnutí režimu / zapnutí a vypnutí buffu, porovnat pro rytmus a zesílení. Ukončení buffu, odlišit od sebrání nového předmětu.
+[B] weapons/buffed_on.wav (2.428 s)
+  Návrh použití: Mošino / Přepnutí rytmu · Shift; Mošino / Zesílení · E
+  Přepnutí režimu / zapnutí a vypnutí buffu, porovnat pro rytmus a zesílení.
+[B] weapons/capper_shoot.wav (1.0 s)
+  Návrh použití: Mošino / Zvukomet · výstřel
+  Energetický výstřel: porovnat jako základ zvukometu, může potřebovat basovou vrstvu a úpravu délky.
+[B] weapons/cow_mangler_main_shot.wav (1.834 s)
+  Návrh použití: Mošino / Zvukomet · výstřel
+  Energetický výstřel: porovnat jako základ zvukometu, může potřebovat basovou vrstvu a úpravu délky.
+[B] weapons/cow_mangler_reload.wav (0.619 s)
+  Návrh použití: Mošino / Přebití zvukometu
+  Stylizované přebití energetické zbraně, nikoli automaticky synchronizovaná hotová sekvence.
+[B] weapons/cow_mangler_reload_02.wav (0.6 s)
+  Návrh použití: Mošino / Přebití zvukometu
+  Stylizované přebití energetické zbraně, nikoli automaticky synchronizovaná hotová sekvence.
+[B] weapons/cow_mangler_reload_03.wav (0.6 s)
+  Návrh použití: Mošino / Přebití zvukometu
+  Stylizované přebití energetické zbraně, nikoli automaticky synchronizovaná hotová sekvence.
+[B] weapons/cow_mangler_reload_04.wav (0.602 s)
+  Návrh použití: Mošino / Přebití zvukometu
+  Stylizované přebití energetické zbraně, nikoli automaticky synchronizovaná hotová sekvence.
+[B] weapons/cow_mangler_reload_final.wav (0.886 s)
+  Návrh použití: Mošino / Přebití zvukometu
+  Stylizované přebití energetické zbraně, nikoli automaticky synchronizovaná hotová sekvence.
+[B] weapons/flame_thrower_airblast.wav (1.469 s)
+  Návrh použití: Mošino / Dopad zvukového projektilu; Mošino / Basový úder · RMB; Viktor / Pulzní granát · RMB
+  Energetický kontakt / tlakový úder. Rozlišit zásah projektilu a odhození basovou vlnou.
+[B] weapons/fx/rics/bison_projectile_impact_flesh.wav (2.014 s)
+  Návrh použití: Mošino / Dopad zvukového projektilu; Mošino / Basový úder · RMB; Viktor / Pulzní granát · RMB
+  Energetický kontakt / tlakový úder. Rozlišit zásah projektilu a odhození basovou vlnou.
+[B] weapons/fx/rics/bison_projectile_impact_world.wav (2.014 s)
+  Návrh použití: Mošino / Dopad zvukového projektilu; Mošino / Basový úder · RMB; Viktor / Pulzní granát · RMB
+  Energetický kontakt / tlakový úder. Rozlišit zásah projektilu a odhození basovou vlnou.
+[B] weapons/fx/rics/pomson_projectile_impact_flesh.wav (2.014 s)
+  Návrh použití: Mošino / Dopad zvukového projektilu; Mošino / Basový úder · RMB; Viktor / Pulzní granát · RMB
+  Energetický kontakt / tlakový úder. Rozlišit zásah projektilu a odhození basovou vlnou.
+[B] weapons/fx/rics/pomson_projectile_impact_world.wav (2.014 s)
+  Návrh použití: Mošino / Dopad zvukového projektilu; Mošino / Basový úder · RMB; Viktor / Pulzní granát · RMB
+  Energetický kontakt / tlakový úder. Rozlišit zásah projektilu a odhození basovou vlnou.
+[B] weapons/pomson_fire_01.wav (1.407 s)
+  Návrh použití: Mošino / Zvukomet · výstřel
+  Energetický výstřel: porovnat jako základ zvukometu, může potřebovat basovou vrstvu a úpravu délky.
+[B] weapons/push.wav (0.637 s)
+  Návrh použití: Mošino / Dopad zvukového projektilu; Mošino / Basový úder · RMB; Viktor / Pulzní granát · RMB
+  Energetický kontakt / tlakový úder. Rozlišit zásah projektilu a odhození basovou vlnou.
+[B] weapons/push_impact.wav (0.62 s)
+  Návrh použití: Mošino / Dopad zvukového projektilu; Mošino / Basový úder · RMB; Viktor / Pulzní granát · RMB
+  Energetický kontakt / tlakový úder. Rozlišit zásah projektilu a odhození basovou vlnou.
+[B] weapons/vaccinator_toggle.wav (0.429 s)
+  Návrh použití: Mošino / Přepnutí rytmu · Shift; Mošino / Zesílení · E
+  Přepnutí režimu / zapnutí a vypnutí buffu, porovnat pro rytmus a zesílení.
+[C] ambient/halloween/mysterious_perc_01.wav (5.363 s)
+  Návrh použití: Mošino / Střelba do taktu
+  Experimentální perkusní akcenty; tóninu, tempo a vhodnost pro střelbu do taktu je nutné ověřit.
+[C] ambient/halloween/mysterious_perc_02.wav (5.439 s)
+  Návrh použití: Mošino / Střelba do taktu
+  Experimentální perkusní akcenty; tóninu, tempo a vhodnost pro střelbu do taktu je nutné ověřit.
+[C] ambient/halloween/mysterious_perc_03.wav (3.966 s)
+  Návrh použití: Mošino / Střelba do taktu
+  Experimentální perkusní akcenty; tóninu, tempo a vhodnost pro střelbu do taktu je nutné ověřit.
+[C] ambient/halloween/mysterious_perc_04.wav (3.99 s)
+  Návrh použití: Mošino / Střelba do taktu
+  Experimentální perkusní akcenty; tóninu, tempo a vhodnost pro střelbu do taktu je nutné ověřit.
+
+PICKUPY A PITÍ
+------------------------------------------------------------
+[A] items/regenerate.wav (2.165 s)
+  Návrh použití: Lékárnička; Velká lékárnička; Tramal
+  Doplnění zdraví / regenerace, porovnat pro léčivé předměty.
+[A] items/spawn_item.wav (0.986 s)
+  Návrh použití: Obnovení předmětu / konec buffu; Zpětná vazba a stavy / Oživení
+  Obnovení předmětu / oživení hráče, rozlišit použití poslechem.
+[A] mvm/mvm_revive.wav (1.212 s)
+  Návrh použití: Obnovení předmětu / konec buffu; Zpětná vazba a stavy / Oživení
+  Obnovení předmětu / oživení hráče, rozlišit použití poslechem.
+[A] player/pl_scout_dodge_can_crush.wav (0.284 s)
+  Návrh použití: David / Posílení · Q
+  Otevření / zmáčknutí plechovky pro Monster; fyzická vrstva posílení.
+[A] player/pl_scout_dodge_can_drink.wav (1.225 s)
+  Návrh použití: Pivo · rychlost; Slivovice · síla; Dědova slivovice
+  Otevření plechovky, pití nebo šplouchání lahve; fyzické vrstvy pickupu, nepřepisují hudbu.
+[A] player/pl_scout_dodge_can_drink_fast.wav (0.63 s)
+  Návrh použití: Pivo · rychlost; Slivovice · síla; Dědova slivovice
+  Otevření plechovky, pití nebo šplouchání lahve; fyzické vrstvy pickupu, nepřepisují hudbu.
+[A] player/pl_scout_dodge_can_open.wav (1.492 s)
+  Návrh použití: Pivo · rychlost; Slivovice · síla; Dědova slivovice; David / Posílení · Q
+  Otevření plechovky, pití nebo šplouchání lahve; fyzické vrstvy pickupu, nepřepisují hudbu. Otevření / zmáčknutí plechovky pro Monster; fyzická vrstva posílení.
+[A] player/taunt_bottle_slosh.wav (0.578 s)
+  Návrh použití: Pivo · rychlost; Slivovice · síla; Dědova slivovice
+  Otevření plechovky, pití nebo šplouchání lahve; fyzické vrstvy pickupu, nepřepisují hudbu.
+[A] player/taunt_demo_bigburp.wav (0.608 s)
+  Návrh použití: Dědova slivovice
+  Demomanovo velké grknutí (burp) z TF2: uživatelem vyžádaný kandidát po vypití dědovy slivovice. Není to zvuk respawnu pickupu.
+[B] items/gunpickup2.wav (0.659 s)
+  Návrh použití: Honzův karburátor
+  Kovový pickup, kandidát karburátoru.
+[B] items/powerup_pickup_haste.wav (3.007 s)
+  Návrh použití: Pivo · rychlost
+  Stylizované sebrání odpovídajícího buffu; porovnat oproti běžnému potvrzení.
+[B] items/powerup_pickup_regeneration.wav (3.0 s)
+  Návrh použití: Lékárnička; Tramal
+  Stylizované sebrání odpovídajícího buffu; porovnat oproti běžnému potvrzení.
+[B] items/powerup_pickup_resistance.wav (1.95 s)
+  Návrh použití: Štít
+  Stylizované sebrání odpovídajícího buffu; porovnat oproti běžnému potvrzení.
+[B] items/powerup_pickup_strength.wav (4.484 s)
+  Návrh použití: Slivovice · síla
+  Stylizované sebrání odpovídajícího buffu; porovnat oproti běžnému potvrzení.
+[B] items/powerup_pickup_uber.wav (7.959 s)
+  Návrh použití: Dědova slivovice
+  Stylizované sebrání odpovídajícího buffu; porovnat oproti běžnému potvrzení.
+[B] player/invulnerable_off.wav (2.606 s)
+  Návrh použití: Obnovení předmětu / konec buffu; Zpětná vazba a stavy / Léčení a zesílení
+  Ukončení buffu, odlišit od sebrání nového předmětu.
+[B] ui/item_metal_scrap_pickup.wav (0.893 s)
+  Návrh použití: Honzův karburátor
+  Kovový pickup, kandidát karburátoru.
+[B] ui/item_metal_tiny_pickup.wav (0.85 s)
+  Návrh použití: Honzův karburátor
+  Kovový pickup, kandidát karburátoru.
+
+POVA – OHEŇ
+------------------------------------------------------------
+[A] weapons/flame_thrower_end.wav (0.819 s)
+  Návrh použití: Pova / Modrý plamen · Shift
+  Ucelené fáze plamenometu: nástup, smyčka, kontakt a doznění.
+[A] weapons/flame_thrower_fire_hit.wav (3.629 s)
+  Návrh použití: Pova / Modrý plamen · Shift
+  Ucelené fáze plamenometu: nástup, smyčka, kontakt a doznění.
+[A] weapons/flame_thrower_fire_hitloop.wav (1.143 s)
+  Návrh použití: Pova / Modrý plamen · Shift
+  Ucelené fáze plamenometu: nástup, smyčka, kontakt a doznění.
+[A] weapons/flame_thrower_loop.wav (3.63 s)
+  Návrh použití: Pova / Modrý plamen · Shift
+  Ucelené fáze plamenometu: nástup, smyčka, kontakt a doznění.
+[A] weapons/flame_thrower_start.wav (3.63 s)
+  Návrh použití: Pova / Modrý plamen · Shift
+  Ucelené fáze plamenometu: nástup, smyčka, kontakt a doznění.
+[B] misc/flame_engulf.wav (2.494 s)
+  Návrh použití: Pova / Modrý plamen · Shift; Pova / Ohnivý dopad · Q
+  Rozhoření / ohnivý projektil / meteor: stylizovaná vrstva plamene nebo ohnivého dopadu.
+[B] misc/halloween/spell_fireball_cast.wav (1.997 s)
+  Návrh použití: Pova / Modrý plamen · Shift; Pova / Ohnivý dopad · Q
+  Rozhoření / ohnivý projektil / meteor: stylizovaná vrstva plamene nebo ohnivého dopadu.
+[B] misc/halloween/spell_fireball_impact.wav (2.577 s)
+  Návrh použití: Pova / Modrý plamen · Shift; Pova / Ohnivý dopad · Q
+  Rozhoření / ohnivý projektil / meteor: stylizovaná vrstva plamene nebo ohnivého dopadu.
+[B] misc/halloween/spell_meteor_cast.wav (2.002 s)
+  Návrh použití: Pova / Modrý plamen · Shift; Pova / Ohnivý dopad · Q
+  Rozhoření / ohnivý projektil / meteor: stylizovaná vrstva plamene nebo ohnivého dopadu.
+[B] misc/halloween/spell_meteor_impact.wav (3.008 s)
+  Návrh použití: Pova / Modrý plamen · Shift; Pova / Ohnivý dopad · Q
+  Rozhoření / ohnivý projektil / meteor: stylizovaná vrstva plamene nebo ohnivého dopadu.
+[B] weapons/dragons_fury_impact.wav (2.494 s)
+  Návrh použití: Pova / Modrý plamen · Shift; Pova / Ohnivý dopad · Q
+  Rozhoření / ohnivý projektil / meteor: stylizovaná vrstva plamene nebo ohnivého dopadu.
+[B] weapons/dragons_fury_shoot.wav (3.227 s)
+  Návrh použití: Pova / Modrý plamen · Shift; Pova / Ohnivý dopad · Q
+  Rozhoření / ohnivý projektil / meteor: stylizovaná vrstva plamene nebo ohnivého dopadu.
+
+PROSTŘEDÍ – STROJE A VOZIDLA
+------------------------------------------------------------
+[B] ambient/computer_tape.wav (4.957 s)
+  Návrh použití: Workshop · počítač
+  Počítač / elektronika: podkres workshopu nebo krátké pracovní ruchy.
+[B] ambient/computer_working.wav (5.929 s)
+  Návrh použití: Workshop · počítač
+  Počítač / elektronika: podkres workshopu nebo krátké pracovní ruchy.
+[B] ambient/computer_working2.wav (7.798 s)
+  Návrh použití: Workshop · počítač
+  Počítač / elektronika: podkres workshopu nebo krátké pracovní ruchy.
+[B] ambient/cp_harbor/car_1shot_01.wav (9.952 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/cp_harbor/car_1shot_02.wav (3.71 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/cp_harbor/car_1shot_03.wav (9.908 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/cp_harbor/car_1shot_04.wav (7.932 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/cp_harbor/car_1shot_05.wav (11.371 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/cp_harbor/car_1shot_06.wav (9.483 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/engine_idle.wav (2.011 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/lair/cap_3_inside_computer_bank1.wav (12.697 s)
+  Návrh použití: Workshop · počítač
+  Počítač / elektronika: podkres workshopu nebo krátké pracovní ruchy.
+[B] ambient/mvm_warehouse/car_passby_01.wav (3.384 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/mvm_warehouse/car_passby_02.wav (8.675 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/mvm_warehouse/car_passby_03.wav (9.419 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/mvm_warehouse/car_passby_04.wav (1.288 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/mvm_warehouse/car_passby_05.wav (5.435 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/mvm_warehouse/car_passby_06.wav (5.955 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] ambient/mvm_warehouse/car_passby_07.wav (7.915 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Motor / jednorázový zvuk / průjezd auta; typ motoru a možnost smyčky vyžaduje poslech.
+[B] doors/door_metal_rusty_move1.wav (5.55 s)
+  Návrh použití: Kotel · páka
+  Rezavý kovový pohyb: pouze kandidát mechanické vrstvy páky; délku a charakter posoudit.
+[B] mvm/mvm_tank_end.wav (4.103 s)
+  Návrh použití: Rolba · motor; Rolba · pásy a náraz
+  Pásové vozidlo: vrstvy motoru, pohybu a nárazu rolby; nejde o potvrzený zvuk skutečné rolby.
+[B] mvm/mvm_tank_loop.wav (3.349 s)
+  Návrh použití: Rolba · motor; Rolba · pásy a náraz
+  Pásové vozidlo: vrstvy motoru, pohybu a nárazu rolby; nejde o potvrzený zvuk skutečné rolby.
+[B] mvm/mvm_tank_smash.wav (3.449 s)
+  Návrh použití: Rolba · motor; Rolba · pásy a náraz
+  Pásové vozidlo: vrstvy motoru, pohybu a nárazu rolby; nejde o potvrzený zvuk skutečné rolby.
+[B] mvm/mvm_tank_start.wav (4.103 s)
+  Návrh použití: Rolba · motor; Rolba · pásy a náraz
+  Pásové vozidlo: vrstvy motoru, pohybu a nárazu rolby; nejde o potvrzený zvuk skutečné rolby.
+[B] player/taunt_tank_end_engine_stop.wav (2.024 s)
+  Návrh použití: Rolba · motor; Rolba · pásy a náraz
+  Pásové vozidlo: vrstvy motoru, pohybu a nárazu rolby; nejde o potvrzený zvuk skutečné rolby.
+[B] player/taunt_tank_forward.wav (7.464 s)
+  Návrh použití: Rolba · motor; Rolba · pásy a náraz
+  Pásové vozidlo: vrstvy motoru, pohybu a nárazu rolby; nejde o potvrzený zvuk skutečné rolby.
+[B] player/taunt_tank_idle.wav (2.982 s)
+  Návrh použití: Rolba · motor; Rolba · pásy a náraz
+  Pásové vozidlo: vrstvy motoru, pohybu a nárazu rolby; nejde o potvrzený zvuk skutečné rolby.
+[B] player/taunt_tank_reverse.wav (8.666 s)
+  Návrh použití: Rolba · motor; Rolba · pásy a náraz
+  Pásové vozidlo: vrstvy motoru, pohybu a nárazu rolby; nejde o potvrzený zvuk skutečné rolby.
+[C] weapons/bumper_car_accelerate.wav (1.98 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Stylizovaná elektrická autíčka: pouze alternativní pohybová vrstva Yarisu, nikoli věrný benzínový motor.
+[C] weapons/bumper_car_decelerate.wav (2.271 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Stylizovaná elektrická autíčka: pouze alternativní pohybová vrstva Yarisu, nikoli věrný benzínový motor.
+[C] weapons/bumper_car_go_loop.wav (2.481 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Stylizovaná elektrická autíčka: pouze alternativní pohybová vrstva Yarisu, nikoli věrný benzínový motor.
+[C] weapons/bumper_car_screech.wav (5.004 s)
+  Návrh použití: Yaris · motor a pneumatiky
+  Stylizovaná elektrická autíčka: pouze alternativní pohybová vrstva Yarisu, nikoli věrný benzínový motor.
+
+PROSTŘEDÍ – VENEK A TUNEL
+------------------------------------------------------------
+[A] ambient/bird1.wav (2.824 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/bird2.wav (2.075 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/bird3.wav (2.433 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird1.wav (1.171 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird2.wav (0.431 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird3.wav (0.588 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird4.wav (0.514 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird5.wav (0.743 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird6.wav (0.891 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird7.wav (0.948 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird8.wav (2.749 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_bird9.wav (0.943 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/forest_life.wav (8.853 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/lightwindcreaks.wav (7.146 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/outdoors_quiet_birds.wav (5.828 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/pondlife.wav (6.351 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/wind_gust1.wav (3.497 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[A] ambient/wind_gust2.wav (4.46 s)
+  Návrh použití: Chaty · další ambientové vrstvy; Hanamura · atmosféra
+  Ptáci, příroda a vítr: lokální vrstvy chat a zahrady, porovnat se stávajícím podkresem.
+[B] ambient/halloween/underground_wind_lp_01.wav (8.629 s)
+  Návrh použití: Tunel · atmosféra
+  Tunel / vnitřní prostor: poslední varianta je stylizovaný temný rumble, porovnat intenzitu.
+[B] ambient/hell/hell_rumbles_01.wav (2.966 s)
+  Návrh použití: Tunel · atmosféra
+  Tunel / vnitřní prostor: poslední varianta je stylizovaný temný rumble, porovnat intenzitu.
+[B] ambient/indoors.wav (1.869 s)
+  Návrh použití: Tunel · atmosféra
+  Tunel / vnitřní prostor: poslední varianta je stylizovaný temný rumble, porovnat intenzitu.
+[B] ambient/rottenburg/dove_01.wav (1.586 s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient/rottenburg/dove_02.wav (2.16 s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient/rottenburg/smallbird_01.wav (2.0 s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient/rottenburg/smallbird_02.wav (2.0 s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient/rottenburg/smallbird_03.wav (2.0 s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient/rottenburg/smallbird_04.wav (2.0 s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient/underground.wav (4.849 s)
+  Návrh použití: Tunel · atmosféra
+  Tunel / vnitřní prostor: poslední varianta je stylizovaný temný rumble, porovnat intenzitu.
+[B] ambient_mp3/lair/animal_call_woodpecker1.mp3 (? s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient_mp3/lair/animal_call_woodpecker2.mp3 (? s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient_mp3/lair/animal_call_woodpecker3.mp3 (? s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[B] ambient_mp3/lair/animal_call_woodpecker4.mp3 (? s)
+  Návrh použití: Hanamura · atmosféra; Chaty · další ambientové vrstvy
+  Další ptáci; zahrnout i MP3 bez WAV protějšku, nejde o duplicitní formát.
+[C] misc/achievement_earned.wav (10.12 s)
+  Návrh použití: Respin Joker · výhra
+  Krátká odměna / cinknutí: jen kandidát vrstvy výhry automatu, ne hotový zvuk slotu.
+[C] ui/mm_xp_chime.wav (3.342 s)
+  Návrh použití: Respin Joker · výhra
+  Krátká odměna / cinknutí: jen kandidát vrstvy výhry automatu, ne hotový zvuk slotu.
+
+PROSTŘEDÍ – VODA A OHEŇ
+------------------------------------------------------------
+[A] ambient/boiler_01.wav (5.675 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/boiler_02.wav (5.675 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/cp_harbor/cauldron_lp_main.wav (6.52 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/cp_harbor/furnace_1_shot_01.wav (4.31 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/cp_harbor/furnace_1_shot_02.wav (2.999 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/cp_harbor/furnace_1_shot_03.wav (4.168 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/cp_harbor/furnace_1_shot_04.wav (3.94 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/cp_harbor/furnace_1_shot_05.wav (3.262 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/lair/cap_2_boiler_rough1.wav (4.979 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/lair/cap_2_boiler_smooth1.wav (5.057 s)
+  Návrh použití: Kotel · oheň a přehřátí
+  Kotel / pec: smyčka nebo jednotlivé zvuky provozu, přesný charakter ověřit.
+[A] ambient/medieval_brazier.wav (3.968 s)
+  Návrh použití: Krb a gril; Kotel · oheň a přehřátí
+  Ohniště / hoření, kandidát krbu a grilu.
+[A] ambient/pondwater.wav (4.695 s)
+  Návrh použití: Potok; Jízda proudem
+  Rybník / proud / vodopád, porovnat intenzitu pro potok a tobogan.
+[A] ambient/water/water_splash1.wav (1.306 s)
+  Návrh použití: Malý a velký splash; Kroky a dopady / Mělká voda; Společná knihovna / Kulka → voda
+  Vodní splash, velikost a vhodnost zásahu hladiny ověřit poslechem.
+[A] ambient/water/water_splash2.wav (1.521 s)
+  Návrh použití: Malý a velký splash; Kroky a dopady / Mělká voda; Společná knihovna / Kulka → voda
+  Vodní splash, velikost a vhodnost zásahu hladiny ověřit poslechem.
+[A] ambient/water/water_splash3.wav (1.993 s)
+  Návrh použití: Malý a velký splash; Kroky a dopady / Mělká voda; Společná knihovna / Kulka → voda
+  Vodní splash, velikost a vhodnost zásahu hladiny ověřit poslechem.
+[A] ambient/waterfall.wav (5.747 s)
+  Návrh použití: Potok; Jízda proudem
+  Rybník / proud / vodopád, porovnat intenzitu pro potok a tobogan.
+[A] ambient/waterfallinside.wav (5.747 s)
+  Návrh použití: Potok; Jízda proudem
+  Rybník / proud / vodopád, porovnat intenzitu pro potok a tobogan.
+[A] ambient/waterfalloutside.wav (5.747 s)
+  Návrh použití: Potok; Jízda proudem
+  Rybník / proud / vodopád, porovnat intenzitu pro potok a tobogan.
+[B] ambient/alarms/doomsday_lift_alarm.wav (2.643 s)
+  Návrh použití: Kotel · varování v patře
+  Technický alarm: porovnat pro přehřátí kotle.
+[B] ambient/drips1.wav (7.059 s)
+  Návrh použití: Potok; Tunel · atmosféra
+  Kapání a podzemní voda: lokální vrstva tunelu či vody, ne automaticky potok.
+[B] ambient/drips2.wav (7.059 s)
+  Návrh použití: Potok; Tunel · atmosféra
+  Kapání a podzemní voda: lokální vrstva tunelu či vody, ne automaticky potok.
+[B] ambient/drips3.wav (6.757 s)
+  Návrh použití: Potok; Tunel · atmosféra
+  Kapání a podzemní voda: lokální vrstva tunelu či vody, ne automaticky potok.
+[B] ambient/halloween/underground_water_lp_01.wav (7.217 s)
+  Návrh použití: Potok; Tunel · atmosféra
+  Kapání a podzemní voda: lokální vrstva tunelu či vody, ne automaticky potok.
+[B] ambient/steam_drum.wav (2.476 s)
+  Návrh použití: Kotel · oheň a přehřátí; Kotel · varování v patře
+  Pára / syčení: doplněk kotle, nikoli vlastní vrstva hoření.
+[B] ambient_mp3/lair/jungle_underground_steam.mp3 (? s)
+  Návrh použití: Kotel · oheň a přehřátí; Kotel · varování v patře
+  Pára / syčení: doplněk kotle, nikoli vlastní vrstva hoření.
+[B] ambient_mp3/lair/jungle_underground_steam2.mp3 (? s)
+  Návrh použití: Kotel · oheň a přehřátí; Kotel · varování v patře
+  Pára / syčení: doplněk kotle, nikoli vlastní vrstva hoření.
+[B] items/bomb_warning.wav (3.765 s)
+  Návrh použití: Kotel · varování v patře
+  Technický alarm: porovnat pro přehřátí kotle.
+
+SEKERY, KOSA A KONTAKTY
+------------------------------------------------------------
+[A] physics/body/body_medium_impact_hard1.wav (1.016 s)
+  Návrh použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Smrt a pád těla; Yaris · fyzická vrstva sražení
+  Tvrdý dopad těla nebo fyzická vrstva sražení autem; bez hlášky.
+[A] physics/body/body_medium_impact_hard2.wav (0.85 s)
+  Návrh použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Smrt a pád těla; Yaris · fyzická vrstva sražení
+  Tvrdý dopad těla nebo fyzická vrstva sražení autem; bez hlášky.
+[A] physics/body/body_medium_impact_hard3.wav (1.016 s)
+  Návrh použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Smrt a pád těla; Yaris · fyzická vrstva sražení
+  Tvrdý dopad těla nebo fyzická vrstva sražení autem; bez hlášky.
+[A] physics/body/body_medium_impact_hard4.wav (0.796 s)
+  Návrh použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Smrt a pád těla; Yaris · fyzická vrstva sražení
+  Tvrdý dopad těla nebo fyzická vrstva sražení autem; bez hlášky.
+[A] physics/body/body_medium_impact_hard5.wav (1.016 s)
+  Návrh použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Smrt a pád těla; Yaris · fyzická vrstva sražení
+  Tvrdý dopad těla nebo fyzická vrstva sražení autem; bez hlášky.
+[A] physics/body/body_medium_impact_hard6.wav (0.981 s)
+  Návrh použití: Další pohyb / Náraz hráče do stěny; Zpětná vazba a stavy / Smrt a pád těla; Yaris · fyzická vrstva sražení
+  Tvrdý dopad těla nebo fyzická vrstva sražení autem; bez hlášky.
+[A] weapons/axe_hit_flesh1.wav (0.466 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/axe_hit_flesh2.wav (0.505 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/axe_hit_flesh3.wav (0.466 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/blade_hit1.wav (0.205 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/blade_hit2.wav (0.208 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/blade_hit3.wav (0.201 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/blade_hit4.wav (0.205 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/blade_slice_2.wav (0.574 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/blade_slice_3.wav (0.522 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/blade_slice_4.wav (0.555 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada); Zpětná vazba a stavy / Zásahy do těla
+  Kontakt ostré zbraně s hráčem; oddělit od švihu vzduchem a zásahu stěny.
+[A] weapons/demo_sword_swing1.wav (0.39 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[A] weapons/demo_sword_swing2.wav (0.348 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[A] weapons/demo_sword_swing3.wav (0.387 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[A] weapons/knife_swing.wav (0.364 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[A] weapons/machete_swing.wav (0.572 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[A] weapons/pickaxe_swing1.wav (0.499 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[A] weapons/pickaxe_swing2.wav (0.498 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[A] weapons/pickaxe_swing3.wav (0.5 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[A] weapons/shovel_swing.wav (0.616 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Rozpolcení · Shift
+  Švih chladné zbraně; porovnat váhu sekery a kosy. Není to zásah cíle.
+[B] mvm/melee_impacts/blade_hit_robo01.wav (0.234 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Výrazný kovový kontakt; robot/pánev mohou být příliš specifické. Jen alternativa bloku či zásahu kovu.
+[B] mvm/melee_impacts/blade_hit_robo02.wav (0.316 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Výrazný kovový kontakt; robot/pánev mohou být příliš specifické. Jen alternativa bloku či zásahu kovu.
+[B] mvm/melee_impacts/blade_hit_robo03.wav (0.299 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Výrazný kovový kontakt; robot/pánev mohou být příliš specifické. Jen alternativa bloku či zásahu kovu.
+[B] mvm/melee_impacts/blade_hit_robo04.wav (0.17 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Výrazný kovový kontakt; robot/pánev mohou být příliš specifické. Jen alternativa bloku či zásahu kovu.
+[B] physics/body/body_medium_impact_soft1.wav (0.55 s)
+  Návrh použití: Zpětná vazba a stavy / Smrt a pád těla; Zpětná vazba a stavy / Zásahy do těla
+  Měkčí dopad těla, porovnat oproti tvrdé sadě.
+[B] physics/body/body_medium_impact_soft2.wav (1.016 s)
+  Návrh použití: Zpětná vazba a stavy / Smrt a pád těla; Zpětná vazba a stavy / Zásahy do těla
+  Měkčí dopad těla, porovnat oproti tvrdé sadě.
+[B] physics/body/body_medium_impact_soft3.wav (0.512 s)
+  Návrh použití: Zpětná vazba a stavy / Smrt a pád těla; Zpětná vazba a stavy / Zásahy do těla
+  Měkčí dopad těla, porovnat oproti tvrdé sadě.
+[B] physics/body/body_medium_impact_soft4.wav (0.514 s)
+  Návrh použití: Zpětná vazba a stavy / Smrt a pád těla; Zpětná vazba a stavy / Zásahy do těla
+  Měkčí dopad těla, porovnat oproti tvrdé sadě.
+[B] physics/body/body_medium_impact_soft5.wav (0.55 s)
+  Návrh použití: Zpětná vazba a stavy / Smrt a pád těla; Zpětná vazba a stavy / Zásahy do těla
+  Měkčí dopad těla, porovnat oproti tvrdé sadě.
+[B] physics/body/body_medium_impact_soft6.wav (1.016 s)
+  Návrh použití: Zpětná vazba a stavy / Smrt a pád těla; Zpětná vazba a stavy / Zásahy do těla
+  Měkčí dopad těla, porovnat oproti tvrdé sadě.
+[B] physics/body/body_medium_impact_soft7.wav (0.512 s)
+  Návrh použití: Zpětná vazba a stavy / Smrt a pád těla; Zpětná vazba a stavy / Zásahy do těla
+  Měkčí dopad těla, porovnat oproti tvrdé sadě.
+[B] player/pl_impact_airblast1.wav (0.719 s)
+  Návrh použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Tělesný úder nebo odhození; podklad kopnutí, ne samotný pohyb nohy.
+[B] player/pl_impact_airblast2.wav (0.825 s)
+  Návrh použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Tělesný úder nebo odhození; podklad kopnutí, ne samotný pohyb nohy.
+[B] player/pl_impact_airblast3.wav (0.768 s)
+  Návrh použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Tělesný úder nebo odhození; podklad kopnutí, ne samotný pohyb nohy.
+[B] player/pl_impact_airblast4.wav (0.731 s)
+  Návrh použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Tělesný úder nebo odhození; podklad kopnutí, ne samotný pohyb nohy.
+[B] weapons/blade_hitworld.wav (1.188 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Pova / Zkřížené sekyry · RMB
+  Kontakt s objektem: přesný materiál nelze určit jen z názvu; ověřit poslechem.
+[B] weapons/boxing_gloves_hit1.wav (0.432 s)
+  Návrh použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Tělesný úder nebo odhození; podklad kopnutí, ne samotný pohyb nohy.
+[B] weapons/boxing_gloves_hit2.wav (0.403 s)
+  Návrh použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Tělesný úder nebo odhození; podklad kopnutí, ne samotný pohyb nohy.
+[B] weapons/boxing_gloves_hit3.wav (0.302 s)
+  Návrh použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Tělesný úder nebo odhození; podklad kopnutí, ne samotný pohyb nohy.
+[B] weapons/boxing_gloves_hit4.wav (0.375 s)
+  Návrh použití: Kondulič / Odkopnutí · E; Zpětná vazba a stavy / Zásahy do těla
+  Tělesný úder nebo odhození; podklad kopnutí, ne samotný pohyb nohy.
+[B] weapons/cbar_hit1.wav (1.168 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Pova / Zkřížené sekyry · RMB
+  Kontakt s objektem: přesný materiál nelze určit jen z názvu; ověřit poslechem.
+[B] weapons/cbar_hit2.wav (1.177 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Pova / Zkřížené sekyry · RMB
+  Kontakt s objektem: přesný materiál nelze určit jen z názvu; ověřit poslechem.
+[B] weapons/demo_sword_hit_world1.wav (1.172 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Pova / Zkřížené sekyry · RMB
+  Kontakt s objektem: přesný materiál nelze určit jen z názvu; ověřit poslechem.
+[B] weapons/demo_sword_hit_world2.wav (1.172 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → tvrdý povrch; Pova / Zkřížené sekyry · RMB
+  Kontakt s objektem: přesný materiál nelze určit jen z názvu; ověřit poslechem.
+[B] weapons/halloween_boss/knight_axe_hit.wav (3.517 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada)
+  Alternativní zásah chladnou zbraní; charakter kontaktu ověřit.
+[B] weapons/halloween_boss/knight_axe_miss.wav (1.881 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Dlouhý řez · RMB
+  Alternativní seknutí / těžký švih, vhodnost pro kosu nebo sekeru ověřit.
+[B] weapons/pan/pan_impact_world1.wav (1.198 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Výrazný kovový kontakt; robot/pánev mohou být příliš specifické. Jen alternativa bloku či zásahu kovu.
+[B] weapons/pan/pan_impact_world2.wav (1.198 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Výrazný kovový kontakt; robot/pánev mohou být příliš specifické. Jen alternativa bloku či zásahu kovu.
+[B] weapons/pan/pan_impact_world3.wav (1.198 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → kov; Pova / Zkřížené sekyry · RMB
+  Výrazný kovový kontakt; robot/pánev mohou být příliš specifické. Jen alternativa bloku či zásahu kovu.
+[B] weapons/samurai/tf_katana_01.wav (0.751 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada)
+  Alternativní zásah chladnou zbraní; charakter kontaktu ověřit.
+[B] weapons/samurai/tf_katana_02.wav (0.77 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada)
+  Alternativní zásah chladnou zbraní; charakter kontaktu ověřit.
+[B] weapons/samurai/tf_katana_03.wav (0.812 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada)
+  Alternativní zásah chladnou zbraní; charakter kontaktu ověřit.
+[B] weapons/samurai/tf_katana_04.wav (0.715 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada)
+  Alternativní zásah chladnou zbraní; charakter kontaktu ověřit.
+[B] weapons/samurai/tf_katana_05.wav (0.671 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada)
+  Alternativní zásah chladnou zbraní; charakter kontaktu ověřit.
+[B] weapons/samurai/tf_katana_06.wav (0.671 s)
+  Návrh použití: Společná knihovna / Sekera / kosa → hráč (společná sada)
+  Alternativní zásah chladnou zbraní; charakter kontaktu ověřit.
+[B] weapons/samurai/tf_katana_slice_01.wav (1.393 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Dlouhý řez · RMB
+  Alternativní seknutí / těžký švih, vhodnost pro kosu nebo sekeru ověřit.
+[B] weapons/samurai/tf_katana_slice_02.wav (1.757 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Dlouhý řez · RMB
+  Alternativní seknutí / těžký švih, vhodnost pro kosu nebo sekeru ověřit.
+[B] weapons/samurai/tf_katana_slice_03.wav (1.637 s)
+  Návrh použití: Pova / Sekyrky; Max / Kosa; Max / Dlouhý řez · RMB
+  Alternativní seknutí / těžký švih, vhodnost pro kosu nebo sekeru ověřit.
+
+STAVY, LÉČENÍ A SCHOPNOSTI
+------------------------------------------------------------
+[A] mvm/mvm_robo_stun.wav (24.787 s)
+  Návrh použití: Zpětná vazba a stavy / Omráčení; Zpětná vazba a stavy / Potvrzení omráčení / uspání
+  Omráčení nebo potvrzení; robotickou variantu porovnat s běžnou.
+[A] player/pl_impact_stun.wav (? s)
+  Návrh použití: Zpětná vazba a stavy / Omráčení; Zpětná vazba a stavy / Potvrzení omráčení / uspání
+  Omráčení nebo potvrzení; robotickou variantu porovnat s běžnou.
+[A] player/pl_impact_stun_range.wav (6.136 s)
+  Návrh použití: Zpětná vazba a stavy / Omráčení; Zpětná vazba a stavy / Potvrzení omráčení / uspání
+  Omráčení nebo potvrzení; robotickou variantu porovnat s běžnou.
+[A] player/recharged.wav (0.315 s)
+  Návrh použití: Zpětná vazba a stavy / Ultimátka / náboj připravený; Kondulič / Optika a nabití rány
+  Nabití / připravenost schopnosti; pro optiku jen kandidát elektronického potvrzení.
+[A] player/spy_shield_break.wav (1.486 s)
+  Návrh použití: Zpětná vazba a stavy / Štít; Štít
+  Nástup, konec nebo rozbití štítu podle názvu.
+[A] weapons/dispenser_heal.wav (3.733 s)
+  Návrh použití: Viktor / Léčivé pole · E; Zpětná vazba a stavy / Léčení a zesílení
+  Léčení: smyčka nebo odpojení, možné vrstvy léčivého pole.
+[A] weapons/medi_shield_deploy.wav (0.764 s)
+  Návrh použití: Zpětná vazba a stavy / Štít; Štít
+  Nástup, konec nebo rozbití štítu podle názvu.
+[A] weapons/medi_shield_retract.wav (2.776 s)
+  Návrh použití: Zpětná vazba a stavy / Štít; Štít
+  Nástup, konec nebo rozbití štítu podle názvu.
+[A] weapons/medigun_charged.wav (3.646 s)
+  Návrh použití: Zpětná vazba a stavy / Ultimátka / náboj připravený; Kondulič / Optika a nabití rány
+  Nabití / připravenost schopnosti; pro optiku jen kandidát elektronického potvrzení.
+[A] weapons/medigun_heal.wav (4.0 s)
+  Návrh použití: Viktor / Léčivé pole · E; Zpětná vazba a stavy / Léčení a zesílení
+  Léčení: smyčka nebo odpojení, možné vrstvy léčivého pole.
+[A] weapons/medigun_heal_detach.wav (1.652 s)
+  Návrh použití: Viktor / Léčivé pole · E; Zpětná vazba a stavy / Léčení a zesílení
+  Léčení: smyčka nebo odpojení, možné vrstvy léčivého pole.
+[A] weapons/medigun_no_target.wav (0.992 s)
+  Návrh použití: Zpětná vazba a stavy / Neplatná akce / žádný cíl
+  Žádný cíl / neplatná akce.
+[A] weapons/quick_fix_heal.wav (3.873 s)
+  Návrh použití: Viktor / Léčivé pole · E; Zpětná vazba a stavy / Léčení a zesílení
+  Léčení: smyčka nebo odpojení, možné vrstvy léčivého pole.
+[A] weapons/rocket_pack_boosters_ready.wav (0.732 s)
+  Návrh použití: Zpětná vazba a stavy / Ultimátka / náboj připravený; Kondulič / Optika a nabití rány
+  Nabití / připravenost schopnosti; pro optiku jen kandidát elektronického potvrzení.
+[A] weapons/wrench_hit_build_fail.wav (0.797 s)
+  Návrh použití: Zpětná vazba a stavy / Neplatná akce / žádný cíl
+  Žádný cíl / neplatná akce.
+[B] items/powerup_pickup_supernova_activate.wav (6.007 s)
+  Návrh použití: Zpětná vazba a stavy / Společný nástup ultimátky; David / Posílení · Q; Mošino / Drop the Beat · Q
+  Výrazný nástup zesílení/ultimátky, samotný nevytvoří celou schopnost.
+[B] misc/halloween/spell_blast_jump.wav (1.879 s)
+  Návrh použití: Šindel / Spravedlivý skok · Shift; Mirek / Výskok · Shift
+  Zesílený odraz / dopad; porovnat, aby nepůsobil jako raketový batoh.
+[B] misc/halloween/spell_stealth.wav (2.196 s)
+  Návrh použití: Max / Stínová forma · E; Max / Vpád do stínu · Q
+  Nástup a konec neviditelnosti / teleport: možné vrstvy stínové formy a ultimátky.
+[B] misc/halloween/spell_teleport.wav (1.393 s)
+  Návrh použití: Max / Stínová forma · E; Max / Vpád do stínu · Q
+  Nástup a konec neviditelnosti / teleport: možné vrstvy stínové formy a ultimátky.
+[B] player/resistance_light1.wav (1.301 s)
+  Návrh použití: Zpětná vazba a stavy / Štít
+  Zásah ochrany / odporu, alternativa pro zvuk zásahu štítu.
+[B] player/resistance_light2.wav (1.301 s)
+  Návrh použití: Zpětná vazba a stavy / Štít
+  Zásah ochrany / odporu, alternativa pro zvuk zásahu štítu.
+[B] player/resistance_light3.wav (1.301 s)
+  Návrh použití: Zpětná vazba a stavy / Štít
+  Zásah ochrany / odporu, alternativa pro zvuk zásahu štítu.
+[B] player/resistance_light4.wav (1.301 s)
+  Návrh použití: Zpětná vazba a stavy / Štít
+  Zásah ochrany / odporu, alternativa pro zvuk zásahu štítu.
+[B] player/resistance_medium1.wav (1.999 s)
+  Návrh použití: Zpětná vazba a stavy / Štít
+  Zásah ochrany / odporu, alternativa pro zvuk zásahu štítu.
+[B] player/resistance_medium2.wav (1.999 s)
+  Návrh použití: Zpětná vazba a stavy / Štít
+  Zásah ochrany / odporu, alternativa pro zvuk zásahu štítu.
+[B] player/resistance_medium3.wav (1.999 s)
+  Návrh použití: Zpětná vazba a stavy / Štít
+  Zásah ochrany / odporu, alternativa pro zvuk zásahu štítu.
+[B] player/resistance_medium4.wav (1.999 s)
+  Návrh použití: Zpětná vazba a stavy / Štít
+  Zásah ochrany / odporu, alternativa pro zvuk zásahu štítu.
+[B] player/spy_cloak.wav (2.229 s)
+  Návrh použití: Max / Stínová forma · E; Max / Vpád do stínu · Q
+  Nástup a konec neviditelnosti / teleport: možné vrstvy stínové formy a ultimátky.
+[B] player/spy_uncloak.wav (2.623 s)
+  Návrh použití: Max / Stínová forma · E; Max / Vpád do stínu · Q
+  Nástup a konec neviditelnosti / teleport: možné vrstvy stínové formy a ultimátky.
+[B] weapons/crit_power.wav (8.251 s)
+  Návrh použití: Zpětná vazba a stavy / Společný nástup ultimátky; David / Posílení · Q; Mošino / Drop the Beat · Q
+  Výrazný nástup zesílení/ultimátky, samotný nevytvoří celou schopnost.
+[B] weapons/crusaders_crossbow_shoot.wav (1.311 s)
+  Návrh použití: David / Biotická střela · kontakt
+  Léčivý kontakt nebo vypuštění léčivé střely; kontakt a výstřel rozlišit.
+[B] weapons/fx/rics/arrow_impact_crossbow_heal.wav (3.0 s)
+  Návrh použití: David / Biotická střela · kontakt
+  Léčivý kontakt nebo vypuštění léčivé střely; kontakt a výstřel rozlišit.
+[B] weapons/rocket_pack_boosters_fire.wav (4.541 s)
+  Návrh použití: Šindel / Spravedlivý skok · Shift; Mirek / Výskok · Shift
+  Zesílený odraz / dopad; porovnat, aby nepůsobil jako raketový batoh.
+[B] weapons/rocket_pack_land.wav (0.774 s)
+  Návrh použití: Šindel / Spravedlivý skok · Shift; Mirek / Výskok · Shift
+  Zesílený odraz / dopad; porovnat, aby nepůsobil jako raketový batoh.
+[B] weapons/syringegun_shoot.wav (0.353 s)
+  Návrh použití: David / Uspávací šipka · Shift
+  Vypuštění injekční střely: kandidát pro uspávací šipku, ne samotný stav spánku.
+[B] weapons/weapon_crit_charged_on.wav (4.402 s)
+  Návrh použití: Zpětná vazba a stavy / Společný nástup ultimátky; David / Posílení · Q; Mošino / Drop the Beat · Q
+  Výrazný nástup zesílení/ultimátky, samotný nevytvoří celou schopnost.
+
+STŘELNÉ ZBRANĚ A PŘEBÍJENÍ
+------------------------------------------------------------
+[A] weapons/shotgun_empty.wav (0.116 s)
+  Návrh použití: Společná knihovna / Prázdná zbraň
+  Prázdná zbraň: porovnat krátká mechanická cvaknutí.
+[A] weapons/sniper_bolt_back.wav (0.275 s)
+  Návrh použití: Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  Odstřelovací puška: závěr / přebití, porovnat pro Konduliče a Davida.
+[A] weapons/sniper_bolt_forward.wav (0.311 s)
+  Návrh použití: Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  Odstřelovací puška: závěr / přebití, porovnat pro Konduliče a Davida.
+[A] weapons/sniper_railgun_dry_fire.wav (0.133 s)
+  Návrh použití: Společná knihovna / Prázdná zbraň
+  Prázdná zbraň: porovnat krátká mechanická cvaknutí.
+[A] weapons/sniper_worldreload.wav (0.708 s)
+  Návrh použití: Kondulič / Přebití odstřelovačky; David / Přebití biotické pušky
+  Odstřelovací puška: závěr / přebití, porovnat pro Konduliče a Davida.
+[A] weapons/widow_maker_dry_fire.wav (0.157 s)
+  Návrh použití: Společná knihovna / Prázdná zbraň
+  Prázdná zbraň: porovnat krátká mechanická cvaknutí.
+[B] mvm/physics/robo_impact_bullet01.wav (0.519 s)
+  Návrh použití: Společná knihovna / Kulka → kov
+  Zásah kulky do robota: kovová alternativa, charakter mimo robota posoudit.
+[B] mvm/physics/robo_impact_bullet02.wav (0.519 s)
+  Návrh použití: Společná knihovna / Kulka → kov
+  Zásah kulky do robota: kovová alternativa, charakter mimo robota posoudit.
+[B] mvm/physics/robo_impact_bullet03.wav (0.519 s)
+  Návrh použití: Společná knihovna / Kulka → kov
+  Zásah kulky do robota: kovová alternativa, charakter mimo robota posoudit.
+[B] mvm/physics/robo_impact_bullet04.wav (0.619 s)
+  Návrh použití: Společná knihovna / Kulka → kov
+  Zásah kulky do robota: kovová alternativa, charakter mimo robota posoudit.
+[B] physics/concrete/concrete_impact_flare1.wav (2.014 s)
+  Návrh použití: Společná knihovna / Kulka → kámen, beton, omítka
+  Dopad světlice do betonu; jen alternativa tvrdého zásahu, nejde o potvrzený běžný zásah kulky.
+[B] physics/concrete/concrete_impact_flare2.wav (2.014 s)
+  Návrh použití: Společná knihovna / Kulka → kámen, beton, omítka
+  Dopad světlice do betonu; jen alternativa tvrdého zásahu, nejde o potvrzený běžný zásah kulky.
+[B] physics/concrete/concrete_impact_flare3.wav (2.014 s)
+  Návrh použití: Společná knihovna / Kulka → kámen, beton, omítka
+  Dopad světlice do betonu; jen alternativa tvrdého zásahu, nejde o potvrzený běžný zásah kulky.
+[B] physics/concrete/concrete_impact_flare4.wav (2.014 s)
+  Návrh použití: Společná knihovna / Kulka → kámen, beton, omítka
+  Dopad světlice do betonu; jen alternativa tvrdého zásahu, nejde o potvrzený běžný zásah kulky.
+[B] weapons/ambassador_shoot.wav (2.006 s)
+  Návrh použití: Šindel · výstřel
+  Alternativní pistole/revolver pro porovnání; nepřepisovat vybranou R8 automaticky.
+[B] weapons/csgo_awp_shoot.wav (4.131 s)
+  Návrh použití: Kondulič · oba režimy střelby
+  Alternativa rány odstřelovačky či rychlé SMG. Existující volbu nemění.
+[B] weapons/pistol_clipin.wav (0.173 s)
+  Návrh použití: Šindel / Přebití Devítky
+  Přebití pistole; vybrat podle animace Devítky.
+[B] weapons/pistol_reload_scout.wav (0.862 s)
+  Návrh použití: Šindel / Přebití Devítky
+  Přebití pistole; vybrat podle animace Devítky.
+[B] weapons/pistol_shoot.wav (0.821 s)
+  Návrh použití: Šindel · výstřel
+  Alternativní pistole/revolver pro porovnání; nepřepisovat vybranou R8 automaticky.
+[B] weapons/pistol_worldreload.wav (0.713 s)
+  Návrh použití: Šindel / Přebití Devítky
+  Přebití pistole; vybrat podle animace Devítky.
+[B] weapons/revolver_shoot.wav (2.351 s)
+  Návrh použití: Šindel · výstřel
+  Alternativní pistole/revolver pro porovnání; nepřepisovat vybranou R8 automaticky.
+[B] weapons/smg_clip_in.wav (0.198 s)
+  Návrh použití: Viktor / Přebití zbraně
+  Fáze přebití SMG: alternativa pro Viktora podle vzhledu a časování zbraně.
+[B] weapons/smg_clip_out.wav (0.132 s)
+  Návrh použití: Viktor / Přebití zbraně
+  Fáze přebití SMG: alternativa pro Viktora podle vzhledu a časování zbraně.
+[B] weapons/smg_shoot.wav (0.821 s)
+  Návrh použití: Kondulič · oba režimy střelby
+  Alternativa rány odstřelovačky či rychlé SMG. Existující volbu nemění.
+[B] weapons/smg_worldreload.wav (0.683 s)
+  Návrh použití: Viktor / Přebití zbraně
+  Fáze přebití SMG: alternativa pro Viktora podle vzhledu a časování zbraně.
+[B] weapons/sniper_shoot.wav (3.608 s)
+  Návrh použití: Kondulič · oba režimy střelby
+  Alternativa rány odstřelovačky či rychlé SMG. Existující volbu nemění.
+[B] weapons/sniper_shoot_large.wav (4.131 s)
+  Návrh použití: Kondulič · oba režimy střelby
+  Alternativa rány odstřelovačky či rychlé SMG. Existující volbu nemění.
+
+POLOŽKY BEZ PŘESVĚDČIVÉHO KANDIDÁTA Z TÉTO KNIHOVNY
+steps_carpet – Koberec
+steps_rubber – Guma
+steps_roof – Střešní tašky
+steps_hay – Seno
+steps_sawdust – Piliny a pytle
+steps_slide – Povrch skluzavky
+move_wallride – Jízda po zdi
+combat_bullet_wood – Kulka → dřevo
+combat_bullet_glass – Kulka → sklo
+combat_bullet_ground – Kulka → hlína, písek, štěrk
+combat_bullet_leaves – Kulka → tráva a listí
+combat_bullet_soft – Kulka → měkký povrch
+combat_slash_wood – Sekera / kosa → dřevo
+combat_slash_soft – Sekera / kosa → měkký povrch
+state_hurt – Přijetí poškození
+state_sleep – Uspání a probuzení
+state_slow_root – Zpomalení a uvolnění
+state_silence_antiheal – Umlčení a blokace léčení
+mirek_rapid – Rychlopalba · RMB
+mirek_ult – Smršť · Q
+david_grenade – Biotický granát · E
+kondulic_ult – Infravize · Q
+sindel_wave – Say what again?! · RMB · efekt
+sindel_ult – Ezechiel 25:17 · Q
+world_slide – Klouzání po skluzavce
+world_groomer_enter – Rolba · nasednutí a sesednutí

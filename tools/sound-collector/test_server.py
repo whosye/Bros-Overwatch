@@ -20,7 +20,7 @@ class DeskIntegration(unittest.TestCase):
         self.root = Path(self.directory.name)
         self.inbox = self.root / "sounds"
         self.state_path = self.root / "state" / "collection.json"
-        self.collection = Collection(self.inbox, self.state_path)
+        self.collection = Collection(self.inbox, self.state_path, libraries={})
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         self.server.collection = self.collection
         self.server.daemon_threads = True
@@ -65,6 +65,42 @@ class DeskIntegration(unittest.TestCase):
         second.write_bytes(b"new audio")
         with self.get("/api/snapshot") as response:
             self.assertIn("inbox:new.mp3", [file["id"] for file in json.load(response)["files"]])
+
+    def test_external_tf2_audition_assignment_and_restart(self):
+        library = self.root / "_MIMO_GIT_K_PRESUNU/TF2_kandidati"
+        audio = library / "weapons/bow_shoot.wav"
+        audio.parent.mkdir(parents=True)
+        raw = self.file.read_bytes()
+        audio.write_bytes(raw)
+        (library / "KANDIDATI.json").write_text(json.dumps({"source": {"id": "tf2", "label": "TF2", "author": "TF2"},
+            "files": [{"file": "weapons/bow_shoot.wav", "item_ids": ["mirek_weapon"], "section": "A"}]}), encoding="utf-8")
+        self.collection.libraries = {"tf2": library}
+        before = self.state_path.read_bytes()
+        with self.get("/api/snapshot") as response:
+            snapshot = json.load(response)
+        self.assertEqual(before, self.state_path.read_bytes())
+        self.assertFalse(snapshot["warnings"])
+        recommendation = next(r for r in snapshot["recommendations"] if r["source_id"] == "tf2")
+        file_id = recommendation["file"]
+        self.assertEqual(file_id, "tf2:weapons/bow_shoot.wav")
+        self.assertTrue(next(f for f in snapshot["files"] if f["id"] == file_id)["inbox"])
+        with self.get("/api/audio?" + urlencode({"id": file_id}), {"Range": "bytes=0-43"}) as response:
+            self.assertEqual(response.status, 206)
+            self.assertEqual(response.read(), raw[:44])
+        with self.post("assign", {"id": "mirek_weapon", "file": file_id, "revision": 0}):
+            pass
+        restarted = Collection(self.inbox, self.state_path, libraries={"tf2": library})
+        self.assertEqual(restarted.entry("mirek_weapon")["files"], [file_id])
+        self.assertEqual(restarted.state["files"][file_id]["author"], "TF2")
+        self.assertEqual(audio.read_bytes(), raw)
+        with self.assertRaises(Invalid):
+            self.collection.file_path("tf2:../../outside.wav")
+        with self.assertRaises(Invalid):
+            self.collection.file_path("tf2:C:/outside.wav")
+        # A malformed external manifest must not hide the other libraries or user choices.
+        (library / "KANDIDATI.json").write_text('{"files":[{"file":"../outside.wav"}]}')
+        self.assertTrue(self.collection.snapshot()["warnings"])
+        self.assertEqual(self.collection.entry("mirek_weapon")["files"], [file_id])
 
     def test_assignment_done_notes_and_source_survive_restart(self):
         self.item("steps_wood", {"files": [self.file_id], "done": True, "note": "Použít tři varianty."})
@@ -187,6 +223,17 @@ class DeskIntegration(unittest.TestCase):
         self.assertEqual(recommendation["note"], "Vyzkoušet jako švih")
         self.assertEqual(self.collection.entry("pova_weapon")["files"], [])
         self.assertEqual(before, self.state_path.read_bytes())
+
+    def test_replaced_honza_suggestions_preserve_saved_choice_and_other_targets(self):
+        folder, manifest, file_id = self.candidate_manifest()
+        manifest['files'][0]['item_ids'] = ['honza_trap', 'pova_hook']
+        (folder / 'KANDIDATI.json').write_text(json.dumps(manifest), encoding='utf-8')
+        self.item('honza_trap', {'files': [file_id], 'done': True, 'note': 'Uložený výběr'})
+        recommendation = self.collection.recommendations()[0][0]
+        self.assertEqual(recommendation['item_ids'], ['pova_hook'])
+        self.assertEqual(self.collection.entry('honza_trap')['files'], [file_id])
+        self.assertTrue(self.collection.entry('honza_trap')['done'])
+        self.assertEqual(self.collection.entry('honza_trap')['note'], 'Uložený výběr')
 
     def test_one_click_assignment_preserves_notes_and_adds_origin(self):
         _, _, file_id = self.candidate_manifest()

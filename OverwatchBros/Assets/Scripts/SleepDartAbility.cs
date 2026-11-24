@@ -37,7 +37,7 @@ public class SleepDartAbility : NetworkBehaviour
         nextUseTime = Time.time + ability.Cooldown;
 
         var eye = fpc.playerCamera.transform;
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.45f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("david_sleep.fire", ProceduralSfx.Dash), transform.position, 0.45f);
         // (hlaska az podle vysledku: uspani = hlaska schopnosti, minuti = hlaska k minuti - viz Arrive)
         var held = GetComponent<HeldWeapons>();
         if (held != null) held.ShowDartPistol();
@@ -113,6 +113,8 @@ public class SleepDartAbility : NetworkBehaviour
     [ClientRpc]
     void FiredClientRpc(Vector3 from, Vector3 to, float seconds)
     {
+        if (!IsOwner && !ReplayPlayer.Active)
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("david_sleep.fire", ProceduralSfx.Dash), from, 0.45f);
         var dart = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         DestroyImmediate(dart.GetComponent<Collider>());
         dart.name = "SleepDart";

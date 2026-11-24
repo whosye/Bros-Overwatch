@@ -1,0 +1,493 @@
+{
+  "version": 1,
+  "source_root": "C:\\myDev_\\audio\\sounds",
+  "source_hashes": {
+    "latch": "5f356988a83acf9f320e72ad31f08a80668f9bf0474658fb50f76d5cc3b8ca10",
+    "spring": "98ca9a8955b69cbe6844614bb0de2973014f9845314d17aa5f02a8f44cdfbfff",
+    "wire": "f778f19350bb2f77ba0e156148d8fce855adf74d5990a901e5384f8008658b9c",
+    "jaw": "b620198cb45b78fc73a532af5266c386c88d025a99d3ca4a75ab8241c8cf148c",
+    "metal": "43f0da0959a5081836d61d5873c6fd7e0809fdfe508bd939f4458e94e7ad1ecf",
+    "boulder": "e1f6ebc936cc2ca009e7393fd8d0c7b07ae9d78995eccba9031a6cfa95d84a87",
+    "collapse": "4f25f2f3346c98228f6e45379c1f06a5161e1e844894ba24f460d95eb2da275e",
+    "gravel": "0a48aa1ceaaecefacd8402f9034d2b17e232f5339de2f26f75b628bc195867e6",
+    "blast": "d83a02d8c05b1f6dd316b5595f00a74093b0d58cfaf24cd58160e543639b50b5",
+    "rock1": "aa0fb5577ba67dd4a6d0a92e54c07234d49ad8a06fe574bc3ba2210fb36eade7",
+    "rock2": "21dc9d2d684f54c2b3ef8feb8140364890810c6e945eacac971f5bdf7730e0a8",
+    "rock3": "f8f2e3d46f96d288c99131d4d401d77ca1c996cc13abb576bcd131c84072a03f",
+    "hit1": "2d54853a11792b8b581bc67e412433d0306d7f192e5777780497a223d06d4641",
+    "hit2": "a0f950725c0cfccb0f4910b654f99f1faa391fcad2101b86217e2ddc38053684",
+    "hit3": "e9d85d25564a1bb30a5a3de737bbff4542caf24ff5eeea6980dfb6a5b45bd1cb",
+    "hit4": "c52799b784fbef72ba3308254c9122f27b270dfeca5a693907eb497cbf9b9a13",
+    "hit5": "7203806d5baa17ae59601c26f09873736ed93fa985643560e402ece1e80b1bdf",
+    "hit6": "f53050b14ba9239ff27bb4eedcc6df8aa28d9a08c0f27c1efb762f61ceca6966"
+  },
+  "source": {
+    "id": "honza_design",
+    "label": "Honza – balvan a past",
+    "url": "",
+    "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026",
+    "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné."
+  },
+  "files": [
+    {
+      "file": "honza_trap_snap_01.wav",
+      "path": "Složený návrh: latch + spring + jaw + metal + wire",
+      "title": "Past · ostré sklapnutí čelistí",
+      "phase": "trap_snap",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_trap"
+      ],
+      "note": "SKLAPNUTÍ PASTI: mechanická západka + prudká pružina + kovové čelisti. Krátký kontakt, bez hlasu či výbuchu. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 0.38,
+      "bytes": 33560,
+      "sha256": "45c809298653660dbe76dc3d90ca0a444083bf5452b1090ba8d224f5ed36f12b",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav",
+          "sha256": "5f356988a83acf9f320e72ad31f08a80668f9bf0474658fb50f76d5cc3b8ca10"
+        },
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHMisc_Tool Tape Measure Pull Retract Spring Slide Spin Long 07_ESM_HDLM.wav",
+          "sha256": "98ca9a8955b69cbe6844614bb0de2973014f9845314d17aa5f02a8f44cdfbfff"
+        },
+        {
+          "path": "cs2/sounds/doors/door_metal_thin_close2.wav",
+          "sha256": "b620198cb45b78fc73a532af5266c386c88d025a99d3ca4a75ab8241c8cf148c"
+        },
+        {
+          "path": "cs2/sounds/physics/metal/metal_solid_impact_soft1.wav",
+          "sha256": "43f0da0959a5081836d61d5873c6fd7e0809fdfe508bd939f4458e94e7ad1ecf"
+        },
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/METLTonl_Item Spring Wire Impact Flick Top Clatter Light Tap Roll Handling Short 01_ESM_HDLM.wav",
+          "sha256": "f778f19350bb2f77ba0e156148d8fce855adf74d5990a901e5384f8008658b9c"
+        }
+      ]
+    },
+    {
+      "file": "honza_trap_snap_02.wav",
+      "path": "Složený návrh: latch + spring + jaw + metal + wire",
+      "title": "Past · těžší ocelové sklapnutí",
+      "phase": "trap_snap",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_trap"
+      ],
+      "note": "SKLAPNUTÍ PASTI: mechanická západka + prudká pružina + kovové čelisti. Krátký kontakt, bez hlasu či výbuchu. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 0.55,
+      "bytes": 48554,
+      "sha256": "f1800e26dc618ababb7457662914a8e30f74e345e5069eb31d17f0ad659314dd",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav",
+          "sha256": "5f356988a83acf9f320e72ad31f08a80668f9bf0474658fb50f76d5cc3b8ca10"
+        },
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHMisc_Tool Tape Measure Pull Retract Spring Slide Spin Long 07_ESM_HDLM.wav",
+          "sha256": "98ca9a8955b69cbe6844614bb0de2973014f9845314d17aa5f02a8f44cdfbfff"
+        },
+        {
+          "path": "cs2/sounds/doors/door_metal_thin_close2.wav",
+          "sha256": "b620198cb45b78fc73a532af5266c386c88d025a99d3ca4a75ab8241c8cf148c"
+        },
+        {
+          "path": "cs2/sounds/physics/metal/metal_solid_impact_soft1.wav",
+          "sha256": "43f0da0959a5081836d61d5873c6fd7e0809fdfe508bd939f4458e94e7ad1ecf"
+        },
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/METLTonl_Item Spring Wire Impact Flick Top Clatter Light Tap Roll Handling Short 01_ESM_HDLM.wav",
+          "sha256": "f778f19350bb2f77ba0e156148d8fce855adf74d5990a901e5384f8008658b9c"
+        }
+      ]
+    },
+    {
+      "file": "honza_trap_snap_03.wav",
+      "path": "Složený návrh: latch + spring + jaw + metal + wire",
+      "title": "Past · suché rychlé sklapnutí",
+      "phase": "trap_snap",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_trap"
+      ],
+      "note": "SKLAPNUTÍ PASTI: mechanická západka + prudká pružina + kovové čelisti. Krátký kontakt, bez hlasu či výbuchu. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 0.44,
+      "bytes": 38852,
+      "sha256": "c42d985c78fafe1ecbac522e57609ded62204574d8e55c9c94a4c2ced0f6ba29",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav",
+          "sha256": "5f356988a83acf9f320e72ad31f08a80668f9bf0474658fb50f76d5cc3b8ca10"
+        },
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/MECHMisc_Tool Tape Measure Pull Retract Spring Slide Spin Long 07_ESM_HDLM.wav",
+          "sha256": "98ca9a8955b69cbe6844614bb0de2973014f9845314d17aa5f02a8f44cdfbfff"
+        },
+        {
+          "path": "cs2/sounds/doors/door_metal_thin_close2.wav",
+          "sha256": "b620198cb45b78fc73a532af5266c386c88d025a99d3ca4a75ab8241c8cf148c"
+        },
+        {
+          "path": "cs2/sounds/physics/metal/metal_solid_impact_soft1.wav",
+          "sha256": "43f0da0959a5081836d61d5873c6fd7e0809fdfe508bd939f4458e94e7ad1ecf"
+        },
+        {
+          "path": "sounds/GameAudioBundle2026/Epic Stock Media - HD Lock And Mechanism Sound Design Kit/METLTonl_Item Spring Wire Impact Flick Top Clatter Light Tap Roll Handling Short 01_ESM_HDLM.wav",
+          "sha256": "f778f19350bb2f77ba0e156148d8fce855adf74d5990a901e5384f8008658b9c"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_launch_01.wav",
+      "path": "Složený návrh: boulder + collapse",
+      "title": "Balvan · vypuštění / první kontakt 1",
+      "phase": "launch",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "VYPUŠTĚNÍ: těžký kámen dosedne a začne se pohybovat. Jednorázový nástup, nikoli valicí smyčka. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 1.247,
+      "bytes": 110046,
+      "sha256": "a497c2a38f00099b9f8ef5e375881ac98f995f16eb1dd7e5741af26445cb02f6",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/physics/concrete/boulder_impact_hard4.wav",
+          "sha256": "e1f6ebc936cc2ca009e7393fd8d0c7b07ae9d78995eccba9031a6cfa95d84a87"
+        },
+        {
+          "path": "cs2/sounds/physics/destruction/smash_rockcollapse1.wav",
+          "sha256": "4f25f2f3346c98228f6e45379c1f06a5161e1e844894ba24f460d95eb2da275e"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_launch_02.wav",
+      "path": "Složený návrh: boulder + collapse",
+      "title": "Balvan · vypuštění / první kontakt 2",
+      "phase": "launch",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "VYPUŠTĚNÍ: těžký kámen dosedne a začne se pohybovat. Jednorázový nástup, nikoli valicí smyčka. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 1.248,
+      "bytes": 110126,
+      "sha256": "e827891c6f3385263e1b4ea84488aefd18931f525d26788b8c955408448b5da0",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/physics/concrete/boulder_impact_hard4.wav",
+          "sha256": "e1f6ebc936cc2ca009e7393fd8d0c7b07ae9d78995eccba9031a6cfa95d84a87"
+        },
+        {
+          "path": "cs2/sounds/physics/destruction/smash_rockcollapse1.wav",
+          "sha256": "4f25f2f3346c98228f6e45379c1f06a5161e1e844894ba24f460d95eb2da275e"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_roll_01.wav",
+      "path": "Složený návrh: gravel + rock1 + rock2 + rock3 + hit1 + hit2 + hit3 + hit4 + hit5 + hit6",
+      "title": "Balvan · těžké valení po zemi",
+      "phase": "roll",
+      "loop": true,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "VALENÍ: pětisekundová smyčka kamenného tření, nerovnoměrných těžkých kontaktů a sypkého podkladu. Přehrávač opakuje smyčku. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 5.0,
+      "bytes": 441044,
+      "sha256": "8c4d2696c081f99291ed09b7c858aa55a8647b9c8c0e93539a67153ae06b7668",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/ambient/train/gravel_chute.mp3",
+          "sha256": "0a48aa1ceaaecefacd8402f9034d2b17e232f5339de2f26f75b628bc195867e6"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock1.mp3",
+          "sha256": "aa0fb5577ba67dd4a6d0a92e54c07234d49ad8a06fe574bc3ba2210fb36eade7"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock2.mp3",
+          "sha256": "21dc9d2d684f54c2b3ef8feb8140364890810c6e945eacac971f5bdf7730e0a8"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock3.mp3",
+          "sha256": "f8f2e3d46f96d288c99131d4d401d77ca1c996cc13abb576bcd131c84072a03f"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard1.wav",
+          "sha256": "2d54853a11792b8b581bc67e412433d0306d7f192e5777780497a223d06d4641"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard2.wav",
+          "sha256": "a0f950725c0cfccb0f4910b654f99f1faa391fcad2101b86217e2ddc38053684"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard3.wav",
+          "sha256": "e9d85d25564a1bb30a5a3de737bbff4542caf24ff5eeea6980dfb6a5b45bd1cb"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard4.wav",
+          "sha256": "c52799b784fbef72ba3308254c9122f27b270dfeca5a693907eb497cbf9b9a13"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard5.wav",
+          "sha256": "7203806d5baa17ae59601c26f09873736ed93fa985643560e402ece1e80b1bdf"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard6.wav",
+          "sha256": "f53050b14ba9239ff27bb4eedcc6df8aa28d9a08c0f27c1efb762f61ceca6966"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_roll_02.wav",
+      "path": "Složený návrh: gravel + rock1 + rock2 + rock3 + hit1 + hit2 + hit3 + hit4 + hit5 + hit6",
+      "title": "Balvan · valení se štěrkem",
+      "phase": "roll",
+      "loop": true,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "VALENÍ: pětisekundová smyčka kamenného tření, nerovnoměrných těžkých kontaktů a sypkého podkladu. Přehrávač opakuje smyčku. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 5.0,
+      "bytes": 441044,
+      "sha256": "56994ae211d0e18c4cdbab8d67da4d552180eb703547ca0b08ec44c3d940ec6a",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/ambient/train/gravel_chute.mp3",
+          "sha256": "0a48aa1ceaaecefacd8402f9034d2b17e232f5339de2f26f75b628bc195867e6"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock1.mp3",
+          "sha256": "aa0fb5577ba67dd4a6d0a92e54c07234d49ad8a06fe574bc3ba2210fb36eade7"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock2.mp3",
+          "sha256": "21dc9d2d684f54c2b3ef8feb8140364890810c6e945eacac971f5bdf7730e0a8"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock3.mp3",
+          "sha256": "f8f2e3d46f96d288c99131d4d401d77ca1c996cc13abb576bcd131c84072a03f"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard1.wav",
+          "sha256": "2d54853a11792b8b581bc67e412433d0306d7f192e5777780497a223d06d4641"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard2.wav",
+          "sha256": "a0f950725c0cfccb0f4910b654f99f1faa391fcad2101b86217e2ddc38053684"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard3.wav",
+          "sha256": "e9d85d25564a1bb30a5a3de737bbff4542caf24ff5eeea6980dfb6a5b45bd1cb"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard4.wav",
+          "sha256": "c52799b784fbef72ba3308254c9122f27b270dfeca5a693907eb497cbf9b9a13"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard5.wav",
+          "sha256": "7203806d5baa17ae59601c26f09873736ed93fa985643560e402ece1e80b1bdf"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard6.wav",
+          "sha256": "f53050b14ba9239ff27bb4eedcc6df8aa28d9a08c0f27c1efb762f61ceca6966"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_roll_03.wav",
+      "path": "Složený návrh: gravel + rock1 + rock2 + rock3 + hit1 + hit2 + hit3 + hit4 + hit5 + hit6",
+      "title": "Balvan · hluboké pomalé drcení",
+      "phase": "roll",
+      "loop": true,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "VALENÍ: pětisekundová smyčka kamenného tření, nerovnoměrných těžkých kontaktů a sypkého podkladu. Přehrávač opakuje smyčku. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 5.0,
+      "bytes": 441044,
+      "sha256": "21a7ad6f4ebfeca3d1695610372526fb73bed5048bc908f44fb8665d35715a10",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/ambient/train/gravel_chute.mp3",
+          "sha256": "0a48aa1ceaaecefacd8402f9034d2b17e232f5339de2f26f75b628bc195867e6"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock1.mp3",
+          "sha256": "aa0fb5577ba67dd4a6d0a92e54c07234d49ad8a06fe574bc3ba2210fb36eade7"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock2.mp3",
+          "sha256": "21dc9d2d684f54c2b3ef8feb8140364890810c6e945eacac971f5bdf7730e0a8"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock3.mp3",
+          "sha256": "f8f2e3d46f96d288c99131d4d401d77ca1c996cc13abb576bcd131c84072a03f"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard1.wav",
+          "sha256": "2d54853a11792b8b581bc67e412433d0306d7f192e5777780497a223d06d4641"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard2.wav",
+          "sha256": "a0f950725c0cfccb0f4910b654f99f1faa391fcad2101b86217e2ddc38053684"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard3.wav",
+          "sha256": "e9d85d25564a1bb30a5a3de737bbff4542caf24ff5eeea6980dfb6a5b45bd1cb"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard4.wav",
+          "sha256": "c52799b784fbef72ba3308254c9122f27b270dfeca5a693907eb497cbf9b9a13"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard5.wav",
+          "sha256": "7203806d5baa17ae59601c26f09873736ed93fa985643560e402ece1e80b1bdf"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard6.wav",
+          "sha256": "f53050b14ba9239ff27bb4eedcc6df8aa28d9a08c0f27c1efb762f61ceca6966"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_impact_01.wav",
+      "path": "Složený návrh: boulder + hit1 + rock1",
+      "title": "Balvan · náraz / odskok 1",
+      "phase": "impact",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "NÁRAZ: těžký kontakt skály s podkladem nebo překážkou, krátké drobení. Bez exploze. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 1.397,
+      "bytes": 123294,
+      "sha256": "e26181c4e700bec05cd11be457e72876cf7c5d8088d9ab434f5da612228c9b75",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/physics/concrete/boulder_impact_hard4.wav",
+          "sha256": "e1f6ebc936cc2ca009e7393fd8d0c7b07ae9d78995eccba9031a6cfa95d84a87"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard1.wav",
+          "sha256": "2d54853a11792b8b581bc67e412433d0306d7f192e5777780497a223d06d4641"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock1.mp3",
+          "sha256": "aa0fb5577ba67dd4a6d0a92e54c07234d49ad8a06fe574bc3ba2210fb36eade7"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_impact_02.wav",
+      "path": "Složený návrh: boulder + hit2 + rock2",
+      "title": "Balvan · náraz / odskok 2",
+      "phase": "impact",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "NÁRAZ: těžký kontakt skály s podkladem nebo překážkou, krátké drobení. Bez exploze. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 1.398,
+      "bytes": 123384,
+      "sha256": "0abfcf5a9aaf65e4b174d1f03d5e58a94fe865fc4bd22931e8590c267f541c19",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/physics/concrete/boulder_impact_hard4.wav",
+          "sha256": "e1f6ebc936cc2ca009e7393fd8d0c7b07ae9d78995eccba9031a6cfa95d84a87"
+        },
+        {
+          "path": "cs2/sounds/physics/concrete/rock_impact_hard2.wav",
+          "sha256": "a0f950725c0cfccb0f4910b654f99f1faa391fcad2101b86217e2ddc38053684"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock2.mp3",
+          "sha256": "21dc9d2d684f54c2b3ef8feb8140364890810c6e945eacac971f5bdf7730e0a8"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_explode_01.wav",
+      "path": "Složený návrh: blast + collapse + rock3",
+      "title": "Balvan · závěrečný výbuch a kamenná suť 1",
+      "phase": "explode",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "ZÁVĚREČNÝ VÝBUCH: tlaková exploze + zhroucení a rozlet kamenných úlomků. Jednorázový konec ultimátky, ne náhodná součást valení. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 2.8,
+      "bytes": 247004,
+      "sha256": "6301a1a8f1a3e0d8a5f51b075645cb5a6e908af51c1198df1402b70cfeaf9504",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/weapons/c4/c4_explode1.wav",
+          "sha256": "d83a02d8c05b1f6dd316b5595f00a74093b0d58cfaf24cd58160e543639b50b5"
+        },
+        {
+          "path": "cs2/sounds/physics/destruction/smash_rockcollapse1.wav",
+          "sha256": "4f25f2f3346c98228f6e45379c1f06a5161e1e844894ba24f460d95eb2da275e"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock3.mp3",
+          "sha256": "f8f2e3d46f96d288c99131d4d401d77ca1c996cc13abb576bcd131c84072a03f"
+        }
+      ]
+    },
+    {
+      "file": "honza_boulder_explode_02.wav",
+      "path": "Složený návrh: blast + collapse + rock3",
+      "title": "Balvan · závěrečný výbuch a kamenná suť 2",
+      "phase": "explode",
+      "loop": false,
+      "section": "A",
+      "item_ids": [
+        "honza_ult"
+      ],
+      "note": "ZÁVĚREČNÝ VÝBUCH: tlaková exploze + zhroucení a rozlet kamenných úlomků. Jednorázový konec ultimátky, ne náhodná součást valení. Složený návrh z nahrávek; finální vhodnost posuď poslechem.",
+      "seconds": 2.8,
+      "bytes": 247004,
+      "sha256": "962dc964cc1660ed5d6b7c73890ff01164f744bca0b96d1fd2b87928b55afe97",
+      "status": "candidate_not_auditioned",
+      "sources": [
+        {
+          "path": "cs2/sounds/weapons/c4/c4_explode1.wav",
+          "sha256": "d83a02d8c05b1f6dd316b5595f00a74093b0d58cfaf24cd58160e543639b50b5"
+        },
+        {
+          "path": "cs2/sounds/physics/destruction/smash_rockcollapse1.wav",
+          "sha256": "4f25f2f3346c98228f6e45379c1f06a5161e1e844894ba24f460d95eb2da275e"
+        },
+        {
+          "path": "cs2/sounds/ambient/common/materials/rock3.mp3",
+          "sha256": "f8f2e3d46f96d288c99131d4d401d77ca1c996cc13abb576bcd131c84072a03f"
+        }
+      ]
+    }
+  ]
+}

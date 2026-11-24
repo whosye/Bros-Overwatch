@@ -56,6 +56,12 @@ def restore(all_candidates=False):
     if design_needed:
         from design_mosino_pulse import main
         main()
+    if all_candidates or any(f.startswith('tf2:') for f in wanted):
+        from import_tf2 import import_candidates
+        restored += import_candidates(None if all_candidates else wanted)
+    if all_candidates or any(f.startswith('honza:') for f in wanted):
+        from design_honza_audio import restore as restore_honza
+        restored += restore_honza(None if all_candidates else wanted)
     return restored
 
 

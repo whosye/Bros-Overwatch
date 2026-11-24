@@ -377,6 +377,8 @@ public class HookVisual : MonoBehaviour
 
     State state = State.Windup;
     float stateTime;
+    bool reelingAudio;
+    AudioSource reelSource;
     Vector3 hookPos;
     Vector3 launchHand;
 
@@ -463,6 +465,13 @@ public class HookVisual : MonoBehaviour
 
     void SetState(State next)
     {
+        if (!reelingAudio && (next == State.Pull || next == State.Retract))
+        {
+            reelingAudio = true;
+            reelSource = ProceduralSfx.PlayTracked(CollectedAudioBank.Pick("pova_hook.reel"), Hand(), 0.55f, 22f,
+                spatial: !ProceduralSfx.IsLocalPlayer(owner));
+            if (reelSource != null) reelSource.transform.SetParent(owner, true);
+        }
         state = next;
         stateTime = 0f;
     }
@@ -473,7 +482,7 @@ public class HookVisual : MonoBehaviour
         hookPos = launchHand;
         tip.gameObject.SetActive(true);
         if (held != null) held.SetHookThrown(true);
-        ProceduralSfx.Play(ProceduralSfx.Dash, launchHand, 0.6f);
+        ProceduralSfx.PlayForActor(owner, CollectedAudioBank.Pick("pova_hook.throw", ProceduralSfx.Dash), launchHand, 0.6f);
         SetState(State.Out);
     }
 
@@ -532,8 +541,11 @@ public class HookVisual : MonoBehaviour
                 sag = Mathf.MoveTowards(sag, 0f, 0.5f * Time.deltaTime);
                 if ((hookPos - hand).sqrMagnitude < 0.15f * 0.15f)
                 {
-                    ProceduralSfx.Play(ProceduralSfx.Empty, hand, 0.9f);   // zacvaknuti zpet do ruky
-                    ProceduralSfx.Play(ProceduralSfx.Hit, hand, 0.35f);
+                    if (!CollectedAudioBank.Has("pova_hook.stop"))
+                    {
+                        ProceduralSfx.Play(ProceduralSfx.Empty, hand, 0.9f);
+                        ProceduralSfx.Play(ProceduralSfx.Hit, hand, 0.35f);
+                    }
                     Destroy(gameObject);
                     return;
                 }
@@ -546,6 +558,9 @@ public class HookVisual : MonoBehaviour
 
     void OnDestroy()
     {
+        if (reelSource != null) { reelSource.Stop(); Destroy(reelSource.gameObject); }
+        if (reelingAudio && owner != null)
+            ProceduralSfx.PlayForActor(owner, CollectedAudioBank.Pick("pova_hook.stop"), Hand(), 0.55f);
         if (held != null) held.SetHookThrown(false);
     }
 

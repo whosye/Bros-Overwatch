@@ -457,7 +457,7 @@ public class CaptureUI
         if (Time.unscaledTime < nextTick) return;
 
         nextTick = Time.unscaledTime + Mathf.Lerp(0.6f, 0.22f, match.progress.Value);
-        ProceduralSfx.Play(ProceduralSfx.CaptureTick, ear, 0.55f);
+        ProceduralSfx.Play(CollectedAudioBank.Pick("ui_capture_tick", ProceduralSfx.CaptureTick), ear, 0.55f);
     }
 
     void UpdateMarker(PlayerHero local, MatchManager match, int state)

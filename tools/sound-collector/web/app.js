@@ -177,15 +177,15 @@ function renderList() {
   }).join("");
 }
 
-function audioElement(file) {
+function audioElement(file, loop = false) {
   if (!file?.exists) return `<p class="broken-message">${file?.pointer ? "Je tu pouze Git LFS odkaz. Skutečná nahrávka ještě není stažená." : "Soubor už ve složce není. Pokud jsi ho přejmenoval, přiřaď nový název."}</p>`;
-  return `<audio controls preload="none" src="/api/audio?id=${encodeURIComponent(file.id)}&amp;v=${file.modified}" aria-label="Přehrát ${esc(file.name)}"></audio>`;
+  return `<audio controls preload="none" ${loop ? "loop" : ""} src="/api/audio?id=${encodeURIComponent(file.id)}&amp;v=${file.modified}" aria-label="Přehrát ${esc(file.name)}"></audio>`;
 }
 
 function attachment(id, index) {
   const file = fileMap.get(id), meta = data.state.files[id] || {};
   return `<article class="attachment-card"><div class="attachment-name"><span class="file-type">${esc(file?.format || "?")}</span><strong>${esc(file?.name || id)}</strong><button class="icon-button" data-detach="${esc(id)}" aria-label="Odebrat přiřazení ${esc(file?.name || id)}" title="Odebrat přiřazení; soubor zůstane ve složce">✕</button></div>
-    <div class="file-location">${file?.inbox ? "sounds_dir / " : "Už v projektu / "}${esc(file?.relative || id)}</div>${audioElement(file)}
+    <div class="file-location">${esc(file?.location || (file?.inbox ? "sounds_dir / " : "Už v projektu / "))}${esc(file?.relative || id)}</div>${audioElement(file)}
     <details class="source-details"><summary>Zdroj a licence ${meta.source || meta.license ? "· vyplněno" : "· volitelné"}</summary><form class="source-fields" data-source="${esc(id)}">
       <label for="source-${index}">Odkaz na původní stránku<input id="source-${index}" name="source" type="url" placeholder="https://freesound.org/…" value="${esc(meta.source)}" maxlength="2000"></label>
       <div class="source-row"><label for="license-${index}">Licence<input id="license-${index}" name="license" placeholder="Např. CC0, CC BY, Sonniss…" value="${esc(meta.license)}" maxlength="2000"></label><label for="author-${index}">Autor / knihovna<input id="author-${index}" name="author" placeholder="Jméno autora nebo balíčku" value="${esc(meta.author)}" maxlength="2000"></label></div>
@@ -199,8 +199,8 @@ function recommendationCard(row, library = false) {
   const targets = row.item_ids.map(itemById).filter(Boolean);
   const duration = Number.isFinite(row.seconds) ? `${row.seconds.toFixed(1)} s` : "";
   return `<article class="recommendation-card"><div class="recommendation-meta"><span class="tier-badge tier-${esc(row.tier)}">${esc(row.source_label || "GDC 2026")} · ${esc(row.tier)} · ${tierNames[row.tier]}</span><span>${esc(duration)}</span></div>
-    <h4>${esc(library ? targetName(targets[0] || {title:file?.name || row.file}) : file?.name || row.file)}</h4>
-    ${library ? `<code>${esc(file?.name || row.file)}</code>` : ""}<p>${esc(row.note)}</p>${audioElement(file)}
+    <h4>${esc(row.title || (library ? targetName(targets[0] || {title:file?.name || row.file}) : file?.name || row.file))}</h4>
+    ${library || row.title ? `<code>${esc(file?.name || row.file)}</code>` : ""}<p>${esc(row.note)}</p>${audioElement(file, row.loop)}
     ${library ? `<div class="candidate-targets"><small>PŘIŘADIT K POUŽITÍ:</small>${targets.map(item => {
       const assigned = entry(item).files.includes(row.file);
       return `<button class="button tiny ${assigned ? "quiet" : ""}" ${assigned ? `data-open-item="${esc(item.id)}"` : `data-assign-item="${esc(item.id)}" data-assign-file="${esc(row.file)}"`}>${assigned ? "✓ Přiřazeno · " : "＋ "}${esc(targetName(item))}${assigned ? " ↗" : ""}</button>`;

@@ -50,7 +50,6 @@ public class GrappleAbility : NetworkBehaviour
         float seconds = Mathf.Clamp(Vector3.Distance(transform.position, destination) / Mathf.Max(1f, ability.speed), 0.15f, 1.2f);
         fpc.OwnerGrapplePull(destination, seconds, anchor, normal);
 
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
         RopeServerRpc(anchor, seconds);
     }
@@ -85,6 +84,8 @@ public class GrappleAbility : NetworkBehaviour
     [ClientRpc]
     void RopeClientRpc(Vector3 anchor, float seconds)
     {
+        if (ReplayPlayer.Active) return;
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("kondulic_hook.throw", ProceduralSfx.Dash), transform.position, 0.6f);
         var go = new GameObject("GrappleRope");
         var line = go.AddComponent<LineRenderer>();
         line.positionCount = 2;
@@ -101,6 +102,10 @@ public class GrappleAbility : NetworkBehaviour
     IEnumerator Rope(LineRenderer line, Vector3 anchor, float seconds)
     {
         float end = Time.time + seconds + 0.1f;
+        yield return new WaitForSeconds(0.06f);
+        var reel = ProceduralSfx.PlayTracked(CollectedAudioBank.Pick("kondulic_hook.reel"), transform.position, 0.55f, 22f,
+            spatial: !ProceduralSfx.IsLocalPlayer(this));
+        if (reel != null) reel.transform.SetParent(transform, true);
         while (Time.time < end && line != null)
         {
             // Lano vede od ruky (u majitele od kamery vpravo dole).
@@ -113,5 +118,7 @@ public class GrappleAbility : NetworkBehaviour
         }
         if (line != null)
             Destroy(line.gameObject);
+        if (reel != null) { reel.Stop(); Destroy(reel.gameObject); }
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("kondulic_hook.stop"), transform.position, 0.55f);
     }
 }

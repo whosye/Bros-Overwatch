@@ -584,7 +584,7 @@ public partial class MatchManager
     void PointWonClientRpc(int team, Vector3 position, int index)
     {
         var listener = Camera.main != null ? Camera.main.transform.position : position;
-        ProceduralSfx.Play(ProceduralSfx.CaptureWon, listener, 1f);
+        ProceduralSfx.Play(CollectedAudioBank.Pick("ui_capture_won", ProceduralSfx.CaptureWon), listener, 1f);
         Fx.Sparks(position + Vector3.up, UiKit.TeamColor(team));
         Fx.Sparks(position + Vector3.up * 2f, UiKit.TeamColor(team));
         // The replicated fullscreen presentation shows a team-relative result before teleporting.

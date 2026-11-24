@@ -17,6 +17,8 @@ import sys
 import uuid
 import wave
 
+from audio_paths import resolve_input
+
 APP = Path(__file__).resolve().parent
 PROJECT = APP.parent.parent
 UNITY = PROJECT / 'OverwatchBros'
@@ -127,8 +129,51 @@ def assemble_shells(part, repeats, duration):
     return mix
 
 
+def fit_reload_mechanism(part, seconds):
+    """Fit the complete pump/bolt movement around shell insertions without cutting its tail."""
+    peak=max(abs(v) for v in part)
+    first=next(i for i,v in enumerate(part) if abs(v)>peak*.01)
+    last=len(part)-next(i for i,v in enumerate(reversed(part)) if abs(v)>peak*.01)
+    part=part[first:last]
+    count=max(2,round(RATE*seconds))
+    result=array.array('f')
+    fade=min(RATE//500,count//4)
+    for i in range(count):
+        position=i*(len(part)-1)/(count-1)
+        a=int(position)
+        value=part[a]+(part[min(a+1,len(part)-1)]-part[a])*(position-a)
+        result.append(value*min(1,i/max(1,fade),(count-i-1)/max(1,fade)))
+    return result
+
+
 def cues_for(item, filename):
     name = filename.lower()
+    if item.startswith('existing_gun_'):
+        hero = {'sniper': 'kondulic', 'anna': 'david'}.get(item.removeprefix('existing_gun_'), item.removeprefix('existing_gun_'))
+        mode = '_fire_scoped' if hero == 'kondulic' and ('awp' in name or 'sniper' in name) else '_fire'
+        return [hero + mode, item]
+    if item == 'mirek_weapon':
+        if 'impact_' in name:
+            material = next((value for token, value in [('flesh', 'body'), ('wood', 'wood'), ('metal', 'metal'), ('concrete', 'stone')] if token in name), 'stone')
+            return ['mirek_weapon.impact.' + material]
+        if 'nearmiss' in name: return ['mirek_weapon.flight']
+        if 'pull_short' in name: return ['mirek_weapon.draw.short']
+        if 'pull_reverse' in name: return ['mirek_weapon.cancel']
+        if 'pull' in name: return ['mirek_weapon.draw']
+        if 'slide' in name: return ['mirek_weapon.nock']
+        if 'draw_bow' in name: return ['mirek_weapon.equip']
+        return ['mirek_weapon.release']
+    if item in ('pova_hook', 'kondulic_hook'):
+        phase = 'reel' if 'reel_start' in name else 'stop' if 'reel_stop' in name else 'hit' if 'impact' in name else 'throw'
+        return [item + '.' + phase]
+    if item == 'pickup_invulnerable':
+        if 'burp' in name: return [item + '.burp']
+        if 'drink' in name: return [item + '.drink']
+        if 'bottle' in name: return [item + '.bottle']
+        return [item]
+    if item == 'david_sleep': return ['david_sleep.fire' if 'shoot' in name else 'david_sleep.impact']
+    if item == 'david_impact': return ['david_impact.fire' if 'shoot' in name else 'david_impact']
+    if item == 'viktor_ult': return ['viktor_ult.lock' if 'ping' in name else 'viktor_ult']
     if item == 'world_splash':
         if 'entry' in name: return ['steps_water.enter']
         if 'exit' in name: return ['steps_water.exit']
@@ -143,7 +188,10 @@ def cues_for(item, filename):
         if 'flesh' in name or 'stab' in name: return [item + '.impact.body']
         if 'hit' in name: return [item + '.impact.surface']
         return [item + '.swing']
-    if item == 'honza_ult': return ['honza_ult.land']
+    if item == 'honza_ult':
+        for phase, cue in [('roll', 'roll'), ('launch', 'start'), ('explode', 'explode'), ('impact', 'land')]:
+            if name.startswith('honza_boulder_' + phase + '_'): return ['honza_ult.' + cue]
+        return ['honza_ult.land']
     if item == 'honza_mine':
         return [item + ('.explode' if 'detonate' in name or 'explos' in name else '.impact')]
     if item == 'kondulic_scope':
@@ -162,12 +210,18 @@ def main():
     choices = dict(state['items'])
     overrides = json.loads((APP / 'integration_overrides.json').read_text(encoding='utf-8'))
     for item, files in overrides.get('defaults', {}).items():
+        alias = {'honza_fire': 'existing_gun_honza', 'sindel_fire': 'existing_gun_sindel',
+                 'viktor_fire': 'existing_gun_viktor', 'david_fire': 'existing_gun_david',
+                 'kondulic_fire': 'existing_gun_sniper', 'kondulic_fire_scoped': 'existing_gun_sniper'}.get(item)
+        if alias and choices.get(alias, {}).get('files') and not choices[alias].get('skipped'):
+            continue
         if not choices.get(item, {}).get('files'):
             choices[item] = {'files': files, 'done': False, 'integration_default': True}
     previous_path = OUT / 'IMPORT_MANIFEST.json'
     previous = {r['source']: r for r in json.loads(previous_path.read_text(encoding='utf-8'))['files']} if previous_path.exists() else {}
     cues = defaultdict(list)
     exported = {}
+    used_shells = {}
     report = {'revision': state['revision'], 'items': {}, 'files': [], 'rules': [
         'Assigned files are used even when done is false; skipped items are excluded.',
         'Land and water entry/exit are separate from walking.',
@@ -178,33 +232,42 @@ def main():
     for item, choice in choices.items():
         if choice.get('skipped') or not choice.get('files'): continue
         records = []
-        effective_files = overrides.get('reload_sequences', {}).get(item, choice['files'])
+        item_cues = set()
+        effective_files = choice['files']
         for file_id in effective_files:
-            if not file_id.startswith('inbox:'): raise ValueError('Unsupported source ' + file_id)
-            relative = Path(file_id.removeprefix('inbox:'))
-            source_root = (UNITY / 'Sound/sounds_dir').resolve()
-            source = (source_root / relative).resolve()
-            if not source.is_relative_to(source_root) or not source.is_file(): raise ValueError('Missing/unsafe source ' + file_id)
+            source = resolve_input(file_id)
+            if not source.is_file(): raise ValueError('Missing source ' + file_id)
+            relative = Path(file_id.split(':', 1)[1])
             if file_id not in exported:
                 digest = hashlib.sha256(source.read_bytes()).hexdigest()
-                library = {'CS2_kandidati': 'CS2', 'GDC2026_kandidati': 'GDC2026'}.get(relative.parts[0], 'Designed/' + relative.parts[0])
-                parent = Path(*relative.parts[1:-1]) if len(relative.parts) > 2 else Path('Effects')
+                external = file_id.partition(':')[0] in ('tf2', 'honza')
+                library = ('TF2' if file_id.startswith('tf2:') else 'Designed/Honza') if external else {'CS2_kandidati': 'CS2', 'GDC2026_kandidati': 'GDC2026'}.get(relative.parts[0], 'Designed/' + relative.parts[0])
+                parent = (relative.parent if external else
+                          Path(*relative.parts[1:-1]) if len(relative.parts) > 2 else Path('Effects'))
                 path = OUT / library / parent / (source.stem + '_' + digest[:8] + '.wav')
                 loop = item.startswith('world_') and item not in ('world_splash',) or item == 'world_groomer_engine'
-                if path.exists() and file_id in previous and previous[file_id]['source_sha256'] == digest and previous[file_id]['loop'] == loop:
+                loop = loop or item == 'honza_ult' and source.name.startswith('honza_boulder_roll_')
+                processing = 'single_tick_v1' if item == 'ui_capture_tick' else ''
+                if path.exists() and file_id in previous and previous[file_id]['source_sha256'] == digest and previous[file_id]['loop'] == loop and previous[file_id].get('processing', '') == processing:
                     with wave.open(str(path)) as sound: duration = sound.getnframes() / sound.getframerate()
                 else:
                     samples = decode(source, 16 if loop else 8)
+                    if processing == 'single_tick_v1':
+                        peak = max(abs(v) for v in samples)
+                        first = next(i for i,v in enumerate(samples) if abs(v) > peak * .1)
+                        samples = samples[max(0, first - RATE//1000):first + round(RATE*.16)]
                     duration = save_audio(path, samples, loop)
                 clip_guid = write_meta(path, audio=True, streaming=loop)
                 exported[file_id] = {'source': file_id, 'source_sha256': digest, 'asset': path.relative_to(UNITY).as_posix(),
                                      'guid': clip_guid, 'seconds': round(duration, 4), 'loop': loop,
                                      'provenance': state.get('files', {}).get(file_id, {})}
+                if processing: exported[file_id]['processing'] = processing
                 report['files'].append(exported[file_id])
             record = exported[file_id]
             records.append(record)
             if not item.endswith('_reload'):
                 for cue in cues_for(item, source.name):
+                    item_cues.add(cue)
                     if record not in cues[cue]: cues[cue].append(record)
         if item.endswith('_reload'):
             # Follow the user's order (magazine out, in, bolt, etc.), with gaps between actions.
@@ -213,8 +276,22 @@ def main():
             mix = array.array('f', [0]) * round(RATE * duration)
             shell = overrides.get('reload_shells', {}).get(item)
             if shell:
-                part = decode(UNITY / 'Sound/sounds_dir' / shell['source'].removeprefix('inbox:'))
-                mix = assemble_shells(part, shell['repeats'], duration)
+                insertion=next((f for f in effective_files if 'insertshell' in f.lower()), None)
+                shell=dict(shell,source=insertion) if insertion else None
+            if shell:
+                part = decode(resolve_input(shell['source']))
+                mechanisms=[r for r in records if r['source']!=shell['source']]
+                lead=.18 if mechanisms else 0
+                tail=.18 if mechanisms else 0
+                inserts=assemble_shells(part, shell['repeats'], duration-lead-tail)
+                offset=round(RATE*lead)
+                mix[offset:offset+len(inserts)]=inserts
+                for record in mechanisms:
+                    before=any(token in record['source'].lower() for token in ('back','open','out'))
+                    piece=fit_reload_mechanism(decode(UNITY/record['asset']), .18)
+                    at=0 if before else len(mix)-len(piece)
+                    for j,value in enumerate(piece): mix[at+j]+=value
+                used_shells[item]=dict(shell,component_sources=list(effective_files))
             else:
                 pieces = [decode(UNITY / record['asset']) for record in records]
                 for i, part in enumerate(pieces):
@@ -225,12 +302,13 @@ def main():
             seconds = save_audio(path, mix)
             sequence = {'asset': path.relative_to(UNITY).as_posix(), 'guid': write_meta(path, audio=True), 'seconds': seconds}
             cues[item].append(sequence)
+            item_cues.add(item)
         report['items'][item] = {'done': choice.get('done', False), 'note': choice.get('note', ''),
                                   'sources': choice['files'], 'integration_default': choice.get('integration_default', False),
                                   'playback_sources': effective_files,
-                                  'cues': [key for key in cues if key == item or key.startswith(item + '.')]}
+                                  'cues': sorted(item_cues)}
     # Quiet gravel/stone grains form a provisional rolling texture from already selected recordings.
-    if cues.get('steps_gravel.step'):
+    if cues.get('steps_gravel.step') and not cues.get('honza_ult.roll'):
         grains = [decode(UNITY / record['asset']) for record in cues['steps_gravel.step'][:4]]
         mix = array.array('f', [0]) * (RATE * 3)
         for i in range(24):
@@ -271,9 +349,9 @@ MonoBehaviour:
         if path.exists(): write_meta(path)
     report['cue_count'] = len(cues)
     report['unique_source_files'] = len(exported)
-    report['reload_overrides'] = overrides.get('reload_shells', {})
+    report['reload_overrides'] = used_shells
     for record in report['reload_overrides'].values():
-        source = UNITY / 'Sound/sounds_dir' / record['source'].removeprefix('inbox:')
+        source = resolve_input(record['source'])
         record['source_sha256'] = hashlib.sha256(source.read_bytes()).hexdigest()
     (OUT / 'IMPORT_MANIFEST.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     from cleanup_unused_audio import unused_generated, checked_unlink

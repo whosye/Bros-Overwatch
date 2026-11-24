@@ -91,7 +91,7 @@ public static class ProceduralSfx
     public static AudioClip Dash => dash ??= Sweep("dash", 0.35f, 0.6f);
 
     // Short string snap with a little air, rather than the long ability whoosh.
-    public static AudioClip BowRelease => bowRelease ??= Make("bowRelease", 0.12f, (t, r) =>
+    public static AudioClip BowRelease => CollectedAudioBank.Pick("mirek_weapon.release") ?? (bowRelease ??= Make("bowRelease", 0.12f, (t, r) =>
     {
         float attack = Mathf.Clamp01(t / 0.002f);
         float tail = Mathf.Clamp01((0.12f - t) / 0.025f);
@@ -99,7 +99,7 @@ public static class ProceduralSfx
             + 0.25f * Mathf.Sin(2f * Mathf.PI * 1380f * t);
         return attack * tail * (stringTone * 0.42f * Mathf.Exp(-t * 48f)
             + Noise(r) * 0.32f * Mathf.Exp(-t * 65f));
-    });
+    }));
 
     // A finite, non-looping air hiss: even a missed cleanup can never play indefinitely.
     public static AudioClip ArrowFlight => arrowFlight ??= MakeArrowFlight();
@@ -108,7 +108,7 @@ public static class ProceduralSfx
     {
         var source = arrow.gameObject.AddComponent<AudioSource>();
         source.playOnAwake = false;
-        source.clip = ArrowFlight;
+        source.clip = CollectedAudioBank.Pick("mirek_weapon.flight", ArrowFlight);
         source.loop = false;
         source.volume = 0.1f;
         source.spatialBlend = 1f;

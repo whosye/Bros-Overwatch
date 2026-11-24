@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2eecc632f9f5f0083f3e8b89bc4e246, type: 3}
   m_Name: CollectedAudioBank
   m_EditorClassIdentifier:
-  collectionRevision: 341
+  collectionRevision: 416
   cues:
   - id: combat_bullet_glass
     clips:
@@ -59,6 +59,12 @@ MonoBehaviour:
   - id: combat_grenade_bounce
     clips:
     - {fileID: 8300000, guid: faa62f42b52a541ab80c809e3d29c5d3, type: 3}
+  - id: combat_slash_metal
+    clips:
+    - {fileID: 8300000, guid: e9166ad9f0575104b49b6afb11ebd433, type: 3}
+    - {fileID: 8300000, guid: b1a2f3765f5c5980b5cc80ae0c340238, type: 3}
+    - {fileID: 8300000, guid: 2964bb5519815270968bd38981469655, type: 3}
+    - {fileID: 8300000, guid: 894b9190313350408bb754d7fa0616a5, type: 3}
   - id: combat_slash_soft
     clips:
     - {fileID: 8300000, guid: c9ad1ad8e3ff58efb6dc050dc8b66dec, type: 3}
@@ -81,9 +87,24 @@ MonoBehaviour:
   - id: david_grenade
     clips:
     - {fileID: 8300000, guid: 32a773c5c7135847ba021d9c6441c72a, type: 3}
+  - id: david_impact.fire
+    clips:
+    - {fileID: 8300000, guid: 9d02b6f70aac52fea3f04b9057753d5a, type: 3}
   - id: david_reload
     clips:
     - {fileID: 8300000, guid: ccdbd45470645711a3de79088146bc27, type: 3}
+  - id: david_sleep.fire
+    clips:
+    - {fileID: 8300000, guid: 58708cfa0b855b2fbdb3972693183acd, type: 3}
+  - id: existing_gun_honza
+    clips:
+    - {fileID: 8300000, guid: 6968fe82bfb758c89f6c5603250fae75, type: 3}
+  - id: existing_gun_sindel
+    clips:
+    - {fileID: 8300000, guid: b58c50387b275c37bebb7bae22a240c3, type: 3}
+  - id: honza_fire
+    clips:
+    - {fileID: 8300000, guid: 6968fe82bfb758c89f6c5603250fae75, type: 3}
   - id: honza_mine.explode
     clips:
     - {fileID: 8300000, guid: 9760a827412e5181938d41c55700458e, type: 3}
@@ -96,12 +117,26 @@ MonoBehaviour:
   - id: honza_reload
     clips:
     - {fileID: 8300000, guid: 4a42b2637a035877b442db03b93211a8, type: 3}
+  - id: honza_trap
+    clips:
+    - {fileID: 8300000, guid: e2a4108a50325b72a085f3fedb63c8c2, type: 3}
+  - id: honza_ult.explode
+    clips:
+    - {fileID: 8300000, guid: 201e11f36da45527af502d00921e82f5, type: 3}
   - id: honza_ult.land
     clips:
     - {fileID: 8300000, guid: a93e7b6026b65fff80bafaef18219eda, type: 3}
+    - {fileID: 8300000, guid: 78a133a7372a517fa1cfb1cbfee9d1c0, type: 3}
+    - {fileID: 8300000, guid: 559528cf80c859a18d1103eaef071029, type: 3}
   - id: honza_ult.roll
     clips:
-    - {fileID: 8300000, guid: 81cfca07336d511da49286eef841ef12, type: 3}
+    - {fileID: 8300000, guid: 48e9d4c3e7fb546c8655b10f01f4cdd6, type: 3}
+    - {fileID: 8300000, guid: 80e9a8f59a845fdcb5d1dcb4ac90ff99, type: 3}
+    - {fileID: 8300000, guid: 1b320a5d73725e5880e6e6ca4885931c, type: 3}
+  - id: honza_ult.start
+    clips:
+    - {fileID: 8300000, guid: 690fee40e4ad5188ad7c48d2afd3b855, type: 3}
+    - {fileID: 8300000, guid: 8e30e1b552715b12b36acceb971ef2e7, type: 3}
   - id: kondulic_fire
     clips:
     - {fileID: 8300000, guid: 49e52e5651ef5567aea58f7518c61de6, type: 3}
@@ -109,6 +144,15 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: ab4165cf6b6250cf9767a14f8247630f, type: 3}
     - {fileID: 8300000, guid: 8765c7a6c98a537e816c9972794cb62c, type: 3}
+  - id: kondulic_hook.reel
+    clips:
+    - {fileID: 8300000, guid: 008a152eb0e95c2981ca05824a5a4fbb, type: 3}
+  - id: kondulic_hook.stop
+    clips:
+    - {fileID: 8300000, guid: 182f1db7290b513dbaf2066deb00a543, type: 3}
+  - id: kondulic_hook.throw
+    clips:
+    - {fileID: 8300000, guid: efaab9e5a9835eafa1c1ccc2b1f4d1b4, type: 3}
   - id: kondulic_kick
     clips:
     - {fileID: 8300000, guid: ca0fe1ef3b3b59ffa9a1ff6e93bed531, type: 3}
@@ -129,6 +173,23 @@ MonoBehaviour:
   - id: kondulic_ult
     clips:
     - {fileID: 8300000, guid: 524ceaa29a4f5d6abe35529855fc60dd, type: 3}
+  - id: max_reap
+    clips:
+    - {fileID: 8300000, guid: 2c2919e74d105f078ce6675d294d5bcd, type: 3}
+    - {fileID: 8300000, guid: 45a441cd2960503281d49bf139a6937b, type: 3}
+    - {fileID: 8300000, guid: 6e400b95f0845c4b90ca64a7c65ad2d6, type: 3}
+    - {fileID: 8300000, guid: 03a0ff660eab53e6b1f2a2a1b76d466a, type: 3}
+  - id: max_shadow
+    clips:
+    - {fileID: 8300000, guid: 14990f79d87257f6af2500ec9f7bfb8d, type: 3}
+  - id: max_slash
+    clips:
+    - {fileID: 8300000, guid: f84392e26acf5f00b0e0dca5e3e0dcf4, type: 3}
+    - {fileID: 8300000, guid: a228557a4e6d510db344bab5201b4c69, type: 3}
+    - {fileID: 8300000, guid: 4dcf51108c105d61b1982474adfa6075, type: 3}
+  - id: max_ult
+    clips:
+    - {fileID: 8300000, guid: eda33fd1eaba59088f11c1e480e10d8b, type: 3}
   - id: max_weapon.impact.surface
     clips:
     - {fileID: 8300000, guid: 43920476b03f5482a9246e6116531af6, type: 3}
@@ -142,9 +203,55 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 0b59f4dfcc39508bbc0b53ddba30380f, type: 3}
     - {fileID: 8300000, guid: 7e8e4fe6dd1b513d8c4f9eb5497e51c6, type: 3}
     - {fileID: 8300000, guid: c2f1d789e5a3554ab5c71b6c770dab8e, type: 3}
+    - {fileID: 8300000, guid: f84392e26acf5f00b0e0dca5e3e0dcf4, type: 3}
+    - {fileID: 8300000, guid: 4dcf51108c105d61b1982474adfa6075, type: 3}
+    - {fileID: 8300000, guid: 16dbf58b3680537980fec0897d3732c9, type: 3}
+    - {fileID: 8300000, guid: ba0306df623f543fa941fd65f93b0986, type: 3}
+  - id: mirek_weapon.draw
+    clips:
+    - {fileID: 8300000, guid: 3216a20d372554009dd4ac3679530c05, type: 3}
+  - id: mirek_weapon.draw.short
+    clips:
+    - {fileID: 8300000, guid: 7204b4284ffc5fa894db3bf2281ac3ab, type: 3}
+  - id: mirek_weapon.flight
+    clips:
+    - {fileID: 8300000, guid: 2e994bbf635852458e0e2a4dc82685c2, type: 3}
+    - {fileID: 8300000, guid: 5e9135b205df57bfa41a8282e84e97c1, type: 3}
+    - {fileID: 8300000, guid: 95e7b2875f99578884b7ffd1e388a265, type: 3}
+    - {fileID: 8300000, guid: b327fb7926a550db82c1a828e2f8eef3, type: 3}
+  - id: mirek_weapon.impact.body
+    clips:
+    - {fileID: 8300000, guid: 1f1863438c295422a0d9438130d20796, type: 3}
+    - {fileID: 8300000, guid: ed77f34743a95e1ba4bf018cdff4dde7, type: 3}
+    - {fileID: 8300000, guid: 24396e5c2c3d505f973c6ae96af2ab3d, type: 3}
+    - {fileID: 8300000, guid: 43f07eadd593561ba36adfca266937e6, type: 3}
+  - id: mirek_weapon.impact.metal
+    clips:
+    - {fileID: 8300000, guid: d0eb487caed25467a78c537af7ce02f9, type: 3}
+    - {fileID: 8300000, guid: b4ba7521d8b25b159855a1eb1e933870, type: 3}
+    - {fileID: 8300000, guid: 081457df9ea75fb7b124164455f53851, type: 3}
+  - id: mirek_weapon.impact.stone
+    clips:
+    - {fileID: 8300000, guid: 4f2bfafb4ab05cb9988d3ed2da26dee5, type: 3}
+    - {fileID: 8300000, guid: 4cc07db6ddad54eb9efafe860c5459f3, type: 3}
+    - {fileID: 8300000, guid: aa9013ea59c25bad950199ce5ccdbb28, type: 3}
+  - id: mirek_weapon.impact.wood
+    clips:
+    - {fileID: 8300000, guid: 9fa035cb0d9951a6b9b8794baf254bce, type: 3}
+    - {fileID: 8300000, guid: 83c349c0b73159959678145dfb90ffc8, type: 3}
+    - {fileID: 8300000, guid: 7ef4bcac408957d195a60d3faa3202c6, type: 3}
+  - id: mirek_weapon.release
+    clips:
+    - {fileID: 8300000, guid: 62e974f54a015e129d33a9e0872dfb69, type: 3}
+  - id: mosino_fire
+    clips:
+    - {fileID: 8300000, guid: c8bd8ce1224857bfa80c3eef0d618999, type: 3}
   - id: mosino_reload
     clips:
     - {fileID: 8300000, guid: 92b9351b1427528eaca5cc9d88444dae, type: 3}
+  - id: mosino_wave
+    clips:
+    - {fileID: 8300000, guid: ed7a728fcedd58a3ac560c1a45adb3b7, type: 3}
   - id: move_body_wall
     clips:
     - {fileID: 8300000, guid: e483db5230785672a2204df918d26a7a, type: 3}
@@ -175,17 +282,42 @@ MonoBehaviour:
   - id: pickup_carburetor
     clips:
     - {fileID: 8300000, guid: 3dbc3df8c54c52cf92c6b553559b6f03, type: 3}
+    - {fileID: 8300000, guid: 498296f6bab150c2a23a64a95453f458, type: 3}
+    - {fileID: 8300000, guid: c6e664578227521c8522d5c7aa76877a, type: 3}
   - id: pickup_health
     clips:
     - {fileID: 8300000, guid: 6add0dd2aa875e92b62fa5926d18d25e, type: 3}
+    - {fileID: 8300000, guid: b35fc162b56d5d9d9104a8feca1ac396, type: 3}
   - id: pickup_invulnerable
+    clips:
+    - {fileID: 8300000, guid: 806d9d95fe295ba499a38a4c6b9b2608, type: 3}
+  - id: pickup_invulnerable.bottle
     clips:
     - {fileID: 8300000, guid: 920d126731e95e28af43499f974e59b1, type: 3}
     - {fileID: 8300000, guid: d41ee2d20f545a95975c4838765a359f, type: 3}
     - {fileID: 8300000, guid: 8a3816abdd745f06857be689a7fb6596, type: 3}
+  - id: pickup_invulnerable.burp
+    clips:
+    - {fileID: 8300000, guid: c4700ba103fb55b78709b075c54f81bb, type: 3}
+  - id: pickup_invulnerable.drink
+    clips:
+    - {fileID: 8300000, guid: 2711358ad7f45b3b9f3c36fca500f76f, type: 3}
+  - id: pickup_respawn
+    clips:
+    - {fileID: 8300000, guid: 5a457cc3a1475a94b5d167ca675ec40a, type: 3}
   - id: pickup_tramal
     clips:
     - {fileID: 8300000, guid: 6add0dd2aa875e92b62fa5926d18d25e, type: 3}
+    - {fileID: 8300000, guid: 2cb8fdbcf0cb51edb15436678d401c0a, type: 3}
+  - id: pova_hook.reel
+    clips:
+    - {fileID: 8300000, guid: 008a152eb0e95c2981ca05824a5a4fbb, type: 3}
+  - id: pova_hook.stop
+    clips:
+    - {fileID: 8300000, guid: 182f1db7290b513dbaf2066deb00a543, type: 3}
+  - id: pova_hook.throw
+    clips:
+    - {fileID: 8300000, guid: efaab9e5a9835eafa1c1ccc2b1f4d1b4, type: 3}
   - id: pova_weapon.impact.body
     clips:
     - {fileID: 8300000, guid: 226ea07acff05c15b68d1e25c5ecc262, type: 3}
@@ -198,7 +330,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 41e28c8d42a250e8a987d7475816f103, type: 3}
   - id: sindel_fire
     clips:
-    - {fileID: 8300000, guid: a3162f6f5cc15c6aa901b2bb92148746, type: 3}
+    - {fileID: 8300000, guid: b58c50387b275c37bebb7bae22a240c3, type: 3}
   - id: sindel_grenade
     clips:
     - {fileID: 8300000, guid: dd7ab2a203b65a65a2535224c5531d5e, type: 3}
@@ -407,6 +539,12 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 762d73e92c0252c2a2019aeeb44cf131, type: 3}
     - {fileID: 8300000, guid: 0dc1a7aa02ac50af9a867ce496dd501f, type: 3}
     - {fileID: 8300000, guid: 6c21f7ba921f59d78cb8286f9b27e20b, type: 3}
+  - id: ui_capture_tick
+    clips:
+    - {fileID: 8300000, guid: 7fc1d610d5b7570dbcd822e9289e56f8, type: 3}
+  - id: ui_capture_won
+    clips:
+    - {fileID: 8300000, guid: 46794d4cdbdc5965b78534df71d51294, type: 3}
   - id: viktor_fire
     clips:
     - {fileID: 8300000, guid: 4a6634229b165cc694830a4bfbde3c64, type: 3}
@@ -423,6 +561,9 @@ MonoBehaviour:
   - id: viktor_ult
     clips:
     - {fileID: 8300000, guid: c3db6004a855594cbffafe9a7e50f4fe, type: 3}
+  - id: viktor_ult.lock
+    clips:
+    - {fileID: 8300000, guid: 3d065e56bdc05d959d206b8c12139f98, type: 3}
   - id: world_boiler_fire
     clips:
     - {fileID: 8300000, guid: 8ad20983b32755fc806f3f450c6a00aa, type: 3}

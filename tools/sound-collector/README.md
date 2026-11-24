@@ -38,6 +38,21 @@ Přímý poslech nové knihovny: **http://127.0.0.1:8765/?view=candidates&source
 
 Filtr **Doporučené** zobrazuje nedokončené položky s dostupným doporučením, **Přiřazeno** tvůj výběr a **Hotovo** potvrzené položky. Některé doporučené zvuky jsou jen jedna vrstva složené akce; pod přehrávačem je poznámka k použití.
 
+### TF2
+
+TF2 je připojené jako samostatná knihovna: **http://127.0.0.1:8765/?view=candidates&source=tf2**.
+V Poslechu kandidátů zvol **TF2**, přehraj zvuk a klikni na použití. Pro jiné použití vyber položku checklistu a zvol **Přidat jiný soubor**; výběr obsahuje i TF2.
+
+486 kandidátů je lokálně uložených v `_MIMO_GIT_K_PRESUNU/TF2_kandidati`, mimo Git. Originály ve zvukové knihovně zůstávají zachované. Stabilní odkazy `tf2:…` podporuje server, ukládání voleb i export do Unity. Výběry se importem automaticky nemění.
+
+Obnova knihovny: `python tools/sound-collector/import_tf2.py`. Příkaz používá verzovaný soupis `research/TF2_CANDIDATES.json`, ověřuje SHA-256 a nepřepisuje změněné kopie. Standardní obnova/export umí obnovit jen vybrané vstupy TF2. Úklid pracovní cache v `sounds_dir` tuto knihovnu nemaže.
+
+### Honza: balvan a sklapnutí pasti
+
+Položky [Balvan](http://127.0.0.1:8765/?item=honza_ult) a [Past na medvědy](http://127.0.0.1:8765/?item=honza_trap) nabízejí novou knihovnu **Honza – balvan a past**. Návrhy rozlišují vypuštění, opakované valení, náraz a závěrečný výbuch; past má tři krátká kovová sklapnutí. Smyčky valení se v přehrávači automaticky opakují. Jde o složené návrhy k posouzení, ne schválené nahrávky skutečného balvanu/pasti.
+
+Audio zůstává v ignorované složce `_MIMO_GIT_K_PRESUNU/Honza_kandidati`. Recept `design_honza_audio.py` a manifest `research/HONZA_AUDIO_DESIGN.json` uchovávají zdroje, kontrolní součty a fáze. Obnova: `python tools/sound-collector/design_honza_audio.py`. Původní doporučení pro tyto dvě položky nahrazuje `recommendation_preferences.json`; uložený výběr uživatele se nemění. Export rozlišuje fáze a nepromíchá valení s explozemi.
+
 ### Vlastní další nahrávky
 
 1. Stahuj zvuky do `OverwatchBros/Sound/sounds_dir`. Podsložky jsou povolené. Archivy ZIP nejdřív rozbal.

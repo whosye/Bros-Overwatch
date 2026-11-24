@@ -1,6 +1,9 @@
 {
-  "reason": "User choices: Sindel R8 shots with Deagle reload, David suppressed M4A1, Kondulic AWP scoped / MP5 unscoped, Honza five shell insertions within the reload animation.",
+  "reason": "Fallback weapon recordings when no explicit replacement is selected; pickup spawn_item; Honza inserts five selected shells within the reload animation. Current chooser selections take priority.",
   "defaults": {
+    "pickup_respawn": [
+      "tf2:items/spawn_item.wav"
+    ],
     "viktor_fire": [
       "inbox:CS2_kandidati/weapons/m4a1/m4a1_01.wav",
       "inbox:CS2_kandidati/weapons/m4a1/m4a1_02.wav",
@@ -21,17 +24,10 @@
       "inbox:CS2_kandidati/weapons/mp5/mp5_01.wav"
     ]
   },
-  "reload_sequences": {
-    "sindel_reload": [
-      "inbox:CS2_kandidati/weapons/deagle/de_clipout.wav",
-      "inbox:CS2_kandidati/weapons/deagle/de_clipin.mp3",
-      "inbox:CS2_kandidati/weapons/deagle/de_slideback.wav",
-      "inbox:CS2_kandidati/weapons/deagle/de_slideforward.wav"
-    ]
-  },
+  "reload_sequences": {},
   "reload_shells": {
     "honza_reload": {
-      "source": "inbox:CS2_kandidati/weapons/nova/nova_insertshell_01.mp3",
+      "source": "inbox:CS2_kandidati/weapons/mag7/mag7_insertshell.wav",
       "repeats": 5
     }
   }

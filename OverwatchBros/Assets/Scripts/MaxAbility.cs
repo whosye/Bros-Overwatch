@@ -102,7 +102,8 @@ public class MaxAbility : NetworkBehaviour
         nextReap = Time.time + reap.Cooldown;
         hero.SayAbility(reap);
         ReapGuardServerRpc(0.6f);   // odolnost uz behem vypadu (prodlouzi se pri dopadu)
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.7f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("max_reap", ProceduralSfx.Dash), transform.position, 0.7f);
+        ReapAudioServerRpc();
 
         // smer pohledu; pri pohledu nahoru i kousek do vyse
         Vector3 look = fpc.playerCamera.transform.forward;
@@ -160,6 +161,16 @@ public class MaxAbility : NetworkBehaviour
             if (distance < bestDistance) { bestDistance = distance; best = networkObject; }
         }
         return best;
+    }
+
+    [ServerRpc]
+    void ReapAudioServerRpc() => ReapAudioClientRpc();
+
+    [ClientRpc]
+    void ReapAudioClientRpc()
+    {
+        if (!IsOwner && !ReplayPlayer.Active)
+            ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("max_reap", ProceduralSfx.Dash), transform.position, 0.7f);
     }
 
     // usek od odrazu po konec; dopad (uder) prijde presne na konci skoku (LeapTime)
@@ -318,8 +329,7 @@ public class MaxAbility : NetworkBehaviour
         if (shadowSmoke != null) shadowSmoke.Emit(40);
         Fx.Sparks(chest, ShadowColor);
         Fx.Sparks(chest + Vector3.up * 0.4f, new Color(0.9f, 0.5f, 1f));
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.9f);
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, transform.position, 0.35f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("max_shadow", ProceduralSfx.Dash), transform.position, 0.75f, 25f);
     }
 
     // Kourova stopa: tmave fialove chuchvalce ve svete (zustavaji za Maxem) a svetle fialove jiskricky.
@@ -571,7 +581,7 @@ public class MaxAbility : NetworkBehaviour
     [ClientRpc]
     void SpinClientRpc()
     {
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.8f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("max_slash", ProceduralSfx.Dash), transform.position, 0.8f);
         if (!IsOwner) PlaySpin();   // majitel uz prehral sam
     }
 

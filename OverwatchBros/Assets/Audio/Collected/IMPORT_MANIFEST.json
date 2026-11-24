@@ -1,5 +1,5 @@
 {
-  "revision": 341,
+  "revision": 416,
   "items": {
     "steps_wood": {
       "done": true,
@@ -30,8 +30,8 @@
         "inbox:CS2_kandidati/player/land3.mp3"
       ],
       "cues": [
-        "steps_wood.step",
-        "steps_wood.land"
+        "steps_wood.land",
+        "steps_wood.step"
       ]
     },
     "steps_solid_wood": {
@@ -63,8 +63,8 @@
         "inbox:CS2_kandidati/player/land3.mp3"
       ],
       "cues": [
-        "steps_solid_wood.step",
-        "steps_solid_wood.land"
+        "steps_solid_wood.land",
+        "steps_solid_wood.step"
       ]
     },
     "steps_stone": {
@@ -94,8 +94,8 @@
         "inbox:CS2_kandidati/player/footsteps/concrete_ct_08.wav"
       ],
       "cues": [
-        "steps_stone.step",
-        "steps_stone.land"
+        "steps_stone.land",
+        "steps_stone.step"
       ]
     },
     "steps_tile": {
@@ -129,8 +129,8 @@
         "inbox:CS2_kandidati/player/footsteps/land_tile_03.wav"
       ],
       "cues": [
-        "steps_tile.step",
-        "steps_tile.land"
+        "steps_tile.land",
+        "steps_tile.step"
       ]
     },
     "steps_gravel": {
@@ -164,8 +164,8 @@
         "inbox:CS2_kandidati/player/footsteps/land_gravel_03.wav"
       ],
       "cues": [
-        "steps_gravel.step",
-        "steps_gravel.land"
+        "steps_gravel.land",
+        "steps_gravel.step"
       ]
     },
     "steps_grass": {
@@ -199,8 +199,8 @@
         "inbox:CS2_kandidati/player/footsteps/land_grass_03.wav"
       ],
       "cues": [
-        "steps_grass.step",
-        "steps_grass.land"
+        "steps_grass.land",
+        "steps_grass.step"
       ]
     },
     "steps_dirt": {
@@ -234,8 +234,8 @@
         "inbox:CS2_kandidati/player/footsteps/land_dirt_03.wav"
       ],
       "cues": [
-        "steps_dirt.step",
-        "steps_dirt.land"
+        "steps_dirt.land",
+        "steps_dirt.step"
       ]
     },
     "steps_sand": {
@@ -269,8 +269,8 @@
         "inbox:CS2_kandidati/player/footsteps/land_sand_03.wav"
       ],
       "cues": [
-        "steps_sand.step",
-        "steps_sand.land"
+        "steps_sand.land",
+        "steps_sand.step"
       ]
     },
     "steps_carpet": {
@@ -304,8 +304,8 @@
         "inbox:CS2_kandidati/player/footsteps/land_carpet_03.wav"
       ],
       "cues": [
-        "steps_carpet.step",
-        "steps_carpet.land"
+        "steps_carpet.land",
+        "steps_carpet.step"
       ]
     },
     "steps_rubber": {
@@ -339,8 +339,8 @@
         "inbox:CS2_kandidati/player/footsteps/land_rubber_03.wav"
       ],
       "cues": [
-        "steps_rubber.step",
-        "steps_rubber.land"
+        "steps_rubber.land",
+        "steps_rubber.step"
       ]
     },
     "steps_metal": {
@@ -374,8 +374,8 @@
         "inbox:CS2_kandidati/player/footsteps/land_metal_solid_03.wav"
       ],
       "cues": [
-        "steps_metal.step",
-        "steps_metal.land"
+        "steps_metal.land",
+        "steps_metal.step"
       ]
     },
     "steps_water": {
@@ -425,10 +425,11 @@
         "inbox:CS2_kandidati/physics/water/water_splash_03.wav"
       ],
       "cues": [
-        "steps_water.step",
         "steps_water.enter",
         "steps_water.exit",
-        "steps_water.land"
+        "steps_water.land",
+        "steps_water.step",
+        "world_splash"
       ]
     },
     "move_jump": {
@@ -794,13 +795,13 @@
         "inbox:CS2_kandidati/weapons/knife/knife_stab.wav"
       ],
       "cues": [
-        "pova_weapon.swing",
+        "pova_weapon.impact.body",
         "pova_weapon.impact.surface",
-        "pova_weapon.impact.body"
+        "pova_weapon.swing"
       ]
     },
     "max_weapon": {
-      "done": true,
+      "done": false,
       "note": "",
       "sources": [
         "inbox:CS2_kandidati/weapons/knife/knife_hit_light_thud_01.mp3",
@@ -811,7 +812,11 @@
         "inbox:CS2_kandidati/weapons/knife/knife_swish_light_03.mp3",
         "inbox:CS2_kandidati/weapons/knife/knife_swish_light_04.mp3",
         "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_02.mp3",
-        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3"
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3",
+        "tf2:weapons/samurai/tf_katana_slice_01.wav",
+        "tf2:weapons/samurai/tf_katana_slice_03.wav",
+        "tf2:weapons/demo_sword_swing1.wav",
+        "tf2:weapons/demo_sword_swing2.wav"
       ],
       "integration_default": false,
       "playback_sources": [
@@ -823,7 +828,11 @@
         "inbox:CS2_kandidati/weapons/knife/knife_swish_light_03.mp3",
         "inbox:CS2_kandidati/weapons/knife/knife_swish_light_04.mp3",
         "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_02.mp3",
-        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3"
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3",
+        "tf2:weapons/samurai/tf_katana_slice_01.wav",
+        "tf2:weapons/samurai/tf_katana_slice_03.wav",
+        "tf2:weapons/demo_sword_swing1.wav",
+        "tf2:weapons/demo_sword_swing2.wav"
       ],
       "cues": [
         "max_weapon.impact.surface",
@@ -841,10 +850,10 @@
       ],
       "integration_default": false,
       "playback_sources": [
-        "inbox:CS2_kandidati/weapons/deagle/de_clipout.wav",
-        "inbox:CS2_kandidati/weapons/deagle/de_clipin.mp3",
-        "inbox:CS2_kandidati/weapons/deagle/de_slideback.wav",
-        "inbox:CS2_kandidati/weapons/deagle/de_slideforward.wav"
+        "inbox:CS2_kandidati/weapons/glock18/glock_clipout.wav",
+        "inbox:CS2_kandidati/weapons/glock18/glock_clipin.wav",
+        "inbox:CS2_kandidati/weapons/glock18/glock_slideback.wav",
+        "inbox:CS2_kandidati/weapons/glock18/glock_sliderelease.wav"
       ],
       "cues": [
         "sindel_reload"
@@ -930,8 +939,8 @@
       ],
       "cues": [
         "kondulic_scope.enter",
-        "kondulic_scope.ready",
-        "kondulic_scope.exit"
+        "kondulic_scope.exit",
+        "kondulic_scope.ready"
       ]
     },
     "kondulic_reload": {
@@ -993,17 +1002,20 @@
       ]
     },
     "viktor_ult": {
-      "done": true,
+      "done": false,
       "note": "",
       "sources": [
-        "inbox:CS2_kandidati/weapons/taser/taser_charging.wav"
+        "inbox:CS2_kandidati/weapons/taser/taser_charging.wav",
+        "tf2:weapons/recon_ping.wav"
       ],
       "integration_default": false,
       "playback_sources": [
-        "inbox:CS2_kandidati/weapons/taser/taser_charging.wav"
+        "inbox:CS2_kandidati/weapons/taser/taser_charging.wav",
+        "tf2:weapons/recon_ping.wav"
       ],
       "cues": [
-        "viktor_ult"
+        "viktor_ult",
+        "viktor_ult.lock"
       ]
     },
     "viktor_grenade": {
@@ -1043,17 +1055,36 @@
       ]
     },
     "honza_ult": {
-      "done": true,
+      "done": false,
       "note": "",
       "sources": [
-        "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav"
+        "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav",
+        "honza:honza_boulder_launch_01.wav",
+        "honza:honza_boulder_launch_02.wav",
+        "honza:honza_boulder_roll_01.wav",
+        "honza:honza_boulder_roll_02.wav",
+        "honza:honza_boulder_roll_03.wav",
+        "honza:honza_boulder_impact_01.wav",
+        "honza:honza_boulder_impact_02.wav",
+        "honza:honza_boulder_explode_01.wav"
       ],
       "integration_default": false,
       "playback_sources": [
-        "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav"
+        "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav",
+        "honza:honza_boulder_launch_01.wav",
+        "honza:honza_boulder_launch_02.wav",
+        "honza:honza_boulder_roll_01.wav",
+        "honza:honza_boulder_roll_02.wav",
+        "honza:honza_boulder_roll_03.wav",
+        "honza:honza_boulder_impact_01.wav",
+        "honza:honza_boulder_impact_02.wav",
+        "honza:honza_boulder_explode_01.wav"
       ],
       "cues": [
-        "honza_ult.land"
+        "honza_ult.explode",
+        "honza_ult.land",
+        "honza_ult.roll",
+        "honza_ult.start"
       ]
     },
     "honza_mine": {
@@ -1075,8 +1106,8 @@
         "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_02.wav"
       ],
       "cues": [
-        "honza_mine.impact",
-        "honza_mine.explode"
+        "honza_mine.explode",
+        "honza_mine.impact"
       ]
     },
     "honza_reload": {
@@ -1138,6 +1169,8 @@
         "inbox:CS2_kandidati/physics/water/water_splash_03.wav"
       ],
       "cues": [
+        "steps_water.enter",
+        "steps_water.exit",
         "world_splash"
       ]
     },
@@ -1170,63 +1203,407 @@
       ]
     },
     "pickup_health": {
-      "done": true,
+      "done": false,
       "note": "",
       "sources": [
-        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav",
+        "tf2:items/regenerate.wav"
       ],
       "integration_default": false,
       "playback_sources": [
-        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav",
+        "tf2:items/regenerate.wav"
       ],
       "cues": [
         "pickup_health"
       ]
     },
     "pickup_invulnerable": {
-      "done": true,
+      "done": false,
       "note": "",
       "sources": [
         "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard1.wav",
         "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard2.wav",
-        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav"
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav",
+        "tf2:player/pl_scout_dodge_can_drink.wav",
+        "tf2:items/powerup_pickup_uber.wav",
+        "tf2:player/taunt_demo_bigburp.wav"
       ],
       "integration_default": false,
       "playback_sources": [
         "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard1.wav",
         "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard2.wav",
-        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav"
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav",
+        "tf2:player/pl_scout_dodge_can_drink.wav",
+        "tf2:items/powerup_pickup_uber.wav",
+        "tf2:player/taunt_demo_bigburp.wav"
       ],
       "cues": [
-        "pickup_invulnerable"
+        "pickup_invulnerable",
+        "pickup_invulnerable.bottle",
+        "pickup_invulnerable.burp",
+        "pickup_invulnerable.drink"
       ]
     },
     "pickup_tramal": {
-      "done": true,
+      "done": false,
       "note": "",
       "sources": [
-        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav",
+        "tf2:items/powerup_pickup_regeneration.wav"
       ],
       "integration_default": false,
       "playback_sources": [
-        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav",
+        "tf2:items/powerup_pickup_regeneration.wav"
       ],
       "cues": [
         "pickup_tramal"
       ]
     },
     "pickup_carburetor": {
-      "done": true,
+      "done": false,
       "note": "",
       "sources": [
-        "inbox:CS2_kandidati/items/pickup_ammo_01.wav"
+        "inbox:CS2_kandidati/items/pickup_ammo_01.wav",
+        "tf2:items/gunpickup2.wav",
+        "tf2:ui/item_metal_scrap_pickup.wav"
       ],
       "integration_default": false,
       "playback_sources": [
-        "inbox:CS2_kandidati/items/pickup_ammo_01.wav"
+        "inbox:CS2_kandidati/items/pickup_ammo_01.wav",
+        "tf2:items/gunpickup2.wav",
+        "tf2:ui/item_metal_scrap_pickup.wav"
       ],
       "cues": [
         "pickup_carburetor"
+      ]
+    },
+    "combat_slash_metal": {
+      "done": true,
+      "note": "",
+      "sources": [
+        "tf2:mvm/melee_impacts/blade_hit_robo04.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo01.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo02.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:mvm/melee_impacts/blade_hit_robo04.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo01.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo02.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo03.wav"
+      ],
+      "cues": [
+        "combat_slash_metal"
+      ]
+    },
+    "pova_hook": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/grappling_hook_shoot.wav",
+        "tf2:weapons/grappling_hook_reel_start.wav",
+        "tf2:weapons/grappling_hook_reel_stop.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/grappling_hook_shoot.wav",
+        "tf2:weapons/grappling_hook_reel_start.wav",
+        "tf2:weapons/grappling_hook_reel_stop.wav"
+      ],
+      "cues": [
+        "pova_hook.reel",
+        "pova_hook.stop",
+        "pova_hook.throw"
+      ]
+    },
+    "mirek_weapon": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/bow_shoot_pull.wav",
+        "tf2:weapons/bow_shoot.wav",
+        "tf2:weapons/bow_shoot_pull_short.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss3.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss4.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh3.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/bow_shoot_pull.wav",
+        "tf2:weapons/bow_shoot.wav",
+        "tf2:weapons/bow_shoot_pull_short.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss3.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss4.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh3.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete.wav"
+      ],
+      "cues": [
+        "mirek_weapon.draw",
+        "mirek_weapon.draw.short",
+        "mirek_weapon.flight",
+        "mirek_weapon.impact.body",
+        "mirek_weapon.impact.metal",
+        "mirek_weapon.impact.stone",
+        "mirek_weapon.impact.wood",
+        "mirek_weapon.release"
+      ]
+    },
+    "david_sleep": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/syringegun_shoot.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/syringegun_shoot.wav"
+      ],
+      "cues": [
+        "david_sleep.fire"
+      ]
+    },
+    "david_impact": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/crusaders_crossbow_shoot.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/crusaders_crossbow_shoot.wav"
+      ],
+      "cues": [
+        "david_impact.fire"
+      ]
+    },
+    "kondulic_hook": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/grappling_hook_reel_start.wav",
+        "tf2:weapons/grappling_hook_reel_stop.wav",
+        "tf2:weapons/grappling_hook_shoot.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/grappling_hook_reel_start.wav",
+        "tf2:weapons/grappling_hook_reel_stop.wav",
+        "tf2:weapons/grappling_hook_shoot.wav"
+      ],
+      "cues": [
+        "kondulic_hook.reel",
+        "kondulic_hook.stop",
+        "kondulic_hook.throw"
+      ]
+    },
+    "mosino_fire": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/capper_shoot.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/capper_shoot.wav"
+      ],
+      "cues": [
+        "mosino_fire"
+      ]
+    },
+    "mosino_wave": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/cow_mangler_main_shot.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/cow_mangler_main_shot.wav"
+      ],
+      "cues": [
+        "mosino_wave"
+      ]
+    },
+    "max_reap": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:passtime/projectile_swoosh1.wav",
+        "tf2:passtime/projectile_swoosh2.wav",
+        "tf2:passtime/projectile_swoosh3.wav",
+        "tf2:passtime/projectile_swoosh6.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:passtime/projectile_swoosh1.wav",
+        "tf2:passtime/projectile_swoosh2.wav",
+        "tf2:passtime/projectile_swoosh3.wav",
+        "tf2:passtime/projectile_swoosh6.wav"
+      ],
+      "cues": [
+        "max_reap"
+      ]
+    },
+    "honza_trap": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "honza:honza_trap_snap_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "honza:honza_trap_snap_03.wav"
+      ],
+      "cues": [
+        "honza_trap"
+      ]
+    },
+    "max_shadow": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:misc/halloween/spell_stealth.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:misc/halloween/spell_stealth.wav"
+      ],
+      "cues": [
+        "max_shadow"
+      ]
+    },
+    "max_slash": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/samurai/tf_katana_slice_01.wav",
+        "tf2:weapons/samurai/tf_katana_slice_02.wav",
+        "tf2:weapons/samurai/tf_katana_slice_03.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/samurai/tf_katana_slice_01.wav",
+        "tf2:weapons/samurai/tf_katana_slice_02.wav",
+        "tf2:weapons/samurai/tf_katana_slice_03.wav"
+      ],
+      "cues": [
+        "max_slash"
+      ]
+    },
+    "max_ult": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:misc/halloween/spell_teleport.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:misc/halloween/spell_teleport.wav"
+      ],
+      "cues": [
+        "max_ult"
+      ]
+    },
+    "ui_capture_won": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:ui/scored.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:ui/scored.wav"
+      ],
+      "cues": [
+        "ui_capture_won"
+      ]
+    },
+    "ui_capture_tick": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:pl_hoodoo/alarm_clock_ticking_3.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:pl_hoodoo/alarm_clock_ticking_3.wav"
+      ],
+      "cues": [
+        "ui_capture_tick"
+      ]
+    },
+    "existing_gun_honza": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/grenade_launcher_shoot.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/grenade_launcher_shoot.wav"
+      ],
+      "cues": [
+        "existing_gun_honza",
+        "honza_fire"
+      ]
+    },
+    "existing_gun_sindel": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:weapons/ambassador_shoot.wav"
+      ],
+      "integration_default": false,
+      "playback_sources": [
+        "tf2:weapons/ambassador_shoot.wav"
+      ],
+      "cues": [
+        "existing_gun_sindel",
+        "sindel_fire"
+      ]
+    },
+    "pickup_respawn": {
+      "done": false,
+      "note": "",
+      "sources": [
+        "tf2:items/spawn_item.wav"
+      ],
+      "integration_default": true,
+      "playback_sources": [
+        "tf2:items/spawn_item.wav"
+      ],
+      "cues": [
+        "pickup_respawn"
       ]
     },
     "viktor_fire": {
@@ -1261,20 +1638,6 @@
       ],
       "cues": [
         "david_fire"
-      ]
-    },
-    "sindel_fire": {
-      "done": false,
-      "note": "",
-      "sources": [
-        "inbox:CS2_kandidati/weapons/revolver/revolver-1_01.wav"
-      ],
-      "integration_default": true,
-      "playback_sources": [
-        "inbox:CS2_kandidati/weapons/revolver/revolver-1_01.wav"
-      ],
-      "cues": [
-        "sindel_fire"
       ]
     },
     "kondulic_fire_scoped": {
@@ -3871,40 +4234,108 @@
       }
     },
     {
-      "source": "inbox:CS2_kandidati/weapons/deagle/de_clipout.wav",
-      "source_sha256": "6fd8ce11dd747c85053e68b5c226e9ada2c1026e0dd6a088e831e466d0352c08",
-      "asset": "Assets/Audio/Collected/CS2/weapons/deagle/de_clipout_6fd8ce11.wav",
-      "guid": "6b989eec5cc75218a025bee49f120676",
-      "seconds": 0.2697,
+      "source": "tf2:weapons/samurai/tf_katana_slice_01.wav",
+      "source_sha256": "ab618e9276c936502fa86a2d84bb14d139050511556e8d14bdc41490f3b122c3",
+      "asset": "Assets/Audio/Collected/TF2/weapons/samurai/tf_katana_slice_01_ab618e92.wav",
+      "guid": "f84392e26acf5f00b0e0dca5e3e0dcf4",
+      "seconds": 1.3932,
       "loop": false,
-      "provenance": {}
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
     },
     {
-      "source": "inbox:CS2_kandidati/weapons/deagle/de_clipin.mp3",
-      "source_sha256": "05d5c188f0ee4e163c87ccdd00cf61b4b079687e037e7b9c2dead9c556b1d613",
-      "asset": "Assets/Audio/Collected/CS2/weapons/deagle/de_clipin_05d5c188.wav",
-      "guid": "c3fb28226c6b5266a08d19cfd845657e",
-      "seconds": 0.1253,
+      "source": "tf2:weapons/samurai/tf_katana_slice_03.wav",
+      "source_sha256": "beb011fa34494233e90316dd7f3d23534686b70c952b03588640442e70002aae",
+      "asset": "Assets/Audio/Collected/TF2/weapons/samurai/tf_katana_slice_03_beb011fa.wav",
+      "guid": "4dcf51108c105d61b1982474adfa6075",
+      "seconds": 1.637,
       "loop": false,
-      "provenance": {}
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
     },
     {
-      "source": "inbox:CS2_kandidati/weapons/deagle/de_slideback.wav",
-      "source_sha256": "868726b5b9fb958c2a2c15c892be67249b10d400d479cd01fab15f404608378b",
-      "asset": "Assets/Audio/Collected/CS2/weapons/deagle/de_slideback_868726b5.wav",
-      "guid": "1effe5f91966533c82b82b718912b873",
-      "seconds": 0.1812,
+      "source": "tf2:weapons/demo_sword_swing1.wav",
+      "source_sha256": "cdadfcf0996cff55bf4b7ec75ff4d4da5acb3241f03e05d63be4d77e0a60c415",
+      "asset": "Assets/Audio/Collected/TF2/weapons/demo_sword_swing1_cdadfcf0.wav",
+      "guid": "16dbf58b3680537980fec0897d3732c9",
+      "seconds": 0.3898,
       "loop": false,
-      "provenance": {}
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
     },
     {
-      "source": "inbox:CS2_kandidati/weapons/deagle/de_slideforward.wav",
-      "source_sha256": "98dd776f9d55964974b8a1198bac4f00d4e0f2865ae0d57bb40cdae6542d0635",
-      "asset": "Assets/Audio/Collected/CS2/weapons/deagle/de_slideforward_98dd776f.wav",
-      "guid": "bc949972baf1516799d2018f344d186a",
-      "seconds": 0.1316,
+      "source": "tf2:weapons/demo_sword_swing2.wav",
+      "source_sha256": "859548f1239004e984d54de167948abb2278f18b8e9047e418aacd6a4c84b6c6",
+      "asset": "Assets/Audio/Collected/TF2/weapons/demo_sword_swing2_859548f1.wav",
+      "guid": "ba0306df623f543fa941fd65f93b0986",
+      "seconds": 0.3481,
       "loop": false,
-      "provenance": {}
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/glock18/glock_clipout.wav",
+      "source_sha256": "092f655ba5f88d52da4195458ad6778952184c8a1d328582c1ff02043300e72e",
+      "asset": "Assets/Audio/Collected/CS2/weapons/glock18/glock_clipout_092f655b.wav",
+      "guid": "b6e3241cacfc5a1099aa3fc3c7e75dfd",
+      "seconds": 0.3013,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/glock18/glock_clipin.wav",
+      "source_sha256": "c92fb13e153ea91594fc63733c5d2950da45021d7eff609da6ac3e32ef9bca51",
+      "asset": "Assets/Audio/Collected/CS2/weapons/glock18/glock_clipin_c92fb13e.wav",
+      "guid": "6efcedcc39525a919cca2f970903ddd4",
+      "seconds": 0.3011,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/glock18/glock_slideback.wav",
+      "source_sha256": "7cc666bb91cb688ca686f8289c85048dbf4cdcdb434b896cd9598716312f4988",
+      "asset": "Assets/Audio/Collected/CS2/weapons/glock18/glock_slideback_7cc666bb.wav",
+      "guid": "03648bee79e45220a92fde4bcd913f8c",
+      "seconds": 0.2485,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "inbox:CS2_kandidati/weapons/glock18/glock_sliderelease.wav",
+      "source_sha256": "a9f315e9e41226cc2b1a34238ff77f2e114861a5126a1452dc59b33095e599e7",
+      "asset": "Assets/Audio/Collected/CS2/weapons/glock18/glock_sliderelease_a9f315e9.wav",
+      "guid": "f95d1efdb8485134b119acdf758602ed",
+      "seconds": 0.3228,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
+        "author": "CS2 – uživatelem dodaná knihovna"
+      }
     },
     {
       "source": "inbox:CS2_kandidati/weapons/hegrenade/hegrenade_detonate_02.wav",
@@ -4141,6 +4572,19 @@
       }
     },
     {
+      "source": "tf2:weapons/recon_ping.wav",
+      "source_sha256": "f9533190d59e973537f4c96e631c78269debac45532032663f72b3c081f33cec",
+      "asset": "Assets/Audio/Collected/TF2/weapons/recon_ping_f9533190.wav",
+      "guid": "3d065e56bdc05d959d206b8c12139f98",
+      "seconds": 2.4903,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
       "source": "inbox:CS2_kandidati/weapons/m4a1/m4a1_clipout.mp3",
       "source_sha256": "ba5374221a140614bc7bc5d413eddd52907277fbf8778f7669b7724ae87c316c",
       "asset": "Assets/Audio/Collected/CS2/weapons/m4a1/m4a1_clipout_ba537422.wav",
@@ -4203,6 +4647,110 @@
         "source": "",
         "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
         "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "honza:honza_boulder_launch_01.wav",
+      "source_sha256": "a497c2a38f00099b9f8ef5e375881ac98f995f16eb1dd7e5741af26445cb02f6",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_boulder_launch_01_a497c2a3.wav",
+      "guid": "690fee40e4ad5188ad7c48d2afd3b855",
+      "seconds": 1.2472,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+      }
+    },
+    {
+      "source": "honza:honza_boulder_launch_02.wav",
+      "source_sha256": "e827891c6f3385263e1b4ea84488aefd18931f525d26788b8c955408448b5da0",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_boulder_launch_02_e827891c.wav",
+      "guid": "8e30e1b552715b12b36acceb971ef2e7",
+      "seconds": 1.2481,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+      }
+    },
+    {
+      "source": "honza:honza_boulder_roll_01.wav",
+      "source_sha256": "8c4d2696c081f99291ed09b7c858aa55a8647b9c8c0e93539a67153ae06b7668",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_boulder_roll_01_8c4d2696.wav",
+      "guid": "48e9d4c3e7fb546c8655b10f01f4cdd6",
+      "seconds": 4.975,
+      "loop": true,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+      }
+    },
+    {
+      "source": "honza:honza_boulder_roll_02.wav",
+      "source_sha256": "56994ae211d0e18c4cdbab8d67da4d552180eb703547ca0b08ec44c3d940ec6a",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_boulder_roll_02_56994ae2.wav",
+      "guid": "80e9a8f59a845fdcb5d1dcb4ac90ff99",
+      "seconds": 4.975,
+      "loop": true,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+      }
+    },
+    {
+      "source": "honza:honza_boulder_roll_03.wav",
+      "source_sha256": "21a7ad6f4ebfeca3d1695610372526fb73bed5048bc908f44fb8665d35715a10",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_boulder_roll_03_21a7ad6f.wav",
+      "guid": "1b320a5d73725e5880e6e6ca4885931c",
+      "seconds": 4.975,
+      "loop": true,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+      }
+    },
+    {
+      "source": "honza:honza_boulder_impact_01.wav",
+      "source_sha256": "e26181c4e700bec05cd11be457e72876cf7c5d8088d9ab434f5da612228c9b75",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_boulder_impact_01_e26181c4.wav",
+      "guid": "78a133a7372a517fa1cfb1cbfee9d1c0",
+      "seconds": 1.3974,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+      }
+    },
+    {
+      "source": "honza:honza_boulder_impact_02.wav",
+      "source_sha256": "0abfcf5a9aaf65e4b174d1f03d5e58a94fe865fc4bd22931e8590c267f541c19",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_boulder_impact_02_0abfcf5a.wav",
+      "guid": "559528cf80c859a18d1103eaef071029",
+      "seconds": 1.3984,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+      }
+    },
+    {
+      "source": "honza:honza_boulder_explode_01.wav",
+      "source_sha256": "6301a1a8f1a3e0d8a5f51b075645cb5a6e908af51c1198df1402b70cfeaf9504",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_boulder_explode_01_6301a1a8.wav",
+      "guid": "201e11f36da45527af502d00921e82f5",
+      "seconds": 2.8,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
       }
     },
     {
@@ -4336,6 +4884,19 @@
       }
     },
     {
+      "source": "tf2:items/regenerate.wav",
+      "source_sha256": "45e40f7dae86528af15d84f7bc1a4487f0f1766a9e28134affa78e9276b7dabd",
+      "asset": "Assets/Audio/Collected/TF2/items/regenerate_45e40f7d.wav",
+      "guid": "b35fc162b56d5d9d9104a8feca1ac396",
+      "seconds": 2.1412,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
       "source": "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard1.wav",
       "source_sha256": "a2e16f4b1c804634dbbb5f44bd071239e2e2e6338ff85fb9624d8f25cb884be6",
       "asset": "Assets/Audio/Collected/CS2/physics/glass/glass_bottle_impact_hard1_a2e16f4b.wav",
@@ -4375,6 +4936,58 @@
       }
     },
     {
+      "source": "tf2:player/pl_scout_dodge_can_drink.wav",
+      "source_sha256": "8d3ac41b06b8fd5cbdadf60476186bb0b9098fc69fbeed4a1ef9697f8c16f83e",
+      "asset": "Assets/Audio/Collected/TF2/player/pl_scout_dodge_can_drink_8d3ac41b.wav",
+      "guid": "2711358ad7f45b3b9f3c36fca500f76f",
+      "seconds": 1.2249,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:items/powerup_pickup_uber.wav",
+      "source_sha256": "9e167a3d3e45706232956b02b96b7ef45cffd072942ed23ead24c061b85356bd",
+      "asset": "Assets/Audio/Collected/TF2/items/powerup_pickup_uber_9e167a3d.wav",
+      "guid": "806d9d95fe295ba499a38a4c6b9b2608",
+      "seconds": 7.959,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:player/taunt_demo_bigburp.wav",
+      "source_sha256": "46b279818f0c4147c5362e37804492e284c832c5538e3055769fbf03a844ebbd",
+      "asset": "Assets/Audio/Collected/TF2/player/taunt_demo_bigburp_46b27981.wav",
+      "guid": "c4700ba103fb55b78709b075c54f81bb",
+      "seconds": 0.608,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:items/powerup_pickup_regeneration.wav",
+      "source_sha256": "fa901c54a9f1895f884069996c46f8cacbd4b5fda8a315f4aa1542ba3cfa58b5",
+      "asset": "Assets/Audio/Collected/TF2/items/powerup_pickup_regeneration_fa901c54.wav",
+      "guid": "2cb8fdbcf0cb51edb15436678d401c0a",
+      "seconds": 3.0,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
       "source": "inbox:CS2_kandidati/items/pickup_ammo_01.wav",
       "source_sha256": "a8c4d2ebb3a1a6c8c36c171dfe5f8a39ddfe982815076a8badbdc045284aafa9",
       "asset": "Assets/Audio/Collected/CS2/items/pickup_ammo_01_a8c4d2eb.wav",
@@ -4385,6 +4998,601 @@
         "source": "",
         "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
         "author": "CS2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:items/gunpickup2.wav",
+      "source_sha256": "5ca0ee93e3fcc1659e0fd213ef1fceb9ceca44440eb58efd16e8e37a08285164",
+      "asset": "Assets/Audio/Collected/TF2/items/gunpickup2_5ca0ee93.wav",
+      "guid": "498296f6bab150c2a23a64a95453f458",
+      "seconds": 0.6588,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:ui/item_metal_scrap_pickup.wav",
+      "source_sha256": "37237b018ac4b67ec6b919170cd3c36938e33131b1c488175325774036683cc3",
+      "asset": "Assets/Audio/Collected/TF2/ui/item_metal_scrap_pickup_37237b01.wav",
+      "guid": "c6e664578227521c8522d5c7aa76877a",
+      "seconds": 0.8934,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:mvm/melee_impacts/blade_hit_robo04.wav",
+      "source_sha256": "40c7e62db6e1a2466cad85c9a06c630bbb0766747ca3d2dbad0e1d6a32acaddb",
+      "asset": "Assets/Audio/Collected/TF2/mvm/melee_impacts/blade_hit_robo04_40c7e62d.wav",
+      "guid": "e9166ad9f0575104b49b6afb11ebd433",
+      "seconds": 0.17,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:mvm/melee_impacts/blade_hit_robo01.wav",
+      "source_sha256": "033ddb05e5842339675ccc2863ebd713dc40e562f401a39b5da552d094cb895e",
+      "asset": "Assets/Audio/Collected/TF2/mvm/melee_impacts/blade_hit_robo01_033ddb05.wav",
+      "guid": "b1a2f3765f5c5980b5cc80ae0c340238",
+      "seconds": 0.2341,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:mvm/melee_impacts/blade_hit_robo02.wav",
+      "source_sha256": "23b285869203dc02f2234514c55d6c4ede5658bca2ee9df1aa3da6df6022fc01",
+      "asset": "Assets/Audio/Collected/TF2/mvm/melee_impacts/blade_hit_robo02_23b28586.wav",
+      "guid": "2964bb5519815270968bd38981469655",
+      "seconds": 0.3165,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:mvm/melee_impacts/blade_hit_robo03.wav",
+      "source_sha256": "63c9cc1ccb05f49cc06bcfda95014eaf07ac3dde418a4b5d5e266423a9eb6195",
+      "asset": "Assets/Audio/Collected/TF2/mvm/melee_impacts/blade_hit_robo03_63c9cc1c.wav",
+      "guid": "894b9190313350408bb754d7fa0616a5",
+      "seconds": 0.2991,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/grappling_hook_shoot.wav",
+      "source_sha256": "3b2d69bd65a8f11455b6fcf1ca760132144a195b5db4a36432f5f250144b2083",
+      "asset": "Assets/Audio/Collected/TF2/weapons/grappling_hook_shoot_3b2d69bd.wav",
+      "guid": "efaab9e5a9835eafa1c1ccc2b1f4d1b4",
+      "seconds": 1.3099,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/grappling_hook_reel_start.wav",
+      "source_sha256": "4b7126998b8c554648db66627e00d8389d1eba9d06fead149f25a7c2ea3a7506",
+      "asset": "Assets/Audio/Collected/TF2/weapons/grappling_hook_reel_start_4b712699.wav",
+      "guid": "008a152eb0e95c2981ca05824a5a4fbb",
+      "seconds": 1.827,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/grappling_hook_reel_stop.wav",
+      "source_sha256": "3c757f3d60f807b34e80ced73c8acd9908bc42fcb4b283742b6d6daa9f1f5d7f",
+      "asset": "Assets/Audio/Collected/TF2/weapons/grappling_hook_reel_stop_3c757f3d.wav",
+      "guid": "182f1db7290b513dbaf2066deb00a543",
+      "seconds": 0.6196,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/bow_shoot_pull.wav",
+      "source_sha256": "d6b7379c125e980afd1a481667f175defdf42ad7013853707d5575cbf70f157b",
+      "asset": "Assets/Audio/Collected/TF2/weapons/bow_shoot_pull_d6b7379c.wav",
+      "guid": "3216a20d372554009dd4ac3679530c05",
+      "seconds": 0.562,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/bow_shoot.wav",
+      "source_sha256": "23eae8cec02bff5d8a746fd1c92cbd10d87be42569fca41d50a37fe244caaf63",
+      "asset": "Assets/Audio/Collected/TF2/weapons/bow_shoot_23eae8ce.wav",
+      "guid": "62e974f54a015e129d33a9e0872dfb69",
+      "seconds": 1.1101,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/bow_shoot_pull_short.wav",
+      "source_sha256": "aba2e1fe91bf7c7aa559265ea02a3e9a3931121f9bc56e5d960d9fba37df42a0",
+      "asset": "Assets/Audio/Collected/TF2/weapons/bow_shoot_pull_short_aba2e1fe.wav",
+      "guid": "7204b4284ffc5fa894db3bf2281ac3ab",
+      "seconds": 0.4223,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/nearmiss/arrow_nearmiss.wav",
+      "source_sha256": "25be34c7ad906b0d89492e3e900d481216d26f3cc74c59ccdc9dbcd9ccc3a188",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/nearmiss/arrow_nearmiss_25be34c7.wav",
+      "guid": "2e994bbf635852458e0e2a4dc82685c2",
+      "seconds": 0.4122,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/nearmiss/arrow_nearmiss3.wav",
+      "source_sha256": "5e899156025a14eee511c640eac42faf2a30e200fe24b70c53df9a46a3232407",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/nearmiss/arrow_nearmiss3_5e899156.wav",
+      "guid": "5e9135b205df57bfa41a8282e84e97c1",
+      "seconds": 0.4138,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/nearmiss/arrow_nearmiss4.wav",
+      "source_sha256": "7def7af112bb57b93fbafc81380edfa22e523c8d149bbb61740429bb637b1b1e",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/nearmiss/arrow_nearmiss4_7def7af1.wav",
+      "guid": "95e7b2875f99578884b7ffd1e388a265",
+      "seconds": 0.5177,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/nearmiss/arrow_nearmiss2.wav",
+      "source_sha256": "6553be5e4f1e8e6fc04edd7412e18ec7e0ff0ca5d53e6167828c4a9d353155eb",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/nearmiss/arrow_nearmiss2_6553be5e.wav",
+      "guid": "b327fb7926a550db82c1a828e2f8eef3",
+      "seconds": 0.6149,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_concrete2.wav",
+      "source_sha256": "2ffa946c3393ec2922548c670b7318486d463de8cec1339e1987084aa398b134",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_concrete2_2ffa946c.wav",
+      "guid": "4f2bfafb4ab05cb9988d3ed2da26dee5",
+      "seconds": 0.6073,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_concrete4.wav",
+      "source_sha256": "5a0dc6ab3054beaadb3d663bb40fb7b3fcf2eb9f83ee74e9923c59f59457e148",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_concrete4_5a0dc6ab.wav",
+      "guid": "4cc07db6ddad54eb9efafe860c5459f3",
+      "seconds": 0.6008,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_flesh2.wav",
+      "source_sha256": "c40c0990b1df36892f8121dd78fa714943dc65e9df7862c98c5a560c4614f1fe",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_flesh2_c40c0990.wav",
+      "guid": "1f1863438c295422a0d9438130d20796",
+      "seconds": 0.6849,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_flesh4.wav",
+      "source_sha256": "9870869cdea01b2aa8986c706c32b438224bf4f633b9d3a37d5aa97552c80643",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_flesh4_9870869c.wav",
+      "guid": "ed77f34743a95e1ba4bf018cdff4dde7",
+      "seconds": 0.713,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_metal.wav",
+      "source_sha256": "11d4dfa1c316e46137584a0948b3f995f0e04cc3b20fa47b3aff93539cc1a444",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_metal_11d4dfa1.wav",
+      "guid": "d0eb487caed25467a78c537af7ce02f9",
+      "seconds": 0.9843,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_flesh3.wav",
+      "source_sha256": "a70abacfe6bfc5af007e9c980fdbfd5dd54edd4b996c8aeb0fe053295569c714",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_flesh3_a70abacf.wav",
+      "guid": "24396e5c2c3d505f973c6ae96af2ab3d",
+      "seconds": 0.9762,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_metal2.wav",
+      "source_sha256": "878afae273189c72938b869f83f7ccffdc85123b25e53eea0f006419e65b1acb",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_metal2_878afae2.wav",
+      "guid": "b4ba7521d8b25b159855a1eb1e933870",
+      "seconds": 0.7502,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_metal4.wav",
+      "source_sha256": "546bbf1ab4865bd3d5692eb054bffc233cea842d85506595c9b01553ec06050a",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_metal4_546bbf1a.wav",
+      "guid": "081457df9ea75fb7b124164455f53851",
+      "seconds": 0.7135,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_wood2.wav",
+      "source_sha256": "d76943e5e380220bad02cf4417697f47e0b923b885d023d5182e463f0bf90651",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_wood2_d76943e5.wav",
+      "guid": "9fa035cb0d9951a6b9b8794baf254bce",
+      "seconds": 1.7545,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_wood4.wav",
+      "source_sha256": "2c7b0ecbb207f1479d01ea840c1977c320a2bcd5edb64912b8d1d9c8e9389954",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_wood4_2c7b0ecb.wav",
+      "guid": "83c349c0b73159959678145dfb90ffc8",
+      "seconds": 0.9737,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_wood.wav",
+      "source_sha256": "8e8db60ea91b36eab2685cea5f4615f09482b481f606eb8139ee8f327bebf9d9",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_wood_8e8db60e.wav",
+      "guid": "7ef4bcac408957d195a60d3faa3202c6",
+      "seconds": 0.8488,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_flesh.wav",
+      "source_sha256": "ec6b9586910da22571ae13de85bedc74692fe4eb2771c1a4ba6e7fc9fc1ca404",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_flesh_ec6b9586.wav",
+      "guid": "43f07eadd593561ba36adfca266937e6",
+      "seconds": 0.6378,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/fx/rics/arrow_impact_concrete.wav",
+      "source_sha256": "acb1b7bb5ca239563da2e1e5eb17c7fd80e0832e11251049523c0032e47d602e",
+      "asset": "Assets/Audio/Collected/TF2/weapons/fx/rics/arrow_impact_concrete_acb1b7bb.wav",
+      "guid": "aa9013ea59c25bad950199ce5ccdbb28",
+      "seconds": 0.5849,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/syringegun_shoot.wav",
+      "source_sha256": "47bebb26ec1c6fab7507f5e4bf182ff3a0aab02ac58be54a0845157a0af03d83",
+      "asset": "Assets/Audio/Collected/TF2/weapons/syringegun_shoot_47bebb26.wav",
+      "guid": "58708cfa0b855b2fbdb3972693183acd",
+      "seconds": 0.3527,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/crusaders_crossbow_shoot.wav",
+      "source_sha256": "944961698598208122d9d03f93340dc373ef05e4f31a6eb17ffc03ff42d9d6ae",
+      "asset": "Assets/Audio/Collected/TF2/weapons/crusaders_crossbow_shoot_94496169.wav",
+      "guid": "9d02b6f70aac52fea3f04b9057753d5a",
+      "seconds": 1.3111,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/capper_shoot.wav",
+      "source_sha256": "f6e2e561403ce87d51bb740cdce54321aae0906f23375e7d7b52593c5c657dc8",
+      "asset": "Assets/Audio/Collected/TF2/weapons/capper_shoot_f6e2e561.wav",
+      "guid": "c8bd8ce1224857bfa80c3eef0d618999",
+      "seconds": 0.9995,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/cow_mangler_main_shot.wav",
+      "source_sha256": "e3430eb643eefe197f4d6fab7ab9ed4d0b4bf9322b7a813eae84cebea806d45f",
+      "asset": "Assets/Audio/Collected/TF2/weapons/cow_mangler_main_shot_e3430eb6.wav",
+      "guid": "ed7a728fcedd58a3ac560c1a45adb3b7",
+      "seconds": 1.8336,
+      "loop": false,
+      "provenance": {}
+    },
+    {
+      "source": "tf2:passtime/projectile_swoosh1.wav",
+      "source_sha256": "3defd22b257d18ba315d6d824388e1b70c625dcf580f5886ecf5132a1fac354d",
+      "asset": "Assets/Audio/Collected/TF2/passtime/projectile_swoosh1_3defd22b.wav",
+      "guid": "2c2919e74d105f078ce6675d294d5bcd",
+      "seconds": 0.4701,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:passtime/projectile_swoosh2.wav",
+      "source_sha256": "c03f085075cb1eb5b0227dc87174dd123c06e5f6e0ea974dedd511a8476f290c",
+      "asset": "Assets/Audio/Collected/TF2/passtime/projectile_swoosh2_c03f0850.wav",
+      "guid": "45a441cd2960503281d49bf139a6937b",
+      "seconds": 0.4824,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:passtime/projectile_swoosh3.wav",
+      "source_sha256": "9cfb63003f9d54f45788e8763ae74143f1eb5fb26f6114f78462a81408fd8ba4",
+      "asset": "Assets/Audio/Collected/TF2/passtime/projectile_swoosh3_9cfb6300.wav",
+      "guid": "6e400b95f0845c4b90ca64a7c65ad2d6",
+      "seconds": 0.5075,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:passtime/projectile_swoosh6.wav",
+      "source_sha256": "00a71eb3069e64c499c4590b7f6afa283bb275bd70b0e33ed7131588e9bc6c8c",
+      "asset": "Assets/Audio/Collected/TF2/passtime/projectile_swoosh6_00a71eb3.wav",
+      "guid": "03a0ff660eab53e6b1f2a2a1b76d466a",
+      "seconds": 0.5308,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "honza:honza_trap_snap_03.wav",
+      "source_sha256": "c42d985c78fafe1ecbac522e57609ded62204574d8e55c9c94a4c2ced0f6ba29",
+      "asset": "Assets/Audio/Collected/Designed/Honza/honza_trap_snap_03_c42d985c.wav",
+      "guid": "e2a4108a50325b72a085f3fedb63c8c2",
+      "seconds": 0.44,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+        "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+      }
+    },
+    {
+      "source": "tf2:misc/halloween/spell_stealth.wav",
+      "source_sha256": "e32f30f7b41046bb819f242239257ebcb4046dddc77078f47ecb47de9fcd8146",
+      "asset": "Assets/Audio/Collected/TF2/misc/halloween/spell_stealth_e32f30f7.wav",
+      "guid": "14990f79d87257f6af2500ec9f7bfb8d",
+      "seconds": 2.1965,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/samurai/tf_katana_slice_02.wav",
+      "source_sha256": "75a3f04b59d83c766ba473fabf6ef1590c6ed90bfc85f920669d245d19111c0b",
+      "asset": "Assets/Audio/Collected/TF2/weapons/samurai/tf_katana_slice_02_75a3f04b.wav",
+      "guid": "a228557a4e6d510db344bab5201b4c69",
+      "seconds": 1.7571,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:misc/halloween/spell_teleport.wav",
+      "source_sha256": "ffc6b6baff4b5dfa5d6f86b7d90488ae7cc6769b6d567432577afe550e124dfd",
+      "asset": "Assets/Audio/Collected/TF2/misc/halloween/spell_teleport_ffc6b6ba.wav",
+      "guid": "eda33fd1eaba59088f11c1e480e10d8b",
+      "seconds": 1.3929,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:ui/scored.wav",
+      "source_sha256": "b6229fdafbfe1bf9f86bbc3c846666822fcdfa97ad6471716b0c8e97d172649b",
+      "asset": "Assets/Audio/Collected/TF2/ui/scored_b6229fda.wav",
+      "guid": "46794d4cdbdc5965b78534df71d51294",
+      "seconds": 2.9956,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:pl_hoodoo/alarm_clock_ticking_3.wav",
+      "source_sha256": "d925fc0c4a8df2b2158f9813c0349772f536b121163ce86eed49f9f82cd6e613",
+      "asset": "Assets/Audio/Collected/TF2/pl_hoodoo/alarm_clock_ticking_3_d925fc0c.wav",
+      "guid": "7fc1d610d5b7570dbcd822e9289e56f8",
+      "seconds": 0.161,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      },
+      "processing": "single_tick_v1"
+    },
+    {
+      "source": "tf2:weapons/grenade_launcher_shoot.wav",
+      "source_sha256": "24c21908fe3936c997e0fae974fd7a112b2a717b3c908991f0d4493bd345f1cd",
+      "asset": "Assets/Audio/Collected/TF2/weapons/grenade_launcher_shoot_24c21908.wav",
+      "guid": "6968fe82bfb758c89f6c5603250fae75",
+      "seconds": 0.5921,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:weapons/ambassador_shoot.wav",
+      "source_sha256": "83d43a1a63ff6144b8a2361950329578d15cb710505af20cc00ff6585c78286d",
+      "asset": "Assets/Audio/Collected/TF2/weapons/ambassador_shoot_83d43a1a.wav",
+      "guid": "b58c50387b275c37bebb7bae22a240c3",
+      "seconds": 2.0056,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
+      }
+    },
+    {
+      "source": "tf2:items/spawn_item.wav",
+      "source_sha256": "ad8fed1b58278c45d1e7a391c4e8a85594b3710a2c7238a30617c8004d9025ba",
+      "asset": "Assets/Audio/Collected/TF2/items/spawn_item_ad8fed1b.wav",
+      "guid": "5a457cc3a1475a94b5d167ca675ec40a",
+      "seconds": 0.9858,
+      "loop": false,
+      "provenance": {
+        "source": "",
+        "license": "Nedoložena",
+        "author": "TF2 – uživatelem dodaná knihovna"
       }
     },
     {
@@ -4433,15 +5641,6 @@
       "provenance": {}
     },
     {
-      "source": "inbox:CS2_kandidati/weapons/revolver/revolver-1_01.wav",
-      "source_sha256": "14963b95dacd8872286ae852516429516b98a628d135f9357072a4250bee0e15",
-      "asset": "Assets/Audio/Collected/CS2/weapons/revolver/revolver-1_01_14963b95.wav",
-      "guid": "a3162f6f5cc15c6aa901b2bb92148746",
-      "seconds": 3.4849,
-      "loop": false,
-      "provenance": {}
-    },
-    {
       "source": "inbox:CS2_kandidati/weapons/awp/awp_01.wav",
       "source_sha256": "4bccb603bea8bcd39e287a7959b5bb7e8ed7c0aabe74755715b169482d6fa8b0",
       "asset": "Assets/Audio/Collected/CS2/weapons/awp/awp_01_4bccb603.wav",
@@ -4476,13 +5675,18 @@
     "Reload components are assembled in order, not randomly exchanged.",
     "Existing recordings and hero voices take priority and are not modified."
   ],
-  "cue_count": 81,
-  "unique_source_files": 247,
+  "cue_count": 117,
+  "unique_source_files": 310,
   "reload_overrides": {
     "honza_reload": {
-      "source": "inbox:CS2_kandidati/weapons/nova/nova_insertshell_01.mp3",
+      "source": "inbox:CS2_kandidati/weapons/mag7/mag7_insertshell.wav",
       "repeats": 5,
-      "source_sha256": "657e2ce9f7cf131ad7c611894faaaf62e8b937182bb77c231b22ff6d4e2fd2fc"
+      "component_sources": [
+        "inbox:CS2_kandidati/weapons/mag7/mag7_insertshell.wav",
+        "inbox:CS2_kandidati/weapons/mag7/mag7_pump_back.mp3",
+        "inbox:CS2_kandidati/weapons/mag7/mag7_pump_forward.wav"
+      ],
+      "source_sha256": "8387724410690ff67ba9b3ee07c1d86eeb49a613187a578f3b4309c8eceeb09f"
     }
   }
 }

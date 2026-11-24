@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "revision": 341,
-  "updated": "2026-11-10T18:33:07Z",
+  "revision": 416,
+  "updated": "2026-11-24T05:15:02Z",
   "items": {
     "steps_wood": {
       "files": [
@@ -435,9 +435,13 @@
         "inbox:CS2_kandidati/weapons/knife/knife_swish_light_03.mp3",
         "inbox:CS2_kandidati/weapons/knife/knife_swish_light_04.mp3",
         "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_02.mp3",
-        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3"
+        "inbox:CS2_kandidati/weapons/knife/knife_swish_heavy_03.mp3",
+        "tf2:weapons/samurai/tf_katana_slice_01.wav",
+        "tf2:weapons/samurai/tf_katana_slice_03.wav",
+        "tf2:weapons/demo_sword_swing1.wav",
+        "tf2:weapons/demo_sword_swing2.wav"
       ],
-      "done": true,
+      "done": false,
       "skipped": false,
       "note": ""
     },
@@ -532,9 +536,10 @@
     },
     "viktor_ult": {
       "files": [
-        "inbox:CS2_kandidati/weapons/taser/taser_charging.wav"
+        "inbox:CS2_kandidati/weapons/taser/taser_charging.wav",
+        "tf2:weapons/recon_ping.wav"
       ],
-      "done": true,
+      "done": false,
       "skipped": false,
       "note": ""
     },
@@ -560,9 +565,17 @@
     },
     "honza_ult": {
       "files": [
-        "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav"
+        "inbox:CS2_kandidati/physics/concrete/boulder_impact_hard4.wav",
+        "honza:honza_boulder_launch_01.wav",
+        "honza:honza_boulder_launch_02.wav",
+        "honza:honza_boulder_roll_01.wav",
+        "honza:honza_boulder_roll_02.wav",
+        "honza:honza_boulder_roll_03.wav",
+        "honza:honza_boulder_impact_01.wav",
+        "honza:honza_boulder_impact_02.wav",
+        "honza:honza_boulder_explode_01.wav"
       ],
-      "done": true,
+      "done": false,
       "skipped": false,
       "note": ""
     },
@@ -630,9 +643,10 @@
     },
     "pickup_health": {
       "files": [
-        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav",
+        "tf2:items/regenerate.wav"
       ],
-      "done": true,
+      "done": false,
       "skipped": false,
       "note": ""
     },
@@ -640,25 +654,204 @@
       "files": [
         "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard1.wav",
         "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard2.wav",
-        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav"
+        "inbox:CS2_kandidati/physics/glass/glass_bottle_impact_hard3.wav",
+        "tf2:player/pl_scout_dodge_can_drink.wav",
+        "tf2:items/powerup_pickup_uber.wav",
+        "tf2:player/taunt_demo_bigburp.wav"
       ],
-      "done": true,
+      "done": false,
       "skipped": false,
       "note": ""
     },
     "pickup_tramal": {
       "files": [
-        "inbox:CS2_kandidati/items/healthshot_success_01.wav"
+        "inbox:CS2_kandidati/items/healthshot_success_01.wav",
+        "tf2:items/powerup_pickup_regeneration.wav"
       ],
-      "done": true,
+      "done": false,
       "skipped": false,
       "note": ""
     },
     "pickup_carburetor": {
       "files": [
-        "inbox:CS2_kandidati/items/pickup_ammo_01.wav"
+        "inbox:CS2_kandidati/items/pickup_ammo_01.wav",
+        "tf2:items/gunpickup2.wav",
+        "tf2:ui/item_metal_scrap_pickup.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "combat_slash_metal": {
+      "files": [
+        "tf2:mvm/melee_impacts/blade_hit_robo04.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo01.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo02.wav",
+        "tf2:mvm/melee_impacts/blade_hit_robo03.wav"
       ],
       "done": true,
+      "skipped": false,
+      "note": ""
+    },
+    "pova_hook": {
+      "files": [
+        "tf2:weapons/grappling_hook_shoot.wav",
+        "tf2:weapons/grappling_hook_reel_start.wav",
+        "tf2:weapons/grappling_hook_reel_stop.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "mirek_weapon": {
+      "files": [
+        "tf2:weapons/bow_shoot_pull.wav",
+        "tf2:weapons/bow_shoot.wav",
+        "tf2:weapons/bow_shoot_pull_short.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss3.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss4.wav",
+        "tf2:weapons/fx/nearmiss/arrow_nearmiss2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh3.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_metal4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood2.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood4.wav",
+        "tf2:weapons/fx/rics/arrow_impact_wood.wav",
+        "tf2:weapons/fx/rics/arrow_impact_flesh.wav",
+        "tf2:weapons/fx/rics/arrow_impact_concrete.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "david_sleep": {
+      "files": [
+        "tf2:weapons/syringegun_shoot.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "david_impact": {
+      "files": [
+        "tf2:weapons/crusaders_crossbow_shoot.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "kondulic_hook": {
+      "files": [
+        "tf2:weapons/grappling_hook_reel_start.wav",
+        "tf2:weapons/grappling_hook_reel_stop.wav",
+        "tf2:weapons/grappling_hook_shoot.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "mosino_fire": {
+      "files": [
+        "tf2:weapons/capper_shoot.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "mosino_wave": {
+      "files": [
+        "tf2:weapons/cow_mangler_main_shot.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "max_reap": {
+      "files": [
+        "tf2:passtime/projectile_swoosh1.wav",
+        "tf2:passtime/projectile_swoosh2.wav",
+        "tf2:passtime/projectile_swoosh3.wav",
+        "tf2:passtime/projectile_swoosh6.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "honza_trap": {
+      "files": [
+        "honza:honza_trap_snap_03.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "max_shadow": {
+      "files": [
+        "tf2:misc/halloween/spell_stealth.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "max_slash": {
+      "files": [
+        "tf2:weapons/samurai/tf_katana_slice_01.wav",
+        "tf2:weapons/samurai/tf_katana_slice_02.wav",
+        "tf2:weapons/samurai/tf_katana_slice_03.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "max_ult": {
+      "files": [
+        "tf2:misc/halloween/spell_teleport.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "ui_capture_won": {
+      "files": [
+        "tf2:ui/scored.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "ui_capture_tick": {
+      "files": [
+        "tf2:pl_hoodoo/alarm_clock_ticking_3.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "state_respawn": {
+      "files": [],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "existing_gun_honza": {
+      "files": [
+        "tf2:weapons/grenade_launcher_shoot.wav"
+      ],
+      "done": false,
+      "skipped": false,
+      "note": ""
+    },
+    "existing_gun_sindel": {
+      "files": [
+        "tf2:weapons/ambassador_shoot.wav"
+      ],
+      "done": false,
       "skipped": false,
       "note": ""
     }
@@ -1863,6 +2056,321 @@
       "source": "",
       "license": "Licence pro použití mimo zdrojovou hru nebyla dodaná ani ověřená.",
       "author": "CS2 – uživatelem dodaná knihovna"
+    },
+    "tf2:mvm/melee_impacts/blade_hit_robo04.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:mvm/melee_impacts/blade_hit_robo01.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:mvm/melee_impacts/blade_hit_robo02.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:mvm/melee_impacts/blade_hit_robo03.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/grappling_hook_shoot.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/grappling_hook_reel_start.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/grappling_hook_reel_stop.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/recon_ping.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/bow_shoot_pull.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/bow_shoot.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/bow_shoot_pull_short.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/nearmiss/arrow_nearmiss.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/nearmiss/arrow_nearmiss3.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/nearmiss/arrow_nearmiss4.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/nearmiss/arrow_nearmiss2.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_concrete2.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_concrete4.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_flesh2.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_flesh4.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_metal.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_flesh3.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_metal2.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_metal4.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_wood2.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_wood4.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_wood.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_flesh.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/fx/rics/arrow_impact_concrete.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/syringegun_shoot.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/crusaders_crossbow_shoot.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/capper_shoot.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/samurai/tf_katana_slice_01.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/samurai/tf_katana_slice_03.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/demo_sword_swing1.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/demo_sword_swing2.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:passtime/projectile_swoosh1.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:passtime/projectile_swoosh2.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:passtime/projectile_swoosh3.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:passtime/projectile_swoosh6.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "honza:honza_trap_snap_03.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "honza:honza_boulder_launch_01.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "honza:honza_boulder_launch_02.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "honza:honza_boulder_roll_01.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "honza:honza_boulder_roll_02.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "honza:honza_boulder_roll_03.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "honza:honza_boulder_impact_01.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "honza:honza_boulder_impact_02.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "honza:honza_boulder_explode_01.wav": {
+      "source": "",
+      "license": "Odvozeno ze zdrojů uvedených u jednotlivých klipů; původní podmínky zůstávají platné.",
+      "author": "Složené návrhy z lokálních knihoven CS2 a Sonniss GDC 2026"
+    },
+    "tf2:misc/halloween/spell_teleport.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:misc/halloween/spell_stealth.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/samurai/tf_katana_slice_02.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:ui/scored.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:pl_hoodoo/alarm_clock_ticking_3.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:items/spawn_item.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:player/pl_scout_dodge_can_drink.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:items/gunpickup2.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:ui/item_metal_scrap_pickup.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:items/regenerate.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:items/powerup_pickup_regeneration.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:items/powerup_pickup_uber.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/grenade_launcher_shoot.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:weapons/ambassador_shoot.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
+    },
+    "tf2:player/taunt_demo_bigburp.wav": {
+      "source": "",
+      "license": "Nedoložena",
+      "author": "TF2 – uživatelem dodaná knihovna"
     }
   }
 }

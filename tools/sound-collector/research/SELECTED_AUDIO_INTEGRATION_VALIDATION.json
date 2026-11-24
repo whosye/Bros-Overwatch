@@ -1,0 +1,27 @@
+{
+  "revision": 416,
+  "selected_items": 72,
+  "items_with_defaults": 77,
+  "source_recordings": 310,
+  "cues": 117,
+  "playback_wav_files": 298,
+  "python_tests": {
+    "passed": 35,
+    "failed": 0
+  },
+  "unity_selected_audio_test": "Passed",
+  "unity_pickup_respawn_test": "Passed",
+  "windows_build": {
+    "result": "Succeeded",
+    "executable": "C:\\myDev_\\games\\bros-overwatch-dir\\Bros-Overwatch\\compiled game\\OverwatchBros.exe",
+    "bytes": 667648
+  },
+  "preservation": {
+    "original_audio_files": 209,
+    "changed_original_audio": [],
+    "baseline": "current HEAD, Git LFS SHA-256 where applicable"
+  },
+  "all_selected_sources_used": true,
+  "user_choices_modified_by_export": false,
+  "manual_playtest_notes": "AUDIO_PLAYTEST.md"
+}

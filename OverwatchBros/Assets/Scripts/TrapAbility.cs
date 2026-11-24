@@ -283,8 +283,7 @@ public class TrapAbility : NetworkBehaviour
     {
         placed = false;
         Fx.Sparks(point + Vector3.up * 0.3f, Steel);
-        ProceduralSfx.Play(ProceduralSfx.Hit, point, 1f);
-        ProceduralSfx.Play(ProceduralSfx.Empty, point, 1f);
+        ProceduralSfx.Play(CollectedAudioBank.Pick("honza_trap", ProceduralSfx.Hit), point, 0.9f, 25f);
 
         if (visual == null) return;
 

@@ -16,6 +16,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit
 from urllib.request import urlopen
 
+from audio_paths import LOCAL_LIBRARIES, inside
+
 
 APP = Path(__file__).resolve().parent
 PROJECT = APP.parent.parent
@@ -41,10 +43,13 @@ def contained(root: Path, relative: str) -> Path:
 
 
 class Collection:
-    def __init__(self, inbox: Path = DEFAULT_INBOX, state_path: Path | None = None):
+    def __init__(self, inbox: Path = DEFAULT_INBOX, state_path: Path | None = None, *, libraries=None):
         self.inbox = inbox.resolve()
+        self.libraries = dict(LOCAL_LIBRARIES if libraries is None else libraries)
         self.state_path = state_path or APP / "collection.json"
         self.catalog = json.loads((APP / "catalog.json").read_text(encoding="utf-8"))
+        preferences = APP / "recommendation_preferences.json"
+        self.preferred_sources = json.loads(preferences.read_text(encoding="utf-8")).get("preferred_sources", {}) if preferences.exists() else {}
         self.items = {item["id"]: item for item in self.catalog["items"]}
         self.existing_ids = {file for item in self.items.values() for file in item.get("existing", [])}
         self.lock = threading.RLock()
@@ -60,6 +65,12 @@ class Collection:
     def file_path(self, file_id: str) -> Path:
         if file_id.startswith("inbox:"):
             result = contained(self.inbox, file_id[6:])
+        elif file_id.partition(":")[0] in self.libraries:
+            prefix, _, relative = file_id.partition(":")
+            try:
+                result = inside(self.libraries[prefix], relative)
+            except ValueError as exc:
+                raise Invalid("Soubor musí být uvnitř zvukové knihovny.") from exc
         elif file_id in self.existing_ids and file_id.startswith("asset:"):
             result = contained(ASSETS, file_id[6:])
         else:
@@ -144,10 +155,14 @@ class Collection:
     def recommendations(self) -> tuple[list[dict], list[str]]:
         """Read the audition manifest without treating suggestions as user choices."""
         result, warnings = [], []
-        for manifest in sorted(self.inbox.glob("*/KANDIDATI.json")):
+        manifests = [(path, self.inbox, "inbox:" + path.parent.relative_to(self.inbox).as_posix() + "/")
+                     for path in sorted(self.inbox.glob("*/KANDIDATI.json"))]
+        manifests.extend((root / "KANDIDATI.json", root, prefix + ":")
+                         for prefix, root in self.libraries.items() if (root / "KANDIDATI.json").is_file())
+        for manifest, root, file_prefix in manifests:
             try:
-                relative = manifest.relative_to(self.inbox).as_posix()
-                path = contained(self.inbox, relative)
+                relative = manifest.relative_to(root).as_posix()
+                path = contained(root, relative)
                 value = json.loads(path.read_text(encoding="utf-8"))
                 if not isinstance(value, dict) or not isinstance(value.get("files"), list):
                     raise Invalid("Neplatný seznam kandidátů.")
@@ -167,7 +182,7 @@ class Collection:
                 for record in value["files"]:
                     if not isinstance(record, dict) or not isinstance(record.get("file"), str):
                         raise Invalid("Neplatný kandidát.")
-                    file_id = "inbox:" + manifest.parent.relative_to(self.inbox).as_posix() + "/" + record["file"]
+                    file_id = file_prefix + record["file"]
                     self.file_path(file_id)
                     targets = record.get("item_ids", [])
                     if not isinstance(targets, list) or any(not isinstance(key, str) for key in targets):
@@ -175,10 +190,17 @@ class Collection:
                     if file_id in seen:
                         continue
                     seen.add(file_id)
-                    group.append({"file": file_id, "item_ids": [key for key in targets if key in self.items],
+                    approved_targets = [key for key in targets if key in self.items and
+                                        (key not in self.preferred_sources or source_id in self.preferred_sources[key])]
+                    if targets and not approved_targets:
+                        continue
+                    group.append({"file": file_id, "item_ids": approved_targets,
                                   "tier": record.get("section") if record.get("section") in ("A", "B", "C") else "B",
                                   "note": str(record.get("note", ""))[:4000],
                                   "original": str(record.get("path", ""))[:4000],
+                                  "title": str(record.get("title", ""))[:240],
+                                  "phase": str(record.get("phase", ""))[:80],
+                                  "loop": record.get("loop") is True,
                                   "seconds": record.get("seconds") if isinstance(record.get("seconds"), (int, float)) else None,
                                   "source_id": source_id, "source_label": source_label,
                                   "source_metadata": source_meta})
@@ -248,8 +270,11 @@ class Collection:
         if exists and info.st_size < 1024:
             with path.open("rb") as stream:
                 pointer = stream.read(40).startswith(b"version https://git-lfs")
+        library = file_id.partition(":")[0]
         return {"id": file_id, "name": path.name, "relative": file_id.split(":", 1)[1],
-                "inbox": file_id.startswith("inbox:"), "exists": exists and not pointer,
+                "inbox": file_id.startswith("inbox:") or library in self.libraries,
+                "location": "Honza · návrhy / " if library == "honza" else "TF2 / " if library == "tf2" else "sounds_dir / " if library == "inbox" else "Už v projektu / ",
+                "exists": exists and not pointer,
                 "pointer": pointer, "size": info.st_size if info else 0,
                 "modified": info.st_mtime if info else 0,
                 "format": path.suffix[1:].upper(), "mime": MIME.get(path.suffix.lower(), "audio/*")}
@@ -325,7 +350,7 @@ class Handler(BaseHTTPRequestHandler):
         url = urlsplit(self.path)
         try:
             if url.path == "/api/identity":
-                self.send_json({"application": "bros-sound-collector", "apiVersion": 3, "pid": os.getpid(), "project": str(PROJECT),
+                self.send_json({"application": "bros-sound-collector", "apiVersion": 5, "pid": os.getpid(), "project": str(PROJECT),
                                 "folder": str(self.collection.inbox), "statePath": str(self.collection.state_path.resolve())})
             elif url.path == "/api/snapshot":
                 self.send_json(self.collection.snapshot())

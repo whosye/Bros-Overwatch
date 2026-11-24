@@ -115,9 +115,26 @@ public static class CollectedAudioPlayCheckBatch
 
     public static void Run()
     {
+        Start("CollectedAudioPlayChecks.SelectedAudioPlaybackAndReloadCancellation", "UNITY_AUDIO_PLAY_TESTS.xml");
+    }
+
+    public static void RunPickupRespawn()
+    {
+        Start("PickupRespawnAudioChecks.RespawnPlaysOnceAtPickupAndResetStaysSilent", "PICKUP_RESPAWN_PLAY_TESTS.xml");
+    }
+
+    public static void RunSelectedAudio()
+    {
+        Start("SelectedAudioIntegrationChecks.SelectedSoundsReachTheirGameplayEvents", "SELECTED_AUDIO_PLAY_TESTS.xml");
+    }
+
+    static void Start(string test, string resultFile)
+    {
         if (!Application.isBatchMode)
             throw new System.InvalidOperationException("Audio batch checks must run in a separate batch editor, never in an interactive session.");
         SessionState.SetBool(Active, true);
+        SessionState.SetString(Active + ".Test", test);
+        SessionState.SetString(Active + ".Result", resultFile);
         TestRunnerApi.RegisterTestCallback(new Results());
         prepareAt = EditorApplication.timeSinceStartup + 5;
         EditorApplication.update += Prepare;
@@ -134,7 +151,7 @@ public static class CollectedAudioPlayCheckBatch
         EditorSceneManager.SaveScene(scene, "Assets/Editor/CollectedAudioSmoke.unity");
         var api = ScriptableObject.CreateInstance<TestRunnerApi>();
         api.Execute(new ExecutionSettings(new Filter { testMode = UnityEditor.TestTools.TestRunner.Api.TestMode.EditMode,
-            testNames = new[] { "CollectedAudioPlayChecks.SelectedAudioPlaybackAndReloadCancellation" } }));
+            testNames = new[] { SessionState.GetString(Active + ".Test", "CollectedAudioPlayChecks.SelectedAudioPlaybackAndReloadCancellation") } }));
     }
 
     sealed class Results : ICallbacks
@@ -144,7 +161,7 @@ public static class CollectedAudioPlayCheckBatch
         public void TestFinished(ITestResultAdaptor result) { }
         public void RunFinished(ITestResultAdaptor result)
         {
-            TestRunnerApi.SaveResultToFile(result, System.IO.Path.GetFullPath("../tools/sound-collector/research/UNITY_AUDIO_PLAY_TESTS.xml"));
+            TestRunnerApi.SaveResultToFile(result, System.IO.Path.GetFullPath("../tools/sound-collector/research/" + SessionState.GetString(Active + ".Result", "UNITY_AUDIO_PLAY_TESTS.xml")));
             SessionState.SetBool(Active, false);
             // Leave the real game scene selected for the next editor launch.
             EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", OpenSceneMode.Single);

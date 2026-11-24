@@ -36,7 +36,12 @@ public partial class MatchManager
         // Obnoveni sebranych.
         for (int i = 0; i < spots.Count && i < 64; i++)
             if ((mask & (1UL << i)) == 0 && Time.time >= pickupRespawnAt[i])
+            {
                 mask |= 1UL << i;
+                // Jednorazova udalost ze serveru, ne zmeny vizualu / pripojeni do rozehrane hry.
+                if (!IsLobby && !IsOver)
+                    PickupRespawnedClientRpc(spots[i].transform.position);
+            }
 
         if (!IsLobby && !IsOver)
         {
@@ -133,6 +138,14 @@ public partial class MatchManager
     }
 
     [ClientRpc]
+    void PickupRespawnedClientRpc(Vector3 position)
+    {
+        // Pri replayi hraje zaznamenana udalost, ne soucasne obnovovani na zive mape.
+        if (ReplayPlayer.Active || IsLobby || IsOver) return;
+        ProceduralSfx.Play(CollectedAudioBank.Pick("pickup_respawn"), position, 0.65f, 18f);
+    }
+
+    [ClientRpc]
     void PickupTakenClientRpc(int index, Vector3 position, ulong playerId)
     {
         var spots = PickupSpot.Sorted;
@@ -187,5 +200,24 @@ public partial class MatchManager
         var sound = CollectedAudioBank.Pick(cue);
         if (sound == null && heal) sound = CollectedAudioBank.Pick("pickup_health");
         ProceduralSfx.Play(sound != null ? sound : heal ? ProceduralSfx.Spawn : ProceduralSfx.CaptureUnlock, position, 0.8f);
+        if (kind == PickupKind.Invulnerable && !ReplayPlayer.Active)
+        {
+            ProceduralSfx.Play(CollectedAudioBank.Pick("pickup_invulnerable.bottle"), position, 0.3f, 16f);
+            StartCoroutine(SlivoviceDrink(playerId, position));
+        }
+    }
+
+    System.Collections.IEnumerator SlivoviceDrink(ulong playerId, Vector3 fallback)
+    {
+        var drink = CollectedAudioBank.Pick("pickup_invulnerable.drink");
+        var burp = CollectedAudioBank.Pick("pickup_invulnerable.burp");
+        var network = NetworkManager.Singleton;
+        network.SpawnManager.SpawnedObjects.TryGetValue(playerId, out var drinker);
+        if (drink != null)
+            ProceduralSfx.PlayForActor(drinker, drink, drinker != null ? drinker.transform.position : fallback, 0.65f, 18f);
+        if (burp == null) yield break;
+        yield return new WaitForSeconds(drink != null ? drink.length + 0.08f : 0.15f);
+        if (ReplayPlayer.Active || IsLobby || IsOver) yield break;
+        ProceduralSfx.PlayForActor(drinker, burp, drinker != null ? drinker.transform.position : fallback, 0.7f, 20f);
     }
 }

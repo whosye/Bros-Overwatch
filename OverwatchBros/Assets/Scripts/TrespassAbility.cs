@@ -203,7 +203,7 @@ public class TrespassAbility : NetworkBehaviour
     void BeginClientRpc(ulong targetId)
     {
         Fx.Sparks(transform.position + Vector3.up, MaxAbility.ShadowColor);
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.9f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("max_ult", ProceduralSfx.Dash), transform.position, 0.9f);
 
         // obet: tmavy fialovy okraj a varovani
         var network = NetworkManager.Singleton;

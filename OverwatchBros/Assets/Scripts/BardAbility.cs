@@ -575,7 +575,7 @@ public class BardAbility : NetworkBehaviour
             fpc.AddImpulse(push);
         }
 
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.Explosion, transform.position, 0.35f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("mosino_wave", ProceduralSfx.Explosion), transform.position, 0.65f);
         hero.SayAbility(wave);
         SoundwaveServerRpc(eye.position, forward);
     }
@@ -801,7 +801,7 @@ public class BardAbility : NetworkBehaviour
         for (int i = 1; i <= 4; i++)
             Fx.Sparks(origin + forward * (range * i / 4f), i % 2 == 0 ? color : Color.white);
         if (!IsOwner)
-            ProceduralSfx.Play(ProceduralSfx.Explosion, origin, 0.35f);
+            ProceduralSfx.Play(CollectedAudioBank.Pick("mosino_wave", ProceduralSfx.Explosion), origin, 0.65f);
     }
 
     [ClientRpc]

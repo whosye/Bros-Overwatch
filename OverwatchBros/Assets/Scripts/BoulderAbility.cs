@@ -99,7 +99,7 @@ public class BoulderAbility : NetworkBehaviour
         if (current)
         {
             ShowBoulder(position.Value);
-            ProceduralSfx.Play(ProceduralSfx.LeapStart, position.Value, 0.6f);
+            ProceduralSfx.Play(CollectedAudioBank.Pick("honza_ult.start", ProceduralSfx.LeapStart), position.Value, 0.6f);
         }
         else if (boulder != null)
         {
@@ -211,7 +211,7 @@ public class BoulderAbility : NetworkBehaviour
 
         position.Value = start;
         rolling.Value = true;
-        ProceduralSfx.PlayForActor(this, ProceduralSfx.LeapStart, start, 0.6f);
+        ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("honza_ult.start", ProceduralSfx.LeapStart), start, 0.6f);
         GetComponent<PlayerHero>().SayAbility(ability);
     }
 
@@ -377,7 +377,7 @@ public class BoulderAbility : NetworkBehaviour
     void ExplodeFxClientRpc(Vector3 center)
     {
         Fx.Explosion(center, ability != null ? ability.radius : 6f);
-        ProceduralSfx.Play(CollectedAudioBank.SmallExplosion(), center, 1f, 60f);
+        ProceduralSfx.Play(CollectedAudioBank.Pick("honza_ult.explode") ?? CollectedAudioBank.SmallExplosion(), center, 1f, 60f);
     }
 
     // Balvan dostal zasah (jen server). Vlastni tym ho neposkodi.

@@ -7,9 +7,11 @@
 - Jezírko a potok se při zvucích zohledňují i bez fyzického collideru. Kroky, dopady a střelba mohou zasáhnout skutečnou vodní plochu.
 - Pova má krátký kontakt s prostředím a delší zásah hráče. Při jednom zásahu se nepřidává druhý kontaktní zvuk nože.
 - Ve sbírce je nová hlavní položka **Sekera / kosa → hráč (společná sada)** se 13 kandidáty. Vlastní soubory lze dát do `OverwatchBros/Sound/sounds_dir/Vlastni_zasahy_do_hracu` a přiřadit je k této položce. Nový výběr se zapojí spuštěním exportu; do té doby hráčské zásahy sdílejí již vybrané bodnutí.
-- Nahrazené jsou pouze známé původní generované střelby `gun_viktor` a `gun_anna`, aktuálně netlumenou M4A1 pro Viktora a tlumenou M4A1-S pro Davida z CS2. Šindel používá výstřel R8 a přebíjecí sekvenci z Deaglu v délce jeho animace, Kondulič AWP při střelbě přes optiku a MP5 bez optiky. Ostatní ručně přiřazené výstřely mají dál přednost.
-- Honzovy projektilové granáty používají vybranou explozi, stejně jako nálož. Přebití používá pětkrát vložení náboje z Novy ve zrychlené sekvenci, která se celá vejde do přebíjecí animace, bez přidaného závěru/pumpy a bez cvaknutí prázdné zbraně na konci.
-- Balvan: vybraný kamenný úder je nyní dopad po pádu, hlasitější a oddělený od exploze. Prozatímní smyčka valení je složená z vybraných štěrkových zvuků a její výška/hlasitost reaguje na pohyb. Ve vzduchu utichá. Přidaný je jeden skok ve vzduchu a šplhání po svislé zdi při držení mezerníku, nejvýše 2,5 m mezi dotyky se zemí.
+- Poslední výběr (revize 416) je zapojený celý. Honza má TF2 granátomet, Šindel Ambassador a zvolené přebití z Glocku, Mošino Capper. Viktor má výchozí M4A1, David tlumenou M4A1-S, Kondulič AWP přes optiku a MP5 bez ní. Aktuální volby z přehledu mají přednost před staršími náhradami.
+- Honzovy projektilové granáty používají vybranou explozi, stejně jako nálož. Přebití obsahuje pět vybraných vložení náboje z Mag7 a vybrané pohyby pumpy před a po vložení. Celá sekvence se vejde do animace a na konci se nepřidává cvaknutí prázdné zbraně.
+- Balvan má samostatné vybrané vypuštění, tři kamenné smyčky valení, dopady a závěrečný výbuch. Hlasitost/výška valení reaguje na pohyb a ve vzduchu utichá. Zůstává jeden skok ve vzduchu a šplhání po svislé zdi při držení mezerníku, nejvýše 2,5 m mezi dotyky se zemí.
+- Luk má zvolené natažení, krátké natažení pro rychlopalbu, vypuštění, průlety a materiálové dopady. Natahování se při přerušení/výměně zbraně zastaví. Oba háky mají zvolené navíjení a konec; past vybrané sklapnutí čelistí.
+- Slivovice má oddělené potvrzení, pití a grknutí. Obnovení pickupů používá `spawn_item` pouze při skutečném respawnu. Tyto situace ověřily automatické herní testy; hlasitosti a charakter je ještě vhodné posoudit během delšího hraní.
 
 ## Další herní zkoušky
 
@@ -25,10 +27,9 @@
 ## Ještě shánět nebo upravit
 
 - [ ] **Honzovy hlášky odšumět v Audacity.** Původní nahrávky zatím zůstávají beze změny.
-- [ ] Luk: natažení, vypuštění tětivy, let a dopady šípu. V CS2 ani podle jmen souborů GDC se vhodná skutečná sada nenašla; nahrávka nože nenahrazuje tětivu.
-- [ ] Honzova past: natažení, dopad, sklapnutí, zničení.
-- [ ] Vlastní souvislé valení kamene místo provizorní štěrkové vrstvy; zvuk skoku/šplhání balvanu.
-- [ ] Maxovy schopnosti, další dosud nevybrané ultimátky a další položky původního checklistu.
+- [ ] Honzova past: další vlastní nahrávky pro natažení, položení a zničení. Sklapnutí už je zapojené.
+- [ ] Doladit charakter tří vybraných smyček valení kamene; případně doplnit zvuk jeho skoku/šplhání.
+- [ ] Další dosud nevybrané ultimátky a položky původního checklistu. Čtyři vybrané Maxovy schopnosti už jsou připojené.
 - [ ] Šindelovo RMB: `SayWhat_Data` má prázdné `sound` i `voiceLines`; mlčení není důkaz chyby přehrávače. Doplnit vhodnou vlastní nahrávku této schopnosti.
 
 Změny banky se projeví po novém spuštění Play. Po dalším výběru zvuků ve sbírce spusť `python tools/sound-collector/export_to_unity.py`.

@@ -15,6 +15,7 @@ public class VisorAbility : NetworkBehaviour
     float endTime;
     float nextUseTime;
     bool hasTarget;
+    float nextLockAudio;
     Vector3 targetPoint;
 
     PlayerHero[] players = new PlayerHero[0];
@@ -177,6 +178,7 @@ public class VisorAbility : NetworkBehaviour
 
     void FindTarget()
     {
+        bool previouslyHadTarget = hasTarget;
         if (Time.time >= nextScan)
         {
             nextScan = Time.time + 0.5f;
@@ -206,6 +208,13 @@ public class VisorAbility : NetworkBehaviour
             var collider = dummy.GetComponentInChildren<Collider>();
             if (collider != null)
                 Consider(eye, collider.bounds.center, null, collider, ref best);
+        }
+
+        if (hasTarget && !previouslyHadTarget && Time.time >= nextLockAudio)
+        {
+            var lockClip = CollectedAudioBank.Pick("viktor_ult.lock");
+            nextLockAudio = Time.time + Mathf.Max(0.5f, lockClip != null ? lockClip.length : 0f);
+            ProceduralSfx.PlayForActor(this, lockClip, transform.position, 0.5f, 16f);
         }
 
         if (hasTarget && BotBrain.IsLocalHuman(this))   // (znacka cile jen na HUD hrace, ne bota na hostu)

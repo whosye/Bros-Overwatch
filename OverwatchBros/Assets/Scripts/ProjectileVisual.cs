@@ -126,7 +126,21 @@ public class ProjectileVisual : MonoBehaviour
         else if (kind == ProjectileSim.KindHit)
         {
             Fx.Sparks(position, weapon.projectileColor);
-            ProceduralSfx.Play(ProceduralSfx.Hit, position, 0.6f);
+            AudioClip impact = null;
+            if (weapon.IsCharged)
+            {
+                string material = "body";
+                if (embedArrow && BulletHoleDecals.TryResolveSurface(position, normal, out var hitSurface))
+                {
+                    var kindOfSurface = AudioSurface.Of(hitSurface.collider, position);
+                    material = kindOfSurface == AudioSurfaceKind.Wood || kindOfSurface == AudioSurfaceKind.SolidWood ? "wood"
+                        : kindOfSurface == AudioSurfaceKind.Metal ? "metal" : "stone";
+                }
+                impact = CollectedAudioBank.Pick("mirek_weapon.impact." + material);
+            }
+            else if (CollectedAudioBank.WeaponCue(weapon) == "david")
+                impact = CollectedAudioBank.Pick("david_impact");
+            ProceduralSfx.Play(impact != null ? impact : ProceduralSfx.Hit, position, 0.6f);
         }
         else if (kind == ProjectileSim.KindSpent)
         {

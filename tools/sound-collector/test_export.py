@@ -18,6 +18,32 @@ class FeedbackExportTests(unittest.TestCase):
     def test_rock_impact_is_a_landing_not_an_explosion(self):
         self.assertEqual(cues_for('honza_ult', 'boulder_impact_hard4.wav'), ['honza_ult.land'])
 
+    def test_boulder_phases_never_share_a_random_pool(self):
+        for phase, cue in [('launch', 'start'), ('roll', 'roll'), ('impact', 'land'), ('explode', 'explode')]:
+            self.assertEqual(cues_for('honza_ult', 'honza_boulder_' + phase + '_01.wav'), ['honza_ult.' + cue])
+
+    def test_bow_drawing_release_flight_and_material_contacts_are_separate(self):
+        for filename, cue in [('bow_shoot_pull.wav', 'draw'), ('bow_shoot_pull_short.wav', 'draw.short'),
+                              ('bow_shoot.wav', 'release'), ('arrow_nearmiss3.wav', 'flight'),
+                              ('arrow_impact_flesh2.wav', 'impact.body'), ('arrow_impact_metal.wav', 'impact.metal'),
+                              ('arrow_impact_wood4.wav', 'impact.wood'), ('arrow_impact_concrete.wav', 'impact.stone')]:
+            self.assertEqual(cues_for('mirek_weapon', filename), ['mirek_weapon.' + cue])
+
+    def test_drinking_and_burping_never_replace_the_pickup_confirmation(self):
+        for filename, cue in [('glass_bottle_impact_hard1.wav', '.bottle'),
+                              ('pl_scout_dodge_can_drink.wav', '.drink'),
+                              ('taunt_demo_bigburp.wav', '.burp'), ('powerup_pickup_uber.wav', '')]:
+            self.assertEqual(cues_for('pickup_invulnerable', filename), ['pickup_invulnerable' + cue])
+
+    def test_hook_throw_reel_and_stop_are_separate_for_both_heroes(self):
+        for hero in ('pova_hook', 'kondulic_hook'):
+            for filename, cue in [('grappling_hook_shoot.wav', 'throw'), ('grappling_hook_reel_start.wav', 'reel'), ('grappling_hook_reel_stop.wav', 'stop')]:
+                self.assertEqual(cues_for(hero, filename), [hero + '.' + cue])
+
+    def test_explicit_existing_weapon_choices_reach_the_runtime_firing_cue(self):
+        self.assertEqual(cues_for('existing_gun_honza', 'grenade_launcher_shoot.wav'), ['honza_fire', 'existing_gun_honza'])
+        self.assertEqual(cues_for('existing_gun_sindel', 'ambassador_shoot.wav'), ['sindel_fire', 'existing_gun_sindel'])
+
     def test_entry_and_landing_are_not_walking_steps(self):
         for name, role in [('land_concrete_01.wav', 'land'), ('concrete_ct_01.wav', 'step')]:
             self.assertEqual(cues_for('steps_stone', name), ['steps_stone.' + role])
@@ -28,7 +54,9 @@ class FeedbackExportTests(unittest.TestCase):
         settings = json.loads((APP / 'integration_overrides.json').read_text(encoding='utf-8'))
         shell = settings['reload_shells']['honza_reload']
         self.assertEqual(shell['repeats'], 5)
-        self.assertIn('nova_insertshell', shell['source'])
+        selected=json.loads((APP/'collection.json').read_text(encoding='utf-8'))['items']['honza_reload']['files']
+        self.assertIn(shell['source'], selected)
+        self.assertIn('insertshell', shell['source'])
         self.assertNotIn('pump', shell['source'])
         with wave.open(str(UNITY / 'Assets/Audio/Collected/Weapons/Reload/honza_reload.wav')) as audio:
             self.assertGreater(audio.getnframes() / audio.getframerate(), 1.4)

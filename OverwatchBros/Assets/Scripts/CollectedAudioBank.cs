@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Exported from Sound/sounds_dir by tools/sound-collector/export_to_unity.py.
+// Exported from the local sound libraries by tools/sound-collector/export_to_unity.py.
 // Existing weapon/ability/voice assets are deliberately never modified by this bank.
 public sealed class CollectedAudioBank : ScriptableObject
 {
