@@ -119,7 +119,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 4a42b2637a035877b442db03b93211a8, type: 3}
   - id: honza_trap
     clips:
-    - {fileID: 8300000, guid: e2a4108a50325b72a085f3fedb63c8c2, type: 3}
+    - {fileID: 8300000, guid: c9c7f81a12cb44d1971a10bd08234fd8, type: 3}
   - id: honza_ult.explode
     clips:
     - {fileID: 8300000, guid: 201e11f36da45527af502d00921e82f5, type: 3}

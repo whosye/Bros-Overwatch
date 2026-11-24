@@ -60,15 +60,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5dbf0e8392bd05b45b37f01dbab67d4e, type: 3}
   - {fileID: 8300000, guid: efbff5528f502524bacc3515965f4d10, type: 3}
   - {fileID: 8300000, guid: dfa218d2058e0bf4e935eb4d498f0443, type: 3}
+  - {fileID: 8300000, guid: e28e051710394c46aa0a6ef65fc7d8fb, type: 3}
   idleLines:
   - {fileID: 8300000, guid: ae4b249eb7a9f824caf058eca2a6a114, type: 3}
   - {fileID: 8300000, guid: dbd01630ce197c64090901753c2b7078, type: 3}
   - {fileID: 8300000, guid: 03842daae669dfb4f913013e5d5e34e2, type: 3}
   - {fileID: 8300000, guid: 0bc990a2ada775346864ba5a707f13f1, type: 3}
+  - {fileID: 8300000, guid: 06143023a3014402a387119f1b0daf9d, type: 3}
   snareLines:
   - {fileID: 8300000, guid: cd26453a1b1ebf243816fa909159f08c, type: 3}
   - {fileID: 8300000, guid: 1917394b2df5cb542854c34d95d396dc, type: 3}
-  attackLines: []
+  attackLines:
+  - {fileID: 8300000, guid: ed48bf258dd641349658e7d22dca5c94, type: 3}
   healLines: []
   headshotLines: []
   missLines: []
