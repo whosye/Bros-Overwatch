@@ -333,7 +333,14 @@ public class FirstPersonArms
         SolveArmFrame(arm, grip, handFrame, pole, stretch);
     }
 
-    static void SolveArmFrame(Arm arm, Vector3 grip, Quaternion handFrame, Vector3 pole, bool stretch)
+    // Bod dlane (kde ruka drzi predmet) a natoceni ruky (z = prsty, y = hrbet ruky) podle aktualni pozy kosti.
+    public static void PalmPose(Arm arm, out Vector3 point, out Quaternion frame)
+    {
+        frame = arm.hand.rotation * arm.handFrameLocal;
+        point = arm.hand.position + frame * PalmOffset;
+    }
+
+    public static void SolveArmFrame(Arm arm, Vector3 grip, Quaternion handFrame, Vector3 pole, bool stretch)
     {
         if (arm == null || arm.upper == null) return;
         if (stretch) arm.upper.localPosition = arm.upperRestLocal;

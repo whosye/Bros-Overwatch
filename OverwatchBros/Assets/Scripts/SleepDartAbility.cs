@@ -113,6 +113,9 @@ public class SleepDartAbility : NetworkBehaviour
     [ClientRpc]
     void FiredClientRpc(Vector3 from, Vector3 to, float seconds)
     {
+        // postava (treti osoba) zvedne levou ruku s pistolkou ve smeru vystrelu
+        var held = GetComponent<HeldWeapons>();
+        if (held != null) held.PlayBodyDart(to - from);
         if (!IsOwner && !ReplayPlayer.Active)
             ProceduralSfx.PlayForActor(this, CollectedAudioBank.Pick("david_sleep.fire", ProceduralSfx.Dash), from, 0.45f);
         var dart = GameObject.CreatePrimitive(PrimitiveType.Capsule);

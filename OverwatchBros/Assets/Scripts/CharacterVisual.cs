@@ -28,6 +28,8 @@ public class CharacterVisual : MonoBehaviour
     }
     public Transform ModelRoot { get; private set; }
     public bool HasModel => ModelRoot != null;
+    // postava je prave videt (ne vlastni v prvni osobe, ne Max ve stinu, ne nepritel s prstenem, ne behem POTG)
+    public bool BodyVisible { get; private set; }
 
     FirstPersonController fpc;
     Health health;
@@ -987,6 +989,7 @@ public class CharacterVisual : MonoBehaviour
         bool hidden = hero != null && hero.IsSpawned && hero.IsHidden;   // Max uvnitr obeti
         bool ring = hero != null && hero.IsSpawned && hero.HiddenFromLocal;   // nepritel s nasazenym prstenem
         bool visible = IsGhost ? !GhostHidden : (!owner || fpc.ThirdPerson || ThirdPersonPreview.Active) && !ReplayPlayer.Active && !hidden && !ring;
+        BodyVisible = visible;
         foreach (var r in renderers)
             if (r != null && r.enabled != visible)
                 r.enabled = visible;

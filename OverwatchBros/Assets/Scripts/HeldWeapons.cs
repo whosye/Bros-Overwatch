@@ -580,6 +580,9 @@ public partial class HeldWeapons : MonoBehaviour
         UpdateDartPistol();
         UpdateAmpGesture();
         UpdateBodyRevolver();
+        UpdateBodyDetonator();
+        UpdateBodyDart();
+        UpdateBodyRecoil();
         if (bodySupportArm == null || visual == null || visual.ModelRoot == null) return;
         if (builtModel == HeldModel.Bow)
         {
@@ -654,6 +657,23 @@ public partial class HeldWeapons : MonoBehaviour
     // zbran se natoci levym bokem ke kamere (tam plechovka prileti)
     static readonly Vector3 CanGunOffset = new Vector3(-0.03f, 0.03f, -0.02f), CanGunTurn = new Vector3(-4f, -10f, -14f);
 
+    // Honza (WeaponDefinition.magazineSlapReload, jen prvni osoba): leva ruka prasti do bedny zasobniku (odpadne i s granaty),
+    // sjede dolu pro novou, nasadi ji zespodu a natahne radici packu (kohout). Casy jako podil doby prebiti.
+    Transform slapMag, slapLever, slapFalling;
+    Vector3 slapMagLocalPos;
+    Quaternion slapMagLocalRot, slapLeverRest;
+    Vector3 slapMagCenter, slapMagExtents;   // bedna v drzaku zbrane (bez granatu)
+    Vector3 slapKnobLocal;                   // kulicka packy (v souradnicich packy)
+    bool slapStruck, slapInserted, slapArmUsed;
+    Vector3 slapFallVelocity, slapFallSpin;
+    float slapFallAge;
+    Vector3 slapReleaseAt;                   // kde ruka pustila packu
+    const float SlapStrike = 0.24f, SlapInsert = 0.66f, SlapPull = 0.74f, SlapRelease = 0.86f, SlapLeave = 0.92f;
+    const float SlapLeverAngle = 35f;        // packa kulickou dozadu (kladne kolem jeji osy X)
+
+    bool SlapReload => builtWeapon != null && builtWeapon.magazineSlapReload && fpArms != null && root != null
+        && hands.Length == 1 && hands[0].holder != null && slapMag != null;
+
     bool MonsterReload => builtWeapon != null && builtWeapon.monsterCanReload && fpArms != null && root != null
         && hands.Length == 1 && hands[0].twoHanded && LeftSupportOnly;
     float throwElapsed = 99f;
@@ -717,10 +737,26 @@ public partial class HeldWeapons : MonoBehaviour
 
     public void Swing() => Swing(1f);
 
+    // Pohyblive dily zbrane pri vystrelu (Honzuv granatomet): vicko na usti se odklopi (MuzzleCap), granaty v bedne
+    // se posunou o misto (GrenadeFeed) - u kamery i na postave.
+    void AnimateShotParts()
+    {
+        foreach (var hand in hands) AnimateShotParts(hand);
+        foreach (var hand in bodyHands) AnimateShotParts(hand);
+    }
+
+    static void AnimateShotParts(Hand hand)
+    {
+        if (hand == null || hand.holder == null) return;
+        foreach (var cap in hand.holder.GetComponentsInChildren<MuzzleCap>()) cap.Flap();
+        foreach (var feed in hand.holder.GetComponentsInChildren<GrenadeFeed>()) feed.Feed();
+    }
+
     public void Swing(float strength)
     {
         swingStrength = strength;
         lastShotTime = Time.time;   // (puska obema rukama: poza strelby)
+        AnimateShotParts();
         if (!ghost)
             ReplayLog.Swing(this);
 
@@ -748,6 +784,8 @@ public partial class HeldWeapons : MonoBehaviour
         reloadDuration = Mathf.Max(0.05f, duration);
         reloadElapsed = 0f;
         reloadCanceled = false;
+        slapStruck = slapInserted = false;
+        SlapRestore();
         canAfter = 99f;
 
         if (visual != null && visual.HasModel)
@@ -762,6 +800,7 @@ public partial class HeldWeapons : MonoBehaviour
             ReplayLog.StopReload(this);
         reloadElapsed = reloadDuration;
         reloadCanceled = true;   // (bez narazu plechovky)
+        SlapRestore();
         canAfter = 99f;
         if (reloadCan != null) reloadCan.gameObject.SetActive(false);
 
@@ -777,6 +816,356 @@ public partial class HeldWeapons : MonoBehaviour
         tauntElapsed = 0f;
         if (visual != null && visual.HasModel)
             visual.PlayAttack(false, 0.5f);
+    }
+
+    // ---------------- Honza: hod miny levou rukou (prvni osoba) ----------------
+    // Leva ruka vyjede zleva zdola s minou na dlani a spodnim obloukem ji hodi dopredu (pusti v MineReleaseSeconds -
+    // tehdy se objevi letici mina, MineAbility), pak ruka odjede dolu z obrazu.
+    public const float MineReleaseSeconds = 0.12f;
+    const float MineThrowSeconds = 0.45f;
+    const float MineHeldDiameter = 0.3f;   // v ruce o kus mensi nez ve svete (36 cm) - tesne u kamery
+    Transform heldMine;
+    float mineThrowAt = -100f;
+    bool mineArmUsed;
+
+    public void PlayMineThrow()
+    {
+        if (root == null || fpArms == null) return;
+        if (heldMine == null) heldMine = BuildHeldMine(root.transform);
+        mineThrowAt = Time.time;
+    }
+
+    static Transform BuildHeldMine(Transform parent)
+    {
+        var holder = new GameObject("HeldMine").transform;
+        holder.SetParent(parent, false);
+        var model = Resources.Load<GameObject>("Weapons/HonzaMine");
+        if (model != null)
+        {
+            var instance = Instantiate(model, holder);
+            instance.transform.localPosition = Vector3.zero;
+            instance.transform.localRotation = Quaternion.identity;
+            instance.transform.localScale *= MineHeldDiameter / 0.36f;
+        }
+        else
+        {
+            // (bez modelu: tmavy disk s rudou kulickou jako mina ve svete)
+            var body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            body.transform.SetParent(holder, false);
+            body.transform.localPosition = new Vector3(0f, 0.02f, 0f);
+            body.transform.localScale = new Vector3(MineHeldDiameter, 0.02f, MineHeldDiameter);
+            Fx.Paint(body, new Color(0.16f, 0.17f, 0.19f));
+            Part(holder, new Vector3(0f, 0.05f, 0f), Vector3.zero, Vector3.one * 0.08f, new Color(1f, 0.2f, 0.12f));
+        }
+        foreach (var collider in holder.GetComponentsInChildren<Collider>()) Destroy(collider);
+        foreach (var renderer in holder.GetComponentsInChildren<Renderer>())
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        holder.gameObject.SetActive(false);
+        return holder;
+    }
+
+    // Leva ruka pri hodu miny (po konci ji jednou vrati do klidu mimo obraz).
+    void SolveMineThrowHand()
+    {
+        float s = Time.time - mineThrowAt;
+        if (fpArms == null || root == null || s < 0f || s >= MineThrowSeconds)
+        {
+            if (heldMine != null && heldMine.gameObject.activeSelf) heldMine.gameObject.SetActive(false);
+            if (mineArmUsed && fpArms != null)
+            {
+                mineArmUsed = false;
+                fpArms.ResetArm(false);
+            }
+            return;
+        }
+        mineArmUsed = true;
+        var rootT = root.transform;
+
+        // drah ruky (vuci kamere): zdola zleva, napraha vlevo dole v obraze, spodnim obloukem dopredu, pusteni, dolu pryc
+        Vector3 low = new Vector3(-0.30f, -0.70f, 0.20f), wind = new Vector3(-0.20f, -0.30f, 0.32f);
+        Vector3 release = new Vector3(-0.07f, -0.13f, 0.56f), follow = new Vector3(-0.03f, -0.07f, 0.60f);
+        const float windAt = 0.07f, followAt = 0.2f;
+        Vector3 local;
+        float lift;   // 0 = prsty dopredu, 1 = prsty dopredu nahoru (pri pusteni)
+        if (s < windAt)
+        {
+            float u = 1f - (1f - s / windAt) * (1f - s / windAt);
+            local = Vector3.Lerp(low, wind, u);
+            lift = 0f;
+        }
+        else if (s < MineReleaseSeconds)
+        {
+            float u = (s - windAt) / (MineReleaseSeconds - windAt);
+            local = Vector3.Lerp(wind, release, u * u) + new Vector3(0f, -0.04f, 0f) * Mathf.Sin(u * Mathf.PI);
+            lift = u;
+        }
+        else if (s < followAt)
+        {
+            float u = (s - MineReleaseSeconds) / (followAt - MineReleaseSeconds);
+            local = Vector3.Lerp(release, follow, Mathf.SmoothStep(0f, 1f, u));
+            lift = 1f;
+        }
+        else
+        {
+            float u = Mathf.SmoothStep(0f, 1f, (s - followAt) / (MineThrowSeconds - followAt));
+            local = Vector3.Lerp(follow, low, u);
+            lift = 1f - u;
+        }
+
+        // dlan nahoru (mina na ni lezi), prsty dopredu, pri hodu se zvednou
+        Vector3 fingers = Vector3.Lerp(new Vector3(0.25f, -0.1f, 1f), new Vector3(0.1f, 0.55f, 1f), lift).normalized;
+        Vector3 back = Vector3.Lerp(new Vector3(0.2f, -1f, 0.15f), new Vector3(0.1f, -1f, 0.7f), lift).normalized;
+        Quaternion frame = rootT.rotation * Quaternion.LookRotation(fingers, back);
+        Vector3 grip = rootT.TransformPoint(local);
+        fpArms.SolveFrame(false, grip, frame, rootT);
+
+        // mina na dlani (spodkem na kuzi, kopuli od dlane), do pusteni
+        bool holding = s < MineReleaseSeconds;
+        if (heldMine.gameObject.activeSelf != holding) heldMine.gameObject.SetActive(holding);
+        if (holding)
+        {
+            Vector3 palm = frame * Vector3.down;
+            heldMine.position = grip - palm * FirstPersonArms.WrapPalmDepth;
+            heldMine.rotation = Quaternion.LookRotation(frame * Vector3.forward, palm);
+        }
+    }
+
+    // ---------------- Honza: detonator v leve ruce pri odpaleni min (prvni osoba) ----------------
+    // Leva ruka zdola zvedne detonator do obrazu (vlevo), zmackne spoust (cuknuti, cvaknuti), chvili ho drzi a stahne ho.
+    const float DetonateSeconds = 0.7f, DetonateUp = 0.12f, DetonateSqueeze = 0.13f, DetonateDown = 0.5f;
+    Transform detonator;
+    float detonateAt = -100f;
+    bool detonateArmUsed, detonateClicked;
+
+    public void PlayDetonate()
+    {
+        if (root == null || fpArms == null) return;
+        if (detonator == null) detonator = BuildDetonator(root.transform);
+        detonateAt = Time.time;
+        detonateClicked = false;
+    }
+
+    static Transform BuildDetonator(Transform parent)
+    {
+        var holder = new GameObject("Detonator").transform;
+        holder.SetParent(parent, false);
+        var model = Resources.Load<GameObject>("Weapons/HonzaDetonator");
+        if (model != null)
+        {
+            var instance = Instantiate(model, holder);
+            instance.transform.localPosition = Vector3.zero;
+            instance.transform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            // (bez modelu: zluta rukojet s cervenou spousti a cudlikem)
+            Part(holder, Vector3.zero, Vector3.zero, new Vector3(0.035f, 0.14f, 0.045f), new Color(0.8f, 0.5f, 0.1f));
+            Part(holder, new Vector3(0f, 0.02f, 0.03f), Vector3.zero, new Vector3(0.01f, 0.05f, 0.012f), new Color(0.7f, 0.07f, 0.04f));
+            Part(holder, new Vector3(0f, 0.08f, 0f), Vector3.zero, new Vector3(0.015f, 0.02f, 0.015f), new Color(0.7f, 0.07f, 0.04f));
+        }
+        foreach (var collider in holder.GetComponentsInChildren<Collider>()) Destroy(collider);
+        foreach (var renderer in holder.GetComponentsInChildren<Renderer>())
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        holder.gameObject.SetActive(false);
+        return holder;
+    }
+
+    // Leva ruka s detonatorem (po konci ji jednou vrati do klidu mimo obraz).
+    void SolveDetonatorHand()
+    {
+        float s = Time.time - detonateAt;
+        if (fpArms == null || root == null || detonator == null || s < 0f || s >= DetonateSeconds)
+        {
+            if (detonator != null && detonator.gameObject.activeSelf) detonator.gameObject.SetActive(false);
+            if (detonateArmUsed && fpArms != null)
+            {
+                detonateArmUsed = false;
+                fpArms.ResetArm(false);
+            }
+            return;
+        }
+        detonateArmUsed = true;
+        if (!detonator.gameObject.activeSelf) detonator.gameObject.SetActive(true);
+        var rootT = root.transform;
+
+        // poloha (vuci kamere): zdola zleva do obrazu vlevo, spici mirne ke stredu
+        Vector3 low = new Vector3(-0.30f, -0.70f, 0.25f), hold = new Vector3(-0.19f, -0.20f, 0.42f);
+        float up = s < DetonateUp ? 1f - (1f - s / DetonateUp) * (1f - s / DetonateUp)
+            : s < DetonateDown ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (s - DetonateDown) / (DetonateSeconds - DetonateDown));
+        Vector3 local = Vector3.Lerp(low, hold, up);
+        Quaternion turn = Quaternion.Slerp(Quaternion.Euler(35f, 30f, -30f), Quaternion.Euler(10f, 15f, -12f), up);
+
+        // zmacknuti: kratke cuknuti dopredu dolu a cvak
+        float d = s - DetonateSqueeze;
+        float squeeze = d < 0f ? 0f : Mathf.Exp(-d * 14f) * Mathf.Min(1f, d * 50f);
+        local += new Vector3(0f, -0.012f, 0.01f) * squeeze;
+        turn = turn * Quaternion.Euler(8f * squeeze, 0f, 0f);
+        if (d >= 0f && !detonateClicked)
+        {
+            detonateClicked = true;
+            if (!ghost) ProceduralSfx.Play(ProceduralSfx.Empty, rootT.TransformPoint(local), 0.8f, 10f, false, SfxKind.Weapon);
+        }
+
+        detonator.localPosition = local;
+        detonator.localRotation = turn;
+        // pest kolem tela detonatoru: prsty dopredu pres spoust, hrbet ruky vlevo, palec nahore u cudliku
+        Quaternion frame = Quaternion.LookRotation(detonator.forward, -detonator.right);
+        fpArms.SolveFrame(false, detonator.position, frame, rootT);
+    }
+
+    // ---------------- Honza ze treti osoby: hod miny a detonator v leve ruce postavy ----------------
+
+    // Mina: postava mavne rukou jako pri hodu pasti (jen postava - v prvni osobe minu hazi leva ruka u kamery).
+    public void PlayBodyThrow()
+    {
+        if (visual != null && visual.HasModel)
+            visual.PlayAttack(true, ThrowDuration);
+    }
+
+    // Tezka zbran na postave (WeaponDefinition.heavyRecoil): po vystrelu se prava ruka se zbrani kratce cukne dozadu
+    // podel hlavne (IK po animaci - ruka si drzi natoceni, loket zustava, kde byl).
+    float bodyRecoilAt = -100f;
+    FirstPersonArms.Arm bodyRecoilArm;
+    const float BodyRecoilSeconds = 0.35f, BodyRecoilDistance = 0.06f;
+
+    void UpdateBodyRecoil()
+    {
+        float d = Time.time - bodyRecoilAt;
+        if (d < 0f || d > BodyRecoilSeconds || visual == null || !visual.HasModel || visual.BodyAnimator == null || !visual.BodyVisible) return;
+        if (bodyHands.Length == 0 || bodyHands[0] == null || bodyHands[0].holder == null) return;
+        float k = Mathf.Exp(-d * 12f) * Mathf.Min(1f, d * 40f);
+        if (k < 0.01f) return;
+        if (bodyRecoilArm == null || bodyRecoilArm.upper == null)
+            bodyRecoilArm = FirstPersonArms.BuildArm(visual.BodyAnimator, true);
+        var arm = bodyRecoilArm;
+        if (arm == null) return;
+
+        var gun = bodyHands[0].holder;
+        FirstPersonArms.PalmPose(arm, out var palm, out var frame);
+        Vector3 target = palm - gun.forward * BodyRecoilDistance * k + Vector3.up * 0.01f * k;
+        Vector3 pole = arm.lower.position - (arm.upper.position + arm.hand.position) * 0.5f;
+        FirstPersonArms.SolveArmFrame(arm, target, Quaternion.AngleAxis(-4f * k, gun.right) * frame, pole, false);
+    }
+
+    // Leva ruka postavy (treti osoba) pro predmety v ruce: detonator (Honza), uspavaci pistolka (David).
+    FirstPersonArms.Arm bodyLeftArm;
+
+    // Leva ruka postavy k bodu 'target' s pesti 'frame' (prsty z, hrbet ruky y) - IK po animaci, plynule podle 'weight'.
+    // Vrati polohu dlane a natoceni ruky (pro predmet v ni). False = postava nema humanoidni model.
+    bool SolveBodyLeftHand(Vector3 target, Quaternion frame, float weight, out Vector3 palm, out Quaternion handFrame)
+    {
+        palm = Vector3.zero;
+        handFrame = Quaternion.identity;
+        if (bodyLeftArm == null || bodyLeftArm.upper == null)
+            bodyLeftArm = FirstPersonArms.BuildArm(visual.BodyAnimator, false);
+        var arm = bodyLeftArm;
+        if (arm == null) return false;
+        var body = visual.ModelRoot;
+        Quaternion upper = arm.upper.localRotation, lower = arm.lower.localRotation, wrist = arm.hand.localRotation;
+        FirstPersonArms.SolveArmFrame(arm, target, frame, body.TransformDirection(new Vector3(-0.6f, -1f, -0.2f)), false);
+        if (weight < 0.999f)
+        {
+            arm.upper.localRotation = Quaternion.Slerp(upper, arm.upper.localRotation, weight);
+            arm.lower.localRotation = Quaternion.Slerp(lower, arm.lower.localRotation, weight);
+            arm.hand.localRotation = Quaternion.Slerp(wrist, arm.hand.localRotation, weight);
+        }
+        FirstPersonArms.PalmPose(arm, out palm, out handFrame);
+        return true;
+    }
+
+    // Predmet v dlani: 'grip' = bod predmetu (v jeho souradnicich), kde ho drzi pest; svetova velikost 1.
+    static void PlaceInPalm(Transform prop, Vector3 palm, Quaternion handFrame, Vector3 grip)
+    {
+        Vector3 fingers = handFrame * Vector3.forward, back = handFrame * Vector3.up;
+        if (!prop.gameObject.activeSelf) prop.gameObject.SetActive(true);
+        prop.rotation = Quaternion.LookRotation(fingers, Vector3.Cross(back, fingers));
+        var parentScale = prop.parent != null ? prop.parent.lossyScale : Vector3.one;
+        prop.localScale = new Vector3(1f / Mathf.Max(0.0001f, parentScale.x), 1f / Mathf.Max(0.0001f, parentScale.y), 1f / Mathf.Max(0.0001f, parentScale.z));
+        prop.position = palm - prop.rotation * grip;
+    }
+
+    // Detonator: postava zvedne levou ruku s detonatorem pred sebe, zmackne ho a ruku zase spusti (IK po animaci).
+    float bodyDetonateAt = -100f;
+    Transform bodyDetonator;
+
+    public void PlayBodyDetonate() => bodyDetonateAt = Time.time;
+
+    void UpdateBodyDetonator()
+    {
+        float s = Time.time - bodyDetonateAt;
+        bool active = s >= 0f && s < DetonateSeconds && visual != null && visual.HasModel && visual.BodyAnimator != null && visual.BodyVisible;
+        if (!active)
+        {
+            if (bodyDetonator != null && bodyDetonator.gameObject.activeSelf) bodyDetonator.gameObject.SetActive(false);
+            return;
+        }
+        if (bodyDetonator == null)
+        {
+            bodyDetonator = BuildDetonator(transform);
+            bodyDetonator.name = "BodyDetonator";
+        }
+
+        // zvednuti (jako v prvni osobe), cuknuti pri zmacknuti, spusteni
+        float weight = s < DetonateUp ? 1f - (1f - s / DetonateUp) * (1f - s / DetonateUp)
+            : s < DetonateDown ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (s - DetonateDown) / (DetonateSeconds - DetonateDown));
+        float d = s - DetonateSqueeze;
+        float squeeze = d < 0f ? 0f : Mathf.Exp(-d * 14f) * Mathf.Min(1f, d * 50f);
+
+        // ruka pred levym ramenem, kousek nad nim a ke stredu tela; pest: prsty dopredu, hrbet ruky vlevo
+        var body = visual.ModelRoot;
+        if (!visual.BodyAnimator) return;
+        var shoulder = visual.BodyAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+        if (shoulder == null) return;
+        Vector3 target = shoulder.position + body.forward * 0.34f + body.up * 0.14f + body.right * 0.08f
+                         + (body.forward * 0.015f - body.up * 0.012f) * squeeze;
+        Quaternion frame = Quaternion.LookRotation(body.forward, -body.right) * Quaternion.Euler(8f * squeeze, 0f, 0f);
+        // detonator v dlani (i behem zvedani / spousteni drzi v ruce)
+        if (SolveBodyLeftHand(target, frame, weight, out var palm, out var handFrame))
+            PlaceInPalm(bodyDetonator, palm, handFrame, Vector3.zero);
+    }
+
+    // Uspavaci sipka (David): postava zvedne levou ruku s pistolkou ve smeru vystrelu, vystreli (cuknuti) a ruku spusti.
+    // Casovani jako v prvni osobe (UpdateDartPistol).
+    float bodyDartAt = -100f;
+    Vector3 bodyDartDirection = Vector3.forward;
+    Transform bodyDart;
+
+    public void PlayBodyDart(Vector3 direction)
+    {
+        bodyDartAt = Time.time;
+        if (direction.sqrMagnitude > 0.001f) bodyDartDirection = direction.normalized;
+    }
+
+    void UpdateBodyDart()
+    {
+        float t = (Time.time - bodyDartAt) / DartShowSeconds;
+        bool active = t >= 0f && t < 1f && visual != null && visual.HasModel && visual.BodyAnimator != null && visual.BodyVisible;
+        if (!active)
+        {
+            if (bodyDart != null && bodyDart.gameObject.activeSelf) bodyDart.gameObject.SetActive(false);
+            return;
+        }
+        if (bodyDart == null)
+        {
+            bodyDart = BuildDartPistol(transform);
+            bodyDart.name = "BodyDartPistol";
+        }
+        var shoulder = visual.BodyAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+        if (shoulder == null) return;
+
+        float raise = t < 0.2f ? Mathf.SmoothStep(0f, 1f, t / 0.2f) : t > 0.75f ? Mathf.SmoothStep(1f, 0f, (t - 0.75f) / 0.25f) : 1f;
+        float kick = t > 0.2f && t < 0.4f ? Mathf.Sin((t - 0.2f) / 0.2f * Mathf.PI) : 0f;
+
+        // ruka natazena pred levym ramenem ve smeru vystrelu (trochu ke stredu tela); pest: prsty po hlavni, hrbet ruky vlevo
+        var body = visual.ModelRoot;
+        Vector3 aim = bodyDartDirection;
+        Vector3 side = Vector3.Cross(Vector3.up, aim);
+        if (side.sqrMagnitude < 0.01f) side = body.right;
+        side.Normalize();
+        Vector3 target = shoulder.position + aim * 0.42f + body.up * 0.04f + side * 0.08f - aim * 0.05f * kick;
+        Quaternion frame = Quaternion.LookRotation(aim, -side) * Quaternion.Euler(-12f * kick, 0f, 0f);
+        if (SolveBodyLeftHand(target, frame, raise, out var palm, out var handFrame))
+            PlaceInPalm(bodyDart, palm, handFrame, DartGrip);
     }
 
     public void PlayThrow()
@@ -838,6 +1227,12 @@ public partial class HeldWeapons : MonoBehaviour
         if (weapon != null && weapon.twoHanded && !weapon.IsMelee && !(visual != null && visual.HoldShootPose)) return;
         // luk: ruce vede IK (natahovani tetivy), animace strelby z pistole by je jen strhla
         if (builtModel == HeldModel.Bow && bodySupportArm != null) return;
+        // tezka zbran: postava nezvedne ruku jako s pistoli, prava ruka se zbrani se jen cukne dozadu (UpdateBodyRecoil)
+        if (weapon != null && weapon.heavyRecoil && !weapon.IsMelee)
+        {
+            bodyRecoilAt = Time.time;
+            return;
+        }
         if (visual != null && visual.HasModel)
             visual.PlayAttack(weapon != null && weapon.IsMelee, weapon != null ? Mathf.Clamp(1.25f / Mathf.Max(0.5f, weapon.fireRate), 0.25f, 0.7f) : 0.4f);
     }
@@ -858,6 +1253,7 @@ public partial class HeldWeapons : MonoBehaviour
         // (F6 nahled ze 3. osoby: vlastni postava se zbrani jako ji vidi ostatni)
         bool thirdPerson = ghost ? GhostThirdPerson : fpc != null && (fpc.ThirdPerson || (ThirdPersonPreview.Active && fpc.IsOwner && fpc.Bot == null));
 
+        UpdateSlapFalling();
         if (reloadElapsed < reloadDuration)
         {
             reloadElapsed += Time.deltaTime;
@@ -948,6 +1344,8 @@ public partial class HeldWeapons : MonoBehaviour
         {
             float bob = Mathf.Sin(Time.time * 1.6f + hand.side) * 0.004f;
             Vector3 position = hand.restPosition + new Vector3(0f, bob, 0f);
+            // posun zbrane v prvni osobe podle zbrane (napr. velky granatomet vic do rohu)
+            if (builtAsOwner && builtWeapon != null) position += builtWeapon.firstPersonOffset;
             Vector3 euler = hand.restEuler;
 
             float p = runPhase + (hand.side > 0f ? 0f : Mathf.PI);
@@ -1058,6 +1456,12 @@ public partial class HeldWeapons : MonoBehaviour
                 // (leva ruka pusti predpazbi, kdyz drzi uspavaci pistolku - jen u podpory v prvni osobe)
                 // leva ruka na predpazbi: bez konecku prstu (vykukovaly pred bokem zbrane); s pistolkou zase cela
                 // (s plechovkou zase cela - prsty ji obemknou)
+                // Honza: leva ruka pri prebiti (bedna a kohout)
+                if (hand.side > 0f && !hand.twoHanded) SolveSlapHand(hand);
+                // Honza: hod miny levou rukou (ma prednost i pred prebijenim)
+                if (hand.side > 0f && !hand.twoHanded) SolveMineThrowHand();
+                // Honza: detonator pri odpaleni min (ma prednost pred hodem i prebijenim)
+                if (hand.side > 0f && !hand.twoHanded) SolveDetonatorHand();
                 if (hand.twoHanded && LeftSupportOnly)
                     fpArms.SetFingertipsHidden(false, !DartShowing && !(reloadCan != null && reloadCan.gameObject.activeSelf));
                 // pistolku drzi leva ruka - plechovka mezitim pryc
@@ -1302,6 +1706,13 @@ public partial class HeldWeapons : MonoBehaviour
             euler.x += angle;
             position += new Vector3(0f, -0.06f, 0.16f) * Mathf.Clamp01(angle / 100f);
         }
+        else if (builtWeapon != null && builtWeapon.heavyRecoil)
+        {
+            // tezka zbran: jen cuknuti dozadu (hlaven se skoro nezvedne)
+            float kick = Mathf.Sin(t * Mathf.PI) * swingStrength;
+            position += new Vector3(0f, 0.004f, -0.07f) * kick;
+            euler.x -= 2f * kick;
+        }
         else
         {
             float kick = Mathf.Sin(t * Mathf.PI) * swingStrength;
@@ -1319,6 +1730,18 @@ public partial class HeldWeapons : MonoBehaviour
             euler += turn;
             return;
         }
+        if (SlapReload)
+        {
+            // Honza: zbran se natoci levym bokem (bednou) ke kamere; pri uderu, nasazeni a pusteni packy poskoci
+            float tilt = Mathf.Min(Mathf.SmoothStep(0f, 1f, t / 0.12f), Mathf.SmoothStep(0f, 1f, (1f - t) / 0.12f));
+            position += new Vector3(-0.05f, 0.04f, -0.02f) * tilt;
+            euler += new Vector3(-4f, -8f, -15f) * tilt;
+            float strike = SlapKick(t, SlapStrike), insert = SlapKick(t, SlapInsert), release = SlapKick(t, SlapRelease);
+            position += new Vector3(0.025f, -0.01f, 0f) * strike + new Vector3(0f, 0.02f, 0f) * insert + new Vector3(0f, 0f, -0.01f) * release;
+            euler += new Vector3(0f, 0f, 7f) * strike + new Vector3(-5f, 0f, 0f) * insert + new Vector3(-2f, 0f, 0f) * release;
+            return;
+        }
+
         if (MonsterReload)
         {
             // David: zbran zustava v obraze, jen se natoci levym bokem ke kamere (zpet az po narazu, AnimateCanAfter)
@@ -1351,6 +1774,236 @@ public partial class HeldWeapons : MonoBehaviour
             position += new Vector3(0f, -0.30f, -0.05f) * blend;
             euler.x += 35f * blend;
         }
+    }
+
+    // ---------------- Honza: prebiti bednou ----------------
+
+    // Kratky naskok a dozneni (rana do zbrane) od okamziku 'at' (podil doby prebiti).
+    float SlapKick(float t, float at)
+    {
+        float d = (t - at) * reloadDuration;
+        return d < 0f ? 0f : Mathf.Exp(-d * 16f) * Mathf.Min(1f, d * 60f);
+    }
+
+    void FindSlapParts(Hand hand)
+    {
+        slapMag = slapLever = null;
+        if (hand == null || hand.holder == null) return;
+        foreach (var part in hand.holder.GetComponentsInChildren<Transform>(true))
+        {
+            if (slapMag == null && part.name.StartsWith("Magazine")) slapMag = part;
+            else if (slapLever == null && part.name.StartsWith("CockingLever")) slapLever = part;
+        }
+        if (slapMag == null) return;
+        slapMagLocalPos = slapMag.localPosition;
+        slapMagLocalRot = slapMag.localRotation;
+
+        // rozmer bedny v drzaku zbrane (bez granatu)
+        var box = HolderBounds(hand.holder, slapMag, true);
+        slapMagCenter = box.center;
+        slapMagExtents = box.extents;
+
+        if (slapLever != null)
+        {
+            slapLeverRest = slapLever.localRotation;
+            // kulicka = horni ctvrtina packy
+            var lever = HolderBounds(hand.holder, slapLever, false);
+            Vector3 knob = new Vector3(lever.center.x, lever.max.y - lever.size.y * 0.23f, lever.center.z);
+            slapKnobLocal = slapLever.InverseTransformPoint(hand.holder.TransformPoint(knob));
+        }
+    }
+
+    // Obal siti dilu v souradnicich drzaku zbrane (volitelne bez granatu).
+    static Bounds HolderBounds(Transform holder, Transform part, bool skipGrenades)
+    {
+        var bounds = new Bounds();
+        bool any = false;
+        foreach (var filter in part.GetComponentsInChildren<MeshFilter>(true))
+        {
+            if (filter.sharedMesh == null) continue;
+            if (skipGrenades)
+            {
+                bool grenade = false;
+                for (var t = filter.transform; t != null && t != part; t = t.parent)
+                    if (t.name.StartsWith("Grenade_")) { grenade = true; break; }
+                if (grenade) continue;
+            }
+            var b = filter.sharedMesh.bounds;
+            for (int i = 0; i < 8; i++)
+            {
+                Vector3 corner = new Vector3((i & 1) == 0 ? b.min.x : b.max.x, (i & 2) == 0 ? b.min.y : b.max.y, (i & 4) == 0 ? b.min.z : b.max.z);
+                Vector3 p = holder.InverseTransformPoint(filter.transform.TransformPoint(corner));
+                if (!any) { bounds = new Bounds(p, Vector3.zero); any = true; }
+                else bounds.Encapsulate(p);
+            }
+        }
+        return bounds;
+    }
+
+    // Bedna a packa zpet na sva mista (konec nebo preruseni prebiti).
+    void SlapRestore()
+    {
+        if (slapMag != null)
+        {
+            if (!slapMag.gameObject.activeSelf) slapMag.gameObject.SetActive(true);
+            slapMag.localPosition = slapMagLocalPos;
+            slapMag.localRotation = slapMagLocalRot;
+        }
+        if (slapLever != null) slapLever.localRotation = slapLeverRest;
+    }
+
+    // Bedna ve svetovych souradnicich posunuta v drzaku zbrane o 'delta' (a natocena kolem osy hlavne).
+    void PlaceSlapMagazine(Transform holder, Vector3 delta, float roll)
+    {
+        var parent = slapMag.parent;
+        Vector3 restWorld = parent != null ? parent.TransformPoint(slapMagLocalPos) : slapMagLocalPos;
+        Quaternion restRot = (parent != null ? parent.rotation : Quaternion.identity) * slapMagLocalRot;
+        slapMag.position = restWorld + holder.TransformVector(delta);
+        slapMag.rotation = Quaternion.AngleAxis(roll, holder.forward) * restRot;
+    }
+
+    void SlapStrikeNow(Transform holder)
+    {
+        slapStruck = true;
+        // padajici kopie bedny (i s granaty); original se schova a "nova" pak prijede zespodu
+        // (i se skutecnou velikosti - model zbrane je v prefabu zmenseny, pod kamerou by kopie byla ~20x vetsi)
+        var copy = Instantiate(slapMag.gameObject, root.transform, true);
+        foreach (var feed in copy.GetComponentsInChildren<GrenadeFeed>(true)) Destroy(feed);
+        slapFalling = copy.transform;
+        slapFallAge = 0f;
+        // (v souradnicich kamery: rana zleva -> doprava pod zbran a dolu, roztoci se)
+        slapFallVelocity = root.transform.InverseTransformDirection(holder.TransformDirection(new Vector3(0.45f, -0.9f, 0.1f)));
+        slapFallSpin = new Vector3(Random.Range(-120f, 120f), Random.Range(-90f, 90f), -260f);
+        slapMag.gameObject.SetActive(false);
+        if (!ghost) ProceduralSfx.Play(ProceduralSfx.BulletImpact, slapMag.position, 0.4f, 15f, false, SfxKind.Weapon);
+    }
+
+    void SlapInsertNow(Transform holder)
+    {
+        slapInserted = true;
+        if (!slapMag.gameObject.activeSelf) slapMag.gameObject.SetActive(true);
+        slapMag.localPosition = slapMagLocalPos;
+        slapMag.localRotation = slapMagLocalRot;
+        if (!ghost) ProceduralSfx.Play(ProceduralSfx.BulletImpact, slapMag.position, 0.45f, 15f, false, SfxKind.Weapon);
+    }
+
+    void UpdateSlapFalling()
+    {
+        if (slapFalling == null) return;
+        slapFallAge += Time.deltaTime;
+        slapFallVelocity += Vector3.down * 9.81f * Time.deltaTime;
+        slapFalling.localPosition += slapFallVelocity * Time.deltaTime;
+        slapFalling.localRotation = Quaternion.Euler(slapFallSpin * Time.deltaTime) * slapFalling.localRotation;
+        if (slapFallAge > 0.9f)
+        {
+            Destroy(slapFalling.gameObject);
+            slapFalling = null;
+        }
+    }
+
+    // Leva ruka pri Honzove prebiti. Po konci prebiti ji jednou vrati do klidu (mimo obraz).
+    void SolveSlapHand(Hand hand)
+    {
+        bool reloading = reloadElapsed < reloadDuration && !reloadCanceled;
+        if (!SlapReload || !reloading)
+        {
+            if (slapArmUsed)
+            {
+                slapArmUsed = false;
+                fpArms.ResetArm(false);
+                SlapRestore();
+            }
+            return;
+        }
+        slapArmUsed = true;
+
+        float t = reloadElapsed / reloadDuration;
+        var h = hand.holder;
+        var rootT = root.transform;
+        float depth = FirstPersonArms.WrapPalmDepth;
+
+        // ruka: pest dlani k bedne (zleva), dlan nahoru (nese bednu), dlan shora na kulicku packy
+        Quaternion fist = Quaternion.LookRotation(h.forward, -h.right);
+        Quaternion carry = FirstPersonArms.HandFrame(h, -1f, true, false);
+        Quaternion grab = Quaternion.LookRotation(h.forward, (h.up - h.right * 0.5f).normalized);
+
+        Vector3 side = slapMagCenter + new Vector3(-slapMagExtents.x, 0f, 0f);   // levy bok bedny
+        Vector3 bottom = slapMagCenter + new Vector3(0f, -slapMagExtents.y, 0f);
+        Vector3 strikeAt = h.TransformPoint(side) + h.right * depth;
+        Vector3 windup = h.TransformPoint(side + new Vector3(-0.16f, 0.05f, -0.04f));
+        Vector3 low = rootT.TransformPoint(new Vector3(-0.28f, -0.75f, 0.30f));
+        Vector3 bringFrom = new Vector3(-0.05f, -0.42f, -0.04f);   // nova bedna zespodu (posun v drzaku)
+
+        Vector3 grip;
+        Quaternion frame;
+        if (t < SlapStrike - 0.08f)
+        {
+            // ruka zespodu k bedne, napraha
+            float u = Mathf.SmoothStep(0f, 1f, t / (SlapStrike - 0.08f));
+            grip = Vector3.Lerp(low, windup, u);
+            frame = fist;
+        }
+        else if (t < SlapStrike)
+        {
+            // uder (zrychluje)
+            float u = (t - (SlapStrike - 0.08f)) / 0.08f;
+            grip = Vector3.Lerp(windup, strikeAt, u * u);
+            frame = fist;
+        }
+        else if (t < 0.42f)
+        {
+            if (!slapStruck) SlapStrikeNow(h);
+            // dotazeni rany a dolu pro novou bednu
+            float u = Mathf.SmoothStep(0f, 1f, (t - SlapStrike) / (0.42f - SlapStrike));
+            grip = Vector3.Lerp(strikeAt + h.TransformVector(new Vector3(0.03f, -0.02f, 0f)), low, u);
+            frame = Quaternion.Slerp(fist, carry, u);
+        }
+        else if (t < SlapInsert)
+        {
+            if (!slapStruck) SlapStrikeNow(h);
+            // nova bedna zespodu (zpomaluje ke konci), ruka ji nese
+            float u = (t - 0.42f) / (SlapInsert - 0.42f);
+            float e = 1f - (1f - u) * (1f - u) * (1f - u);
+            Vector3 delta = Vector3.Lerp(bringFrom, Vector3.zero, e);
+            if (!slapMag.gameObject.activeSelf) slapMag.gameObject.SetActive(true);
+            PlaceSlapMagazine(h, delta, Mathf.Lerp(-25f, 0f, e));
+            grip = h.TransformPoint(bottom + delta) + h.up * depth;
+            frame = carry;
+        }
+        else
+        {
+            if (!slapInserted) SlapInsertNow(h);
+            Vector3 boxGrip = h.TransformPoint(bottom) + h.up * depth;
+            float angle = 0f;
+            if (t >= SlapPull && t < SlapRelease) angle = SlapLeverAngle * Mathf.SmoothStep(0f, 1f, (t - SlapPull) / (SlapRelease - SlapPull));
+            else if (t >= SlapRelease && t < SlapLeave) angle = SlapLeverAngle * (1f - Mathf.SmoothStep(0f, 1f, (t - SlapRelease) / (SlapLeave - SlapRelease)));
+            if (slapLever != null) slapLever.localRotation = slapLeverRest * Quaternion.Euler(angle, 0f, 0f);
+            Vector3 knob = slapLever != null ? slapLever.TransformPoint(slapKnobLocal) : h.TransformPoint(slapMagCenter + Vector3.up * 0.1f);
+
+            if (t < SlapPull)
+            {
+                // od bedny na kulicku packy
+                float u = Mathf.SmoothStep(0f, 1f, (t - SlapInsert) / (SlapPull - SlapInsert));
+                grip = Vector3.Lerp(boxGrip, knob, u) + h.up * 0.05f * Mathf.Sin(u * Mathf.PI);
+                frame = Quaternion.Slerp(carry, grab, u);
+            }
+            else if (t < SlapRelease)
+            {
+                // natazeni: ruka drzi kulicku
+                grip = knob;
+                frame = grab;
+                slapReleaseAt = rootT.InverseTransformPoint(knob);
+            }
+            else
+            {
+                // pusti (packa odskoci zpet) a odejde dolu mimo obraz
+                float u = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(SlapRelease + 0.02f, 1f, t));
+                grip = Vector3.Lerp(rootT.TransformPoint(slapReleaseAt) + h.up * 0.02f, low, u);
+                frame = grab;
+                if (t >= SlapLeave && slapLever != null) slapLever.localRotation = slapLeverRest;
+            }
+        }
+        fpArms.SolveFrame(false, grip, frame, rootT);
     }
 
     // Po narazu plechovky: zbran poskoci od rany (doprava) a srovna se zpet do klidu.
@@ -1542,6 +2195,14 @@ public partial class HeldWeapons : MonoBehaviour
         root = null;
         fpArms = null;
         reloadCan = null;   // (byla pod root)
+        heldMine = null;
+        mineArmUsed = false;
+        detonator = null;
+        detonateArmUsed = false;
+        slapMag = slapLever = null;
+        slapArmUsed = false;
+        if (slapFalling != null) Destroy(slapFalling.gameObject);
+        slapFalling = null;
         ampPointing = false;   // (nove ruce maji sevrenou pest)
         hands = new Hand[0];
         bodyHands = new Hand[0];
@@ -1652,6 +2313,8 @@ public partial class HeldWeapons : MonoBehaviour
                 // schovane za ni), palec skoro natazeny podel boku zbrane
                 if (fpArms != null && weapon.firstPersonTwoHanded && !weapon.twoHanded && count == 1 && model == HeldModel.Gun)
                     fpArms.CurlHand(false, -0.55f, -0.15f);
+                // Honza: bedna zasobniku a kohout pro prebiti
+                if (weapon.magazineSlapReload && count == 1) FindSlapParts(hands[0]);
                 if (fpArms == null)
                     foreach (var hand in hands)
                         BuildArm(hand, weapon, model);

@@ -1,0 +1,14 @@
+Model Information:
+* title:	Mine
+* source:	Sketchfab - "Mine" by Vikking
+* author:	Vikking (Sketchfab)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+Used in the game as Honza's mine (Shift) - thrown, stuck on surfaces and in his left hand in first person
+(Assets/Editor/MineSetup.cs -> Resources/Weapons/HonzaMine.prefab, loaded by MineAbility and HeldWeapons).
+Scaled to 36 cm diameter, bottom at the origin. Otherwise unchanged (3.1k triangles).
+
+This work is based on "Mine" by Vikking licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

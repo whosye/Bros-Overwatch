@@ -28,7 +28,12 @@ public class MineAbility : NetworkBehaviour
         public Light blinker;
         public Vector3 velocity;
         public bool flying;
+        public float showAt;   // (hazejici hrac: mina se objevi az po pusteni z ruky, viz HeldWeapons.PlayMineThrow)
     }
+
+    // model miny ze Sketchfabu (Editor/MineSetup: prumer 36 cm, spodek v pocatku, kopule nahoru)
+    static GameObject minePrefab;
+    static bool minePrefabLoaded;
 
     FirstPersonController fpc;
 
@@ -110,6 +115,9 @@ public class MineAbility : NetworkBehaviour
         if (minesOut > 0 && HeroInput.Pressed(this, HeroInput.Key.RightMouse))
         {
             GetComponent<PlayerHero>().SayAbility(ability, 2);   // hlaska k odpaleni (ability_Shift/step_2)
+            // v prvni osobe zvedne levou rukou detonator a zmackne ho
+            var detonatorHand = GetComponent<HeldWeapons>();
+            if (detonatorHand != null) detonatorHand.PlayDetonate();
             DetonateServerRpc();
         }
 
@@ -135,6 +143,9 @@ public class MineAbility : NetworkBehaviour
         Vector3 direction = (eye.forward + Vector3.up * 0.12f).normalized;
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position, 0.5f);
         GetComponent<PlayerHero>().SayAbility(ability, 1);   // hlaska k hozeni (ability_Shift/step_1)
+        // v prvni osobe minu hodi leva ruka
+        var held = GetComponent<HeldWeapons>();
+        if (held != null) held.PlayMineThrow();
         ThrowServerRpc(eye.position + eye.forward * 0.6f, direction);
     }
 
@@ -229,6 +240,7 @@ public class MineAbility : NetworkBehaviour
 
         var mines = new List<ServerMine>(serverMines);
         serverMines.Clear();
+        if (mines.Count > 0) DetonatedClientRpc();
 
         bool selfLaunch = false;
         foreach (var mine in mines)
@@ -255,14 +267,31 @@ public class MineAbility : NetworkBehaviour
 
     // ---------------- vizual ----------------
 
+    // Odpaleni: postava (treti osoba) zvedne levou ruku s detonatorem a zmackne ho.
+    [ClientRpc]
+    void DetonatedClientRpc()
+    {
+        var hands = GetComponent<HeldWeapons>();
+        if (hands != null) hands.PlayBodyDetonate();
+    }
+
     [ClientRpc]
     void ThrownClientRpc(int id, Vector3 origin, Vector3 velocity)
     {
+        // postava (treti osoba) mavne rukou jako pri hodu pasti
+        var thrower = GetComponent<HeldWeapons>();
+        if (thrower != null) thrower.PlayBodyThrow();
         var visual = BuildVisual();
         visual.root.transform.position = origin;
         visual.velocity = velocity;
         visual.flying = true;
         visuals[id] = visual;
+        // vlastnik ji v prvni osobe prave hazi levou rukou - objevi se, az ji ruka pusti
+        if (IsOwner && fpc != null && fpc.Bot == null && !fpc.ThirdPerson)
+        {
+            visual.showAt = Time.time + HeldWeapons.MineReleaseSeconds;
+            visual.root.SetActive(false);
+        }
     }
 
     [ClientRpc]
@@ -303,6 +332,7 @@ public class MineAbility : NetworkBehaviour
         foreach (var visual in visuals.Values)
         {
             if (visual.root == null) continue;
+            if (!visual.root.activeSelf && Time.time >= visual.showAt) visual.root.SetActive(true);
 
             if (visual.flying)
             {
@@ -319,6 +349,21 @@ public class MineAbility : NetworkBehaviour
     {
         var visual = new MineVisual { root = new GameObject("MineVisual") };
 
+        if (!minePrefabLoaded)
+        {
+            minePrefabLoaded = true;
+            minePrefab = Resources.Load<GameObject>("Weapons/HonzaMine");
+        }
+        if (minePrefab != null)
+        {
+            var model = Instantiate(minePrefab, visual.root.transform);
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localRotation = Quaternion.identity;
+            foreach (var collider in model.GetComponentsInChildren<Collider>()) Destroy(collider);
+            AddBlinker(visual, 0.15f);
+            return visual;
+        }
+
         var body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         DestroyImmediate(body.GetComponent<Collider>());
         body.transform.SetParent(visual.root.transform, false);
@@ -332,14 +377,18 @@ public class MineAbility : NetworkBehaviour
         cap.transform.localScale = Vector3.one * 0.13f;
         Fx.Paint(cap, new Color(1f, 0.2f, 0.12f));
 
+        AddBlinker(visual, 0.15f);
+        return visual;
+    }
+
+    static void AddBlinker(MineVisual visual, float height)
+    {
         var lightObject = new GameObject("Blink");
         lightObject.transform.SetParent(visual.root.transform, false);
-        lightObject.transform.localPosition = new Vector3(0f, 0.15f, 0f);
+        lightObject.transform.localPosition = new Vector3(0f, height, 0f);
         visual.blinker = lightObject.AddComponent<Light>();
         visual.blinker.type = LightType.Point;
         visual.blinker.color = new Color(1f, 0.25f, 0.15f);
         visual.blinker.range = 2.5f;
-
-        return visual;
     }
 }

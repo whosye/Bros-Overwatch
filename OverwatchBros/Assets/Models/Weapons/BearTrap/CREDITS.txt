@@ -1,0 +1,13 @@
+Model Information:
+* title:	Second high poly
+* source:	Sketchfab - "Second high poly" (doplnit / overit autora, nejspis iskandar1ch jako u detonatoru)
+* author:	(overit)
+
+Model License:
+* license type:	(overit - napr. CC-BY-4.0)
+
+Used in the game as Honza's bear trap (E) - thrown, lying open on the ground and snapping shut
+(Assets/Editor/TrapSetup.cs -> Resources/Weapons/HonzaTrap.prefab, loaded by TrapAbility).
+Edited in Blender: reduced from ~509k to 9k triangles, split into "TrapBase" (axle, hubs, pedal, springs) and the
+two jaws "JawFront" / "JawBack" with their origins on the hinge axis (they rotate shut), and repainted
+(rusty jaw ring, dark steel teeth / axle / hubs, rusty pedal) instead of the original greys.

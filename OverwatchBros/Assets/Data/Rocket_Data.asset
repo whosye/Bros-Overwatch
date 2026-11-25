@@ -13,12 +13,20 @@ MonoBehaviour:
   m_Name: Rocket_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: "Gran\xE1tomet"
-  description: "Gran\u00e1ty let\u00ed obloukem a odr\u00e1\u017eej\u00ed se od zd\u00ed. O nep\u0159\u00edtele vybuchnou hned, jinak chv\u00edli po odrazu. V\u00fdbuch zra\u0148uje v okruhu."
+  description: "Gran\xE1ty let\xED obloukem a odr\xE1\u017Eej\xED se od zd\xED. O
+    nep\u0159\xEDtele vybuchnou hned, jinak chv\xEDli po odrazu. V\xFDbuch zra\u0148uje
+    v okruhu."
   damage: 60
   fireRate: 1.5
   maxAmmo: 5
+  burstCount: 1
+  burstInterval: 0.07
   reloadTime: 1.8
   reloadAnimation: 1
+  revolverReload: 0
+  monsterCanReload: 0
+  magazineSlapReload: 1
+  heavyRecoil: 1
   range: 140
   chargeTime: 0
   minChargeDamage: 20
@@ -32,9 +40,14 @@ MonoBehaviour:
   allyHeal: 0
   scopeFov: 0
   scopedChargeTime: 0
+  boltCycleTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
   headshotMultiplier: 2
+  hitscanRadius: 0
+  scopedFalloffStart: 0
+  scopedFalloffEnd: 0
+  scopedFalloffMin: 0.4
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0.5
@@ -49,8 +62,23 @@ MonoBehaviour:
   projectileTrail: 1
   projectilePrefab: {fileID: 0}
   meleeRadius: 0.6
+  meleeArc: 55
+  comboFinisherDamage: 0
+  comboFinisherArc: 60
+  comboFinisherKnockback: 0
+  powerShotEvery: 0
+  powerShotDamageScale: 1.25
+  powerShotColor: {r: 1, g: 0.12, b: 0.06, a: 1}
   heldModel: 0
   dualWield: 0
-  heldPrefab: {fileID: 7302944645326007207, guid: af1d3d5a1e027b34ba5f8605606e788d, type: 3}
+  twoHanded: 0
+  firstPersonTwoHanded: 0
+  heldScale: 1
+  firstPersonOffset: {x: 0.07, y: -0.05, z: 0}
+  heldPrefab: {fileID: 3675046857948262940, guid: 6417f6facd05c3f44b00a93b5b775643, type: 3}
+  comboRotation: 0
   fireSound: {fileID: 8300000, guid: 3b9b8720ca6dcc84ab739877ec6f75a2, type: 3}
   scopedFireSound: {fileID: 0}
+  bulletImpactSound: {fileID: 0}
+  bulletImpactVolume: 0.5
+  bulletHoles: 1

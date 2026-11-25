@@ -1,0 +1,15 @@
+Model Information:
+* title:	First high poly
+* source:	Sketchfab - "First high poly" by iskandar1ch
+* author:	iskandar1ch (Sketchfab)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+Used in the game as Honza's mine detonator, shown in his left hand in first person when he detonates his mines
+(Assets/Editor/DetonatorSetup.cs -> Resources/Weapons/HonzaDetonator.prefab, loaded by HeldWeapons).
+Edited in Blender: reduced from ~350k to 6k triangles and repainted (mustard body, khaki tape, red trigger and
+button, olive battery box, dark metal) instead of the original two colors.
+
+This work is based on "First high poly" by iskandar1ch licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
