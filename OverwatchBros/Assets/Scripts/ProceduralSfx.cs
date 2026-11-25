@@ -349,6 +349,34 @@ public static class ProceduralSfx
 
     static float Noise(System.Random r) => (float)(r.NextDouble() * 2.0 - 1.0);
 
+    // Davidovo prebiti plechovkou: cinknuti plechovky o zbran a jemne syknuti (plechovka se rozplyne v mlhu).
+    static AudioClip canBurst;
+    public static AudioClip CanBurst => canBurst ??= MakeCanBurst();
+
+    static AudioClip MakeCanBurst()
+    {
+        const float seconds = 0.75f;
+        int count = Mathf.CeilToInt(seconds * Rate);
+        var data = new float[count];
+        var rnd = new System.Random(4242);
+        float low = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            float t = i / (float)Rate;
+            float n = Noise(rnd);
+            low += 0.35f * (n - low);
+            // kovove cinknuti (neharmonicke tony plechu), kratke tupe tuknuti, vysoke syknuti, ktere pomalu dozni
+            float clink = (Mathf.Sin(2f * Mathf.PI * 1180f * t) * 0.35f + Mathf.Sin(2f * Mathf.PI * 2350f * t) * 0.5f
+                + Mathf.Sin(2f * Mathf.PI * 3720f * t) * 0.25f) * Mathf.Exp(-t * 30f);
+            float knock = n * Mathf.Exp(-t * 140f) * 0.45f;
+            float hiss = (n - low) * 0.3f * Mathf.Min(1f, t * 30f) * Mathf.Exp(-t * 4.5f);
+            data[i] = Mathf.Clamp((clink + knock + hiss) * 0.75f, -1f, 1f);
+        }
+        var clip = AudioClip.Create("canBurst", count, 1, Rate, false);
+        clip.SetData(data, 0);
+        return clip;
+    }
+
     static AudioClip MakeArrowFlight()
     {
         float fast = 0f, slow = 0f;

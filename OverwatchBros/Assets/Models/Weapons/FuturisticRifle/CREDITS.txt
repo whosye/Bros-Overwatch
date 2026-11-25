@@ -1,0 +1,13 @@
+Model Information:
+* title:	Futuristic Rifle
+* source:	https://sketchfab.com/3d-models/futuristic-rifle-414984b1edd44005b5bef53feff97227
+* author:	Andre Lages (Sketchfab)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+Used in the game as David's rifle (Assets/Editor/FuturisticRifleSetup.cs -> Prefab/Weapons/Held_FuturisticRifle.prefab).
+Downloaded as GLB with 1k textures. The black "rifleToon" outline shell is removed in the held prefab.
+
+This work is based on "Futuristic Rifle" (https://sketchfab.com/3d-models/futuristic-rifle-414984b1edd44005b5bef53feff97227) by Andre Lages licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

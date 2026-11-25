@@ -22,6 +22,7 @@ public partial class HeldWeapons : MonoBehaviour
         // Zbran obema rukama: leva ruka drzi predpazbi (mistni bod v drzaku zbrane).
         public bool twoHanded;
         public Vector3 foregrip;
+        public bool foregripContact;   // foregrip je bod na povrchu zbrane (znacka "Foregrip"), dlan se k nemu prilozi
         // postava se zbrani obema rukama: poza strelby (mistni vuci pateri) - klid je idlePosition / idleRotation
         public bool hasAimPose;
         public Vector3 aimPosition;
@@ -421,8 +422,14 @@ public partial class HeldWeapons : MonoBehaviour
 
     Transform dartPistol;
     float dartShownAt = -100f;
+
+    bool DartShowing => dartPistol != null && Time.time - dartShownAt >= 0f && Time.time - dartShownAt < DartShowSeconds;
+    bool LeftSupportOnly => builtWeapon != null && builtWeapon.firstPersonTwoHanded && !builtWeapon.twoHanded;
     const float DartShowSeconds = 0.75f;
     static readonly Vector3 DartGrip = new Vector3(0f, -0.06f, 0.02f);
+    // posun modelu pistolky (Resources/Weapons/DartPistol) vuci ruce: ruka zustava v DartGrip, model se posune
+    // (y = nahoru, z = dopredu, x = doprava; v metrech)
+    static readonly Vector3 DartModelOffset = new Vector3(0f, 0.02f, 0f);
 
     public void ShowDartPistol()
     {
@@ -431,11 +438,25 @@ public partial class HeldWeapons : MonoBehaviour
         dartShownAt = Time.time;
     }
 
-    // Uspavaci pistole: tmave telo, dlouha hlaven, CO2 bombicka pod hlavni, v hlavni sipka s oranzovou spickou.
+    // Uspavaci pistole: model ze Sketchfabu (Resources/Weapons/DartPistol, postavi Editor/DartPistolSetup - rukojet v bode
+    // DartGrip, hlaven +Z). Kdyz chybi: tmave telo, dlouha hlaven, CO2 bombicka pod hlavni, v hlavni sipka s oranzovou spickou.
     static Transform BuildDartPistol(Transform parent)
     {
         var holder = new GameObject("DartPistol").transform;
         holder.SetParent(parent, false);
+        var model = Resources.Load<GameObject>("Weapons/DartPistol");
+        if (model != null)
+        {
+            var instance = Instantiate(model, holder);
+            instance.transform.localPosition = DartModelOffset;
+            instance.transform.localRotation = Quaternion.identity;
+            foreach (var collider in instance.GetComponentsInChildren<Collider>())
+                Destroy(collider);
+            foreach (var renderer in instance.GetComponentsInChildren<Renderer>())
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            holder.gameObject.SetActive(false);
+            return holder;
+        }
         var dark = new Color(0.16f, 0.17f, 0.2f);
         var steel = new Color(0.62f, 0.64f, 0.68f);
         var teal = new Color(0.2f, 0.55f, 0.6f);
@@ -461,10 +482,16 @@ public partial class HeldWeapons : MonoBehaviour
             if (fpArms != null && !leftUsed && t >= 1f && t < 1.2f) fpArms.ResetArm(false);
             return;
         }
+        // leva ruka jen podpira pusku (prvni osoba): pistolku vezme ona, pak se vrati na predpazbi
+        if (LeftSupportOnly)
+        {
+            leftUsed = false;
+            foreach (var h in hands) if (h.side < 0f) leftUsed = true;
+        }
         // vytahnout zleva, vystrel (zpetny raz), schovat
         float raise = t < 0.2f ? Mathf.SmoothStep(0f, 1f, t / 0.2f) : t > 0.75f ? Mathf.SmoothStep(1f, 0f, (t - 0.75f) / 0.25f) : 1f;
         float kick = t > 0.2f && t < 0.4f ? Mathf.Sin((t - 0.2f) / 0.2f * Mathf.PI) : 0f;
-        dartPistol.localPosition = Vector3.Lerp(new Vector3(-0.32f, -0.5f, 0.35f), new Vector3(-0.2f, -0.2f, 0.5f), raise) + new Vector3(0f, 0.02f, -0.05f) * kick;
+        dartPistol.localPosition = Vector3.Lerp(new Vector3(-0.32f, -0.5f, 0.35f), new Vector3(-0.2f, -0.16f, 0.5f), raise) + new Vector3(0f, 0.02f, -0.05f) * kick;
         dartPistol.localRotation = Quaternion.Euler(-12f * kick, 4f, 0f);
         if (fpArms != null && !leftUsed)
             fpArms.Solve(false, dartPistol.TransformPoint(DartGrip), dartPistol, root.transform, false, true);
@@ -611,6 +638,24 @@ public partial class HeldWeapons : MonoBehaviour
     Vector3 lastPosition;
     float reloadElapsed = 99f;
     float reloadDuration = 1f;
+
+    // David (WeaponDefinition.monsterCanReload, jen prvni osoba): leva ruka vytahne zelenou plechovku Monsteru,
+    // napraha se a svihne s ni do leveho boku zbrane. Naraz = konec prebijeni (naboje pribydou prave tehdy),
+    // plechovka se rozplyne v jemnou zelenou mlhu a ruka se vrati na predpazbi.
+    Transform reloadCan;
+    bool reloadCanceled;
+    float canAfter = 99f;                 // cas od narazu (navrat ruky na predpazbi)
+    const float CanReturnSeconds = 0.4f;
+    const float CanPalmDepth = 0.018f;    // stred plechovky (polomer 3,3 cm) za bodem dlane
+    // poloha plechovky (vuci kamere): dole mimo obraz, zvednuta vlevo dole v obraze, napraha vlevo vzadu
+    static readonly Vector3 CanLowPos = new Vector3(-0.22f, -0.60f, 0.28f), CanLowTurn = new Vector3(35f, 20f, 0f);
+    static readonly Vector3 CanUpPos = new Vector3(-0.08f, -0.17f, 0.42f), CanUpTurn = new Vector3(-6f, 28f, 10f);
+    static readonly Vector3 CanBackPos = new Vector3(-0.15f, -0.13f, 0.36f), CanBackTurn = new Vector3(-14f, 40f, 28f);
+    // zbran se natoci levym bokem ke kamere (tam plechovka prileti)
+    static readonly Vector3 CanGunOffset = new Vector3(-0.03f, 0.03f, -0.02f), CanGunTurn = new Vector3(-4f, -10f, -14f);
+
+    bool MonsterReload => builtWeapon != null && builtWeapon.monsterCanReload && fpArms != null && root != null
+        && hands.Length == 1 && hands[0].twoHanded && LeftSupportOnly;
     float throwElapsed = 99f;
     const float ThrowDuration = 0.45f;
     float tauntElapsed = 99f;
@@ -702,6 +747,8 @@ public partial class HeldWeapons : MonoBehaviour
             ReplayLog.Reload(this, duration);
         reloadDuration = Mathf.Max(0.05f, duration);
         reloadElapsed = 0f;
+        reloadCanceled = false;
+        canAfter = 99f;
 
         if (visual != null && visual.HasModel)
         {
@@ -714,6 +761,9 @@ public partial class HeldWeapons : MonoBehaviour
         if (!ghost)
             ReplayLog.StopReload(this);
         reloadElapsed = reloadDuration;
+        reloadCanceled = true;   // (bez narazu plechovky)
+        canAfter = 99f;
+        if (reloadCan != null) reloadCan.gameObject.SetActive(false);
 
         if (visual != null && visual.HasModel)
             visual.StopReload();
@@ -809,7 +859,13 @@ public partial class HeldWeapons : MonoBehaviour
         bool thirdPerson = ghost ? GhostThirdPerson : fpc != null && (fpc.ThirdPerson || (ThirdPersonPreview.Active && fpc.IsOwner && fpc.Bot == null));
 
         if (reloadElapsed < reloadDuration)
+        {
             reloadElapsed += Time.deltaTime;
+            // David: konec prebiti = naraz plechovky do zbrane
+            if (reloadElapsed >= reloadDuration && !reloadCanceled && MonsterReload) CanImpact();
+        }
+        else if (canAfter < CanReturnSeconds)
+            canAfter += Time.deltaTime;
         if (throwElapsed < ThrowDuration)
             throwElapsed += Time.deltaTime;
         if (tauntElapsed < TauntDuration)
@@ -913,6 +969,8 @@ public partial class HeldWeapons : MonoBehaviour
 
             if (reloadElapsed < reloadDuration)
                 AnimateReload(reloadElapsed / reloadDuration, hand.side, ref position, ref euler);
+            else if (canAfter < CanReturnSeconds && MonsterReload)
+                AnimateCanAfter(canAfter, ref position, ref euler);
 
             if (tauntElapsed < TauntDuration)
             {
@@ -997,8 +1055,26 @@ public partial class HeldWeapons : MonoBehaviour
             if (fpArms != null)
             {
                 fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, builtModel == HeldModel.Bow);   // (luk v natazene ruce)
-                if (hand.twoHanded)
-                    fpArms.Solve(false, hand.holder.TransformPoint(hand.foregrip), hand.holder, root.transform, true);
+                // (leva ruka pusti predpazbi, kdyz drzi uspavaci pistolku - jen u podpory v prvni osobe)
+                // leva ruka na predpazbi: bez konecku prstu (vykukovaly pred bokem zbrane); s pistolkou zase cela
+                // (s plechovkou zase cela - prsty ji obemknou)
+                if (hand.twoHanded && LeftSupportOnly)
+                    fpArms.SetFingertipsHidden(false, !DartShowing && !(reloadCan != null && reloadCan.gameObject.activeSelf));
+                // pistolku drzi leva ruka - plechovka mezitim pryc
+                if (hand.twoHanded && LeftSupportOnly && DartShowing && reloadCan != null && reloadCan.gameObject.activeSelf)
+                    reloadCan.gameObject.SetActive(false);
+                if (hand.twoHanded && !(DartShowing && LeftSupportOnly))
+                {
+                    // podpora jen v prvni osobe: dlan prilozena zespodu k predpazbi, prsty za zbrani
+                    // (Davidovo prebijeni: ruka s plechovkou)
+                    if (LeftSupportOnly)
+                    {
+                        if (!SolveCanHand(hand))
+                            fpArms.Solve(false, hand.holder.TransformPoint(SupportPoint(hand)), hand.holder, root.transform, true, false, true);
+                    }
+                    else
+                        fpArms.Solve(false, hand.holder.TransformPoint(hand.foregrip), hand.holder, root.transform, true);
+                }
                 if (UsesRevolver && hand.revolver != null)
                 {
                     if (reloadElapsed < reloadDuration)
@@ -1243,6 +1319,15 @@ public partial class HeldWeapons : MonoBehaviour
             euler += turn;
             return;
         }
+        if (MonsterReload)
+        {
+            // David: zbran zustava v obraze, jen se natoci levym bokem ke kamere (zpet az po narazu, AnimateCanAfter)
+            float tilt = Mathf.SmoothStep(0f, 1f, t / 0.15f);
+            position += CanGunOffset * tilt;
+            euler += CanGunTurn * tilt;
+            return;
+        }
+
         // Plynuly prechod do polohy prebijeni a zpet.
         float blend = Mathf.Min(Mathf.SmoothStep(0f, 1f, t / 0.18f), Mathf.SmoothStep(0f, 1f, (1f - t) / 0.18f));
 
@@ -1268,6 +1353,183 @@ public partial class HeldWeapons : MonoBehaviour
         }
     }
 
+    // Po narazu plechovky: zbran poskoci od rany (doprava) a srovna se zpet do klidu.
+    void AnimateCanAfter(float a, ref Vector3 position, ref Vector3 euler)
+    {
+        float back = 1f - Mathf.SmoothStep(0f, 1f, a / CanReturnSeconds);
+        float kick = Mathf.Exp(-a * 18f) * Mathf.Min(1f, a * 60f);
+        position += CanGunOffset * back + new Vector3(0.025f, 0.008f, 0f) * kick;
+        euler += CanGunTurn * back + new Vector3(-3f, 4f, -7f) * kick;
+    }
+
+    // Bod predpazbi, kam leva dlan v prvni osobe podpira zbran (v drzaku zbrane).
+    static Vector3 SupportPoint(Hand hand) => hand.foregripContact ? hand.foregrip : hand.foregrip + new Vector3(0f, 0.015f, 0f);
+
+    // Stred plechovky v okamziku narazu (v drzaku zbrane): u leveho boku zbrane kousek za predpazbim.
+    static Vector3 CanHitPoint(Hand hand) => SupportPoint(hand) + new Vector3(-0.052f, 0.035f, -0.05f);
+
+    void CanImpact()
+    {
+        canAfter = 0f;
+        var hand = hands[0];
+        Vector3 at = hand.holder != null ? hand.holder.TransformPoint(CanHitPoint(hand)) : root.transform.position;
+        if (reloadCan != null) reloadCan.gameObject.SetActive(false);
+        CanMist(at);
+        // (v zaznamu uz zvuk je - killcam ho prehraje sam)
+        if (!ghost) ProceduralSfx.Play(ProceduralSfx.CanBurst, at, 0.55f, 15f, false, SfxKind.Weapon);
+    }
+
+    // Jemna zelena mlha z rozplynute plechovky - drzi se u kamery (jako zbran), pomalu se rozplyva.
+    void CanMist(Vector3 position)
+    {
+        var go = new GameObject("FX_MonsterMist");
+        go.transform.SetParent(root.transform, false);
+        go.transform.position = position;
+
+        var ps = go.AddComponent<ParticleSystem>();
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        var main = ps.main;
+        main.duration = 0.3f;
+        main.loop = false;
+        main.playOnAwake = false;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.6f, 1.3f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(0.04f, 0.3f);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.03f, 0.09f);
+        main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.55f, 1f, 0.45f, 0.55f), new Color(0.2f, 0.85f, 0.3f, 0.4f));
+        main.gravityModifier = -0.03f;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+        main.stopAction = ParticleSystemStopAction.Destroy;
+        main.maxParticles = 200;
+
+        var emission = ps.emission;
+        emission.rateOverTime = 0f;
+        emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)70), new ParticleSystem.Burst(0.08f, (short)30) });
+
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = 0.04f;
+
+        var drag = ps.limitVelocityOverLifetime;
+        drag.enabled = true;
+        drag.drag = 2.5f;
+
+        var noise = ps.noise;
+        noise.enabled = true;
+        noise.strength = 0.04f;
+        noise.frequency = 1.5f;
+
+        var color = ps.colorOverLifetime;
+        color.enabled = true;
+        var gradient = new Gradient();
+        gradient.SetKeys(
+            new[] { new GradientColorKey(new Color(0.75f, 1f, 0.6f), 0f), new GradientColorKey(new Color(0.3f, 0.9f, 0.35f), 1f) },
+            new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.1f), new GradientAlphaKey(0.6f, 0.5f), new GradientAlphaKey(0f, 1f) });
+        color.color = new ParticleSystem.MinMaxGradient(gradient);
+
+        var size = ps.sizeOverLifetime;
+        size.enabled = true;
+        size.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(new Keyframe(0f, 0.5f), new Keyframe(1f, 1.8f)));
+
+        var renderer = go.GetComponent<ParticleSystemRenderer>();
+        renderer.material = Fx.ParticleMaterial;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        ps.Play();
+    }
+
+    // Leva ruka pri Davidove prebijeni (a navrat po narazu). Vraci false, kdyz se zrovna neprebiji (ruka na predpazbi).
+    bool SolveCanHand(Hand hand)
+    {
+        bool reloading = reloadElapsed < reloadDuration && !reloadCanceled;
+        bool returning = !reloading && canAfter < CanReturnSeconds;
+        if (!MonsterReload || (!reloading && !returning))
+        {
+            if (reloadCan != null && reloadCan.gameObject.activeSelf) reloadCan.gameObject.SetActive(false);
+            return false;
+        }
+
+        var rootT = root.transform;
+        // ruka na predpazbi (zacatek a konec) - stejne jako bez prebijeni
+        Quaternion supportFrame = FirstPersonArms.HandFrame(hand.holder, -1f, true, true);
+        Vector3 supportGrip = hand.holder.TransformPoint(SupportPoint(hand)) + supportFrame * Vector3.down * FirstPersonArms.WrapPalmDepth;
+
+        // plechovka v okamziku narazu (vuci kamere)
+        Vector3 hitPos = rootT.InverseTransformPoint(hand.holder.TransformPoint(CanHitPoint(hand)));
+        Quaternion hitRot = Quaternion.Inverse(rootT.rotation) * hand.holder.rotation * Quaternion.Euler(0f, 0f, 8f);
+
+        Vector3 canPos;
+        Quaternion canRot;
+        float handBlend = 1f;   // 0 = ruka na predpazbi, 1 = ruka drzi plechovku
+        bool showCan = true;
+        if (reloading)
+        {
+            float t = reloadElapsed / reloadDuration;
+            if (t < 0.22f)
+            {
+                // ruka pusti predpazbi a sjede dolu mimo obraz (tam vezme plechovku)
+                handBlend = Mathf.SmoothStep(0f, 1f, t / 0.22f);
+                canPos = CanLowPos;
+                canRot = Quaternion.Euler(CanLowTurn);
+                showCan = handBlend > 0.9f;
+            }
+            else if (t < 0.55f)
+            {
+                // zvedne plechovku do obrazu (vlevo dole)
+                float u = Mathf.SmoothStep(0f, 1f, (t - 0.22f) / 0.33f);
+                canPos = Vector3.Lerp(CanLowPos, CanUpPos, u) + Vector3.left * 0.05f * Mathf.Sin(u * Mathf.PI);
+                canRot = Quaternion.Slerp(Quaternion.Euler(CanLowTurn), Quaternion.Euler(CanUpTurn), u);
+            }
+            else if (t < 0.82f)
+            {
+                // chvili ukaze, pak napraha
+                float u = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.62f, 0.82f, t));
+                canPos = Vector3.Lerp(CanUpPos, CanBackPos, u);
+                canRot = Quaternion.Slerp(Quaternion.Euler(CanUpTurn), Quaternion.Euler(CanBackTurn), u);
+            }
+            else
+            {
+                // svih do boku zbrane - zrychluje az do narazu
+                float u = (t - 0.82f) / 0.18f;
+                u *= u;
+                canPos = Vector3.Lerp(CanBackPos, hitPos, u) + Vector3.up * 0.04f * Mathf.Sin(u * Mathf.PI);
+                canRot = Quaternion.Slerp(Quaternion.Euler(CanBackTurn), hitRot, u);
+            }
+        }
+        else
+        {
+            // po narazu: ruka chvili v miste rany, pak zpet na predpazbi
+            canPos = hitPos;
+            canRot = hitRot;
+            showCan = false;
+            handBlend = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.05f, CanReturnSeconds, canAfter));
+        }
+
+        // leva ruka drzi plechovku: hrbet ruky ven (vlevo), dlan k plechovce, prsty kolem ni
+        Vector3 canWorld = rootT.TransformPoint(canPos);
+        Quaternion canWorldRot = rootT.rotation * canRot;
+        Quaternion fist = Quaternion.LookRotation(canWorldRot * Vector3.forward, canWorldRot * Vector3.left);
+        Vector3 fistGrip = canWorld - canWorldRot * Vector3.right * CanPalmDepth;
+        // prechod mezi predpazbim a plechovkou obloukem ven a dolu (at ruka neprojede zbrani)
+        Vector3 grip = Vector3.Lerp(supportGrip, fistGrip, handBlend)
+            + rootT.TransformDirection(new Vector3(-0.04f, -0.04f, 0f)) * Mathf.Sin(handBlend * Mathf.PI);
+        fpArms.SolveFrame(false, grip, Quaternion.Slerp(supportFrame, fist, handBlend), rootT);
+
+        if (reloadCan == null)
+        {
+            var go = new GameObject("ReloadMonster");
+            go.transform.SetParent(rootT, false);
+            MonsterCan.Build(go.transform, true);
+            go.transform.localScale = Vector3.one;   // skutecna velikost (v letu je zvetsena)
+            foreach (var r in go.GetComponentsInChildren<Renderer>())
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            reloadCan = go.transform;
+        }
+        if (reloadCan.gameObject.activeSelf != showCan) reloadCan.gameObject.SetActive(showCan);
+        reloadCan.localPosition = canPos;
+        reloadCan.localRotation = canRot;
+        return true;
+    }
+
     void Rebuild(bool owner)
     {
         foreach (var old in bodyHands)
@@ -1279,6 +1541,7 @@ public partial class HeldWeapons : MonoBehaviour
 
         root = null;
         fpArms = null;
+        reloadCan = null;   // (byla pod root)
         ampPointing = false;   // (nove ruce maji sevrenou pest)
         hands = new Hand[0];
         bodyHands = new Hand[0];
@@ -1355,11 +1618,20 @@ public partial class HeldWeapons : MonoBehaviour
                 hand.grip = GripInWeapon(weapon, model);
 
                 // jedna velka zbran obema rukama: vic u stredu a niz, leva ruka na predpazbi
-                if (weapon.twoHanded && count == 1 && model == HeldModel.Gun)
+                if ((weapon.twoHanded || (owner && weapon.firstPersonTwoHanded)) && count == 1 && model == HeldModel.Gun)
                 {
                     hand.twoHanded = true;
                     hand.foregrip = ForegripInWeapon(holder, hand.grip);
-                    if (owner)
+                    // podpora jen v prvni osobe: presny spodek predpazbi ze znacky v prefabu (kdyz ji model ma)
+                    if (owner && !weapon.twoHanded)
+                        foreach (var marker in holder.GetComponentsInChildren<Transform>(true))
+                            if (marker.name == "Foregrip")
+                            {
+                                hand.foregrip = holder.InverseTransformPoint(marker.position);
+                                hand.foregripContact = true;
+                                break;
+                            }
+                    if (owner && weapon.twoHanded)
                     {
                         // strelba od pasu: zbran nize u praveho boku, hlaven sikmo nahoru ke stredu obrazovky
                         hand.restPosition = new Vector3(0.22f, -0.42f, 0.34f);
@@ -1376,6 +1648,10 @@ public partial class HeldWeapons : MonoBehaviour
                 var currentHero = CurrentHero;
                 var prefab = currentHero != null ? currentHero.characterPrefab : null;
                 fpArms = FirstPersonArms.Create(root.transform, prefab);
+                // leva ruka podpira predpazbi: prsty jen mirne pokrcene (vedou pod zbrani a nahoru po jeji druhe strane,
+                // schovane za ni), palec skoro natazeny podel boku zbrane
+                if (fpArms != null && weapon.firstPersonTwoHanded && !weapon.twoHanded && count == 1 && model == HeldModel.Gun)
+                    fpArms.CurlHand(false, -0.55f, -0.15f);
                 if (fpArms == null)
                     foreach (var hand in hands)
                         BuildArm(hand, weapon, model);
