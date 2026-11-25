@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Max
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: Max
-  description: "Zabij\u00e1k s kosou. Rychle se dostane mezi nep\u0159\u00e1tele, projde i zd\u00ed a slab\u0161\u00ed hrdiny zabije jedn\u00edm kombem. Za zabit\u00ed se mu zkr\u00e1t\u00ed cooldown Rozpolcen\u00ed i St\u00ednov\u00e9 formy na polovinu."
+  description: "Zabij\xE1k s kosou. Rychle se dostane mezi nep\u0159\xE1tele, projde
+    i zd\xED a slab\u0161\xED hrdiny zabije jedn\xEDm kombem. Za zabit\xED se mu
+    zkr\xE1t\xED cooldown Rozpolcen\xED i St\xEDnov\xE9 formy na polovinu."
   color: {r: 0.55, g: 0.25, b: 0.85, a: 1}
   maxHealth: 125
   healingScale: 1
@@ -25,6 +27,7 @@ MonoBehaviour:
   secondaryAbilityKind: 30
   secondaryAbility: {fileID: 11400000, guid: 7b4685179edd63e459ec86a18784ac5e, type: 2}
   blockAbility: {fileID: 0}
+  counterAbility: {fileID: 0}
   altAbilityKind: 31
   altAbility: {fileID: 11400000, guid: 04ee9e0b220400942ace43a47114e7b3, type: 2}
   rmbAbilityKind: 32
@@ -55,7 +58,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ca9a06f08820e3c4293b51f80d7788c6, type: 3}
   - {fileID: 8300000, guid: 8339145fb327e1f478b711f805da00cd, type: 3}
   - {fileID: 8300000, guid: eea69335747a40c44bbb0071c9e1f208, type: 3}
+  - {fileID: 8300000, guid: c6129ca2fce5ebd48a430c55163a2339, type: 3}
   - {fileID: 8300000, guid: 57e940e1904d84845a1189bf10bbae02, type: 3}
+  - {fileID: 8300000, guid: dda596356041d924b930512d86ed0b47, type: 3}
   deathLines:
   - {fileID: 8300000, guid: 635a8623db7a1bd4e9c202c8bc4fe956, type: 3}
   - {fileID: 8300000, guid: e2eb90964ae09c44883d643765ccec20, type: 3}
@@ -67,6 +72,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d84f950d4f4021a4e89b5fcd8ac0a561, type: 3}
   - {fileID: 8300000, guid: 3a2aee18d9ca2984eb1e89ce09246e36, type: 3}
   idleLines:
+  - {fileID: 8300000, guid: dda596356041d924b930512d86ed0b47, type: 3}
   - {fileID: 8300000, guid: d1c73514fee808d4db47eed9c7f6f477, type: 3}
   - {fileID: 8300000, guid: c0e1a4f94d454324e801c178292f0830, type: 3}
   - {fileID: 8300000, guid: c66904cdbe094b04f83920d499eecdfa, type: 3}
@@ -79,7 +85,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 1121257d1d815024d87e64142718c9cb, type: 3}
   - {fileID: 8300000, guid: 709ee089397d61145985c84ba4fd4e18, type: 3}
   - {fileID: 8300000, guid: e87ab37cba0cc994e8b0261159baf18a, type: 3}
-  - {fileID: 8300000, guid: dda596356041d924b930512d86ed0b47, type: 3}
   snareLines:
   - {fileID: 8300000, guid: 815deb9529f48b34f9968439976fc66a, type: 3}
   - {fileID: 8300000, guid: 2f10108a1285939489775bfb7cfd793c, type: 3}
