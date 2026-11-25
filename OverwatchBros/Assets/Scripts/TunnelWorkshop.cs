@@ -28,6 +28,8 @@ public sealed class TunnelWorkshop : MonoBehaviour
     public Light accentLight;
 
     AudioListener listener;
+    GalleryMusic gallery;   // hudba galerie GTD ve stejne mape: v galerii workshop ztichne
+    bool searchedGallery;
     RenderTexture screenTexture, sampleTexture;
     Texture2D cpuSample;
     MaterialPropertyBlock screenProperties;
@@ -123,6 +125,8 @@ public sealed class TunnelWorkshop : MonoBehaviour
         bool valid = listener && listener.isActiveAndEnabled;
         Vector3 ear = valid ? listener.transform.position : new Vector3(0f, float.PositiveInfinity, 0f);
         float gain = valid ? GainAt(ear) : 0f;
+        if (!searchedGallery) { searchedGallery = true; gallery = GalleryMusic.FindInMap<GalleryMusic>(transform); }
+        if (gallery != null && gallery.isActiveAndEnabled) gain *= 1f - gallery.Inside01;
         // Hard gate precedes smoothing, including teleport / respawn above ground.
         currentGain = gain <= 0f ? 0f : Mathf.MoveTowards(currentGain, gain, Time.unscaledDeltaTime * 2.5f);
         if (music)

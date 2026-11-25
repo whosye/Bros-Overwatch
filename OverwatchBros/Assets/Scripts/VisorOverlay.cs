@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 // Viktorova Q (takticky zamerovac): po dobu ultimatky ma hrac obraz jako pres takticke bryle - jemny oranzovy nadech,
 // tmave oranzovy ram bryli se zakulacenymi rohy a sedlem pro nos, svitiva linka na vnitrni hrane, rohove znacky HUD
-// a jemne radkovani. Jen mistni hrac (VisorAbility.IsActive), pod HUD; plynule nabiha a mizi.
+// a jemne radkovani. Jen mistni hrac (VisorAbility.IsActive), v POTG a killcamu hrac ze zaznamu; pod HUD; plynule nabiha a mizi.
 public class VisorOverlay : MonoBehaviour
 {
     static readonly Color Orange = new Color(1f, 0.55f, 0.15f);
@@ -38,11 +38,12 @@ public class VisorOverlay : MonoBehaviour
     {
         var network = NetworkManager.Singleton;
         var player = network != null && network.LocalClient != null ? network.LocalClient.PlayerObject : null;
+        if (ReplayPlayer.Active) return ReplayPlayer.PovVisor;   // POTG a killcam: bryle hrace ze zaznamu
         if (player == null) return false;
         var fpc = player.GetComponent<FirstPersonController>();
         if (fpc == null || fpc.IsDead || fpc.Bot != null) return false;
         var visor = player.GetComponent<VisorAbility>();
-        return visor != null && visor.isActiveAndEnabled && visor.IsActive && !ReplayPlayer.Active;
+        return visor != null && visor.isActiveAndEnabled && visor.IsActive;
     }
 
     void Update()

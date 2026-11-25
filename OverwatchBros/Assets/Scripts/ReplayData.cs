@@ -23,6 +23,7 @@ public struct ReplayPlayerSnap
     public Vector3 holyPoint;
     public float holyRadius, holyProgress;
     public byte slivovice;        // zbyvajici nesmrtelnost z dedovy slivovice (desetiny s, 0 = nema)
+    public bool visor;            // Viktor ma nasazene takticke bryle (ultimatka) - overlay v POTG a killcamu
 
     public const byte Alive = 1, Rushing = 2, Blocking = 4, Boosted = 8, Hidden = 16, Revealed = 32, Preaching = 64,
         Scoped = 128;   // mirí pres zamerovac (killcam z pohledu vraha: priblizeni a kruh)
@@ -139,7 +140,8 @@ public class ReplayEvent
 
 public class ReplayClip
 {
-    public const int Version = 6;   // 6: bod, o ktery se hralo (podlaha a zabrany v zaznamu)   // 5: natazeni luku u kazdeho hrace
+    public const int Version = 7;   // 7: Viktorovy bryle u kazdeho hrace
+    //   // 6: bod, o ktery se hralo (podlaha a zabrany v zaznamu)   // 5: natazeni luku u kazdeho hrace
 
     public int povId;
     public float duration;
@@ -297,6 +299,7 @@ public class ReplayClip
             w.Write(p.maxHealth);
             w.Write(p.charge);
             w.Write(p.slivovice);
+            w.Write(p.visor);
             w.Write(p.holyAim);
             if (p.holyAim)
             {
@@ -385,7 +388,7 @@ public class ReplayClip
             f.players[i] = new ReplayPlayerSnap
             {
                 id = r.ReadInt32(), hero = r.ReadInt16(), team = r.ReadByte(), position = ReadV(r), yaw = r.ReadSingle(), flags = r.ReadByte(),
-                health = r.ReadSingle(), maxHealth = r.ReadSingle(), charge = r.ReadByte(), slivovice = r.ReadByte(), holyAim = r.ReadBoolean(),
+                health = r.ReadSingle(), maxHealth = r.ReadSingle(), charge = r.ReadByte(), slivovice = r.ReadByte(), visor = r.ReadBoolean(), holyAim = r.ReadBoolean(),
             };
             if (f.players[i].holyAim)
             {
