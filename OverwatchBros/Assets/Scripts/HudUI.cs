@@ -124,6 +124,19 @@ public class HudUI
     TextMeshProUGUI testLabel;
     Image chargeFill;
 
+    // Nekdo sklapl tvou past (Honza): mala oranzova znacka pod zamerovacem na 2 s.
+    static float trapTime = -10f;
+    static string trapName = "";
+    const float TrapDuration = 2f;
+    Image trapBadge;
+    TextMeshProUGUI trapLabel;
+
+    public static void NotifyTrap(string caught)
+    {
+        trapTime = Time.unscaledTime;
+        trapName = caught ?? "";
+    }
+
     public static void NotifyHit(bool kill)
     {
         ReplayLog.HudHit(kill);
@@ -319,6 +332,18 @@ public class HudUI
         killRect.anchoredPosition = new Vector2(0f, -58f);
         killRect.sizeDelta = new Vector2(46f, 46f);
         killObject.SetActive(false);
+
+        trapBadge = UiKit.MakeImage(root.transform, "TrapCaught", new Color(0.9f, 0.45f, 0.1f, 0.85f), center,
+            new Vector2(0f, -110f), new Vector2(320f, 36f));
+        trapBadge.raycastTarget = false;
+        UiKit.MakeImage(trapBadge.transform, "Jaw", new Color(1f, 0.9f, 0.75f), new Vector2(0f, 0.5f), new Vector2(20f, 0f), new Vector2(18f, 4f))
+            .rectTransform.localRotation = Quaternion.Euler(0f, 0f, 35f);
+        UiKit.MakeImage(trapBadge.transform, "Jaw", new Color(1f, 0.9f, 0.75f), new Vector2(0f, 0.5f), new Vector2(20f, 0f), new Vector2(18f, 4f))
+            .rectTransform.localRotation = Quaternion.Euler(0f, 0f, -35f);
+        trapLabel = UiKit.MakeText(trapBadge.transform, "Text", "", 22f, TextAlignmentOptions.Center, center,
+            new Vector2(10f, 0f), new Vector2(290f, 34f), Color.white);
+        trapLabel.fontStyle = FontStyles.Bold;
+        trapBadge.gameObject.SetActive(false);
 
         // Znacka zamereneho cile: zluty kosoctverec.
         var lockObject = new GameObject("LockMarker", typeof(RectTransform));
@@ -518,6 +543,19 @@ public class HudUI
             float t = sinceKill / KillDuration;
             killIcon.color = new Color(1f, 1f, 1f, Mathf.Clamp01((1f - t) * 3f));
             killIcon.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.5f, 1f, Mathf.Clamp01(t * 6f));
+        }
+
+        float sinceTrap = Time.unscaledTime - trapTime;
+        bool showTrap = trapBadge != null && sinceTrap >= 0f && sinceTrap < TrapDuration && !ReplayPlayer.Active;
+        if (trapBadge != null && trapBadge.gameObject.activeSelf != showTrap)
+            trapBadge.gameObject.SetActive(showTrap);
+        if (showTrap)
+        {
+            float alpha = Mathf.Clamp01((TrapDuration - sinceTrap) / 0.4f);   // posledni 0,4 s mizi
+            trapBadge.color = new Color(0.9f, 0.45f, 0.1f, 0.85f * alpha);
+            trapLabel.alpha = alpha;
+            trapLabel.text = string.IsNullOrEmpty(trapName) ? "CHYCEN V PASTI" : "V PASTI: " + trapName;
+            trapBadge.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.3f, 1f, Mathf.Clamp01(sinceTrap * 6f));
         }
     }
 

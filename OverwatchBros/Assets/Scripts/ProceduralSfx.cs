@@ -2,8 +2,17 @@ using System;
 using UnityEngine;
 
 // Placeholder zvuky generovane kodem. Az budou skutecne nahravky, staci je pripojit misto techto.
+// Druh zvuku pro posuvniky v nastaveni (GameSettings.WeaponVolume / EffectsVolume).
+public enum SfxKind { Effect, Weapon }
+
 public static class ProceduralSfx
 {
+    public static float Gain(SfxKind kind) => kind == SfxKind.Weapon ? GameSettings.WeaponVolume : GameSettings.EffectsVolume;
+
+    // Nahravky, ktere hraly jako zvuk zbrane - podle nich se pozna druh i pri prehravani zaznamu (POTG, killcam).
+    static readonly System.Collections.Generic.HashSet<AudioClip> weaponClips = new System.Collections.Generic.HashSet<AudioClip>();
+    public static SfxKind KindOf(AudioClip clip) => clip != null && weaponClips.Contains(clip) ? SfxKind.Weapon : SfxKind.Effect;
+
     const int Rate = 44100;
 
     static AudioClip gunshot, empty, reload, hit, dash, leapStart, explosion, death, spawn, footstep, hurt, stun, stunConfirm, captureTick, captureWon, captureUnlock, potgIntro, ultCharge, splash, bigSplash, waterRush, jokerJingle;
@@ -110,7 +119,7 @@ public static class ProceduralSfx
         source.playOnAwake = false;
         source.clip = CollectedAudioBank.Pick("mirek_weapon.flight", ArrowFlight);
         source.loop = false;
-        source.volume = 0.1f;
+        source.volume = 0.1f * GameSettings.WeaponVolume;
         source.spatialBlend = 1f;
         source.rolloffMode = AudioRolloffMode.Linear;
         source.minDistance = 0.8f;
@@ -299,7 +308,8 @@ public static class ProceduralSfx
 
     public static void PlayForActor(Component actor, AudioClip clip, Vector3 position, float volume, float maxDistance)
     {
-        Play(clip, position, volume, maxDistance, spatial: !IsLocalPlayer(actor));
+        // zvuky ze zbrane hrace (vystrel, prazdny zasobnik, zasahy...) = posuvnik Zbrane
+        Play(clip, position, volume, maxDistance, !IsLocalPlayer(actor), actor is WeaponShooting ? SfxKind.Weapon : SfxKind.Effect);
     }
 
     public static void Play(AudioClip clip, Vector3 position, float volume = 1f)
@@ -308,22 +318,23 @@ public static class ProceduralSfx
         Play(clip, position, volume, clip == explosion ? 60f : clip == gunshot ? 45f : 30f);
     }
 
-    public static void Play(AudioClip clip, Vector3 position, float volume, float maxDistance, bool spatial = true)
+    public static void Play(AudioClip clip, Vector3 position, float volume, float maxDistance, bool spatial = true, SfxKind kind = SfxKind.Effect)
     {
-        PlayTracked(clip, position, volume, maxDistance, spatial);
+        PlayTracked(clip, position, volume, maxDistance, spatial, 1f, kind);
     }
 
     // Reloads retain the source so interruptions can stop the complete assembled sequence.
-    public static AudioSource PlayTracked(AudioClip clip, Vector3 position, float volume, float maxDistance, bool spatial = true, float pitch = 1f)
+    public static AudioSource PlayTracked(AudioClip clip, Vector3 position, float volume, float maxDistance, bool spatial = true, float pitch = 1f, SfxKind kind = SfxKind.Effect)
     {
         if (clip == null || GameAudioLock.Locked) return null;   // v menu zadne zvuky ze hry
         ReplayLog.Sfx(clip, position, volume, maxDistance, pitch);
+        if (kind == SfxKind.Weapon) weaponClips.Add(clip);
 
         var go = new GameObject("SFX_" + clip.name);
         go.transform.position = position;
         var source = go.AddComponent<AudioSource>();
         source.clip = clip;
-        source.volume = volume;
+        source.volume = volume * Gain(kind);
         source.spatialBlend = spatial ? 1f : 0f;
         source.panStereo = 0f;
         source.rolloffMode = AudioRolloffMode.Linear;

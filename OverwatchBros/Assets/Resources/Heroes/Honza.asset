@@ -26,6 +26,7 @@ MonoBehaviour:
   secondaryAbilityKind: 4
   secondaryAbility: {fileID: 11400000, guid: 9fe3402203ee97448ae63992941fd5fb, type: 2}
   blockAbility: {fileID: 0}
+  counterAbility: {fileID: 0}
   altAbilityKind: 5
   altAbility: {fileID: 11400000, guid: f31aac637cf5af64585176dd80a2114e, type: 2}
   rmbAbilityKind: 0
@@ -35,6 +36,7 @@ MonoBehaviour:
   moveSpeed: 1
   lifesteal: 0
   takedownCooldownCut: 0
+  takedownKillsOnly: 0
   deathGrenades: 4
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
@@ -62,6 +64,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 9e76a89fd1acc3049b12fec83376e599, type: 3}
   - {fileID: 8300000, guid: 8ad21ca0b3f5cbc49a0b21a18caacfd3, type: 3}
   idleLines:
+  - {fileID: 8300000, guid: 681d4fdd620dcd6429e241712735c4d7, type: 3}
+  - {fileID: 8300000, guid: 5f09644063dcca74fb094fcfcc1dc19c, type: 3}
   - {fileID: 8300000, guid: 292418ca695b483409c094facbd542b7, type: 3}
   snareLines: []
   attackLines:

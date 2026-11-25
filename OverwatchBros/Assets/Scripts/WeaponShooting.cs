@@ -63,7 +63,7 @@ public class WeaponShooting : NetworkBehaviour
         if (clip == null) return;
         float duration = shortDraw && rapid != null ? rapid.interval : weapon != null ? weapon.chargeTime : clip.length;
         bowDrawAudio = ProceduralSfx.PlayTracked(clip, transform.position, 0.5f, 22f,
-            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip.length / Mathf.Max(0.05f, duration));
+            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip.length / Mathf.Max(0.05f, duration), kind: SfxKind.Weapon);
         if (bowDrawAudio != null) bowDrawAudio.transform.SetParent(transform, true);
     }
 
@@ -82,7 +82,7 @@ public class WeaponShooting : NetworkBehaviour
         StopReloadAudio();
         var clip = CollectedAudioBank.ForActor(this, CollectedAudioBank.WeaponCue(weapon) + "_reload", ProceduralSfx.Reload);
         reloadAudio = ProceduralSfx.PlayTracked(clip, transform.position, 0.6f, 22f,
-            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip != null ? clip.length / Mathf.Max(0.05f, duration) : 1f);
+            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip != null ? clip.length / Mathf.Max(0.05f, duration) : 1f, kind: SfxKind.Weapon);
         if (reloadAudio != null) reloadAudio.transform.SetParent(transform, true);
     }
 

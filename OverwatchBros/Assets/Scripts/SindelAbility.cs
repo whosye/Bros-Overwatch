@@ -417,7 +417,7 @@ public class SindelAbility : NetworkBehaviour
         {
             var source = ball.AddComponent<AudioSource>();
             source.clip = clip;
-            source.volume = 1f;
+            source.volume = GameSettings.EffectsVolume;
             source.spatialBlend = 1f;
             source.rolloffMode = AudioRolloffMode.Linear;
             source.minDistance = 5f;

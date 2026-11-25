@@ -127,6 +127,10 @@ public class HeroVoice : MonoBehaviour
     }
 
     // Dulezitejsi hlaska prerusi mene dulezitou; opacne se mene dulezita preskoci.
+    // Nejvyssi priorita konkretni nahravky (Honza: nekdo sklapl jeho past) - neprerusi ji smrt ani zabiti,
+    // jen zacatek ultimatky (ta se nesmi ztratit).
+    public const int TopLinePriority = 7;
+
     static int Priority(VoiceKind kind)
     {
         switch (kind)
@@ -239,7 +243,8 @@ public class HeroVoice : MonoBehaviour
         int priority = Priority(kind);
         bool busy = source != null && source.isPlaying;
         bool ult = kind == VoiceKind.Ability && slot == 0;
-        if (busy && (priority < playingPriority || (priority == playingPriority && priority < 4))) return;
+        bool ultOverTop = ult && playingPriority == TopLinePriority;
+        if (busy && !ultOverTop && (priority < playingPriority || (priority == playingPriority && priority < 4))) return;
         // Hlasku k ultimatce neprerusi jina schopnost ani zabiti; jen dalsi faze ultimatky nebo smrt.
         if (busy && playingUlt && !ult && kind != VoiceKind.Death) return;
         // Hudbu jizdy z toboganu prebije jen ultimatka.

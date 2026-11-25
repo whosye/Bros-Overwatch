@@ -13,6 +13,7 @@ public partial class MatchManager
     {
         ("Max", "Honza", "max_honza"),
         ("Viktor", "Ayran", "viktor_pova"),   // Viktor zacne, Pova (Jamn) odpovi
+        ("Honza", "Ayran", "honza_pova"),     // Honza zacne, Pova odpovi
     };
 
     // Hlaska pri zasahu konkretniho soupere zbrani (strelec, zasazeny - jmena hero assetu, slozka v Resources/Banter

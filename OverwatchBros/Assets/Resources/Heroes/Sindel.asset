@@ -26,6 +26,7 @@ MonoBehaviour:
   secondaryAbilityKind: 27
   secondaryAbility: {fileID: 11400000, guid: 27f65ea8c1cbd6849949125d7186e2af, type: 2}
   blockAbility: {fileID: 0}
+  counterAbility: {fileID: 0}
   altAbilityKind: 28
   altAbility: {fileID: 11400000, guid: 2b6beac6cd90658458c7074be38b3746, type: 2}
   rmbAbilityKind: 34
@@ -35,6 +36,7 @@ MonoBehaviour:
   moveSpeed: 1
   lifesteal: 0
   takedownCooldownCut: 0
+  takedownKillsOnly: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
@@ -52,7 +54,8 @@ MonoBehaviour:
   killLines:
   - {fileID: 8300000, guid: 417ab6c6e72bdb94f8b0b98bda05d084, type: 3}
   - {fileID: 8300000, guid: 344a25cbbab0e0f43b3baca8f46dcc05, type: 3}
-  deathLines: []
+  deathLines:
+  - {fileID: 8300000, guid: 533f6e7a0378d364584e859255ada267, type: 3}
   hurtLines:
   - {fileID: 8300000, guid: 5b1a70576af8a45498f323cb0b94556b, type: 3}
   - {fileID: 8300000, guid: 980eb342a35f0ad47a764b82014da725, type: 3}
@@ -73,8 +76,9 @@ MonoBehaviour:
   missLines:
   - {fileID: 8300000, guid: cc62b9c1ce3886d4288c4d507487efce, type: 3}
   scopeLines: []
-  healedLines: []
+  healedLines:
+  - {fileID: 8300000, guid: 5bece3cdb697f7543b111e587bbb5065, type: 3}
   ultVoiceEcho: 0
-  ultVoiceMaxSeconds: 3
+  ultVoiceMaxSeconds: 5
   ultVoiceSpeed: 1
   ultVoiceNormalTail: 0

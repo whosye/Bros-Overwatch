@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb986c8c69f0d54da46dfb93a4f4a22, type: 3}
   m_Name: BioticGrenade_Data
   m_EditorClassIdentifier: Assembly-CSharp::AbilityDefinition
-  abilityName: "Zelen\u00fd Monster"
-  description: "Hod\u00ed\u0161 klasick\u00fd ZELEN\u00dd Monster - vybuchne po dopadu: spoluhr\u00e1\u010de (i tebe) v okruhu vyl\u00e9\u010d\u00ed a na 4 s pos\u00edl\u00ed (+20 % po\u0161kozen\u00ed, slab\u0161\u00ed ne\u017e B\u00edl\u00fd Monster), nep\u0159\u00e1tele zran\u00ed, na 2 s zpomal\u00ed a na chv\u00edli jim zablokuje l\u00e9\u010den\u00ed."
+  abilityName: "Zelen\xFD Monster"
+  description: "Hod\xED\u0161 klasick\xFD ZELEN\xDD Monster - vybuchne po dopadu:
+    spoluhr\xE1\u010De (i tebe) v okruhu vyl\xE9\u010D\xED a na 4 s pos\xEDl\xED
+    (+20 % po\u0161kozen\xED, slab\u0161\xED ne\u017E B\xEDl\xFD Monster), nep\u0159\xE1tele
+    zran\xED, na 2 s zpomal\xED a na chv\xEDli jim zablokuje l\xE9\u010Den\xED."
   icon: {fileID: 2800000, guid: 88ab6343a7ee1194c9683f905ee63deb, type: 3}
   cooldown: 10
   ultCost: 0
@@ -26,6 +29,7 @@ MonoBehaviour:
   sound: {fileID: 0}
   voiceLines:
   - {fileID: 8300000, guid: 081d5f6bc5d35f243bfba0e5b52126aa, type: 3}
+  - {fileID: 8300000, guid: 1d55293c0f5d4e64f8fa64424359289c, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

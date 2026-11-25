@@ -187,7 +187,7 @@ public class Boiler : MonoBehaviour
         }
         if (roar != null)
         {
-            roar.volume = Mathf.MoveTowards(roar.volume, heating ? 0.9f : 0f, Time.deltaTime * 0.8f);
+            roar.volume = Mathf.MoveTowards(roar.volume, heating ? 0.9f * GameSettings.EffectsVolume : 0f, Time.deltaTime * 0.8f);
             if (!heating && roar.volume <= 0.001f && roar.isPlaying) roar.Stop();
         }
     }

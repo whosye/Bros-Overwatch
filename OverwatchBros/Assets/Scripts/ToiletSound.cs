@@ -42,7 +42,7 @@ public class ToiletSound : MonoBehaviour
         source.minDistance = 10f;
         source.maxDistance = HearDistance;
         source.dopplerLevel = 0f;
-        source.volume = 1f;
+        source.volume = GameSettings.EffectsVolume;
     }
 
     void Update()

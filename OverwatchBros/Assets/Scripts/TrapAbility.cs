@@ -181,7 +181,7 @@ public class TrapAbility : NetworkBehaviour
             if (dummy != null)
             {
                 dummy.TakeDamage(ability.power);
-                Snap();
+                Snap("Terč");
                 return;
             }
 
@@ -195,7 +195,8 @@ public class TrapAbility : NetworkBehaviour
             if (controller != null && victim.currentHealth.Value > 0f)
                 controller.ServerRoot(ability.duration);
 
-            Snap();
+            var caughtHero = victim.GetComponent<PlayerHero>();
+            Snap(caughtHero != null ? caughtHero.DisplayName : "");
             return;
         }
     }
@@ -225,10 +226,26 @@ public class TrapAbility : NetworkBehaviour
         visual = null;
     }
 
-    void Snap()
+    void Snap(string caught)
     {
         trapActive = false;
         SnappedClientRpc(trapPosition, ability.duration);
+
+        // majitel pasti se ozve - slysi to jen on (Resources/Banter/<hrdina>_past, napr. honza_past)
+        var owner = GetComponent<PlayerHero>();
+        if (owner != null && owner.Hero != null)
+            owner.ServerSayFolderLine(owner.Hero.name.ToLowerInvariant() + "_past", true);
+
+        // znacka "chycen v pasti" jen tomu, kdo past polozil (bot nic)
+        if (BotBrain.IsBot(gameObject) || (owner != null && owner.isBot.Value)) return;
+        var target = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { OwnerClientId } } };
+        CaughtClientRpc(caught ?? "", target);
+    }
+
+    [ClientRpc]
+    void CaughtClientRpc(string caught, ClientRpcParams rpcParams = default)
+    {
+        if (IsOwner) HudUI.NotifyTrap(caught);
     }
 
     // ---------------- vizual ----------------

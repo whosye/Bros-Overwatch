@@ -421,7 +421,7 @@ public class BoulderAbility : NetworkBehaviour
             bool onGround = Physics.Raycast(boulder.transform.position + Vector3.up * 0.15f, Vector3.down, 0.35f, ~0, QueryTriggerInteraction.Ignore);
             float speed = moved.magnitude / Mathf.Max(Time.deltaTime, 0.001f);
             float load = Mathf.Clamp01(speed / Mathf.Max(1f, ability != null ? ability.speed : 10f));
-            rollAudio.volume = Mathf.MoveTowards(rollAudio.volume, onGround ? load * 0.3f : 0f, Time.deltaTime * 2f);
+            rollAudio.volume = Mathf.MoveTowards(rollAudio.volume, onGround ? load * 0.3f * GameSettings.EffectsVolume : 0f, Time.deltaTime * 2f);
             rollAudio.pitch = Mathf.Lerp(0.75f, 1.25f, load);
         }
         if (moved.sqrMagnitude < 1e-8f) return;

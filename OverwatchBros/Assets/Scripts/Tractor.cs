@@ -370,7 +370,7 @@ public class Tractor : MonoBehaviour
         float load = Mathf.Clamp01(speed / MaxSpeed);
         if (engine != null)
         {
-            engine.volume = Mathf.MoveTowards(engine.volume, driven ? 0.55f + load * 0.35f : 0f, Time.deltaTime * 1.5f);
+            engine.volume = Mathf.MoveTowards(engine.volume, driven ? (0.55f + load * 0.35f) * GameSettings.EffectsVolume : 0f, Time.deltaTime * 1.5f);
             engine.pitch = Mathf.Lerp(0.8f, 1.5f, load) + (driven ? Mathf.PerlinNoise(Time.time * 3f, 0f) * 0.05f : 0f);
             if (!driven && engine.volume <= 0.001f && engine.isPlaying) engine.Stop();
         }

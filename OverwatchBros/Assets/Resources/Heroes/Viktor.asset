@@ -59,16 +59,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: dac50d304e2b6da4bbc9e2dac37ca3ef, type: 3}
   - {fileID: 8300000, guid: 7b2b3eab11da48178cfd4a9f8971ed4a, type: 3}
   hurtLines:
-  - {fileID: 8300000, guid: f722b914cab92044895f766d0ae12ac8, type: 3}
   - {fileID: 8300000, guid: 5a3d864b8ae29684ab824b6ae5745230, type: 3}
-  - {fileID: 8300000, guid: c714061c08ab64d499273cba039825a1, type: 3}
   - {fileID: 8300000, guid: c2cd4ee2c725e9d4689028833a3a89e4, type: 3}
   - {fileID: 8300000, guid: 2be9f0824afd2814fb267bb576c08978, type: 3}
   - {fileID: 8300000, guid: 63867bf51ff5f6f4780e9ca6944987b4, type: 3}
   - {fileID: 8300000, guid: 78d49518c13280742a1c750c6e7fef46, type: 3}
   idleLines:
   - {fileID: 8300000, guid: d0cc161946dfc4847a8504898fd934ea, type: 3}
-  - {fileID: 8300000, guid: 2827768468c64af4397900b3ddb9afc5, type: 3}
   - {fileID: 8300000, guid: e18e9e51d9d398347b200cf52d850911, type: 3}
   - {fileID: 8300000, guid: 1b73547c108f81548941608ba613d984, type: 3}
   - {fileID: 8300000, guid: 9e17a85819033234d9385a1ad3dc4dfb, type: 3}

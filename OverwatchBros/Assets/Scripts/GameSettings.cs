@@ -19,6 +19,18 @@ public static class GameSettings
         get => Mathf.Clamp01(PlayerPrefs.GetFloat(VoiceVolumeKey, 1f));
         set => PlayerPrefs.SetFloat(VoiceVolumeKey, Mathf.Clamp01(value));
     }
+    // Zvuky zbrani (vystrely, prebijeni, tetiva, sipy) a ostatni efekty (schopnosti, zasahy, vybuchy, stroje...)
+    // zvlast od hlasek, hudby a prostredi; celkova Volume plati i pro ne.
+    public static float WeaponVolume
+    {
+        get => Mathf.Clamp01(PlayerPrefs.GetFloat("settings.weaponVolume", 1f));
+        set => PlayerPrefs.SetFloat("settings.weaponVolume", Mathf.Clamp01(value));
+    }
+    public static float EffectsVolume
+    {
+        get => Mathf.Clamp01(PlayerPrefs.GetFloat("settings.effectsVolume", 1f));
+        set => PlayerPrefs.SetFloat("settings.effectsVolume", Mathf.Clamp01(value));
+    }
     public static float MusicVolume
     {
         get => Mathf.Clamp01(PlayerPrefs.GetFloat("settings.musicVolume", 1f));

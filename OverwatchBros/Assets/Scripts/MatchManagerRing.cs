@@ -258,6 +258,7 @@ public partial class MatchManager
             gollumActive.Value = true;
             GollumAppearedClientRpc(ringHolder.Value);
             nextGollumLine = Time.time + 0.6f;   // (az si klienti postavu zobrazi)
+            gollumHitCount = 0;
         }
 
         // pohyb: po ctyrech po navigacni siti, jinak primo (i skrz zdi), vzdy pri zemi; pres prekazky a na
@@ -339,6 +340,17 @@ public partial class MatchManager
             Combat.DamagePlayer(null, victim, Mathf.Lerp(12f, 85f, Fury(anger, 1.6f)), "env:glum");
             if (victimHero != null && victim.currentHealth.Value > 0f) victimHero.ServerDeathCause = "";
             GollumHitClientRpc(target + Vector3.up);
+
+            // kazdy druhy zasah nositele: zvlastni hlaska (Resources/Audio/GlumHit); kdyz predchozi jeste hraje
+            // (nastvany Glum bije rychle), tahle se vynecha, at se neprerusuje
+            if (holderHitFor != ringHolder.Value) { holderHitFor = ringHolder.Value; gollumHitCount = 0; }
+            gollumHitCount++;
+            if (gollumHitCount % 2 == 0 && Time.time >= nextGollumHitLine)
+            {
+                nextGollumHitLine = Time.time + 4f;
+                nextGollumLine = Mathf.Max(nextGollumLine, Time.time + 5f);   // (at ji hned neprerusi bezna hlaska)
+                GollumHitLineClientRpc(Random.Range(0, 1000));
+            }
         }
     }
 
@@ -368,10 +380,15 @@ public partial class MatchManager
         GollumFledClientRpc(ringHolder.Value);
     }
 
-    float nextGollumLine;
+    float nextGollumLine, nextGollumHitLine;
+    int gollumHitCount;
+    ulong holderHitFor = Nobody;
 
     [ClientRpc]
     void GollumSpeakClientRpc(int seed) => RingWorldView.Speak(seed);
+
+    [ClientRpc]
+    void GollumHitLineClientRpc(int seed) => RingWorldView.Speak(seed, true);
 
     [ClientRpc]
     void GollumHurtClientRpc(Vector3 position)

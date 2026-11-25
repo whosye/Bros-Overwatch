@@ -676,7 +676,7 @@ public class ReplayPlayer : MonoBehaviour
             case ReplayEventType.GlobalSound: Fx.PlayGlobal(FindSound(e.name), e.f0); break;
             case ReplayEventType.Sfx:
                 ProceduralSfx.PlayTracked(FindSound(e.name), e.p0, e.f0, e.f1 > 0f ? e.f1 : 30f,
-                    spatial: true, pitch: e.f2 > 0f ? e.f2 : 1f);
+                    spatial: true, pitch: e.f2 > 0f ? e.f2 : 1f, kind: ProceduralSfx.KindOf(FindSound(e.name)));
                 break;
             case ReplayEventType.ProjectileSpawn:
                 var weapon = FindWeapon(e.name);
