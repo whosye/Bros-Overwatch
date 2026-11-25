@@ -376,6 +376,7 @@ public class ReplayPlayer : MonoBehaviour
             g.held.GhostDead = !alive;
             g.held.GhostThirdPerson = pov && povThird;
             g.held.GhostBlocking = g.visual.GhostBlocking;
+            g.held.GhostScoped = (p.flags & ReplayPlayerSnap.Scoped) != 0;
             // natazeni luku: kazda postava ze sveho zaznamu (killcam z pohledu vraha, ostatni ve 3. osobe);
             // POTG z pohledu nahravajiciho hrace ma presnejsi hodnotu z jeho snimku
             g.held.GhostCharge = p.charge / 255f;
@@ -533,7 +534,8 @@ public class ReplayPlayer : MonoBehaviour
             if ((p.flags & ReplayPlayerSnap.Scoped) != 0 && weapon != null && weapon.scopeFov > 0f)
             {
                 scopeFov = weapon.scopeFov;
-                wantFov = scopeFov;
+                if (!ghosts.TryGetValue(p.id, out var actor) || !actor.held.SniperHandling)
+                    wantFov = scopeFov;
                 scopedShot = weapon.HasScopedShot;
             }
             break;
@@ -731,11 +733,12 @@ public class ReplayPlayer : MonoBehaviour
                 if (g != null && g.voice != null)
                     g.voice.PlayReplay(HeroRegistry.Get(g.hero), (VoiceKind)e.id, e.a, e.b, Mathf.Max(0f, -e.time), e.player == clip.povId);
                 break;
-            case ReplayEventType.Swing: if (g != null) g.held.Swing(); break;
+            case ReplayEventType.Swing: if (g != null) g.held.Swing(1f, e.flag); break;
             case ReplayEventType.Taunt: if (g != null) g.held.PlayTaunt(); break;
             case ReplayEventType.SayWhatWave: SayWhatWave.Spawn(e.p0, e.p1, e.f0); break;
             case ReplayEventType.FearShow: if (g != null) FearMarker.Show(g.go.transform, e.f0); break;
             case ReplayEventType.Reload: if (g != null) g.held.PlayReload(e.f0); break;
+            case ReplayEventType.BoltCycle: if (g != null) g.held.PlayBoltCycle(e.f0); break;
             case ReplayEventType.StopReload: if (g != null) g.held.StopReload(); break;
             case ReplayEventType.Kick: if (g != null) g.visual.PlayKick(e.f0); break;
             case ReplayEventType.Ultimate: if (g != null) { if (e.f0 > 0f) g.visual.PlayUltimate(e.f0); else g.visual.StopUltimate(); } break;

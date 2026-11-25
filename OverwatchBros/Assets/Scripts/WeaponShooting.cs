@@ -169,6 +169,7 @@ public class WeaponShooting : NetworkBehaviour
         charging = false;
         StopBowDrawAudio();
         scopedCharge = 0f;
+        StopBoltCycle();
         weapon = newWeapon;
         burstLeft = 0;
         ammoOverride = 0;
@@ -188,7 +189,7 @@ public class WeaponShooting : NetworkBehaviour
         if (!IsOwner) return;
         if (weapon == null) return;
 
-        if (weapon.revolverReload && IsSpawned && playerCamera != null && Time.time >= nextPresentationPitch)
+        if ((weapon.revolverReload || weapon.HasScopedShot) && IsSpawned && playerCamera != null && Time.time >= nextPresentationPitch)
         {
             nextPresentationPitch = Time.time + 0.05f;
             float pitch = Mathf.DeltaAngle(0f, playerCamera.transform.localEulerAngles.x);
@@ -325,7 +326,7 @@ public class WeaponShooting : NetworkBehaviour
 
         PlayShot(playerCamera.transform.position, true, 1f);
         ShotFxServerRpc(false, true, false);
-        held.Swing();
+        held.Swing(1f, scoped: true);
 
         Vector3 origin = playerCamera.transform.position;
         Vector3 direction = playerCamera.transform.forward;
@@ -364,17 +365,26 @@ public class WeaponShooting : NetworkBehaviour
         {
             boltUntil = Time.time + weapon.boltCycleTime;
             nextFireTime = Mathf.Max(nextFireTime, boltUntil);
-            StartCoroutine(BoltFx(weapon.boltCycleTime));
+            boltFx = StartCoroutine(BoltFx(weapon.boltCycleTime));
         }
     }
 
     float boltUntil;
+    Coroutine boltFx;
+
+    void StopBoltCycle()
+    {
+        if (boltFx != null) StopCoroutine(boltFx);
+        boltFx = null;
+        boltUntil = 0f;
+    }
 
     // Zvuk + animace pretazeni zaveru (chvili po vystrelu, at se neslije s ranou).
     System.Collections.IEnumerator BoltFx(float duration)
     {
         const float delay = 0.12f;
         yield return new WaitForSeconds(delay);
+        boltFx = null;
         if (reloading || (fpc != null && fpc.IsDead)) yield break;
         float length = Mathf.Max(0.1f, duration - delay);
         PlayBoltFx(length);
@@ -383,7 +393,7 @@ public class WeaponShooting : NetworkBehaviour
 
     void PlayBoltFx(float duration)
     {
-        held.PlayReload(duration);
+        held.PlayBoltCycle(duration);
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Reload, transform.position, 0.7f, 22f);
     }
 
@@ -424,6 +434,7 @@ public class WeaponShooting : NetworkBehaviour
     void OnDisable()
     {
         charging = false;
+        StopBoltCycle();
         StopBowDrawAudio();
         StopReloadAudio();
     }
@@ -932,7 +943,7 @@ public class WeaponShooting : NetworkBehaviour
         if (IsOwner) return;
         StopBowDrawAudio();
         remoteDrawStart = -1f;   // (sip vyletel - tetiva povolena)
-        held.Swing(power ? 2.4f : 1f);
+        held.Swing(power ? 2.4f : 1f, scoped);
         if (power)
         {
             PlayPowerShot(transform.position);

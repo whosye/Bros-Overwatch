@@ -53,6 +53,7 @@ MonoBehaviour:
   meleeRadius: 0.6
   heldModel: 2
   dualWield: 0
-  heldPrefab: {fileID: 809421828374749415, guid: 4f0bff9ff4f7b2f428b37ab8273ee6b9, type: 3}
+  twoHanded: 1
+  heldPrefab: {fileID: 2892186661807696490, guid: 34cf1a96751cd2a458494bc6ac9b4548, type: 3}
   fireSound: {fileID: 8300000, guid: d796670e72cf71c43a6be46d560c0324, type: 3}
   scopedFireSound: {fileID: 0}

@@ -10,6 +10,7 @@ public partial class HeldWeapons : MonoBehaviour
     {
         public Transform holder;
         public RevolverVisual revolver;
+        public SniperRifleVisual sniper;
         public float side;
         public Vector3 restPosition;
         public Vector3 restEuler;
@@ -299,8 +300,10 @@ public partial class HeldWeapons : MonoBehaviour
         var body = visual.ModelRoot;
         Vector3 hipLocal = body.InverseTransformPoint(hips.position);
         // strelba: puska pred telem ve vysce pasu / hrudi, hlaven dopredu (kam postava strili)
-        hand.holder.position = body.TransformPoint(new Vector3(0.16f, hipLocal.y + 0.42f, 0.32f));
-        hand.holder.rotation = body.rotation * Quaternion.Euler(-2f, -4f, 0f);
+        var aim = HeldPrefabMarker(hand.holder, "BodyAimPose");
+        Vector3 aimOffset = aim != null ? aim.localPosition : new Vector3(0.16f, 0.42f, 0.32f);
+        hand.holder.position = body.TransformPoint(aimOffset + Vector3.up * hipLocal.y);
+        hand.holder.rotation = body.rotation * (aim != null ? aim.localRotation : Quaternion.Euler(-2f, -4f, 0f));
         hand.holder.SetParent(spine, true);
         hand.aimPosition = hand.holder.localPosition;
         hand.aimRotation = hand.holder.localRotation;
@@ -511,6 +514,7 @@ public partial class HeldWeapons : MonoBehaviour
     {
         if (root == null || fpArms == null || ghost) return;
         if (bardAbility == null) bardAbility = GetComponent<BardAbility>();
+        var support = hands.Length == 1 && hands[0].twoHanded ? hands[0] : null;
         // (krátke gesto na zacatku zesileni: nahoru, dvakrat pumpne, dolu - casovani v BardAbility)
         ampBlend = bardAbility != null && root.activeSelf ? bardAbility.AmpGestureWeight : 0f;
         if (ampBlend <= 0.001f)
@@ -518,7 +522,7 @@ public partial class HeldWeapons : MonoBehaviour
             if (ampPointing)
             {
                 fpArms.PointLeftIndex(false);
-                fpArms.ResetArm(false);
+                if (support == null) fpArms.ResetArm(false);
                 ampPointing = false;
             }
             return;
@@ -530,10 +534,12 @@ public partial class HeldWeapons : MonoBehaviour
             ampHand.SetParent(root.transform, false);
         }
         float pump = bardAbility.AmpGesturePump;
-        Vector3 hidden = new Vector3(-0.45f, -0.6f, 0.4f);
+        Vector3 start = support != null
+            ? root.transform.InverseTransformPoint(support.holder.TransformPoint(support.foregrip))
+            : new Vector3(-0.45f, -0.6f, 0.4f);
         Vector3 raised = new Vector3(-0.3f, -0.02f + 0.07f * pump, 0.55f);
         float k = Mathf.SmoothStep(0f, 1f, ampBlend);
-        ampHand.localPosition = Vector3.Lerp(hidden, raised, k);
+        ampHand.localPosition = Vector3.Lerp(start, raised, k);
         // prsty (a ukazovacek) miri vzhuru, dlan ke stredu obrazu; na uder se pest lehce naklopi dopredu
         ampHand.localRotation = Quaternion.Euler(-80f + 12f * pump, 8f, 0f);
         fpArms.Solve(false, ampHand.position, ampHand, root.transform, false, true);
@@ -582,9 +588,19 @@ public partial class HeldWeapons : MonoBehaviour
         UpdateDartPistol();
         UpdateAmpGesture();
         UpdateBodyRevolver();
+<<<<<<< Updated upstream
         UpdateBodyDetonator();
         UpdateBodyDart();
         UpdateBodyRecoil();
+=======
+        if (HasSniperVisual(builtWeapon))
+        {
+            foreach (var hand in bodyHands)
+                if (hand.sniper != null && hand.holder.gameObject.activeInHierarchy)
+                    PoseSniperOnBody(hand);
+            return;
+        }
+>>>>>>> Stashed changes
         if (bodySupportArm == null || visual == null || visual.ModelRoot == null) return;
         if (builtModel == HeldModel.Bow)
         {
@@ -618,6 +634,8 @@ public partial class HeldWeapons : MonoBehaviour
             // puska v prave ruce podle animace strelby (Viktor): leva ruka na predpazbi jen pri mireni,
             // pri behu bez strelby se plynule pusti a bezi podle animace
             float support = !hand.hasAimPose && bodyMainArm == null ? visual.AimHoldWeight : 1f;
+            if (bardAbility != null && bardAbility.isActiveAndEnabled)
+                support *= 1f - bardAbility.AmpGestureWeight;
             if (support <= 0.001f) continue;
             var arm = bodySupportArm;
             Quaternion upper = arm.upper.localRotation, lower = arm.lower.localRotation, wrist = arm.hand.localRotation;
@@ -687,6 +705,7 @@ public partial class HeldWeapons : MonoBehaviour
     {
         shooting = GetComponent<WeaponShooting>();
         fpc = GetComponent<FirstPersonController>();
+        bardAbility = GetComponent<BardAbility>();
     }
 
     // ---------------- duch pro prehravani POTG (bez site) ----------------
@@ -700,9 +719,15 @@ public partial class HeldWeapons : MonoBehaviour
 
     public void SetGhost(HeroDefinition hero, bool firstPerson, Transform camera)
     {
+        var weapon = hero != null ? hero.weapon : null;
+        if (ghostWeapon != weapon && HasSniperVisual(ghostWeapon))
+        {
+            ResetSniperBolt();
+            reloadElapsed = reloadDuration;
+        }
         ghost = true;
         ghostHero = hero;
-        ghostWeapon = hero != null ? hero.weapon : null;
+        ghostWeapon = weapon;
         ghostFirstPerson = firstPerson && camera != null;
         ghostCamera = camera;
         built = false;
@@ -739,6 +764,7 @@ public partial class HeldWeapons : MonoBehaviour
 
     public void Swing() => Swing(1f);
 
+<<<<<<< Updated upstream
     // Pohyblive dily zbrane pri vystrelu (Honzuv granatomet): vicko na usti se odklopi (MuzzleCap), granaty v bedne
     // se posunou o misto (GrenadeFeed) - u kamery i na postave.
     void AnimateShotParts()
@@ -945,12 +971,16 @@ public partial class HeldWeapons : MonoBehaviour
     }
 
     public void Swing(float strength)
+=======
+    public void Swing(float strength, bool scoped = false)
+>>>>>>> Stashed changes
     {
         swingStrength = strength;
+        sniperScopedShot = scoped;
         lastShotTime = Time.time;   // (puska obema rukama: poza strelby)
         AnimateShotParts();
         if (!ghost)
-            ReplayLog.Swing(this);
+            ReplayLog.Swing(this, scoped);
 
         if (hands.Length == 0)
         {
@@ -975,14 +1005,18 @@ public partial class HeldWeapons : MonoBehaviour
             ReplayLog.Reload(this, duration);
         reloadDuration = Mathf.Max(0.05f, duration);
         reloadElapsed = 0f;
+<<<<<<< Updated upstream
         reloadCanceled = false;
         slapStruck = slapInserted = false;
         SlapRestore();
         canAfter = 99f;
+=======
+        ResetSniperBolt();
+>>>>>>> Stashed changes
 
         if (visual != null && visual.HasModel)
         {
-            if (!UsesRevolver) visual.PlayReload(reloadDuration);
+            if (!UsesRevolver && !HasSniperVisual(CurrentWeapon)) visual.PlayReload(reloadDuration);
         }
     }
 
@@ -1415,6 +1449,7 @@ public partial class HeldWeapons : MonoBehaviour
 
     void PlayBodyAttack(WeaponDefinition weapon)
     {
+        if (HasSniperVisual(weapon)) return;
         // zbran obema rukama (strelba od pasu): postava pri vystrelu nezveda ruce, zbran zustava u boku
         // (s vlastni animaci strelby hrdiny se prehraje ta - recoil)
         if (weapon != null && weapon.twoHanded && !weapon.IsMelee && !(visual != null && visual.HoldShootPose)) return;
@@ -1487,7 +1522,11 @@ public partial class HeldWeapons : MonoBehaviour
         // Move the first-person rifle out of the lens as the optic settles in.
         // Body weapons remain visible to other players, and weapon animations keep advancing.
         if (root != null)
-            root.transform.localPosition = owner ? Vector3.down * (0.9f * Mathf.SmoothStep(0f, 1f, scopeBlend)) : Vector3.zero;
+        {
+            float hide = HasSniperVisual(builtWeapon) ? SniperRifleVisual.Ease(0.43f, 0.72f, scopeBlend)
+                : Mathf.SmoothStep(0f, 1f, scopeBlend);
+            root.transform.localPosition = owner ? Vector3.down * (0.9f * hide) : Vector3.zero;
+        }
         if (root != null && root.activeSelf != cameraHandsVisible)
             root.SetActive(cameraHandsVisible);
 
@@ -1553,12 +1592,14 @@ public partial class HeldWeapons : MonoBehaviour
             {
                 hand.swingTime += Time.deltaTime;
                 float t = Mathf.Clamp01(hand.swingTime / swingDuration);
-                Animate(t, ref position, ref euler);
+                if (hand.sniper == null) Animate(t, ref position, ref euler);
             }
 
             if (UsesRevolver) euler *= 0.2f;
 
-            if (reloadElapsed < reloadDuration)
+            if (hand.sniper != null)
+                PoseSniperAtCamera(hand, scopeBlend, ref position, ref euler);
+            else if (reloadElapsed < reloadDuration)
                 AnimateReload(reloadElapsed / reloadDuration, hand.side, ref position, ref euler);
             else if (canAfter < CanReturnSeconds && MonsterReload)
                 AnimateCanAfter(canAfter, ref position, ref euler);
@@ -1645,6 +1686,7 @@ public partial class HeldWeapons : MonoBehaviour
             hand.holder.localPosition = position;
             hand.holder.localRotation = rotation;
             UpdateRevolverParts(hand);
+<<<<<<< Updated upstream
             UpdateLauncherBarrel(hand);
 
             if (fpArms != null)
@@ -1677,6 +1719,23 @@ public partial class HeldWeapons : MonoBehaviour
                     else
                         fpArms.Solve(false, hand.holder.TransformPoint(hand.foregrip), hand.holder, root.transform, true);
                 }
+=======
+            if (hand.sniper != null) hand.sniper.SampleParts(SniperCycle, SniperReload);
+
+            if (fpArms != null)
+            {
+                if (hand.sniper != null)
+                {
+                    fpArms.Solve(true, hand.sniper.TriggerHand(SniperCycle), hand.holder, root.transform, false, true);
+                    fpArms.Solve(false, hand.sniper.SupportHand(SniperReload), hand.holder, root.transform, true);
+                }
+                else
+                {
+                    fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, builtModel == HeldModel.Bow);   // (luk v natazene ruce)
+                }
+                if (hand.twoHanded && hand.sniper == null)
+                    fpArms.Solve(false, hand.holder.TransformPoint(hand.foregrip), hand.holder, root.transform, true);
+>>>>>>> Stashed changes
                 if (UsesRevolver && hand.revolver != null)
                 {
                     if (reloadElapsed < reloadDuration)
@@ -2435,6 +2494,12 @@ public partial class HeldWeapons : MonoBehaviour
         rageMaterials = null;
         rageFlames = null;
         rageShown = false;
+        if (built && builtWeapon != CurrentWeapon)
+        {
+            ResetSniperBolt();
+            if (HasSniperVisual(builtWeapon)) reloadElapsed = reloadDuration;
+        }
+        sniperAim = sniperAbilityBlend = 0f;
         built = true;
         builtVersion = visual != null ? visual.Version : 0;
         builtWeapon = CurrentWeapon;
@@ -2488,6 +2553,7 @@ public partial class HeldWeapons : MonoBehaviour
                 }
 
                 BuildModel(holder, weapon, model, side);
+                hand.sniper = holder.GetComponentInChildren<SniperRifleVisual>();
                 if (bowLeft) SnapArrowToRest(holder, GripInWeapon(weapon, model));
                 FindArrow(hand);
                 holder.localPosition = hand.restPosition;
@@ -2495,12 +2561,19 @@ public partial class HeldWeapons : MonoBehaviour
                 hands[i] = hand;
 
                 hand.grip = GripInWeapon(weapon, model);
+                if (hand.sniper != null && owner)
+                {
+                    hand.restPosition = SniperCameraRest;
+                    hand.restEuler = SniperCameraAngle;
+                    holder.SetLocalPositionAndRotation(hand.restPosition, Quaternion.Euler(hand.restEuler));
+                }
 
                 // jedna velka zbran obema rukama: vic u stredu a niz, leva ruka na predpazbi
                 if ((weapon.twoHanded || (owner && weapon.firstPersonTwoHanded)) && count == 1 && model == HeldModel.Gun)
                 {
                     hand.twoHanded = true;
                     hand.foregrip = ForegripInWeapon(holder, hand.grip);
+<<<<<<< Updated upstream
                     // podpora jen v prvni osobe: presny spodek predpazbi ze znacky v prefabu (kdyz ji model ma)
                     if (owner && weapon.firstPersonTwoHanded)
                         foreach (var marker in holder.GetComponentsInChildren<Transform>(true))
@@ -2512,12 +2585,18 @@ public partial class HeldWeapons : MonoBehaviour
                                 break;
                             }
                     if (owner && weapon.twoHanded && !weapon.firstPersonTwoHanded)
+=======
+                    if (owner && hand.sniper == null)
+>>>>>>> Stashed changes
                     {
                         // strelba od pasu: zbran nize u praveho boku, hlaven sikmo nahoru ke stredu obrazovky
-                        hand.restPosition = new Vector3(0.22f, -0.42f, 0.34f);
-                        hand.restEuler = new Vector3(-7f, -7f, 4f);
-                        holder.localPosition = hand.restPosition;
-                        holder.localRotation = Quaternion.Euler(hand.restEuler);
+                        var pose = HeldPrefabMarker(holder, "FirstPersonPose");
+                        hand.restPosition = pose != null ? pose.localPosition : new Vector3(0.22f, -0.42f, 0.34f);
+                        hand.restEuler = pose != null ? new Vector3(
+                            Mathf.DeltaAngle(0f, pose.localEulerAngles.x),
+                            Mathf.DeltaAngle(0f, pose.localEulerAngles.y),
+                            Mathf.DeltaAngle(0f, pose.localEulerAngles.z)) : new Vector3(-7f, -7f, 4f);
+                        holder.SetLocalPositionAndRotation(hand.restPosition, Quaternion.Euler(hand.restEuler));
                     }
                 }
             }
@@ -2561,12 +2640,20 @@ public partial class HeldWeapons : MonoBehaviour
                 var holder = new GameObject(i == 0 ? "BodyRightHand" : "BodyLeftHand").transform;
                 hand.holder = holder;
                 BuildModel(holder, weapon, model, side);
+                hand.sniper = holder.GetComponentInChildren<SniperRifleVisual>();
                 if (bowBody) SnapArrowToRest(holder, GripInWeapon(weapon, model));
                 FindArrow(hand);
                 bodyHands[i] = hand;
                 // prsty postavy sevrene kolem zbrane (prava, u dvou zbrani i leva)
                 if (side > 0f) visual.GripRight = true;
                 else visual.GripLeft = true;
+
+                if (AttachSniperToBody(hand))
+                {
+                    hand.grip = GripInWeapon(weapon, model);
+                    hand.foregrip = ForegripInWeapon(holder, hand.grip);
+                    continue;
+                }
 
                 if (bowBody)
                 {
@@ -2663,6 +2750,11 @@ public partial class HeldWeapons : MonoBehaviour
     // Predpazbi: kus pred rukojeti smerem k hlavni (podle delky modelu), kousek pod osou zbrane.
     public static Vector3 ForegripInWeapon(Transform holder, Vector3 grip, float fraction = 0.45f, float maxForward = 0.32f)
     {
+        var sniper = holder.GetComponentInChildren<SniperRifleVisual>();
+        if (sniper != null) return holder.InverseTransformPoint(sniper.Foregrip.position);
+        var marker = HeldPrefabMarker(holder, "Foregrip");
+        if (marker != null) return holder.InverseTransformPoint(marker.position);
+
         float front = grip.z + 0.25f;
         bool any = false;
         foreach (var renderer in holder.GetComponentsInChildren<Renderer>())
@@ -2678,6 +2770,9 @@ public partial class HeldWeapons : MonoBehaviour
         float forward = Mathf.Clamp((front - grip.z) * fraction, 0.15f, maxForward);
         return new Vector3(grip.x, grip.y + 0.01f, grip.z + forward);
     }
+
+    static Transform HeldPrefabMarker(Transform holder, string name) =>
+        holder.childCount > 0 ? holder.GetChild(0).Find(name) : null;
 
     static Transform Limb(PrimitiveType type, Transform parent, Color color)
     {
@@ -2695,6 +2790,13 @@ public partial class HeldWeapons : MonoBehaviour
     public static Vector3 GripInWeapon(WeaponDefinition weapon, HeldModel model)
     {
         if (model == HeldModel.Bow) return new Vector3(0f, 0f, 0.10f);
+        if (weapon.heldPrefab != null && weapon.heldPrefab.TryGetComponent<SniperRifleVisual>(out var sniper))
+            return sniper.Grip.localPosition;
+        if (model == HeldModel.Gun && weapon.heldPrefab != null)
+        {
+            var grip = weapon.heldPrefab.transform.Find("Grip");
+            if (grip != null) return grip.localPosition * (weapon.heldScale > 0.01f ? weapon.heldScale : 1f);
+        }
 
         return Swung(model) ? new Vector3(0f, 0.12f, 0f)
             : weapon.IsProjectile ? new Vector3(0f, -0.10f, 0.12f)

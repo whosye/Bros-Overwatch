@@ -59,7 +59,8 @@ MonoBehaviour:
   comboFinisherKnockback: 0
   heldModel: 2
   dualWield: 0
-  heldPrefab: {fileID: 2811407784632665609, guid: 81469f333866d914ca66b93642a80f32, type: 3}
+  twoHanded: 1
+  heldPrefab: {fileID: 4091342489592866979, guid: a8f61ff0181dc2b46be0732b714ceb9a, type: 3}
   fireSound: {fileID: 8300000, guid: 05e1626de14cdb64ebe5ed393abdfdc3, type: 3}
   scopedFireSound: {fileID: 8300000, guid: fd8de4546f323b34a8d3060eb723c4ca, type: 3}
   bulletImpactSound: {fileID: 0}

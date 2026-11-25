@@ -171,20 +171,7 @@ public class BlockAbility : NetworkBehaviour
     // animace a zvuk seku (vlastnik hned, ostatni pres server)
     void PlayCounterSwing(float strength)
     {
-        var held = GetComponent<HeldWeapons>();
-        if (held != null) held.Swing(2f);
-        var visual = GetComponent<CharacterVisual>();
-        if (visual != null)
-        {
-            var which = visual.HasAbilityAnimation(CharacterVisual.AbilityAnim.Combo3) ? CharacterVisual.AbilityAnim.Combo3
-                : visual.HasAbilityAnimation(CharacterVisual.AbilityAnim.Combo1) ? CharacterVisual.AbilityAnim.Combo1
-                : (CharacterVisual.AbilityAnim)(-1);
-            if ((int)which >= 0)
-            {
-                float length = visual.AbilityClipLength(which);
-                visual.PlayAbility(which, 0f, length, Mathf.Min(length, 0.55f));
-            }
-        }
+        if (TryGetComponent<HeldWeapons>(out var held)) held.Swing();
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, transform.position + Vector3.up, 0.5f + 0.4f * strength);
     }
 

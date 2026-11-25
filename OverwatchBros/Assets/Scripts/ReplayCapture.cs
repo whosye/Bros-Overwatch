@@ -601,7 +601,8 @@ public static class ReplayLog
     public static void Taunt(Component player) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Taunt, player = PlayerOf(player) }); }
     public static void SayWhatWave(Vector3 origin, Vector3 direction, float range) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.SayWhatWave, p0 = origin, p1 = direction, f0 = range }); }
     public static void FearShow(Transform player, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.FearShow, player = PlayerOf(player), f0 = seconds }); }
-    public static void Swing(Component player) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Swing, player = PlayerOf(player) }); }
+    public static void Swing(Component player, bool scoped) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Swing, player = PlayerOf(player), flag = scoped }); }
+    public static void BoltCycle(Component player, float duration) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.BoltCycle, player = PlayerOf(player), f0 = duration }); }
     public static void Reload(Component player, float duration) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Reload, player = PlayerOf(player), f0 = duration }); }
     public static void StopReload(Component player) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.StopReload, player = PlayerOf(player) }); }
     public static void Kick(Component player, float duration) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.Kick, player = PlayerOf(player), f0 = duration }); }

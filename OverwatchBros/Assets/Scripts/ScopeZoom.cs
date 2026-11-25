@@ -9,6 +9,7 @@ public class ScopeZoom : MonoBehaviour
 
     FirstPersonController fpc;
     PlayerHero hero;
+    HeldWeapons held;
     float baseFov = -1f;
 
     public bool Zoomed { get; private set; }
@@ -77,7 +78,8 @@ public class ScopeZoom : MonoBehaviour
         // Sniper pri nabijeni rany chodi pomaleji.
         fpc.ScopeSpeedScale = Zoomed && definition.weapon.HasScopedShot ? definition.weapon.scopedMoveSpeed : 1f;
 
-        float targetFov = Zoomed ? scopeFov : baseFov;
+        if (held == null) held = GetComponent<HeldWeapons>();
+        float targetFov = Zoomed && !(held != null && held.SniperHandling) ? scopeFov : baseFov;
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFov, 1f - Mathf.Exp(-ZoomSpeed * Time.deltaTime));
         fpc.LookScale = cam.fieldOfView / baseFov;
         ScopeBlend = scopeFov > 0f ? BlendForFov(cam.fieldOfView, baseFov, scopeFov) : 0f;   // (David: holo zamerovac)
