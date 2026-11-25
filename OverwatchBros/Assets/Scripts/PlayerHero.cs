@@ -1148,9 +1148,9 @@ public class PlayerHero : NetworkBehaviour
             voice.Play(Hero, (VoiceKind)kind, slot, pick);
     }
 
-    // Nahodna hlaska pri chozeni (vlastnik): jednou za 25-50 s chuze.
+    // Nahodna hlaska pri chozeni (vlastnik): jednou za 15-30 s chuze (prvni po 20 s).
     float walkTime;
-    float nextIdleLine = 30f;
+    float nextIdleLine = 20f;
     Vector3 lastWalkPosition;
 
     void TickIdleLines()
@@ -1169,7 +1169,7 @@ public class PlayerHero : NetworkBehaviour
         if (walkTime < nextIdleLine) return;
 
         walkTime = 0f;
-        nextIdleLine = Random.Range(25f, 50f);
+        nextIdleLine = Random.Range(15f, 30f);
         Say(VoiceKind.Idle);
     }
 

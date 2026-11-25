@@ -165,6 +165,7 @@ public class ReplayCapture : MonoBehaviour
             if (preaching) flags |= ReplayPlayerSnap.Preaching;
             var mover = p.GetComponent<FirstPersonController>();
             if (mover != null && mover.IsSpawned && mover.scoped.Value) flags |= ReplayPlayerSnap.Scoped;
+            var visor = p.GetComponent<VisorAbility>();
 
             list.Add(new ReplayPlayerSnap
             {
@@ -178,6 +179,7 @@ public class ReplayCapture : MonoBehaviour
                 maxHealth = h != null ? h.maxHealth : 100f,
                 charge = (byte)Mathf.RoundToInt(Mathf.Clamp01(bow != null ? bow.ChargeFraction : 0f) * 255f),
                 slivovice = (byte)Mathf.Clamp(Mathf.CeilToInt(p.SlivoviceRemaining * 10f), 0, 255),
+                visor = visor != null && visor.enabled && visor.IsSpawned && (visor.IsScanning || (visor.IsOwner && visor.IsActive)),
                 holyAim = preaching && ezekiel.AimValid,
                 holyPoint = preaching ? ezekiel.Aim : Vector3.zero,
                 holyRadius = preaching ? ezekiel.Radius : 0f,

@@ -45,6 +45,19 @@ public class ReplayPlayer : MonoBehaviour
     }
     public static Camera Camera => instance != null ? instance.view : null;
 
+    // Hrac, z jehoz pohledu se prehrava (POTG v 1. osobe, killcam = vrah), ma nasazene Viktorovy bryle (VisorOverlay).
+    public static bool PovVisor
+    {
+        get
+        {
+            var f = Frame;
+            if (f == null || f.players == null || (!IsKillcam && f.thirdPerson)) return false;
+            foreach (var p in f.players)
+                if (p.id == instance.clip.povId) return p.visor && (p.flags & ReplayPlayerSnap.Alive) != 0;
+            return false;
+        }
+    }
+
     // Jmenovka nad hlavou hrace v prehravani (stejne jako v zapase).
     public struct Plate
     {
