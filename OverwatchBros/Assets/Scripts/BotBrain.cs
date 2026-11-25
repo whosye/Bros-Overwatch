@@ -1492,11 +1492,17 @@ public partial class BotBrain : MonoBehaviour
     {
         Vector2 size = match.pointSize.Value;
         var rotation = Quaternion.Euler(0f, match.pointYaw.Value, 0f);
+        var customArea = match.CurrentCaptureArea;
         // v urovni bodu (ne v patre nad nim - bod v chate): navigacni sit hledat tesne u podlahy bodu
         for (int tries = 0; tries < 12; tries++)
         {
             float spread = tries < 6 ? 0.35f : 0.45f;
             Vector3 local = new Vector3(Random.Range(-spread, spread) * size.x, 0.3f, Random.Range(-spread, spread) * size.y);
+            if (customArea != null)
+            {
+                Vector2 sample = customArea.Geometry.Sample(Random.value, Random.Range(.05f, .95f), Random.Range(.05f, .95f));
+                local = new Vector3(sample.x, .3f, sample.y);
+            }
             Vector3 candidate = match.pointPosition.Value + rotation * local;
             if (NavMesh.SamplePosition(candidate, out var hit, 1.5f, BotNavigation.Filter)
                 && hit.position.y < match.pointPosition.Value.y + 1.2f && OnPoint(match, hit.position))
