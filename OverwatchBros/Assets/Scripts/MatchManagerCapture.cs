@@ -61,6 +61,7 @@ public partial class MatchManager
     public NetworkVariable<Vector3> pointPosition = new NetworkVariable<Vector3>();
     public NetworkVariable<float> pointYaw = new NetworkVariable<float>();
     public NetworkVariable<Vector2> pointSize = new NetworkVariable<Vector2>(new Vector2(10f, 7f));
+    public CapturePointArea CurrentCaptureArea => CapturePointArea.FindActive(pointIndex.Value + 1);
     public NetworkVariable<float> progress = new NetworkVariable<float>();
 
     public NetworkVariable<int> round = new NetworkVariable<int>(1);
@@ -388,7 +389,12 @@ public partial class MatchManager
     public bool InCaptureArea(Vector3 feet)
     {
         Vector3 local = Quaternion.Euler(0f, -pointYaw.Value, 0f) * (feet - pointPosition.Value);
-        if (Mathf.Abs(local.x) > pointSize.Value.x * 0.5f || Mathf.Abs(local.z) > pointSize.Value.y * 0.5f) return false;
+        var customArea = CurrentCaptureArea;
+        if (customArea != null)
+        {
+            if (!customArea.Geometry.Contains(new Vector2(local.x, local.z))) return false;
+        }
+        else if (Mathf.Abs(local.x) > pointSize.Value.x * 0.5f || Mathf.Abs(local.z) > pointSize.Value.y * 0.5f) return false;
         if (local.y < -1.5f || local.y > 4f) return false;
         if (local.y <= 1.2f) return true;
 
@@ -663,6 +669,15 @@ public partial class MatchManager
                 Vector3 scale = manual.transform.lossyScale;
                 if (scale.x > 1.01f || scale.z > 1.01f)
                     pointSizes[i] = new Vector2(Mathf.Clamp(scale.x, 2f, 60f), Mathf.Clamp(scale.z, 2f, 60f));
+                var customArea = manual.GetComponent<CapturePointArea>();
+                if (customArea != null && customArea.HasArea)
+                {
+                    var bounds = customArea.Geometry.bounds;
+                    // Keep legacy broad-phase consumers conservative even when the
+                    // composite footprint is offset from the marker's origin.
+                    pointSizes[i] = new Vector2(2f * Mathf.Max(Mathf.Abs(bounds.xMin), Mathf.Abs(bounds.xMax)),
+                        2f * Mathf.Max(Mathf.Abs(bounds.yMin), Mathf.Abs(bounds.yMax)));
+                }
             }
 
             string name = PointNames[i];

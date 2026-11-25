@@ -1,0 +1,61 @@
+INTERIER CC0 - hotove materialy pro Unity URP
+
+Pouziti: pretahni soubor .mat na plochu. V ProBuilderu pro souvisle
+podlahy pouzij Auto UV, World Space, Anchor None, Tiling 1/1.
+Materialy jiz obsahuji prevod na fyzickou velikost textury v metrech.
+Na beznem meshi s UV 0..1 velikost uprav podle potreby.
+
+Vsechny zdrojove textury: Poly Haven, CC0-1.0.
+Povoleno pouziti a upravy ve hre vcetne komercniho sireni.
+Licence: https://polyhaven.com/license
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+
+Normal: OpenGL, import jako Normal Map. Albedo: sRGB.
+UnityMask: linear; R=0 (nekovovy povrch), G=AO, B=0, A=smoothness.
+Mapa UnityMask je zapojena do Metallic i Occlusion slotu.
+Neni nutny displacement ani vlastni shader.
+
+MATERIALY A ZDROJE:
+
+Predsin/Predsin_Teraco.mat
+  https://polyhaven.com/a/terrazzo_tiles
+  Autori: Amal Kumar
+Predsin/Predsin_Dlazba_Hneda.mat
+  https://polyhaven.com/a/brown_floor_tiles
+  Autori: Rob Tuytel
+Kuchyn/Kuchyn_Dlazba_Bezova.mat
+  https://polyhaven.com/a/interior_tiles
+  Autori: Charlotte Baglioni
+Kuchyn/Kuchyn_Dlazba_Svetla.mat
+  https://polyhaven.com/a/floor_tiles_02
+  Autori: Rob Tuytel
+Kuchyn/Kuchyn_Lino_Retro.mat
+  https://polyhaven.com/a/old_linoleum_flooring_01
+  Autori: Charlotte Baglioni
+Kuchyn/Kuchyn_Obklad_Bily.mat
+  https://polyhaven.com/a/long_white_tiles
+  Autori: Jenelle van Heerden, Sergej Majboroda
+Chodba/Chodba_Lino_Hnede.mat
+  https://polyhaven.com/a/linoleum_brown
+  Autori: Rob Tuytel
+Chodba/Chodba_Parkety.mat
+  https://polyhaven.com/a/herringbone_parquet
+  Autori: Jenelle van Heerden, Sergej Majboroda
+Chodba/Chodba_Dlazba_Seda.mat
+  https://polyhaven.com/a/grey_tiles
+  Autori: Amal Kumar
+Sklep/Sklep_Podlaha_Beton.mat
+  https://polyhaven.com/a/concrete_floor
+  Autori: eye-candy.xyz
+Sklep/Sklep_Podlaha_Beton_Osoupany.mat
+  https://polyhaven.com/a/worn_concrete_floor
+  Autori: Dimitrios Savva
+Sklep/Sklep_Zed_Cihly.mat
+  https://polyhaven.com/a/brick_wall_001
+  Autori: Rob Tuytel, Dimitrios Savva
+Sklep/Sklep_Zed_Omitka_Cihly.mat
+  https://polyhaven.com/a/rough_plaster_brick
+  Autori: Rob Tuytel
+Sklep/Sklep_Zed_Omitka_Seda.mat
+  https://polyhaven.com/a/grey_plaster
+  Autori: Rob Tuytel
