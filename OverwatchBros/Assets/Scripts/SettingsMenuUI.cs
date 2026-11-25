@@ -12,7 +12,7 @@ public class SettingsMenuUI
     readonly GameObject[] pages=new GameObject[4];
     readonly Button[] tabs=new Button[4];
     TextMeshProUGUI hint;
-    Button closeButton,leaveButton,headBob,music,graphics;
+    Button closeButton,leaveButton,headBob,music,graphics,perfLog,perfFolder;
     Slider sensitivity,bob,master,musicVolume,voice,ambient,weapons,effects;
     TextMeshProUGUI sensValue,bobValue,masterValue,musicValue,voiceValue,ambientValue,weaponsValue,effectsValue;
     Action resume;
@@ -37,6 +37,8 @@ public class SettingsMenuUI
         sensitivity=Row(pages[0].transform,"Citlivost myši",120,0,1,SensitivityValue(),v=>GameSettings.Sensitivity=Mathf.Round(GameSettings.MinSensitivity*Mathf.Pow(GameSettings.MaxSensitivity/GameSettings.MinSensitivity,v)*100)/100,out sensValue);
         headBob=MenuStyle.Button(pages[0].transform,"",new Vector2(0,15),new Vector2(1000,60),()=>GameSettings.HeadBobEnabled=!GameSettings.HeadBobEnabled);
         bob=Row(pages[0].transform,"Intenzita pohupování",-95,0,200,GameSettings.HeadBobIntensity*100,v=>GameSettings.HeadBobIntensity=v/100,out bobValue);
+        perfLog=MenuStyle.Button(pages[0].transform,"",new Vector2(-255,-172),new Vector2(490,52),()=>GameSettings.PerfLogEnabled=!GameSettings.PerfLogEnabled,false,23);
+        perfFolder=MenuStyle.Button(pages[0].transform,"Otevřít složku s logy",new Vector2(255,-172),new Vector2(490,52),OpenPerfFolder,false,23);
         master=Row(pages[1].transform,"Celková hlasitost",170,0,100,GameSettings.Volume*100,v=>GameSettings.Volume=v/100,out masterValue);
         musicVolume=Row(pages[1].transform,"Hudba",112,0,100,GameSettings.MusicVolume*100,v=>GameSettings.MusicVolume=v/100,out musicValue);
         voice=Row(pages[1].transform,"Hlášky postav",54,0,100,GameSettings.VoiceVolume*100,v=>GameSettings.VoiceVolume=v/100,out voiceValue);
@@ -90,6 +92,11 @@ public class SettingsMenuUI
         return slider;
     }
     static float SensitivityValue()=>Mathf.Log(Mathf.Clamp(GameSettings.Sensitivity,GameSettings.MinSensitivity,GameSettings.MaxSensitivity)/GameSettings.MinSensitivity)/Mathf.Log(GameSettings.MaxSensitivity/GameSettings.MinSensitivity);
+    static void OpenPerfFolder()
+    {
+        try { System.IO.Directory.CreateDirectory(PerfLogger.Folder); } catch { }
+        Application.OpenURL("file:///"+PerfLogger.Folder.Replace('\\','/'));
+    }
     public void Select(int index)
     {
         for(int i=0;i<pages.Length;i++)
@@ -126,6 +133,7 @@ public class SettingsMenuUI
         weapons.SetValueWithoutNotify(GameSettings.WeaponVolume*100); weaponsValue.text=Mathf.RoundToInt(GameSettings.WeaponVolume*100)+" %";
         effects.SetValueWithoutNotify(GameSettings.EffectsVolume*100); effectsValue.text=Mathf.RoundToInt(GameSettings.EffectsVolume*100)+" %";
         UiKit.SetButtonLabel(headBob,"Pohupování kamery: "+(GameSettings.HeadBobEnabled?"ZAPNUTO":"VYPNUTO"));
+        UiKit.SetButtonLabel(perfLog,"Logování výkonu: "+(GameSettings.PerfLogEnabled?"ZAPNUTO":"VYPNUTO"));
         UiKit.SetButtonLabel(music,"Hudba v menu: "+(GameSettings.MusicEnabled?"ZAPNUTO":"VYPNUTO"));
         UiKit.SetButtonLabel(graphics,"Kvalita grafiky: "+GraphicsQuality.Names[GraphicsQuality.Level]+"   ›");
     }

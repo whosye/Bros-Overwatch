@@ -106,7 +106,7 @@ public class FlashAbility : NetworkBehaviour
             foreach (var col in Physics.OverlapSphere(point, ability.radius, ~0, QueryTriggerInteraction.Ignore))
             {
                 // poskozeni podle vzdalenosti od stredu vybuchu
-                float near = Vector3.Distance(point, col.ClosestPoint(point));
+                float near = Vector3.Distance(point, Combat.ClosestPoint(col, point));
                 float damage = ability.power * Mathf.Lerp(1f, 0.4f, near / Mathf.Max(0.1f, ability.radius));
 
                 var dummy = col.GetComponentInParent<Target>();

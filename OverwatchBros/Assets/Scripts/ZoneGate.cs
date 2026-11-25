@@ -78,7 +78,7 @@ public class ZoneGate : MonoBehaviour
         if (lastChangeFrame != Time.frameCount)
         {
             lastChangeFrame = Time.frameCount;
-            BotNavigation.Invalidate();
+            BotNavigation.Refresh();   // na pozadi, stara sit plati, dokud neni nova
         }
     }
 

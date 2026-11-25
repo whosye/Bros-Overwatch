@@ -51,6 +51,23 @@ public static class GameSettings
         get => Mathf.Clamp01(PlayerPrefs.GetFloat(AmbientVolumeKey, 0.12f));
         set => PlayerPrefs.SetFloat(AmbientVolumeKey, Mathf.Clamp01(value));
     }
+    // Logovani vykonu do souboru (PerfLogger) - zapina se v Nastaveni > HRA.
+    // Neuklada se: po kazdem spusteni hry je vypnute.
+    static bool perfLogEnabled;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetPerfLog() => perfLogEnabled = false;
+
+    public static bool PerfLogEnabled
+    {
+        get => perfLogEnabled;
+        set
+        {
+            perfLogEnabled = value;
+            PerfLogger.Apply();
+        }
+    }
+
     const string HeadBobEnabledKey = "settings.headBobEnabled";
     const string HeadBobIntensityKey = "settings.headBobIntensity";
 

@@ -714,7 +714,7 @@ public class WeaponShooting : NetworkBehaviour
             if (victim == null || struck.Contains(victim)) continue;
             if (victim is Health h && Combat.SameTeam(gameObject, h.gameObject)) continue;
 
-            Vector3 point = col.ClosestPoint(origin);
+            Vector3 point = Combat.ClosestPoint(col, origin);
             Vector3 to = point - origin;
             float along = Vector3.Dot(to, forward);
             if (along < -0.2f || to.magnitude > weapon.range + MeleeSlack) continue;
@@ -751,7 +751,7 @@ public class WeaponShooting : NetworkBehaviour
             var owner = hit.collider.GetComponentInParent<NetworkObject>();
             if (owner != null && owner == NetworkObject) continue;
 
-            Vector3 point = hit.distance > 0f ? hit.point : hit.collider.ClosestPoint(origin);
+            Vector3 point = hit.distance > 0f ? hit.point : Combat.ClosestPoint(hit.collider, origin);
             ApplyHit(hit.collider, point, 1.4f, normal: hit.normal);
             return;
         }

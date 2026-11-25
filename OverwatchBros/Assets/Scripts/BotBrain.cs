@@ -1888,6 +1888,9 @@ public static class BotNavigation
     public static void Invalidate()
     {
         nextBuildAttempt = 0f;
+        rebuild = null;
+        rebuildAgain = false;
+        haveBuilt = false;
         if (navInstance.valid) navInstance.Remove();
         navInstance = default;
         navData = null;
@@ -1906,16 +1909,15 @@ public static class BotNavigation
         navInstance = default;
         navData = null;
         agentType = -1;
+        rebuild = null;
+        rebuildAgain = false;
+        haveBuilt = false;
         indoorSpots.Clear();
     }
 
-    static float nextBuildAttempt;
-
-    public static void EnsureBuilt()
+    // Zdroje site: kolize v rozsahu mapy (bez triggeru, postav hracu, tajnych mist, otevrenych bran).
+    static List<NavMeshBuildSource> CollectBuildSources(bool log)
     {
-        if (Ready || Time.realtimeSinceStartup < nextBuildAttempt) return;
-        nextBuildAttempt = Time.realtimeSinceStartup + 5f;   // (kdyz se nepovede, nezkouset kazdy snimek)
-
         // postavy hracu do site nepatri (byly by v ni diry)
         var controllers = Object.FindObjectsByType<CharacterController>();
         var states = new bool[controllers.Length];
@@ -1924,8 +1926,6 @@ public static class BotNavigation
             states[i] = controllers[i].enabled;
             controllers[i].enabled = false;
         }
-
-        float started = Time.realtimeSinceStartup;
 
         // zdroje: koliznni tvary jen v rozsahu mapy (bez triggeru)
         var sources = new List<NavMeshBuildSource>();
@@ -1938,7 +1938,7 @@ public static class BotNavigation
         // (Tlacenice) se sit muze postavit driv, nez brana poprve probehne Update - spawny by pak byly v siti uzavrene
         int openGates = sources.RemoveAll(src => src.component is Collider c && c.GetComponentInParent<ZoneGate>() is ZoneGate gate
             && ZoneGate.ShouldBeOpen(gate.unlockAfter));
-        if (openGates > 0) Debug.Log($"[Boti] Otevrene brany zon - vynechano kolizi: {openGates}.");
+        if (log && openGates > 0) Debug.Log($"[Boti] Otevrene brany zon - vynechano kolizi: {openGates}.");
         // Mesh Collider s modelem bez Read/Write (rucne pridane kolize, napr. gauc s Maxem): stavitel site by hlasil
         // chybu (a v buildu by ho vynechal) - misto nej se do site da kvadr jeho obrysu.
         var unreadable = new List<string>();
@@ -1955,8 +1955,49 @@ public static class BotNavigation
             sources[i] = src;
             if (unreadable.Count < 12) unreadable.Add(col.name);
         }
-        if (unreadable.Count > 0)
+        if (log && unreadable.Count > 0)
             Debug.Log($"[Boti] Kolize s modelem bez Read/Write (v siti jako kvadr): {string.Join(", ", unreadable)}.");
+
+        for (int i = 0; i < controllers.Length; i++)
+            if (controllers[i] != null) controllers[i].enabled = states[i];
+        return sources;
+    }
+
+    // Zmena cest za hry (otevrena brana, spadla podlaha): stara sit plati dal a nova se postavi NA POZADI
+    // (UpdateNavMeshDataAsync) - drive se stavela znovu na hlavnim vlakne a hra se na ~100 ms zasekla.
+    static NavMeshBuildSettings builtSettings;
+    static Bounds builtBounds;
+    static bool haveBuilt;
+    static AsyncOperation rebuild;
+    static bool rebuildAgain;
+
+    public static void Refresh()
+    {
+        if (!Ready || !haveBuilt) { Invalidate(); return; }
+        if (rebuild != null && !rebuild.isDone) { rebuildAgain = true; return; }
+        var sources = CollectBuildSources(false);
+        var op = NavMeshBuilder.UpdateNavMeshDataAsync(navData, builtSettings, sources, builtBounds);
+        rebuild = op;
+        if (op == null) { Invalidate(); return; }
+        op.completed += _ =>
+        {
+            if (op != rebuild) return;   // mezitim jina mapa
+            rebuild = null;
+            if (!Ready) return;
+            FindIndoorSpots();
+            if (rebuildAgain) { rebuildAgain = false; Refresh(); }
+        };
+    }
+
+    static float nextBuildAttempt;
+
+    public static void EnsureBuilt()
+    {
+        if (Ready || Time.realtimeSinceStartup < nextBuildAttempt) return;
+        nextBuildAttempt = Time.realtimeSinceStartup + 5f;   // (kdyz se nepovede, nezkouset kazdy snimek)
+
+        float started = Time.realtimeSinceStartup;
+        var sources = CollectBuildSources(true);
         Bounds bounds = new Bounds();
         bool any = false;
         foreach (var src in sources)
@@ -1987,11 +2028,11 @@ public static class BotNavigation
             var report = settings.ValidationReport(bounds);
             Debug.Log($"[Boti] Pokus '{label}' (agent {settings.agentTypeID}): {(navData == null ? "sit se nepostavila" : $"spawnu na siti {onSpawn}/2")}"
                 + $"{(report != null && report.Length > 0 ? ", hlaseni: " + string.Join("; ", report) : "")}.");
+            builtSettings = settings;
             if (navData != null && onSpawn > 0) break;
         }
-
-        for (int i = 0; i < controllers.Length; i++)
-            if (controllers[i] != null) controllers[i].enabled = states[i];
+        builtBounds = bounds;
+        haveBuilt = navData != null;
 
         FindIndoorSpots();
         // diagnostika: kolik zdroju, jak velka sit, kde je nejblizsi sit od spawnu

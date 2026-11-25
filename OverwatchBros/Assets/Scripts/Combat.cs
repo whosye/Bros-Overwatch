@@ -165,6 +165,14 @@ public static class Combat
 
     // Plosny vybuch (jen server): damage klesa od stredu (100 %) po okraj (edgeFactor), neprochazi zdmi, nevraci vlastni tym.
     // 'direct' = hrac, ktereho projektil trefil primo: dostane plne poskozeni bez ohledu na vzdalenost od stredu.
+    // Collider.ClosestPoint umi jen box / koule / kapsle / konvexni mesh; u ostatnich (nekonvexni mesh, teren)
+    // by jen varoval a vratil nesmysl - pak nejblizsi bod obalu.
+    public static Vector3 ClosestPoint(Collider col, Vector3 point)
+    {
+        bool supported = col is BoxCollider || col is SphereCollider || col is CapsuleCollider || (col is MeshCollider mesh && mesh.convex);
+        return supported ? col.ClosestPoint(point) : col.bounds.ClosestPoint(point);
+    }
+
     // Vraci, kolik nepratel (a cvicnych tercu) vybuch zasahl.
     public static int Explode(GameObject attacker, Vector3 position, float radius, float damage, float edgeFactor, Health direct = null, string source = "", Transform ignoredOccluder = null)
     {
