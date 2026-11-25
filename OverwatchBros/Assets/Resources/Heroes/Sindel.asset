@@ -60,12 +60,14 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5b1a70576af8a45498f323cb0b94556b, type: 3}
   - {fileID: 8300000, guid: 980eb342a35f0ad47a764b82014da725, type: 3}
   - {fileID: 8300000, guid: 5a86768cbd6dd6d48b83dd7ee904ef55, type: 3}
+  - {fileID: 8300000, guid: e82fec4998f635a4885eb1fae29f6afd, type: 3}
   idleLines:
   - {fileID: 8300000, guid: b51d19d482685514f994fab41c962bb2, type: 3}
   - {fileID: 8300000, guid: 98389558563b39f46985956a12484224, type: 3}
   - {fileID: 8300000, guid: 04cbda7ba510393498c300beeee4d143, type: 3}
   - {fileID: 8300000, guid: 6307bc6ae2c4d3f4aa2351a014fbf4b6, type: 3}
   - {fileID: 8300000, guid: 530ae7ba0907afe4e9833f64dc217323, type: 3}
+  - {fileID: 8300000, guid: 6cd81ff888650c548abb97b65cbda2cc, type: 3}
   snareLines:
   - {fileID: 8300000, guid: 97386fd59f9840749949630399594e56, type: 3}
   - {fileID: 8300000, guid: 7803c5aa0e6670342b3fa327746b554b, type: 3}
@@ -74,10 +76,14 @@ MonoBehaviour:
   healLines: []
   headshotLines: []
   missLines:
+  - {fileID: 8300000, guid: fe39dbcef9402aa49be5f46f5b388f75, type: 3}
   - {fileID: 8300000, guid: cc62b9c1ce3886d4288c4d507487efce, type: 3}
+  weaponMissLineChance: 0.25
   scopeLines: []
   healedLines:
   - {fileID: 8300000, guid: 5bece3cdb697f7543b111e587bbb5065, type: 3}
+  - {fileID: 8300000, guid: ae29409664d9ea8469c28e869d11d9e2, type: 3}
+  - {fileID: 8300000, guid: 0cd2e9e55bcbfd343aadbb81a4932199, type: 3}
   ultVoiceEcho: 0
   ultVoiceMaxSeconds: 5
   ultVoiceSpeed: 1

@@ -64,7 +64,7 @@ MonoBehaviour:
   snareLines:
   - {fileID: 8300000, guid: 6da499fcd1fff4b41bc2344e80c0c46b, type: 3}
   attackLines:
-  - {fileID: 8300000, guid: 3c2f75d370a9f9046b7d191e04474840, type: 3}
+  - {fileID: 8300000, guid: 9e9124f8ce9b7114a89288ee9962d97d, type: 3}
   healLines:
   - {fileID: 8300000, guid: 1b0b6e079a37fd5499adeec67d4de460, type: 3}
   - {fileID: 8300000, guid: 37edbf1cdabc5b346bbd9f4a74e47f57, type: 3}
@@ -72,6 +72,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 78627cdf5d49a504bb1c27f7c856bed0, type: 3}
   missLines:
   - {fileID: 8300000, guid: 474d7e55f1abafb418706d042ccd672f, type: 3}
+  weaponMissLineChance: 0
   scopeLines:
   - {fileID: 8300000, guid: 5ffb361e977b20240870961284bae431, type: 3}
   healedLines: []

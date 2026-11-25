@@ -29,7 +29,6 @@ MonoBehaviour:
   sound: {fileID: 0}
   voiceLines:
   - {fileID: 8300000, guid: 081d5f6bc5d35f243bfba0e5b52126aa, type: 3}
-  - {fileID: 8300000, guid: 1d55293c0f5d4e64f8fa64424359289c, type: 3}
   blockAbsorb: 0.8
   blockSpeed: 0.5
   regenDelay: 5

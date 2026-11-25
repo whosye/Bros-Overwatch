@@ -165,20 +165,25 @@ public static class Combat
 
     // Plosny vybuch (jen server): damage klesa od stredu (100 %) po okraj (edgeFactor), neprochazi zdmi, nevraci vlastni tym.
     // 'direct' = hrac, ktereho projektil trefil primo: dostane plne poskozeni bez ohledu na vzdalenost od stredu.
-    public static void Explode(GameObject attacker, Vector3 position, float radius, float damage, float edgeFactor, Health direct = null, string source = "", Transform ignoredOccluder = null)
+    // Vraci, kolik nepratel (a cvicnych tercu) vybuch zasahl.
+    public static int Explode(GameObject attacker, Vector3 position, float radius, float damage, float edgeFactor, Health direct = null, string source = "", Transform ignoredOccluder = null)
     {
         var network = NetworkManager.Singleton;
-        if (network == null || !network.IsServer) return;
+        if (network == null || !network.IsServer) return 0;
 
         var match = MatchManager.Instance;
-        if (match != null && (match.IsOver || match.IsLobby)) return;
+        if (match != null && (match.IsOver || match.IsLobby)) return 0;
 
+        int hits = 0;
         var damaged = new HashSet<Health>();
         foreach (var col in Physics.OverlapSphere(position, radius, ~0, QueryTriggerInteraction.Ignore))
         {
             var dummy = col.GetComponentInParent<Target>();
             if (dummy != null)
+            {
                 dummy.TakeDamage(damage);
+                hits++;
+            }
 
             var boulder = col.GetComponentInParent<BoulderHitbox>();
             if (boulder != null)
@@ -200,7 +205,9 @@ public static class Combat
             float distance = Vector3.Distance(position, health.transform.position);
             float scaled = health == direct ? damage : damage * Mathf.Lerp(1f, edgeFactor, Mathf.Clamp01(distance / radius));
             DamagePlayer(attacker, health, scaled, source);
+            hits++;
         }
+        return hits;
     }
 
     // Stoji hrac na spawnu sveho tymu? Tam na nej nepratele nemuzou - poskozeni ani omezeni (omraceni, uspani,

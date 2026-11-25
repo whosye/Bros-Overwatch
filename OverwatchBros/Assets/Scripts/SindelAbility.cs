@@ -353,7 +353,9 @@ public class SindelAbility : NetworkBehaviour
 
         var match = MatchManager.Instance;
         if (match == null || (!match.IsOver && !match.IsLobby))
+        {
             Combat.Explode(gameObject, point, grenade.radius, grenade.power, Edge, null, Combat.AbilitySource(grenade));
+        }
 
         DetonatedClientRpc(point, grenade.radius);
     }

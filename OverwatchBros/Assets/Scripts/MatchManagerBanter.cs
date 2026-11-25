@@ -82,7 +82,7 @@ public partial class MatchManager
             var health = who.GetComponent<Health>();
             if (health == null || health.currentHealth.Value <= 0f) break;
 
-            who.SayBanterClientRpc(folder, i);
+            who.SayBanterClientRpc(folder, i, 3);
             yield return new WaitForSeconds(clips[i].length + 0.3f);
         }
         banterRunning = false;

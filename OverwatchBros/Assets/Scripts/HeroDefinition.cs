@@ -138,6 +138,8 @@ public class HeroDefinition : ScriptableObject
     public AudioClip[] headshotLines;
     [Tooltip("Kdyz schopnost mine (David: uspavaci sipka nikoho netrefi).")]
     public AudioClip[] missLines;
+    [Tooltip("Hlaska z Miss Lines i kdyz mine vystrel ze zbrane (leve tlacitko) - s touto sanci, pak chvili pauza. 0 = ne (Sindel 0,25).")]
+    [Range(0f, 1f)] public float weaponMissLineChance = 0f;
     [Tooltip("Kdyz priblizi zamerovacem - prave tlacitko (obcas).")]
     public AudioClip[] scopeLines;
     [Tooltip("Kdyz ho vyleci spoluhrac (obcas, nejvys jednou za nekolik sekund).")]

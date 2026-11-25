@@ -358,8 +358,10 @@ public class EzekielAbility : NetworkBehaviour
     // Sloup svetla zasahne vse ve svislem valci nad kruhem (od kousek pod zemi az k nebi) - i skrz stropy a patra,
     // takze kdyz kruh lezi v prizemi, dostanou to i nepratele v patre nad nim. Poskozeni podle vodorovne
     // vzdalenosti od osy sloupu: 'power' uprostred, 'StrikeEdge' na okraji.
-    void BeamDamage(Vector3 point)
+    // Vraci, jestli zasahl aspon jednoho nepritele (nebo cvicny terc).
+    bool BeamDamage(Vector3 point)
     {
+        bool hit = false;
         float radius = ability.radius;
         Vector3 bottom = point + Vector3.down * (BeamBelow - radius);
         Vector3 top = point + Vector3.up * (BeamHeight - radius);
@@ -372,7 +374,10 @@ public class EzekielAbility : NetworkBehaviour
 
             var dummy = col.GetComponentInParent<Target>();
             if (dummy != null)
+            {
                 dummy.TakeDamage(scaled);
+                hit = true;
+            }
 
             var boulder = col.GetComponentInParent<BoulderHitbox>();
             if (boulder != null)
@@ -393,7 +398,9 @@ public class EzekielAbility : NetworkBehaviour
             Vector3 feet = health.transform.position - point;
             feet.y = 0f;
             Combat.DamagePlayer(gameObject, health, ability.power * Mathf.Lerp(1f, StrikeEdge, Mathf.Clamp01(feet.magnitude / radius)), Combat.AbilitySource(ability));
+            hit = true;
         }
+        return hit;
     }
 
     // ---------------- vizual ----------------

@@ -627,6 +627,10 @@ public class WeaponShooting : NetworkBehaviour
             if (!first.HasValue || first.Value.collider.GetComponentInParent<Health>() == null) return;
         }
 
+        // minul (nezasahl nepritele ani terc): hrdina s weaponMissLineChance se obcas ozve (Sindel)
+        if (!first.HasValue || !HitsEnemy(first.Value.collider))
+            MaybeSayWeaponMiss();
+
         if (first.HasValue)
         {
             var hit = first.Value;
@@ -644,6 +648,25 @@ public class WeaponShooting : NetworkBehaviour
             else
                 ApplyHit(hit.collider, hit.point, 1f, normal: hit.normal);
         }
+    }
+
+    float nextWeaponMissLine;
+
+    bool HitsEnemy(Collider col)
+    {
+        if (col.GetComponentInParent<Target>() != null) return true;
+        var health = col.GetComponentInParent<Health>();
+        return health != null && !Combat.SameTeam(gameObject, health.gameObject);
+    }
+
+    // Hlaska "minul jsem" po minutem vystrelu: s danou sanci, po hlasce 6-10 s pauza (pistole strili rychle).
+    void MaybeSayWeaponMiss()
+    {
+        var hero = GetComponent<PlayerHero>();
+        if (hero == null || hero.Hero == null || hero.Hero.weaponMissLineChance <= 0f || Time.time < nextWeaponMissLine) return;
+        if (Random.value >= hero.Hero.weaponMissLineChance) return;
+        nextWeaponMissLine = Time.time + Random.Range(6f, 10f);
+        hero.Say(VoiceKind.Miss);
     }
 
     // Uder: siroky oblouk pred hracem (~110 st.) a k tomu 0,5 m tolerance do stran - zasahne vsechny nepratele
