@@ -38,6 +38,16 @@ public class WeaponDefinition : ScriptableObject
     public bool reloadAnimation = false;
     [Tooltip("Revolver: aim-corrected grip and swing-out cylinder reload instead of a magazine animation.")]
     public bool revolverReload;
+    [Tooltip("David: v prvni osobe zbran zustava v obraze, leva ruka vezme zelenou plechovku Monsteru a svihne s ni do zbrane. "
+        + "Naraz je presne na konci prebijeni (naboje pribydou) - plechovka se rozplyne v zelenou mlhu. "
+        + "Jen se zbrani podepirenou levou rukou (First Person Two Handed); ostatni hraci vidi bezne prebijeni.")]
+    public bool monsterCanReload;
+    [Tooltip("Honza: v prvni osobe leva ruka prasti do bedny zasobniku (dil Magazine), ta odpadne, prinese novou, nasadi ji "
+        + "a natahne kohout (dil CockingLever). Ostatni hraci vidi bezne prebijeni.")]
+    public bool magazineSlapReload;
+    [Tooltip("Tezka zbran (Honzuv granatomet): pri vystrelu se ruka se zbrani jen cukne dozadu - bez zvednuti hlavne "
+        + "a bez animace strelby z pistole na postave.")]
+    public bool heavyRecoil;
 
     // Hitscan: dosah okamziteho paprsku. Projectile: nejvetsi vzdalenost, kterou projektil preleti.
     public float range = 100f;
@@ -146,8 +156,13 @@ public class WeaponDefinition : ScriptableObject
     public bool dualWield = false;
     [Tooltip("Jedna velka zbran drzena obema rukama (jako puska Soldiera): leva ruka na predpazbi, zbran vic u stredu.")]
     public bool twoHanded = false;
+    [Tooltip("Jen v prvni osobe: leva ruka podpira zbran zespodu pod hlavni (poza i postava pro ostatni zustava jako u jedne ruky).")]
+    public bool firstPersonTwoHanded = false;
     [Tooltip("Zvetseni modelu zbrane v ruce (1 = jak je v prefabu).")]
     public float heldScale = 1f;
+    [Tooltip("Posun zbrane v prvni osobe (m, vuci kamere: x doprava, y nahoru, z dopredu) - kdyz zabira moc obrazu. "
+        + "Jde menit i za hry (projevi se hned).")]
+    public Vector3 firstPersonOffset;
     [Tooltip("Volitelny vlastni model zbrane. Kdyz je prazdny, pouzije se model z kostek.")]
     public GameObject heldPrefab;
     [Tooltip("Trojsek: zakladni utok je rotace tri uderu (sek pravou, sek levou, vyskok s uderem do zeme) - TripleSlashAbility. "

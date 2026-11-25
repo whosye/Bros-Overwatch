@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70ebeba9977deef4cb0414f2cfd81e11, type: 3}
   m_Name: SindelPistol_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
-  weaponName: "Dev\xEDtka"
+  weaponName: PeaceMaker
   description: "P\u0159esn\xE1 pistole. Ka\u017Ed\xFD t\u0159et\xED v\xFDst\u0159el
     ze z\xE1sobn\xEDku je pos\xEDlen\xFD (zbra\u0148 zrudne) a d\xE1 v\xEDc po\u0161kozen\xED."
   damage: 38
   fireRate: 1.4285715
-  maxAmmo: 9
+  maxAmmo: 6
   burstCount: 1
   burstInterval: 0.07
   reloadTime: 1.5

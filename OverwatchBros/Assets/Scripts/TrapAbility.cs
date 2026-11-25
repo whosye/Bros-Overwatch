@@ -33,7 +33,11 @@ public class TrapAbility : NetworkBehaviour
 
     // vizual
     GameObject visual;
-    Transform jawA, jawB;
+    TrapJaws jaws;
+
+    // model pasti ze Sketchfabu (Editor/TrapSetup: sirka 1, spodek v pocatku, celisti JawFront / JawBack na ose pantu)
+    static GameObject trapPrefab;
+    static bool trapPrefabLoaded;
 
     public float CooldownRemaining => Mathf.Max(0f, nextUseTime - Time.time);
 
@@ -181,7 +185,7 @@ public class TrapAbility : NetworkBehaviour
             if (dummy != null)
             {
                 dummy.TakeDamage(ability.power);
-                Snap();
+                Snap("Terč");
                 return;
             }
 
@@ -195,7 +199,8 @@ public class TrapAbility : NetworkBehaviour
             if (controller != null && victim.currentHealth.Value > 0f)
                 controller.ServerRoot(ability.duration);
 
-            Snap();
+            var caughtHero = victim.GetComponent<PlayerHero>();
+            Snap(caughtHero != null ? caughtHero.DisplayName : "");
             return;
         }
     }
@@ -225,10 +230,26 @@ public class TrapAbility : NetworkBehaviour
         visual = null;
     }
 
-    void Snap()
+    void Snap(string caught)
     {
         trapActive = false;
         SnappedClientRpc(trapPosition, ability.duration);
+
+        // majitel pasti se ozve - slysi to jen on (Resources/Banter/<hrdina>_past, napr. honza_past)
+        var owner = GetComponent<PlayerHero>();
+        if (owner != null && owner.Hero != null)
+            owner.ServerSayFolderLine(owner.Hero.name.ToLowerInvariant() + "_past", true);
+
+        // znacka "chycen v pasti" jen tomu, kdo past polozil (bot nic)
+        if (BotBrain.IsBot(gameObject) || (owner != null && owner.isBot.Value)) return;
+        var target = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { OwnerClientId } } };
+        CaughtClientRpc(caught ?? "", target);
+    }
+
+    [ClientRpc]
+    void CaughtClientRpc(string caught, ClientRpcParams rpcParams = default)
+    {
+        if (IsOwner) HudUI.NotifyTrap(caught);
     }
 
     // ---------------- vizual ----------------
@@ -242,10 +263,9 @@ public class TrapAbility : NetworkBehaviour
             held.PlayThrow();
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, from, 0.4f);
 
-        var flying = BuildVisual(out var a, out var b);
+        var flying = BuildVisual(out var flyingJaws);
         flying.name = "TrapThrow";
-        if (a != null) a.localRotation = Quaternion.Euler(0f, 0f, -78f);
-        if (b != null) b.localRotation = Quaternion.Euler(0f, 0f, 78f);
+        flyingJaws.Close(true);
         flying.transform.localScale = Vector3.one * 0.8f;
         flying.AddComponent<TrapFlight>().Begin(from, to, flight);
     }
@@ -256,7 +276,7 @@ public class TrapAbility : NetworkBehaviour
         if (visual != null)
             Destroy(visual);
 
-        visual = BuildVisual(out jawA, out jawB);
+        visual = BuildVisual(out jaws);
         visual.transform.position = point + Vector3.up * 0.02f;
 
         // Zasahova zona pasti (aby ji slo rozstrilet); nizka, takze se pres ni da prejit.
@@ -290,16 +310,40 @@ public class TrapAbility : NetworkBehaviour
         var box = visual.GetComponent<BoxCollider>();
         if (box != null)
             Destroy(box);
-        if (jawA != null) jawA.localRotation = Quaternion.Euler(0f, 0f, -78f);
-        if (jawB != null) jawB.localRotation = Quaternion.Euler(0f, 0f, 78f);
+        if (jaws != null) jaws.Close(false);   // rychle sklapnuti
         Destroy(visual, Mathf.Max(0.5f, holdSeconds));
         visual = null;
     }
 
-    GameObject BuildVisual(out Transform jawLeft, out Transform jawRight)
+    GameObject BuildVisual(out TrapJaws trapJaws)
     {
         var root = new GameObject("TrapVisual");
         float radius = ability != null ? Mathf.Clamp(ability.radius * 0.6f, 0.35f, 0.7f) : 0.5f;
+        trapJaws = root.AddComponent<TrapJaws>();
+
+        if (!trapPrefabLoaded)
+        {
+            trapPrefabLoaded = true;
+            trapPrefab = Resources.Load<GameObject>("Weapons/HonzaTrap");
+        }
+        if (trapPrefab != null)
+        {
+            // model: kruh celisti zhruba o prumeru 2 * radius (sirka i s naboji o kus vetsi)
+            var model = Instantiate(trapPrefab, root.transform);
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localRotation = Quaternion.identity;
+            model.transform.localScale = Vector3.one * radius * 2.2f;
+            foreach (var collider in model.GetComponentsInChildren<Collider>()) Destroy(collider);
+            Transform front = null, back = null;
+            foreach (var part in model.GetComponentsInChildren<Transform>(true))
+            {
+                if (front == null && part.name.StartsWith("JawFront")) front = part;
+                else if (back == null && part.name.StartsWith("JawBack")) back = part;
+            }
+            // celisti se zavrou otocenim kolem osy pantu (lokalni X) nahoru proti sobe
+            trapJaws.Init(front, Quaternion.Euler(-80f, 0f, 0f), back, Quaternion.Euler(80f, 0f, 0f));
+            return root;
+        }
 
         var plate = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         DestroyImmediate(plate.GetComponent<Collider>());
@@ -307,8 +351,9 @@ public class TrapAbility : NetworkBehaviour
         plate.transform.localScale = new Vector3(radius * 0.9f, 0.015f, radius * 0.9f);
         Fx.Paint(plate, new Color(0.20f, 0.21f, 0.23f));
 
-        jawLeft = BuildJaw(root.transform, radius, -1f);
-        jawRight = BuildJaw(root.transform, radius, 1f);
+        var jawLeft = BuildJaw(root.transform, radius, -1f);
+        var jawRight = BuildJaw(root.transform, radius, 1f);
+        trapJaws.Init(jawLeft, Quaternion.Euler(0f, 0f, -78f), jawRight, Quaternion.Euler(0f, 0f, 78f));
         return root;
     }
 
@@ -332,6 +377,46 @@ public class TrapAbility : NetworkBehaviour
         }
 
         return jaw;
+    }
+}
+
+// Celisti pasti: otevrene (jak jsou v modelu) a zavrene (otoceni 'closed' navic); Close sklapne rychle nebo hned.
+public class TrapJaws : MonoBehaviour
+{
+    const float CloseSeconds = 0.07f;
+
+    Transform a, b;
+    Quaternion aOpen, bOpen, aClosed, bClosed;
+    float t = -1f;
+
+    public void Init(Transform jawA, Quaternion closeA, Transform jawB, Quaternion closeB)
+    {
+        a = jawA; b = jawB;
+        if (a != null) { aOpen = a.localRotation; aClosed = aOpen * closeA; }
+        if (b != null) { bOpen = b.localRotation; bClosed = bOpen * closeB; }
+        enabled = false;
+    }
+
+    public void Close(bool instant)
+    {
+        t = instant ? CloseSeconds : 0f;
+        Apply();
+        enabled = !instant;
+    }
+
+    void Update()
+    {
+        t += Time.deltaTime;
+        Apply();
+        if (t >= CloseSeconds) enabled = false;
+    }
+
+    void Apply()
+    {
+        float u = Mathf.Clamp01(t / CloseSeconds);
+        u = u * u;   // zrychluje az do sklapnuti
+        if (a != null) a.localRotation = Quaternion.Slerp(aOpen, aClosed, u);
+        if (b != null) b.localRotation = Quaternion.Slerp(bOpen, bClosed, u);
     }
 }
 

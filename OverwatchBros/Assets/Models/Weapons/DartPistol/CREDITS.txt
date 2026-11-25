@@ -1,0 +1,13 @@
+Model Information:
+* title:	Dart Pistol
+* source:	Sketchfab - "Dart Pistol" by GeoGianni
+* author:	GeoGianni (https://sketchfab.com/GeoGianni)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+Used in the game as David's sleep dart pistol, held in the left hand in first person
+(Assets/Editor/DartPistolSetup.cs -> Resources/Weapons/DartPistol.prefab, loaded by HeldWeapons).
+
+This work is based on "Dart Pistol" by GeoGianni licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

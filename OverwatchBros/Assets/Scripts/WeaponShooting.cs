@@ -63,7 +63,7 @@ public class WeaponShooting : NetworkBehaviour
         if (clip == null) return;
         float duration = shortDraw && rapid != null ? rapid.interval : weapon != null ? weapon.chargeTime : clip.length;
         bowDrawAudio = ProceduralSfx.PlayTracked(clip, transform.position, 0.5f, 22f,
-            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip.length / Mathf.Max(0.05f, duration));
+            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip.length / Mathf.Max(0.05f, duration), kind: SfxKind.Weapon);
         if (bowDrawAudio != null) bowDrawAudio.transform.SetParent(transform, true);
     }
 
@@ -82,7 +82,7 @@ public class WeaponShooting : NetworkBehaviour
         StopReloadAudio();
         var clip = CollectedAudioBank.ForActor(this, CollectedAudioBank.WeaponCue(weapon) + "_reload", ProceduralSfx.Reload);
         reloadAudio = ProceduralSfx.PlayTracked(clip, transform.position, 0.6f, 22f,
-            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip != null ? clip.length / Mathf.Max(0.05f, duration) : 1f);
+            spatial: !ProceduralSfx.IsLocalPlayer(this), pitch: clip != null ? clip.length / Mathf.Max(0.05f, duration) : 1f, kind: SfxKind.Weapon);
         if (reloadAudio != null) reloadAudio.transform.SetParent(transform, true);
     }
 
@@ -627,6 +627,10 @@ public class WeaponShooting : NetworkBehaviour
             if (!first.HasValue || first.Value.collider.GetComponentInParent<Health>() == null) return;
         }
 
+        // minul (nezasahl nepritele ani terc): hrdina s weaponMissLineChance se obcas ozve (Sindel)
+        if (!first.HasValue || !HitsEnemy(first.Value.collider))
+            MaybeSayWeaponMiss();
+
         if (first.HasValue)
         {
             var hit = first.Value;
@@ -644,6 +648,25 @@ public class WeaponShooting : NetworkBehaviour
             else
                 ApplyHit(hit.collider, hit.point, 1f, normal: hit.normal);
         }
+    }
+
+    float nextWeaponMissLine;
+
+    bool HitsEnemy(Collider col)
+    {
+        if (col.GetComponentInParent<Target>() != null) return true;
+        var health = col.GetComponentInParent<Health>();
+        return health != null && !Combat.SameTeam(gameObject, health.gameObject);
+    }
+
+    // Hlaska "minul jsem" po minutem vystrelu: s danou sanci, po hlasce 6-10 s pauza (pistole strili rychle).
+    void MaybeSayWeaponMiss()
+    {
+        var hero = GetComponent<PlayerHero>();
+        if (hero == null || hero.Hero == null || hero.Hero.weaponMissLineChance <= 0f || Time.time < nextWeaponMissLine) return;
+        if (Random.value >= hero.Hero.weaponMissLineChance) return;
+        nextWeaponMissLine = Time.time + Random.Range(6f, 10f);
+        hero.Say(VoiceKind.Miss);
     }
 
     // Uder: siroky oblouk pred hracem (~110 st.) a k tomu 0,5 m tolerance do stran - zasahne vsechny nepratele
@@ -691,7 +714,7 @@ public class WeaponShooting : NetworkBehaviour
             if (victim == null || struck.Contains(victim)) continue;
             if (victim is Health h && Combat.SameTeam(gameObject, h.gameObject)) continue;
 
-            Vector3 point = col.ClosestPoint(origin);
+            Vector3 point = Combat.ClosestPoint(col, origin);
             Vector3 to = point - origin;
             float along = Vector3.Dot(to, forward);
             if (along < -0.2f || to.magnitude > weapon.range + MeleeSlack) continue;
@@ -728,7 +751,7 @@ public class WeaponShooting : NetworkBehaviour
             var owner = hit.collider.GetComponentInParent<NetworkObject>();
             if (owner != null && owner == NetworkObject) continue;
 
-            Vector3 point = hit.distance > 0f ? hit.point : hit.collider.ClosestPoint(origin);
+            Vector3 point = hit.distance > 0f ? hit.point : Combat.ClosestPoint(hit.collider, origin);
             ApplyHit(hit.collider, point, 1.4f, normal: hit.normal);
             return;
         }

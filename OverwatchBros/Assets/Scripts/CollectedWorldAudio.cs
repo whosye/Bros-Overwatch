@@ -50,7 +50,7 @@ public sealed class CollectedWorldAudio : MonoBehaviour
         source.clip = clip;
         source.loop = true;
         source.playOnAwake = false;
-        source.volume = volume;
+        source.volume = volume * GameSettings.EffectsVolume;
         source.spatialBlend = 1f;
         source.rolloffMode = AudioRolloffMode.Linear;
         source.minDistance = 1.5f;

@@ -159,7 +159,14 @@ public class ReplayPlayer : MonoBehaviour
         public bool slivovice;
         public Light holyLight;
         public GameObject holyCircle;
+        public int session = -1;        // ve kterem prehravani byla postava naposledy pouzita
+        public bool firstPerson;        // zbrane u kamery (pohled tohoto hrace)
     }
+
+    // Postavy ze zaznamu se po killcamu / POTG nerusi, jen schovaji - priste se pouziji znovu (postaveni modelu
+    // trvalo u kazde postavy desitky ms a start killcamu se zasekl). Nad tento pocet (stare zapasy) se zrusi.
+    const int MaxPooledGhosts = 16;
+    int session;
 
     readonly Dictionary<int, Ghost> ghosts = new Dictionary<int, Ghost>();
     readonly Dictionary<int, GameObject[]> objects = new Dictionary<int, GameObject[]>();
@@ -192,6 +199,7 @@ public class ReplayPlayer : MonoBehaviour
         MatchOverlayUI.ClearKills();
         End();
         killcamVictim = killcam;
+        session++;
         killcamFov = KillcamFov;
         killcamScope = 0f;
         clip = replay;
@@ -251,9 +259,9 @@ public class ReplayPlayer : MonoBehaviour
 
     void End()
     {
-        foreach (var g in ghosts.Values)
-            if (g.go != null) Destroy(g.go);
-        ghosts.Clear();
+        if (ghosts.Count > MaxPooledGhosts) DestroyGhosts();
+        else
+            foreach (var g in ghosts.Values) HideGhost(g);
 
         foreach (var nodes in objects.Values)
             if (nodes.Length > 0 && nodes[0] != null) Destroy(nodes[0]);
@@ -275,7 +283,29 @@ public class ReplayPlayer : MonoBehaviour
     void OnDestroy()
     {
         End();
+        DestroyGhosts();
         if (instance == this) instance = null;
+    }
+
+    void DestroyGhosts()
+    {
+        foreach (var g in ghosts.Values)
+            if (g.go != null) Destroy(g.go);
+        ghosts.Clear();
+    }
+
+    // Konec prehravani: postava se schova a vypnou se jeji efekty (aura, svatozar, kruh) - pri dalsim pouziti
+    // je zapne zase ApplyPlayers podle zaznamu.
+    static void HideGhost(Ghost g)
+    {
+        if (g.go == null) return;
+        if (g.boosted) { g.boosted = false; NanoAura.Set(g.go.transform, false); }
+        if (g.slivovice) { g.slivovice = false; SlivoviceAura.Set(g.go.transform, false); }
+        if (g.holyAura != null) g.holyAura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        if (g.holyLight != null) g.holyLight.enabled = false;
+        if (g.holyCircle != null) g.holyCircle.SetActive(false);
+        if (g.rushAura != null) g.rushAura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        g.go.SetActive(false);
     }
 
     // ---------------- prehravani ----------------
@@ -307,9 +337,11 @@ public class ReplayPlayer : MonoBehaviour
             Fire(clip.events[nextEvent++]);
     }
 
+    readonly HashSet<int> seen = new HashSet<int>();
+
     void ApplyPlayers(ReplayFrame a, ReplayFrame b, float k)
     {
-        var seen = new HashSet<int>();
+        seen.Clear();
         foreach (var p in a.players)
         {
             seen.Add(p.id);
@@ -434,14 +466,23 @@ public class ReplayPlayer : MonoBehaviour
             ghosts[id] = g;
         }
 
+        bool firstPerson = id == clip.povId;
         if (g.hero != heroIndex)
         {
             // (i zmena hrdiny behem klipu)
             g.hero = heroIndex;
             g.visual.SetFeetOffset(feetOffset);
             g.visual.SetModel(definition.characterPrefab, definition.tintCharacter ? definition.color : Color.white, definition.animations);
-            g.held.SetGhost(definition, id == clip.povId, view != null ? view.transform : null);
+            g.held.SetGhost(definition, firstPerson, view != null ? view.transform : null);
         }
+        else if (g.session != session && (firstPerson || g.firstPerson))
+        {
+            // znovu pouzita postava: zbrane u nove kamery prehravani (nebo zpet do rukou postavy)
+            g.visual.SetFeetOffset(feetOffset);
+            g.held.SetGhost(definition, firstPerson, view != null ? view.transform : null);
+        }
+        g.session = session;
+        g.firstPerson = firstPerson;
         return g;
     }
 
@@ -676,7 +717,7 @@ public class ReplayPlayer : MonoBehaviour
             case ReplayEventType.GlobalSound: Fx.PlayGlobal(FindSound(e.name), e.f0); break;
             case ReplayEventType.Sfx:
                 ProceduralSfx.PlayTracked(FindSound(e.name), e.p0, e.f0, e.f1 > 0f ? e.f1 : 30f,
-                    spatial: true, pitch: e.f2 > 0f ? e.f2 : 1f);
+                    spatial: true, pitch: e.f2 > 0f ? e.f2 : 1f, kind: ProceduralSfx.KindOf(FindSound(e.name)));
                 break;
             case ReplayEventType.ProjectileSpawn:
                 var weapon = FindWeapon(e.name);
@@ -718,16 +759,40 @@ public class ReplayPlayer : MonoBehaviour
 
     // ---------------- hledani assetu podle jmena ----------------
 
-    void PrepareLookups()
+    // Generovane zvuky (ProceduralSfx) vzniknou az pri prvnim pouziti - vytvori se vsechny hned po spusteni hry
+    // (v menu), ne az pri prvnim killcamu (synteza trvala desitky ms a killcam se pri startu zasekl).
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void PrewarmGeneratedSounds() => GeneratedSounds();
+
+    static List<AudioClip> GeneratedSounds()
     {
-        // Generovane zvuky vzniknou az pri prvnim pouziti - vytvorit vsechny.
+        var list = new List<AudioClip>();
         foreach (var property in typeof(ProceduralSfx).GetProperties(BindingFlags.Public | BindingFlags.Static))
             if (property.PropertyType == typeof(AudioClip))
             {
-                var clipValue = property.GetValue(null) as AudioClip;
-                if (clipValue != null) sounds[clipValue.name] = clipValue;
+                AudioClip clipValue = null;
+                try { clipValue = property.GetValue(null) as AudioClip; } catch { }
+                if (clipValue != null) list.Add(clipValue);
             }
+        return list;
+    }
 
+    // Seznam zvuku pro udalosti zaznamu: jednou za zivot prehravace; zvuk, ktery v nem chybi (nacten pozdeji),
+    // ho necha jednou projit znovu (FindSound).
+    bool lookupsReady;
+    int lookupSession = -1;
+
+    void PrepareLookups()
+    {
+        if (lookupsReady) return;
+        lookupsReady = true;
+        RefreshSounds();
+    }
+
+    void RefreshSounds()
+    {
+        foreach (var clipValue in GeneratedSounds())
+            sounds[clipValue.name] = clipValue;
         foreach (var audio in Resources.FindObjectsOfTypeAll<AudioClip>())
             if (audio != null && !sounds.ContainsKey(audio.name))
                 sounds[audio.name] = audio;
@@ -735,7 +800,16 @@ public class ReplayPlayer : MonoBehaviour
 
     AudioClip FindSound(string name)
     {
-        return !string.IsNullOrEmpty(name) && sounds.TryGetValue(name, out var clipValue) ? clipValue : CollectedAudioBank.Find(name);
+        if (string.IsNullOrEmpty(name)) return CollectedAudioBank.Find(name);
+        if (sounds.TryGetValue(name, out var clipValue)) return clipValue;
+        // nahravka nactena az po prvnim prochazeni: projit znovu (nejvys jednou za prehravani)
+        if (lookupSession != session)
+        {
+            lookupSession = session;
+            RefreshSounds();
+            if (sounds.TryGetValue(name, out clipValue)) return clipValue;
+        }
+        return CollectedAudioBank.Find(name);
     }
 
     static WeaponDefinition FindWeapon(string name)

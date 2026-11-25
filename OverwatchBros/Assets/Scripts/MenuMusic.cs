@@ -79,7 +79,7 @@ public class MenuMusic : MonoBehaviour
             silentTime = 0f;
             if (!source.isPlaying)
             {
-                if (paused) source.UnPause();
+                if (paused && source.clip == clip) source.UnPause();
                 else
                 {
                     source.clip = clip;

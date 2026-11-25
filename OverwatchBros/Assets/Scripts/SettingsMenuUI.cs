@@ -12,9 +12,9 @@ public class SettingsMenuUI
     readonly GameObject[] pages=new GameObject[4];
     readonly Button[] tabs=new Button[4];
     TextMeshProUGUI hint;
-    Button closeButton,leaveButton,headBob,music,graphics;
-    Slider sensitivity,bob,master,musicVolume,voice,ambient;
-    TextMeshProUGUI sensValue,bobValue,masterValue,musicValue,voiceValue,ambientValue;
+    Button closeButton,leaveButton,headBob,music,graphics,perfLog,perfFolder;
+    Slider sensitivity,bob,master,musicVolume,voice,ambient,weapons,effects;
+    TextMeshProUGUI sensValue,bobValue,masterValue,musicValue,voiceValue,ambientValue,weaponsValue,effectsValue;
     Action resume;
     int openedFrame;
     static int escapeHandledFrame = -1;
@@ -37,11 +37,15 @@ public class SettingsMenuUI
         sensitivity=Row(pages[0].transform,"Citlivost myši",120,0,1,SensitivityValue(),v=>GameSettings.Sensitivity=Mathf.Round(GameSettings.MinSensitivity*Mathf.Pow(GameSettings.MaxSensitivity/GameSettings.MinSensitivity,v)*100)/100,out sensValue);
         headBob=MenuStyle.Button(pages[0].transform,"",new Vector2(0,15),new Vector2(1000,60),()=>GameSettings.HeadBobEnabled=!GameSettings.HeadBobEnabled);
         bob=Row(pages[0].transform,"Intenzita pohupování",-95,0,200,GameSettings.HeadBobIntensity*100,v=>GameSettings.HeadBobIntensity=v/100,out bobValue);
-        master=Row(pages[1].transform,"Celková hlasitost",145,0,100,GameSettings.Volume*100,v=>GameSettings.Volume=v/100,out masterValue);
-        musicVolume=Row(pages[1].transform,"Hudba",65,0,100,GameSettings.MusicVolume*100,v=>GameSettings.MusicVolume=v/100,out musicValue);
-        voice=Row(pages[1].transform,"Hlášky postav",-15,0,100,GameSettings.VoiceVolume*100,v=>GameSettings.VoiceVolume=v/100,out voiceValue);
-        ambient=Row(pages[1].transform,"Zvuky prostředí",-95,0,100,GameSettings.AmbientVolume*100,v=>GameSettings.AmbientVolume=v/100,out ambientValue);
-        music=MenuStyle.Button(pages[1].transform,"",new Vector2(0,-175),new Vector2(1000,50),()=>GameSettings.MusicEnabled=!GameSettings.MusicEnabled,false,23);
+        perfLog=MenuStyle.Button(pages[0].transform,"",new Vector2(-255,-172),new Vector2(490,52),()=>GameSettings.PerfLogEnabled=!GameSettings.PerfLogEnabled,false,23);
+        perfFolder=MenuStyle.Button(pages[0].transform,"Otevřít složku s logy",new Vector2(255,-172),new Vector2(490,52),OpenPerfFolder,false,23);
+        master=Row(pages[1].transform,"Celková hlasitost",170,0,100,GameSettings.Volume*100,v=>GameSettings.Volume=v/100,out masterValue);
+        musicVolume=Row(pages[1].transform,"Hudba",112,0,100,GameSettings.MusicVolume*100,v=>GameSettings.MusicVolume=v/100,out musicValue);
+        voice=Row(pages[1].transform,"Hlášky postav",54,0,100,GameSettings.VoiceVolume*100,v=>GameSettings.VoiceVolume=v/100,out voiceValue);
+        weapons=Row(pages[1].transform,"Zbraně",-4,0,100,GameSettings.WeaponVolume*100,v=>GameSettings.WeaponVolume=v/100,out weaponsValue);
+        effects=Row(pages[1].transform,"Efekty",-62,0,100,GameSettings.EffectsVolume*100,v=>GameSettings.EffectsVolume=v/100,out effectsValue);
+        ambient=Row(pages[1].transform,"Zvuky prostředí",-120,0,100,GameSettings.AmbientVolume*100,v=>GameSettings.AmbientVolume=v/100,out ambientValue);
+        music=MenuStyle.Button(pages[1].transform,"",new Vector2(0,-182),new Vector2(1000,46),()=>GameSettings.MusicEnabled=!GameSettings.MusicEnabled,false,23);
         graphics=MenuStyle.Button(pages[2].transform,"",new Vector2(0,100),new Vector2(1000,70),()=>GraphicsQuality.Level=(GraphicsQuality.Level+1)%GraphicsQuality.Names.Length);
         MenuStyle.Text(pages[2].transform,"GraphicsHint","Změny se projeví ihned.",new Vector2(0,15),new Vector2(1000,60),26,MenuStyle.Muted);
         ControlGroup(pages[3].transform,-275,"POHYB A BOJ",
@@ -88,6 +92,11 @@ public class SettingsMenuUI
         return slider;
     }
     static float SensitivityValue()=>Mathf.Log(Mathf.Clamp(GameSettings.Sensitivity,GameSettings.MinSensitivity,GameSettings.MaxSensitivity)/GameSettings.MinSensitivity)/Mathf.Log(GameSettings.MaxSensitivity/GameSettings.MinSensitivity);
+    static void OpenPerfFolder()
+    {
+        try { System.IO.Directory.CreateDirectory(PerfLogger.Folder); } catch { }
+        Application.OpenURL("file:///"+PerfLogger.Folder.Replace('\\','/'));
+    }
     public void Select(int index)
     {
         for(int i=0;i<pages.Length;i++)
@@ -121,7 +130,10 @@ public class SettingsMenuUI
         musicVolume.SetValueWithoutNotify(GameSettings.MusicVolume*100); musicValue.text=Mathf.RoundToInt(GameSettings.MusicVolume*100)+" %";
         voice.SetValueWithoutNotify(GameSettings.VoiceVolume*100); voiceValue.text=Mathf.RoundToInt(GameSettings.VoiceVolume*100)+" %";
         ambient.SetValueWithoutNotify(GameSettings.AmbientVolume*100); ambientValue.text=Mathf.RoundToInt(GameSettings.AmbientVolume*100)+" %";
+        weapons.SetValueWithoutNotify(GameSettings.WeaponVolume*100); weaponsValue.text=Mathf.RoundToInt(GameSettings.WeaponVolume*100)+" %";
+        effects.SetValueWithoutNotify(GameSettings.EffectsVolume*100); effectsValue.text=Mathf.RoundToInt(GameSettings.EffectsVolume*100)+" %";
         UiKit.SetButtonLabel(headBob,"Pohupování kamery: "+(GameSettings.HeadBobEnabled?"ZAPNUTO":"VYPNUTO"));
+        UiKit.SetButtonLabel(perfLog,"Logování výkonu: "+(GameSettings.PerfLogEnabled?"ZAPNUTO":"VYPNUTO"));
         UiKit.SetButtonLabel(music,"Hudba v menu: "+(GameSettings.MusicEnabled?"ZAPNUTO":"VYPNUTO"));
         UiKit.SetButtonLabel(graphics,"Kvalita grafiky: "+GraphicsQuality.Names[GraphicsQuality.Level]+"   ›");
     }

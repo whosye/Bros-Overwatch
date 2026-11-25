@@ -339,7 +339,7 @@ public static class Fx
 
         var source = go.AddComponent<AudioSource>();
         source.clip = clip;
-        source.volume = volume;
+        source.volume = volume * GameSettings.EffectsVolume;
         source.spatialBlend = spatial ? 1f : 0f;
         source.panStereo = 0f;
         source.dopplerLevel = 0f;
@@ -362,7 +362,7 @@ public static class Fx
 
         var source = go.AddComponent<AudioSource>();
         source.clip = clip;
-        source.volume = volume;
+        source.volume = volume * GameSettings.EffectsVolume;
         source.spatialBlend = 0f;
         source.Play();
 

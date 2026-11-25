@@ -17,6 +17,13 @@ public class FirstPersonArms
     GameObject rig;
     readonly Arm[] arms = new Arm[2];
 
+    // prostredni (a s nimi i posledni) clanky prstu bez palce obou rukou - lze schovat (SetFingertipsHidden)
+    readonly Transform[][] tips = new Transform[2][];
+    readonly Vector3[][] tipScales = new Vector3[2][];
+    readonly bool[] tipsHidden = new bool[2];
+    // zmenseni pri schovani (poradi jako v FindTips): clanky prstu pryc, zakladni clanek ukazovacku na polovinu
+    static readonly float[] TipHiddenScale = { 0.001f, 0.001f, 0.001f, 0.001f, 0.5f };
+
     // Stred dlane vuci zapesti v souradnicich ruky (z = smer prstu, y = hrbet ruky).
     static readonly Vector3 PalmOffset = new Vector3(0f, -0.03f, 0.085f);
 
@@ -50,6 +57,8 @@ public class FirstPersonArms
         }
 
         CurlFingers(animator, rig.transform);
+        result.FindTips(animator, true);
+        result.FindTips(animator, false);
 
         // Hlava (a vse nad rameny) se nekresli; ramena jsou kousek pod kamerou a pred ni.
         float shoulderY = result.arms[0].upper.position.y;
@@ -201,13 +210,34 @@ public class FirstPersonArms
 
     // Natahne pazi tak, aby dlan drzela zbran v miste 'grip' (svetove souradnice); orientace podle drzaku zbrane.
     // underhand: ruka podpira hlaven zespodu (dlan nahoru, hrbet ruky dolu) - predpazbi u zbrane obema rukama.
-    public void Solve(bool right, Vector3 grip, Transform holder, Transform cameraRoot, bool underhand = false, bool stretch = false)
+    // wrap: dlan podpira predpazbi zespodu (lehce z boku u tela), prsty vedou pod zbrani na druhou stranu;
+    // 'grip' je pak bod na spodku zbrane, ke kteremu se prilozi kuze dlane.
+    public void Solve(bool right, Vector3 grip, Transform holder, Transform cameraRoot, bool underhand = false, bool stretch = false, bool wrap = false)
     {
         var arm = arms[right ? 0 : 1];
         if (arm == null || rig == null) return;
         // Loket miri dolu a ven od tela.
         // (v prvni osobe je rameno mimo obraz - kdyz paze na zbran nedosahne, rameno se k ni posune)
-        SolveArm(arm, grip, holder, cameraRoot.TransformDirection(new Vector3(0.7f * arm.side, -1f, -0.3f)), underhand, underhand || stretch);
+        SolveArm(arm, grip, holder, cameraRoot.TransformDirection(new Vector3(0.7f * arm.side, -1f, -0.3f)), underhand, underhand || stretch, wrap);
+    }
+
+    // Sevreni prstu jedne ruky (-1 = pest, -0.85 = vychozi drzeni zbrane); palec zvlast.
+    public void CurlHand(bool right, float fingers, float thumb)
+    {
+        var animator = rig != null ? rig.GetComponent<Animator>() : null;
+        if (animator == null || animator.avatar == null) return;
+        var handler = new HumanPoseHandler(animator.avatar, rig.transform);
+        var pose = new HumanPose();
+        handler.GetHumanPose(ref pose);
+        string prefix = right ? "RightHand." : "LeftHand.";
+        for (int i = 0; i < HumanTrait.MuscleCount && i < pose.muscles.Length; i++)
+        {
+            string name = HumanTrait.MuscleName[i];
+            if (!name.StartsWith(prefix) || !name.Contains("Stretched")) continue;
+            pose.muscles[i] = name.Contains("Thumb") ? thumb : fingers;
+        }
+        handler.SetHumanPose(ref pose);
+        handler.Dispose();
     }
 
     // Leva pest s natazenym ukazovackem (Mosinovo gesto pri zesileni), nebo zpet sevrena pest.
@@ -228,6 +258,34 @@ public class FirstPersonArms
         handler.Dispose();
     }
 
+    void FindTips(Animator animator, bool right)
+    {
+        int i = right ? 0 : 1;
+        tips[i] = new[]
+        {
+            animator.GetBoneTransform(right ? HumanBodyBones.RightIndexIntermediate : HumanBodyBones.LeftIndexIntermediate),
+            animator.GetBoneTransform(right ? HumanBodyBones.RightMiddleIntermediate : HumanBodyBones.LeftMiddleIntermediate),
+            animator.GetBoneTransform(right ? HumanBodyBones.RightRingIntermediate : HumanBodyBones.LeftRingIntermediate),
+            animator.GetBoneTransform(right ? HumanBodyBones.RightLittleIntermediate : HumanBodyBones.LeftLittleIntermediate),
+            // zakladni clanek ukazovacku jen zkratit (vycnival pred bok zbrane)
+            animator.GetBoneTransform(right ? HumanBodyBones.RightIndexProximal : HumanBodyBones.LeftIndexProximal),
+        };
+        tipScales[i] = new Vector3[tips[i].Length];
+        for (int k = 0; k < tips[i].Length; k++)
+            tipScales[i][k] = tips[i][k] != null ? tips[i][k].localScale : Vector3.one;
+    }
+
+    // Schova konecky prstu (prostredni a posledni clanek smrsknute do kloubu) - napr. leva ruka podpirajici
+    // predpazbi, jejiz prsty by jinak vykukovaly pred bokem zbrane. Palec zustava.
+    public void SetFingertipsHidden(bool right, bool hidden)
+    {
+        int i = right ? 0 : 1;
+        if (tips[i] == null || tipsHidden[i] == hidden) return;
+        tipsHidden[i] = hidden;
+        for (int k = 0; k < tips[i].Length; k++)
+            if (tips[i][k] != null) tips[i][k].localScale = hidden ? tipScales[i][k] * TipHiddenScale[k] : tipScales[i][k];
+    }
+
     // Vrati paze do vychozi pozy (mimo obraz) - napr. prava ruka luku, kdyz se zrovna nenatahuje.
     public void ResetArm(bool right)
     {
@@ -240,16 +298,52 @@ public class FirstPersonArms
     }
 
     // Dvoukloubova IK jedne paze (i paze postavy ve 3. osobe): dlan na 'grip', loket smerem 'pole'.
-    public static void SolveArm(Arm arm, Vector3 grip, Transform holder, Vector3 pole, bool underhand, bool stretch = false)
+    // podpora: kuze dlane lezi asi 1,5 cm pred bodem PalmOffset (ten je "uvnitr" drzeneho predmetu) - bod na
+    // povrchu zbrane se posune o tolik do zbrane, at dlan prilehne (radsi kousek zanori nez nechat mezeru)
+    public const float WrapPalmDepth = 0.015f;
+
+    // Natoceni ruky (z = smer prstu, y = hrbet ruky) vuci drzaku zbrane.
+    // Prsty miri dopredu pres rukojet, dlan je privracena k rukojeti, palec nahoru.
+    // (zespodu: prsty sikmo dopredu a ke zbrani, hrbet ruky dolu)
+    // (podpora: prsty sikmo dopredu a napric pod zbrani na druhou stranu, hrbet ruky dolu a lehce ven,
+    //  dlan tedy nahoru ke spodku zbrane, palcova hrana podel boku zbrane u tela)
+    public static Quaternion HandFrame(Transform holder, float side, bool underhand, bool wrap)
+    {
+        return wrap
+            ? Quaternion.LookRotation((holder.forward * 0.65f - holder.right * side * 0.75f).normalized,
+                (-holder.up * 0.9f + holder.right * side * 0.4f).normalized)
+            : underhand
+            ? Quaternion.LookRotation((holder.forward - holder.right * side * 0.35f).normalized, -holder.up)
+            : Quaternion.LookRotation(holder.forward, holder.right * side);
+    }
+
+    // Ruka s libovolnym natocenim (napr. leva ruka s plechovkou pri Davidove prebijeni).
+    public void SolveFrame(bool right, Vector3 grip, Quaternion handFrame, Transform cameraRoot, bool stretch = true)
+    {
+        var arm = arms[right ? 0 : 1];
+        if (arm == null || rig == null) return;
+        SolveArmFrame(arm, grip, handFrame, cameraRoot.TransformDirection(new Vector3(0.7f * arm.side, -1f, -0.3f)), stretch);
+    }
+
+    public static void SolveArm(Arm arm, Vector3 grip, Transform holder, Vector3 pole, bool underhand, bool stretch = false, bool wrap = false)
+    {
+        if (arm == null || arm.upper == null) return;
+        Quaternion handFrame = HandFrame(holder, arm.side, underhand, wrap);
+        if (wrap) grip += handFrame * Vector3.down * WrapPalmDepth;
+        SolveArmFrame(arm, grip, handFrame, pole, stretch);
+    }
+
+    // Bod dlane (kde ruka drzi predmet) a natoceni ruky (z = prsty, y = hrbet ruky) podle aktualni pozy kosti.
+    public static void PalmPose(Arm arm, out Vector3 point, out Quaternion frame)
+    {
+        frame = arm.hand.rotation * arm.handFrameLocal;
+        point = arm.hand.position + frame * PalmOffset;
+    }
+
+    public static void SolveArmFrame(Arm arm, Vector3 grip, Quaternion handFrame, Vector3 pole, bool stretch)
     {
         if (arm == null || arm.upper == null) return;
         if (stretch) arm.upper.localPosition = arm.upperRestLocal;
-
-        // Prsty miri dopredu pres rukojet, dlan je privracena k rukojeti, palec nahoru.
-        // (zespodu: prsty sikmo dopredu a ke zbrani, hrbet ruky dolu)
-        Quaternion handFrame = underhand
-            ? Quaternion.LookRotation((holder.forward - holder.right * arm.side * 0.35f).normalized, -holder.up)
-            : Quaternion.LookRotation(holder.forward, holder.right * arm.side);
         Vector3 wrist = grip - handFrame * PalmOffset;
 
         Vector3 shoulder = arm.upper.position;

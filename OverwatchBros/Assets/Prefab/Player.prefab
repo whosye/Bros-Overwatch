@@ -678,6 +678,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BlockAbility
   ShowTopMostFoldoutHeaderGroup: 1
   ability: {fileID: 0}
+  counter: {fileID: 0}
 --- !u!114 &5463691345871641797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1082,4 +1083,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TripleSlashAbility
   ShowTopMostFoldoutHeaderGroup: 1
-  ability: {fileID: 0}
+  weapon: {fileID: 0}
+  slam: {fileID: 0}

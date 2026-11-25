@@ -1051,13 +1051,42 @@ public class PlayerHero : NetworkBehaviour
 
     // Veta z rozhovoru dvou hrdinu (MatchManagerBanter): nahravka Resources/Banter/<slozka>, poradi 'index'.
     [ClientRpc]
-    public void SayBanterClientRpc(string folder, int index)
+    public void SayBanterClientRpc(string folder, int index, int priority) => PlayFolderLine(folder, index, priority);
+
+    // Hlaska jen pro vlastnika tohoto hrdiny (ostatni ji neslysi) - napr. Honza, kdyz nekdo sklapne jeho past.
+    [ClientRpc]
+    void SayOwnLineClientRpc(string folder, int index, ClientRpcParams rpcParams = default)
+    {
+        if (IsOwner) PlayFolderLine(folder, index, HeroVoice.TopLinePriority);   // prebije vse, prerusi ji jen ultimatka
+    }
+
+    void PlayFolderLine(string folder, int index, int priority = 3)
     {
         if (voice == null) return;
         var clips = new System.Collections.Generic.List<AudioClip>(Resources.LoadAll<AudioClip>("Banter/" + folder));
         clips.Sort((x, y) => string.CompareOrdinal(x.name, y.name));
         if (index >= 0 && index < clips.Count)
-            voice.PlayLine(clips[index], 3);
+            voice.PlayLine(clips[index], priority);
+    }
+
+    // Nahodna hlaska z Resources/Banter/<slozka>. Jen server; prazdna / chybejici slozka = nic.
+    // ownerOnly: uslysi ji jen hrac, ktery tohoto hrdinu hraje (bot nikomu) - napr. Honza, kdyz nekdo sklapne jeho past.
+    // priority: jak dulezita je (3 = jako rozhovor; 5 = prebije i hlasku ke schopnosti).
+    public void ServerSayFolderLine(string folder, bool ownerOnly = false, int priority = 3)
+    {
+        if (!IsServer) return;
+        if (ownerOnly && (isBot.Value || BotBrain.IsBot(gameObject))) return;
+        int count = Resources.LoadAll<AudioClip>("Banter/" + folder).Length;
+        if (count == 0) return;
+        int index = Random.Range(0, count);
+        if (ownerOnly)
+        {
+            var target = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { OwnerClientId } } };
+            SayOwnLineClientRpc(folder, index, target);
+            return;
+        }
+        nextAttackLine = Mathf.Max(nextAttackLine, Time.time + 6f);   // (at hned nenavaze obecna hlaska)
+        SayBanterClientRpc(folder, index, priority);
     }
 
     // Hlaska k utoku (vola server pri zasahu nepritele zbrani): obcas, nejvys jednou za 12-20 s, at to neotravuje.
@@ -1078,7 +1107,7 @@ public class PlayerHero : NetworkBehaviour
                 int count = Resources.LoadAll<AudioClip>("Banter/" + folder).Length;
                 if (count == 0) break;
                 nextAttackLine = Mathf.Max(nextAttackLine, Time.time + 8f);   // (at hned nenavaze obecna hlaska)
-                SayBanterClientRpc(folder, Random.Range(0, count));
+                SayBanterClientRpc(folder, Random.Range(0, count), 3);
                 return;
             }
 
@@ -1137,7 +1166,7 @@ public class PlayerHero : NetworkBehaviour
     void SayServerRpc(int kind, int slot, int phase)
     {
         // (vlastnik posila jen schopnosti, oziveni, chuzi... a scope; zasahy a leceni hlasi server sam)
-        if (kind < 0 || (kind > (int)VoiceKind.Snare && kind != (int)VoiceKind.Scope)) return;
+        if (kind < 0 || (kind > (int)VoiceKind.Snare && kind != (int)VoiceKind.Scope && kind != (int)VoiceKind.Miss)) return;
         SayClientRpc(kind, slot, PickFor((VoiceKind)kind, slot, Mathf.Clamp(phase, 0, 9)));
     }
 

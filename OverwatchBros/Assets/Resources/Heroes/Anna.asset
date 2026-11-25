@@ -13,17 +13,21 @@ MonoBehaviour:
   m_Name: Anna
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   heroName: David
-  description: "Podpora na d\u00e1lku. Pu\u0161kou l\u00e9\u010d\u00ed spoluhr\u00e1\u010de a zra\u0148uje nep\u0159\u00e1tele, usp\u00e1v\u00e1 a posiluje Monsterem: zelen\u00fd (E) slab\u011b, B\u00cdL\u00dd (Q) naplno."
+  description: "Podpora na d\xE1lku. Pu\u0161kou l\xE9\u010D\xED spoluhr\xE1\u010De
+    a zra\u0148uje nep\u0159\xE1tele, usp\xE1v\xE1 a posiluje Monsterem: zelen\xFD
+    (E) slab\u011B, B\xCDL\xDD (Q) naplno."
   color: {r: 0.35, g: 0.75, b: 0.85, a: 1}
   maxHealth: 100
   healingScale: 0.75
   scopeAimPose: 1
+  hipFire: 0
   weapon: {fileID: 11400000, guid: 5d1389603058e184d9c129fe5cb47786, type: 2}
   abilityKind: 16
   ability: {fileID: 11400000, guid: edf8718c252397d48893cfc0ecf69db2, type: 2}
   secondaryAbilityKind: 14
   secondaryAbility: {fileID: 11400000, guid: c1f24624fccc47b4785ada7cef2f79a5, type: 2}
   blockAbility: {fileID: 0}
+  counterAbility: {fileID: 0}
   altAbilityKind: 15
   altAbility: {fileID: 11400000, guid: 7177c925889a06941a76a3affac95ae5, type: 2}
   rmbAbilityKind: 0
@@ -33,10 +37,15 @@ MonoBehaviour:
   moveSpeed: 1
   lifesteal: 0
   takedownCooldownCut: 0
+  takedownKillsOnly: 0
   deathGrenades: 0
   deathGrenadeDamage: 30
   deathGrenadeRadius: 3.5
   characterPrefab: {fileID: 1954741295348994690, guid: 303f60cf9a6c6a74ea4f6b91d3438090, type: 3}
+  backPrefab: {fileID: 0}
+  backOffset: {x: 0.05, y: 0, z: -0.17}
+  backEuler: {x: 0, y: 0, z: -25}
+  backScale: 1
   tintCharacter: 0
   animations: {fileID: 11400000, guid: 33e0a73c0f7c4299a0b425845b37e374, type: 2}
   sleeveColor: {r: 0.09, g: 0.09, b: 0.1, a: 1}
@@ -54,7 +63,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d90c657999b9cbf49a96a9bb78030101, type: 3}
   snareLines:
   - {fileID: 8300000, guid: 6da499fcd1fff4b41bc2344e80c0c46b, type: 3}
-  attackLines: []
+  attackLines:
+  - {fileID: 8300000, guid: 9e9124f8ce9b7114a89288ee9962d97d, type: 3}
   healLines:
   - {fileID: 8300000, guid: 1b0b6e079a37fd5499adeec67d4de460, type: 3}
   - {fileID: 8300000, guid: 37edbf1cdabc5b346bbd9f4a74e47f57, type: 3}
@@ -62,6 +72,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 78627cdf5d49a504bb1c27f7c856bed0, type: 3}
   missLines:
   - {fileID: 8300000, guid: 474d7e55f1abafb418706d042ccd672f, type: 3}
+  weaponMissLineChance: 0
   scopeLines:
   - {fileID: 8300000, guid: 5ffb361e977b20240870961284bae431, type: 3}
+  healedLines: []
   ultVoiceEcho: 1
+  ultVoiceMaxSeconds: 0
+  ultVoiceSpeed: 1
+  ultVoiceNormalTail: 0

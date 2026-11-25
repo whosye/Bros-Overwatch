@@ -923,12 +923,12 @@ public static class M7Setup
     {
         var pistol = LoadOrCreate<WeaponDefinition>("Assets/Data/SindelPistol_Data.asset", w =>
         {
-            w.weaponName = "Devítka";
+            w.weaponName = "PeaceMaker";
             w.fireMode = FireMode.Hitscan;
             w.heldModel = HeldModel.Gun;
             w.damage = 38f;
             w.fireRate = 2.4f;
-            w.maxAmmo = 10;
+            w.maxAmmo = 6;
             w.reloadTime = 1.5f;
             w.range = 120f;
             w.falloffStart = 25f;

@@ -1,0 +1,17 @@
+Model Information:
+* title:	Junkrat's Grenade Launcher
+* source:	Sketchfab - "Junkrat's Grenade Launcher" by Oliver Villar
+* author:	Oliver Villar (https://sketchfab.com, blendtuts.es)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+Used in the game as Honza's grenade launcher (Assets/Editor/GrenadeLauncherSetup.cs -> Prefab/Weapons/Held_GrenadeLauncher.prefab).
+Edited in Blender: the yellow muzzle cap is cut out as a separate part "MuzzleCap" with its origin at the hinge
+(it flips open on every shot, see Scripts/MuzzleCap.cs); the ammo crate is a separate part "Magazine" and the four
+grenades in it are "Grenade_1".."Grenade_4" sharing one mesh (they move on every shot, see Scripts/GrenadeFeed.cs);
+the gear-shift lever on top is "CockingLever" with its origin at the bottom of the stick (pulled back on reload).
+Otherwise unchanged (13.7k triangles, 1k textures).
+
+This work is based on "Junkrat's Grenade Launcher" by Oliver Villar licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

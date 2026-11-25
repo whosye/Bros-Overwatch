@@ -66,7 +66,7 @@ public class WaterSplashFx : MonoBehaviour
         SetRate(wakeRight, surfing ? 70f : 0f);
         foam.emitting = surfing;
         if (surfing && !rush.isPlaying) rush.Play();
-        rush.volume = Mathf.MoveTowards(rush.volume, surfing ? 0.7f : 0f, Time.deltaTime * 2f);
+        rush.volume = Mathf.MoveTowards(rush.volume, surfing ? 0.7f * GameSettings.EffectsVolume : 0f, Time.deltaTime * 2f);
         if (!surfing && rush.volume <= 0.001f && rush.isPlaying) rush.Stop();
     }
 

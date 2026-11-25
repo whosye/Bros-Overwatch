@@ -82,7 +82,7 @@ public class VoiceLineSetup : AssetPostprocessor
         var result = new List<AudioClip>();
         if (lines != null)
             foreach (var clip in lines)
-                if (clip != null && !AssetDatabase.GetAssetPath(clip).StartsWith(folder + "/"))
+                if (clip != null && !AssetDatabase.GetAssetPath(clip).StartsWith(folder + "/") && !MovedAway(AssetDatabase.GetAssetPath(clip)))
                     result.Add(clip);
 
         var paths = new List<string>();
@@ -103,6 +103,16 @@ public class VoiceLineSetup : AssetPostprocessor
         EditorUtility.SetDirty(owner);
         Debug.Log($"[VoiceLineSetup] {owner.name}: {folder} -> {result.Count} nahrávek");
         return true;
+    }
+
+    // Nahravka presunuta (i s .meta = stejne GUID) do jine hlasove slozky hrdiny nebo do Resources/Banter
+    // (rozhovory a hlasky na konkretni udalost) uz do teto schranky nepatri - jinak by ji drzela jako "rucne prirazenou".
+    static bool MovedAway(string path)
+    {
+        if (path.StartsWith("Assets/Resources/Banter/")) return true;
+        if (!path.StartsWith(AudioRoot + "/")) return false;
+        string[] parts = path.Substring(AudioRoot.Length + 1).Split('/');
+        return parts.Length >= 3 && AssetDatabase.FindAssets(parts[0] + " t:HeroDefinition", new[] { HeroDir }).Length > 0;
     }
 
     static bool Same(AudioClip[] current, List<AudioClip> wanted)

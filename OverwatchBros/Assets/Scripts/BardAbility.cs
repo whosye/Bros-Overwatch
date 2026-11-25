@@ -944,8 +944,10 @@ public class BardAuraMusic : MonoBehaviour
         if (healClip == null) healClip = Resources.Load<AudioClip>("Audio/bard_heal");
         if (speedClip == null) speedClip = Resources.Load<AudioClip>("Audio/bard_speed");
         // (ostatni ji slysi jen v dosahu aury - hlida rolloff do jejiho okraje)
-        Fade(ref heal, healClip, healOn, 0.08f);
-        Fade(ref speed, speedClip, speedOn, 0.06f);   // (nahravka je o 2,6 dB hlasitejsi nez leciva)
+        // Obe hudby bezi porad (dokud Bard zije), prepnuti aury jen prolne hlasitost - drive se pri kazdem
+        // prepnuti hudba spoustela znovu (Play) a obraz se na ~20 ms zasekl.
+        Fade(ref heal, healClip, healOn, active, 0.08f);
+        Fade(ref speed, speedClip, speedOn, active, 0.06f);   // (nahravka je o 2,6 dB hlasitejsi nez leciva)
     }
 
     void UpdateDance(bool on)
@@ -958,9 +960,9 @@ public class BardAuraMusic : MonoBehaviour
         if (dance.volume <= 0.001f) dance.Stop();
     }
 
-    void Fade(ref AudioSource source, AudioClip clip, bool on, float volume)
+    void Fade(ref AudioSource source, AudioClip clip, bool on, bool running, float volume)
     {
-        if (on && source == null && clip != null)
+        if (running && source == null && clip != null)
         {
             var go = new GameObject("BardAuraMusic_" + clip.name);
             go.transform.SetParent(transform, false);
@@ -980,8 +982,20 @@ public class BardAuraMusic : MonoBehaviour
         source.minDistance = source.maxDistance * 0.5f;
 
         source.spatialBlend = ProceduralSfx.IsLocalPlayer(bard) ? 0f : 1f;
-        if (on && !source.isPlaying) source.Play();
+        if (running && !source.isPlaying)
+        {
+            if (paused.Contains(source)) source.UnPause();
+            else source.Play();
+            paused.Remove(source);
+        }
         source.volume = Mathf.MoveTowards(source.volume, on ? volume : 0f, Time.deltaTime * (on ? 1f : 2f));
-        if (!on && source.volume <= 0.001f && source.isPlaying) source.Pause();
+        // pauza jen kdyz Bard nehraje (smrt, zaznam, konec zapasu) - ne pri prepnuti aury
+        if (!running && source.volume <= 0.001f && source.isPlaying)
+        {
+            source.Pause();
+            paused.Add(source);
+        }
     }
+
+    readonly System.Collections.Generic.HashSet<AudioSource> paused = new System.Collections.Generic.HashSet<AudioSource>();
 }

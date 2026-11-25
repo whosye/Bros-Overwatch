@@ -13,6 +13,7 @@ public partial class MatchManager
     {
         ("Max", "Honza", "max_honza"),
         ("Viktor", "Ayran", "viktor_pova"),   // Viktor zacne, Pova (Jamn) odpovi
+        ("Honza", "Ayran", "honza_pova"),     // Honza zacne, Pova odpovi
     };
 
     // Hlaska pri zasahu konkretniho soupere zbrani (strelec, zasazeny - jmena hero assetu, slozka v Resources/Banter
@@ -81,7 +82,7 @@ public partial class MatchManager
             var health = who.GetComponent<Health>();
             if (health == null || health.currentHealth.Value <= 0f) break;
 
-            who.SayBanterClientRpc(folder, i);
+            who.SayBanterClientRpc(folder, i, 3);
             yield return new WaitForSeconds(clips[i].length + 0.3f);
         }
         banterRunning = false;

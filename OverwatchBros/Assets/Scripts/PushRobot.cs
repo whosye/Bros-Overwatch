@@ -366,7 +366,7 @@ public class PushRobot : MonoBehaviour
         {
             var source = creaks[team];
             if (source == null) continue;
-            source.volume = Mathf.MoveTowards(source.volume, pushing && owner == team ? 0.55f : 0f, dt * 1.5f);
+            source.volume = Mathf.MoveTowards(source.volume, pushing && owner == team ? 0.55f * GameSettings.EffectsVolume : 0f, dt * 1.5f);
             source.pitch = 0.8f + Mathf.Abs(rate) * 0.25f;
         }
         if (live && Mathf.Abs(rate) > 0f && Time.time >= nextVoice)

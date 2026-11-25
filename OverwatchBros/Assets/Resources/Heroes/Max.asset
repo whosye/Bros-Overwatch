@@ -72,7 +72,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d84f950d4f4021a4e89b5fcd8ac0a561, type: 3}
   - {fileID: 8300000, guid: 3a2aee18d9ca2984eb1e89ce09246e36, type: 3}
   idleLines:
-  - {fileID: 8300000, guid: dda596356041d924b930512d86ed0b47, type: 3}
   - {fileID: 8300000, guid: d1c73514fee808d4db47eed9c7f6f477, type: 3}
   - {fileID: 8300000, guid: c0e1a4f94d454324e801c178292f0830, type: 3}
   - {fileID: 8300000, guid: c66904cdbe094b04f83920d499eecdfa, type: 3}

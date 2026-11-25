@@ -125,6 +125,7 @@ public class RingWorldView : MonoBehaviour
         voice.maxDistance = 40f;
         voice.playOnAwake = false;
         lines = Resources.LoadAll<AudioClip>("Audio/Glum");
+        hitLines = Resources.LoadAll<AudioClip>("Audio/GlumHit");   // kazdy druhy zasah nositele
         // Po ctyrech: telo od kycli (vzadu, 0,55 m) sikmo dopredu k ramenum (0,75 m), ruce jako predni nohy,
         // nohy pokrcene na kolenou dozadu, hlava zvednuta dopredu.
         gollumBody = new GameObject("Telo").transform;
@@ -177,18 +178,22 @@ public class RingWorldView : MonoBehaviour
     const float HipHeight = 0.55f;
     const float BodyPitch = 73f;   // predklon tela pri chuzi po ctyrech
     AudioSource voice;
-    AudioClip[] lines;
-    int lastLine = -1;
+    AudioClip[] lines, hitLines;
+    int lastLine = -1, lastHitLine = -1;
 
     // Glum promluvi (server posila MatchManagerRing - vsichni slysi stejnou hlasku ve stejnou chvili).
-    public static void Speak(int seed)
+    // onHit = zvlastni hlaska pri kazdem druhem zasahu nositele (Resources/Audio/GlumHit).
+    public static void Speak(int seed, bool onHit = false)
     {
-        if (instance == null || instance.voice == null || instance.lines == null || instance.lines.Length == 0) return;
+        if (instance == null || instance.voice == null) return;
+        var pool = onHit ? instance.hitLines : instance.lines;
+        if (pool == null || pool.Length == 0) return;
         if (!instance.gollum.gameObject.activeInHierarchy || ReplayPlayer.Active) return;
-        int pick = Mathf.Abs(seed) % instance.lines.Length;
-        if (instance.lines.Length > 1 && pick == instance.lastLine) pick = (pick + 1) % instance.lines.Length;
-        instance.lastLine = pick;
-        instance.voice.clip = instance.lines[pick];
+        ref int last = ref (onHit ? ref instance.lastHitLine : ref instance.lastLine);
+        int pick = Mathf.Abs(seed) % pool.Length;
+        if (pool.Length > 1 && pick == last) pick = (pick + 1) % pool.Length;
+        last = pick;
+        instance.voice.clip = pool[pick];
         instance.voice.volume = GameSettings.VoiceVolume;
         instance.voice.Play();
     }

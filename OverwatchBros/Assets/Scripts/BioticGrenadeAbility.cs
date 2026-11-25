@@ -104,11 +104,15 @@ public class BioticGrenadeAbility : NetworkBehaviour
         if (match == null || (!match.IsOver && !match.IsLobby))
         {
             var touched = new HashSet<Health>();
+            bool hitEnemy = false;
             foreach (var col in Physics.OverlapSphere(point, ability.radius, ~0, QueryTriggerInteraction.Ignore))
             {
                 var dummy = col.GetComponentInParent<Target>();
                 if (dummy != null)
+                {
                     dummy.TakeDamage(ability.power);
+                    hitEnemy = true;
+                }
 
                 var target = col.GetComponentInParent<Health>();
                 if (target == null || !touched.Add(target) || target.currentHealth.Value <= 0f) continue;
@@ -128,10 +132,15 @@ public class BioticGrenadeAbility : NetworkBehaviour
                 {
                     Combat.DamagePlayer(gameObject, target, ability.power, Combat.AbilitySource(ability));
                     target.ServerBlockHealing(ability.duration);
+                    hitEnemy = true;
                     if (target.TryGetComponent<FirstPersonController>(out var slowed))
                         slowed.ServerSlow(SlowSeconds, SlowFactor);
                 }
             }
+
+            // hlaska jen pri zasahu nepritele (Resources/Banter/david_granat_nepritel) - na spoluhrace nedava smysl
+            if (hitEnemy && TryGetComponent<PlayerHero>(out var self))
+                self.ServerSayFolderLine("david_granat_nepritel", false, 5);
         }
 
         DetonatedClientRpc(point);

@@ -25,9 +25,24 @@ public static class CapturePointGizmos
 
                 Handles.color = new Color(1f, 0.85f, 0.15f);
                 Handles.matrix = Matrix4x4.TRS(point.transform.position, Quaternion.Euler(0f, point.transform.eulerAngles.y, 0f), Vector3.one);
-                Handles.DrawWireCube(new Vector3(0f, 1f, 0f), new Vector3(size.x, 2f, size.y));
+                var area = point.GetComponent<CapturePointArea>();
+                if (area != null && area.HasArea)
+                {
+                    foreach (var edge in area.Geometry.outline)
+                    {
+                        var a = new Vector3(edge.a.x, .05f, edge.a.y);
+                        var b = new Vector3(edge.b.x, .05f, edge.b.y);
+                        Handles.DrawLine(a, b);
+                        Handles.DrawLine(a + Vector3.up * 2f, b + Vector3.up * 2f);
+                        Handles.DrawLine(a, a + Vector3.up * 2f);
+                        Handles.DrawLine(b, b + Vector3.up * 2f);
+                    }
+                }
+                else Handles.DrawWireCube(new Vector3(0f, 1f, 0f), new Vector3(size.x, 2f, size.y));
                 Handles.matrix = Matrix4x4.identity;
-                Handles.Label(point.transform.position + Vector3.up * 2.4f, $"Bod {i}  ({size.x:0.#} × {size.y:0.#} m)");
+                Handles.Label(point.transform.position + Vector3.up * 2.4f, area != null && area.HasArea
+                    ? $"Bod {i}  ({area.RegionCount} casti, {area.Geometry.area:0.#} m²)"
+                    : $"Bod {i}  ({size.x:0.#} × {size.y:0.#} m)");
             }
 
             // mista oziveni v rezimu utok a obrana (SpawnPoint_Utok_X / SpawnPoint_Obrana_X), ktere hra opravdu pouziva

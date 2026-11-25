@@ -118,7 +118,7 @@ public class FoldingFloor : MonoBehaviour
                 ProceduralSfx.Play(ProceduralSfx.Explosion, FreeEdge(), 0.55f, 45f, spatial: true);
                 Fx.Sparks(FreeEdge(), new Color(0.55f, 0.42f, 0.3f));
             }
-            BotNavigation.Invalidate();   // boti: nova cesta do patra
+            BotNavigation.Refresh();   // boti: nova cesta do patra (sit se prestavi na pozadi)
         }
     }
 
