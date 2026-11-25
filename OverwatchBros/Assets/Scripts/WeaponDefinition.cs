@@ -48,6 +48,9 @@ public class WeaponDefinition : ScriptableObject
     [Tooltip("Tezka zbran (Honzuv granatomet): pri vystrelu se ruka se zbrani jen cukne dozadu - bez zvednuti hlavne "
         + "a bez animace strelby z pistole na postave.")]
     public bool heavyRecoil;
+    [Tooltip("Viktor: v prvni osobe leva ruka vytahne zasobnik (dil s 'Magazine' v nazvu) dolu, sjede pro novy a zasune ho "
+        + "zespodu - zbran zustava v obraze. Ostatni hraci vidi bezne prebijeni.")]
+    public bool magazineSwapReload;
 
     // Hitscan: dosah okamziteho paprsku. Projectile: nejvetsi vzdalenost, kterou projektil preleti.
     public float range = 100f;

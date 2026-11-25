@@ -13,12 +13,20 @@ MonoBehaviour:
   m_Name: Pistol_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   weaponName: Pistol
-  description: "Rychl\u00e1 pistole s okam\u017eit\u00fdm z\u00e1sahem. Na velkou d\u00e1lku sl\u00e1bne."
+  description: "Rychl\xE1 pistole s okam\u017Eit\xFDm z\xE1sahem. Na velkou d\xE1lku
+    sl\xE1bne."
   damage: 20
   fireRate: 5.5
   maxAmmo: 14
+  burstCount: 1
+  burstInterval: 0.07
   reloadTime: 1.5
   reloadAnimation: 0
+  revolverReload: 0
+  monsterCanReload: 0
+  magazineSlapReload: 0
+  heavyRecoil: 0
+  magazineSwapReload: 1
   range: 100
   chargeTime: 0
   minChargeDamage: 20
@@ -32,9 +40,14 @@ MonoBehaviour:
   allyHeal: 0
   scopeFov: 0
   scopedChargeTime: 0
+  boltCycleTime: 0
   scopedMinDamage: 30
   scopedMaxDamage: 120
   headshotMultiplier: 1.2
+  hitscanRadius: 0
+  scopedFalloffStart: 0
+  scopedFalloffEnd: 0
+  scopedFalloffMin: 0.4
   scopedAmmoCost: 2
   scopedMoveSpeed: 0.5
   proximityRadius: 0
@@ -49,10 +62,23 @@ MonoBehaviour:
   projectileTrail: 1
   projectilePrefab: {fileID: 0}
   meleeRadius: 0.6
+  meleeArc: 55
+  comboFinisherDamage: 0
+  comboFinisherArc: 60
+  comboFinisherKnockback: 0
+  powerShotEvery: 0
+  powerShotDamageScale: 1.25
+  powerShotColor: {r: 1, g: 0.12, b: 0.06, a: 1}
   heldModel: 0
   dualWield: 0
   twoHanded: 1
-  heldScale: 1.25
-  heldPrefab: {fileID: 5783223463912948960, guid: 83e204c8db133154384a8423f2b836df, type: 3}
+  firstPersonTwoHanded: 1
+  heldScale: 1
+  firstPersonOffset: {x: 0.03, y: 0.03, z: 0.1}
+  heldPrefab: {fileID: 4757237104262889218, guid: 057c550893f0fc04c92638112322f0a9, type: 3}
+  comboRotation: 0
   fireSound: {fileID: 8300000, guid: ee4f2633e9380f84f92345d84d5675b3, type: 3}
   scopedFireSound: {fileID: 0}
+  bulletImpactSound: {fileID: 0}
+  bulletImpactVolume: 0.5
+  bulletHoles: 1

@@ -7,8 +7,35 @@ using UnityEngine;
 // ruka drzi bod (0; 0,12; 0), cepel nahore vybiha dopredu (+Z). Osy se odvodi z tvaru: nejdelsi osa = nasada,
 // konec, kde model nejvic vycniva do strany = cepel (nahoru), smer, kam tam vycniva = dopredu.
 // Spatne otoceni opravi polozky "otocit"; puvodni kosu z kodu vrati "vratit kosu z kodu".
+[InitializeOnLoad]
 public static class ScytheSetup
 {
+    // Kosa ze Sketchfabu zustava prirazena: kdyz ji neco vynuluje (drive MaxSetup), vrati se sama.
+    // Jen "vratit kosu z kodu" ji vypne (pamatuje si editor).
+    const string UseCodeKey = "BrosOverwatch.Scythe.UseCode";
+
+    static ScytheSetup()
+    {
+        EditorApplication.delayCall += EnsureAssigned;
+        EditorApplication.playModeStateChanged += state =>
+        {
+            if (state == PlayModeStateChange.EnteredEditMode) EditorApplication.delayCall += EnsureAssigned;
+        };
+    }
+
+    static void EnsureAssigned()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode || EditorPrefs.GetBool(UseCodeKey, false)) return;
+        var weapon = AssetDatabase.LoadAssetAtPath<WeaponDefinition>(WeaponPath);
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        if (weapon == null || prefab == null || weapon.heldPrefab != null) return;
+        weapon.heldPrefab = prefab;
+        weapon.heldScale = 1f;
+        EditorUtility.SetDirty(weapon);
+        AssetDatabase.SaveAssets();
+        Debug.Log("[Kosa] Max ma zase kosu ze Sketchfabu (" + PrefabPath + ").");
+    }
+
     const string Dir = "Assets/Models/Weapons/Scythe";
     const string ModelPath = Dir + "/Scythe.fbx";
     const string BaseColorPath = Dir + "/Scythe_BaseColor.jpg";
@@ -41,6 +68,7 @@ public static class ScytheSetup
 
         var prefab = BuildPrefab(AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath), BuildMaterial());
         if (prefab == null) return;
+        EditorPrefs.SetBool(UseCodeKey, false);
         Undo.RecordObject(weapon, "Max kosa");
         weapon.heldPrefab = prefab;
         weapon.heldScale = 1f;
@@ -65,6 +93,7 @@ public static class ScytheSetup
         if (weapon == null) return;
         Undo.RecordObject(weapon, "Max kosa z kodu");
         weapon.heldPrefab = null;
+        EditorPrefs.SetBool(UseCodeKey, true);   // (at ji EnsureAssigned zase neprida)
         EditorUtility.SetDirty(weapon);
         AssetDatabase.SaveAssets();
         Debug.Log("[Kosa] Max ma zase kosu skladanou v kodu.");

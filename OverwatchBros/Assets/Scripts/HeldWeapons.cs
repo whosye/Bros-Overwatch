@@ -23,6 +23,7 @@ public partial class HeldWeapons : MonoBehaviour
         public bool twoHanded;
         public Vector3 foregrip;
         public bool foregripContact;   // foregrip je bod na povrchu zbrane (znacka "Foregrip"), dlan se k nemu prilozi
+        public Transform foregripMarker;   // znacka "Foregrip" (muze se hybat - napr. hlaven granatometu)
         // postava se zbrani obema rukama: poza strelby (mistni vuci pateri) - klid je idlePosition / idleRotation
         public bool hasAimPose;
         public Vector3 aimPosition;
@@ -424,7 +425,8 @@ public partial class HeldWeapons : MonoBehaviour
     float dartShownAt = -100f;
 
     bool DartShowing => dartPistol != null && Time.time - dartShownAt >= 0f && Time.time - dartShownAt < DartShowSeconds;
-    bool LeftSupportOnly => builtWeapon != null && builtWeapon.firstPersonTwoHanded && !builtWeapon.twoHanded;
+    // leva ruka v prvni osobe podpira zbran zespodu (David, Viktor) - u kamery bez strelby od pasu
+    bool LeftSupportOnly => builtWeapon != null && builtWeapon.firstPersonTwoHanded;
     const float DartShowSeconds = 0.75f;
     static readonly Vector3 DartGrip = new Vector3(0f, -0.06f, 0.02f);
     // posun modelu pistolky (Resources/Weapons/DartPistol) vuci ruce: ruka zustava v DartGrip, model se posune
@@ -750,6 +752,196 @@ public partial class HeldWeapons : MonoBehaviour
         if (hand == null || hand.holder == null) return;
         foreach (var cap in hand.holder.GetComponentsInChildren<MuzzleCap>()) cap.Flap();
         foreach (var feed in hand.holder.GetComponentsInChildren<GrenadeFeed>()) feed.Feed();
+        FlashMuzzles(hand, false);
+    }
+
+    // Zablesky u usti (MuzzleFlash): bezne vystrely, nebo granatomet.
+    static void FlashMuzzles(Hand hand, bool grenade)
+    {
+        if (hand == null || hand.holder == null) return;
+        foreach (var flash in hand.holder.GetComponentsInChildren<MuzzleFlash>())
+            if (flash.grenade == grenade) flash.Flash();
+    }
+
+    // ---------------- Viktor: granatomet M203 (FlashAbility) ----------------
+    // Vystrel granatu: zablesk a dym z usti granatometu, silny raz a pak se hlaven granatometu posune dopredu a zpet
+    // (nabiti) - leva ruka na ni jede s ni (znacka Foregrip je pod hlavni).
+    float grenadeLaunchAt = -100f;
+    Transform launcherBarrel;
+    Vector3 launcherBarrelLocal;
+    const float LaunchSeconds = 0.75f, LaunchPumpFrom = 0.22f, LaunchPumpTo = 0.6f, LaunchPumpDistance = 0.07f;
+
+    public void PlayGrenadeLaunch()
+    {
+        grenadeLaunchAt = Time.time;
+        foreach (var hand in hands) FlashMuzzles(hand, true);
+        foreach (var hand in bodyHands) FlashMuzzles(hand, true);
+    }
+
+    // Usti granatometu u kamery (vlastni prvni osoba) - odtud granat vyleti.
+    public bool TryGetGrenadeMuzzle(out Vector3 position)
+    {
+        position = Vector3.zero;
+        if (root == null || !root.activeInHierarchy || hands.Length == 0 || hands[0] == null || hands[0].holder == null) return false;
+        foreach (var flash in hands[0].holder.GetComponentsInChildren<MuzzleFlash>())
+            if (flash.grenade) { position = flash.transform.position; return true; }
+        return false;
+    }
+
+    // Raz zbrane po vystrelu granatu (k poze ruky u kamery).
+    void AnimateLaunch(float s, ref Vector3 position, ref Vector3 euler)
+    {
+        float kick = Mathf.Exp(-s * 10f) * Mathf.Min(1f, s * 50f);
+        position += new Vector3(0f, 0.02f, -0.09f) * kick;
+        euler.x -= 10f * kick;
+        // pri nabijeni se zbran lehce natoci, at je hlaven granatometu videt
+        float pump = Mathf.Sin(Mathf.Clamp01((s - LaunchPumpFrom) / (LaunchPumpTo - LaunchPumpFrom)) * Mathf.PI);
+        euler += new Vector3(-3f, -4f, -8f) * pump;
+    }
+
+    // Hlaven granatometu: posun dopredu a zpet (nabiti) po vystrelu granatu.
+    void UpdateLauncherBarrel(Hand hand)
+    {
+        if (launcherBarrel == null || hand == null || hand.holder == null) return;
+        float s = Time.time - grenadeLaunchAt;
+        float d = s > LaunchPumpFrom && s < LaunchPumpTo
+            ? Mathf.Sin((s - LaunchPumpFrom) / (LaunchPumpTo - LaunchPumpFrom) * Mathf.PI) * LaunchPumpDistance : 0f;
+        launcherBarrel.localPosition = launcherBarrelLocal;
+        if (d > 0f) launcherBarrel.position += hand.holder.forward * d;
+    }
+
+    // ---------------- Viktor: prebiti zasobnikem (WeaponDefinition.magazineSwapReload, prvni osoba) ----------------
+    // Leva ruka z predpazbi chyti zasobnik, vytahne ho dolu (z obrazu), sjede pro novy, zasune ho zespodu a vrati se.
+    Transform swapMag;
+    Vector3 swapMagLocalPos;
+    Quaternion swapMagLocalRot;
+    Vector3 swapMagCenter, swapMagExtents;
+    bool swapArmUsed, swapInserted;
+    const float SwapGrab = 0.16f, SwapOut = 0.36f, SwapBack = 0.54f, SwapInsert = 0.8f, SwapHome = 0.95f;
+
+    bool SwapReload => builtWeapon != null && builtWeapon.magazineSwapReload && fpArms != null && root != null
+        && hands.Length == 1 && hands[0] != null && hands[0].holder != null && swapMag != null;
+    bool SwapHandBusy => SwapReload && reloadElapsed < reloadDuration && !reloadCanceled;
+
+    void FindSwapParts(Hand hand, WeaponDefinition weapon)
+    {
+        swapMag = null;
+        launcherBarrel = null;
+        if (hand == null || hand.holder == null) return;
+        foreach (var part in hand.holder.GetComponentsInChildren<Transform>(true))
+        {
+            if (part.name == "M203_Barrel" && launcherBarrel == null)
+            {
+                launcherBarrel = part;
+                launcherBarrelLocal = part.localPosition;
+            }
+            if (weapon.magazineSwapReload && swapMag == null && part.name.IndexOf("Magazine", System.StringComparison.OrdinalIgnoreCase) >= 0
+                && part.GetComponentInChildren<MeshFilter>() != null)
+                swapMag = part;
+        }
+        if (swapMag == null) return;
+        swapMagLocalPos = swapMag.localPosition;
+        swapMagLocalRot = swapMag.localRotation;
+        var box = HolderBounds(hand.holder, swapMag, false);
+        swapMagCenter = box.center;
+        swapMagExtents = box.extents;
+    }
+
+    void SwapRestore()
+    {
+        if (swapMag == null) return;
+        if (!swapMag.gameObject.activeSelf) swapMag.gameObject.SetActive(true);
+        swapMag.localPosition = swapMagLocalPos;
+        swapMag.localRotation = swapMagLocalRot;
+    }
+
+    void PlaceSwapMag(Transform holder, Vector3 delta)
+    {
+        var parent = swapMag.parent;
+        Vector3 restWorld = parent != null ? parent.TransformPoint(swapMagLocalPos) : swapMagLocalPos;
+        if (!swapMag.gameObject.activeSelf) swapMag.gameObject.SetActive(true);
+        swapMag.localRotation = swapMagLocalRot;
+        swapMag.position = restWorld + holder.TransformVector(delta);
+    }
+
+    // Vraci true, kdyz prave ridi levou ruku (jinak ruka podpira zbran jako obvykle).
+    bool SolveSwapHand(Hand hand)
+    {
+        if (!SwapHandBusy)
+        {
+            if (swapArmUsed)
+            {
+                swapArmUsed = false;
+                SwapRestore();
+            }
+            return false;
+        }
+        if (!swapArmUsed) swapInserted = false;
+        swapArmUsed = true;
+
+        float t = reloadElapsed / reloadDuration;
+        var h = hand.holder;
+        var rootT = root.transform;
+        float depth = FirstPersonArms.WrapPalmDepth;
+        Quaternion support = FirstPersonArms.HandFrame(h, -1f, true, true);
+        Vector3 supportGrip = h.TransformPoint(SupportPoint(hand)) + support * Vector3.down * depth;
+        Quaternion grab = Quaternion.LookRotation(h.forward, -h.right);   // dlan zleva na zasobnik, prsty kolem nej
+        Vector3 side = swapMagCenter + new Vector3(-swapMagExtents.x, -swapMagExtents.y * 0.3f, 0f);
+        Vector3 low = rootT.TransformPoint(new Vector3(-0.25f, -0.75f, 0.35f));
+        Vector3 outDelta = new Vector3(0f, -0.32f, -0.02f);   // vytazeny zasobnik (posun v drzaku zbrane)
+
+        Vector3 grip;
+        Quaternion frame;
+        if (t < SwapGrab)
+        {
+            // z predpazbi na zasobnik
+            float u = Mathf.SmoothStep(0f, 1f, t / SwapGrab);
+            grip = Vector3.Lerp(supportGrip, h.TransformPoint(side) + h.right * depth, u) + h.TransformVector(new Vector3(-0.04f, -0.02f, 0f)) * Mathf.Sin(u * Mathf.PI);
+            frame = Quaternion.Slerp(support, grab, u);
+            SwapRestore();
+        }
+        else if (t < SwapOut)
+        {
+            // vytazeni dolu (zrychluje)
+            float u = (t - SwapGrab) / (SwapOut - SwapGrab);
+            Vector3 delta = outDelta * (u * u);
+            PlaceSwapMag(h, delta);
+            grip = h.TransformPoint(side + delta) + h.right * depth;
+            frame = grab;
+        }
+        else if (t < SwapBack)
+        {
+            // stary pryc (uz mimo obraz), ruka dolu pro novy
+            if (swapMag.gameObject.activeSelf) swapMag.gameObject.SetActive(false);
+            float u = Mathf.SmoothStep(0f, 1f, (t - SwapOut) / (SwapBack - SwapOut));
+            grip = Vector3.Lerp(h.TransformPoint(side + outDelta) + h.right * depth, low, u);
+            frame = grab;
+        }
+        else if (t < SwapInsert)
+        {
+            // novy zespodu do sachty (zpomaluje)
+            float u = (t - SwapBack) / (SwapInsert - SwapBack);
+            float e = 1f - (1f - u) * (1f - u) * (1f - u);
+            Vector3 delta = Vector3.Lerp(outDelta, Vector3.zero, e);
+            PlaceSwapMag(h, delta);
+            grip = Vector3.Lerp(low, h.TransformPoint(side + delta) + h.right * depth, Mathf.Min(1f, u * 3f));
+            frame = grab;
+        }
+        else
+        {
+            if (!swapInserted)
+            {
+                swapInserted = true;
+                SwapRestore();
+                if (!ghost) ProceduralSfx.Play(ProceduralSfx.Empty, swapMag.position, 0.7f, 10f, false, SfxKind.Weapon);
+            }
+            // zpet na predpazbi
+            float u = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(SwapInsert, SwapHome, t));
+            grip = Vector3.Lerp(h.TransformPoint(side) + h.right * depth, supportGrip, u) + h.TransformVector(new Vector3(-0.04f, -0.02f, 0f)) * Mathf.Sin(u * Mathf.PI);
+            frame = Quaternion.Slerp(grab, support, u);
+        }
+        fpArms.SolveFrame(false, grip, frame, rootT);
+        return true;
     }
 
     public void Swing(float strength)
@@ -801,6 +993,7 @@ public partial class HeldWeapons : MonoBehaviour
         reloadElapsed = reloadDuration;
         reloadCanceled = true;   // (bez narazu plechovky)
         SlapRestore();
+        SwapRestore();
         canAfter = 99f;
         if (reloadCan != null) reloadCan.gameObject.SetActive(false);
 
@@ -1369,6 +1562,9 @@ public partial class HeldWeapons : MonoBehaviour
                 AnimateReload(reloadElapsed / reloadDuration, hand.side, ref position, ref euler);
             else if (canAfter < CanReturnSeconds && MonsterReload)
                 AnimateCanAfter(canAfter, ref position, ref euler);
+            float sinceLaunch = Time.time - grenadeLaunchAt;
+            if (sinceLaunch >= 0f && sinceLaunch < LaunchSeconds)
+                AnimateLaunch(sinceLaunch, ref position, ref euler);
 
             if (tauntElapsed < TauntDuration)
             {
@@ -1449,10 +1645,12 @@ public partial class HeldWeapons : MonoBehaviour
             hand.holder.localPosition = position;
             hand.holder.localRotation = rotation;
             UpdateRevolverParts(hand);
+            UpdateLauncherBarrel(hand);
 
             if (fpArms != null)
             {
-                fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, builtModel == HeldModel.Bow);   // (luk v natazene ruce)
+                // (rameno se posune k rukojeti, kdyz na ni paze nedosahne - kratsi paze postavy, velka zbran; luk v natazene ruce)
+                fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, true);
                 // (leva ruka pusti predpazbi, kdyz drzi uspavaci pistolku - jen u podpory v prvni osobe)
                 // leva ruka na predpazbi: bez konecku prstu (vykukovaly pred bokem zbrane); s pistolkou zase cela
                 // (s plechovkou zase cela - prsty ji obemknou)
@@ -1463,7 +1661,7 @@ public partial class HeldWeapons : MonoBehaviour
                 // Honza: detonator pri odpaleni min (ma prednost pred hodem i prebijenim)
                 if (hand.side > 0f && !hand.twoHanded) SolveDetonatorHand();
                 if (hand.twoHanded && LeftSupportOnly)
-                    fpArms.SetFingertipsHidden(false, !DartShowing && !(reloadCan != null && reloadCan.gameObject.activeSelf));
+                    fpArms.SetFingertipsHidden(false, !DartShowing && !(reloadCan != null && reloadCan.gameObject.activeSelf) && !SwapHandBusy);
                 // pistolku drzi leva ruka - plechovka mezitim pryc
                 if (hand.twoHanded && LeftSupportOnly && DartShowing && reloadCan != null && reloadCan.gameObject.activeSelf)
                     reloadCan.gameObject.SetActive(false);
@@ -1473,7 +1671,7 @@ public partial class HeldWeapons : MonoBehaviour
                     // (Davidovo prebijeni: ruka s plechovkou)
                     if (LeftSupportOnly)
                     {
-                        if (!SolveCanHand(hand))
+                        if (!SolveCanHand(hand) && !SolveSwapHand(hand))
                             fpArms.Solve(false, hand.holder.TransformPoint(SupportPoint(hand)), hand.holder, root.transform, true, false, true);
                     }
                     else
@@ -1730,6 +1928,18 @@ public partial class HeldWeapons : MonoBehaviour
             euler += turn;
             return;
         }
+        if (SwapReload)
+        {
+            // Viktor: zbran zustava v obraze, natoci se zasobnikem ke kamere; pri vytazeni a zasunuti poskoci
+            float tilt = Mathf.Min(Mathf.SmoothStep(0f, 1f, t / 0.12f), Mathf.SmoothStep(0f, 1f, (1f - t) / 0.12f));
+            position += new Vector3(-0.04f, 0.05f, -0.03f) * tilt;
+            euler += new Vector3(-8f, -10f, -20f) * tilt;
+            float pulled = SlapKick(t, SwapGrab + 0.04f), inserted = SlapKick(t, SwapInsert);
+            position += new Vector3(0f, -0.012f, 0f) * pulled + new Vector3(0f, 0.02f, 0f) * inserted;
+            euler += new Vector3(3f, 0f, 0f) * pulled + new Vector3(-5f, 0f, 0f) * inserted;
+            return;
+        }
+
         if (SlapReload)
         {
             // Honza: zbran se natoci levym bokem (bednou) ke kamere; pri uderu, nasazeni a pusteni packy poskoci
@@ -2016,7 +2226,12 @@ public partial class HeldWeapons : MonoBehaviour
     }
 
     // Bod predpazbi, kam leva dlan v prvni osobe podpira zbran (v drzaku zbrane).
-    static Vector3 SupportPoint(Hand hand) => hand.foregripContact ? hand.foregrip : hand.foregrip + new Vector3(0f, 0.015f, 0f);
+    static Vector3 SupportPoint(Hand hand)
+    {
+        // znacka muze jet s dilem zbrane (hlaven granatometu) - pak aktualni poloha
+        if (hand.foregripMarker != null && hand.holder != null) return hand.holder.InverseTransformPoint(hand.foregripMarker.position);
+        return hand.foregripContact ? hand.foregrip : hand.foregrip + new Vector3(0f, 0.015f, 0f);
+    }
 
     // Stred plechovky v okamziku narazu (v drzaku zbrane): u leveho boku zbrane kousek za predpazbim.
     static Vector3 CanHitPoint(Hand hand) => SupportPoint(hand) + new Vector3(-0.052f, 0.035f, -0.05f);
@@ -2201,6 +2416,9 @@ public partial class HeldWeapons : MonoBehaviour
         detonateArmUsed = false;
         slapMag = slapLever = null;
         slapArmUsed = false;
+        swapMag = null;
+        swapArmUsed = false;
+        launcherBarrel = null;
         if (slapFalling != null) Destroy(slapFalling.gameObject);
         slapFalling = null;
         ampPointing = false;   // (nove ruce maji sevrenou pest)
@@ -2284,15 +2502,16 @@ public partial class HeldWeapons : MonoBehaviour
                     hand.twoHanded = true;
                     hand.foregrip = ForegripInWeapon(holder, hand.grip);
                     // podpora jen v prvni osobe: presny spodek predpazbi ze znacky v prefabu (kdyz ji model ma)
-                    if (owner && !weapon.twoHanded)
+                    if (owner && weapon.firstPersonTwoHanded)
                         foreach (var marker in holder.GetComponentsInChildren<Transform>(true))
                             if (marker.name == "Foregrip")
                             {
                                 hand.foregrip = holder.InverseTransformPoint(marker.position);
                                 hand.foregripContact = true;
+                                hand.foregripMarker = marker;
                                 break;
                             }
-                    if (owner && weapon.twoHanded)
+                    if (owner && weapon.twoHanded && !weapon.firstPersonTwoHanded)
                     {
                         // strelba od pasu: zbran nize u praveho boku, hlaven sikmo nahoru ke stredu obrazovky
                         hand.restPosition = new Vector3(0.22f, -0.42f, 0.34f);
@@ -2311,8 +2530,14 @@ public partial class HeldWeapons : MonoBehaviour
                 fpArms = FirstPersonArms.Create(root.transform, prefab);
                 // leva ruka podpira predpazbi: prsty jen mirne pokrcene (vedou pod zbrani a nahoru po jeji druhe strane,
                 // schovane za ni), palec skoro natazeny podel boku zbrane
-                if (fpArms != null && weapon.firstPersonTwoHanded && !weapon.twoHanded && count == 1 && model == HeldModel.Gun)
+                if (fpArms != null && weapon.firstPersonTwoHanded && count == 1 && model == HeldModel.Gun)
+                {
                     fpArms.CurlHand(false, -0.55f, -0.15f);
+                    // puska: ukazovacek prave ruky natazeny dopredu na spoust (ne v pesti kolem rukojeti)
+                    fpArms.PoseIndexFinger(true, -0.15f, -0.35f, -0.25f);
+                }
+                // Viktor: zasobnik pro prebiti, hlaven granatometu
+                if (count == 1) FindSwapParts(hands[0], weapon);
                 // Honza: bedna zasobniku a kohout pro prebiti
                 if (weapon.magazineSlapReload && count == 1) FindSlapParts(hands[0]);
                 if (fpArms == null)

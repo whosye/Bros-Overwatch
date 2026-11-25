@@ -333,6 +333,25 @@ public class FirstPersonArms
         SolveArmFrame(arm, grip, handFrame, pole, stretch);
     }
 
+    // Ukazovacek (napr. na spousti): clanky od kotniku ke konecku (-1 = sevreny, 1 = natazeny).
+    public void PoseIndexFinger(bool right, float proximal, float middle, float distal)
+    {
+        var animator = rig != null ? rig.GetComponent<Animator>() : null;
+        if (animator == null || animator.avatar == null) return;
+        var handler = new HumanPoseHandler(animator.avatar, rig.transform);
+        var pose = new HumanPose();
+        handler.GetHumanPose(ref pose);
+        string prefix = right ? "RightHand.Index." : "LeftHand.Index.";
+        for (int i = 0; i < HumanTrait.MuscleCount && i < pose.muscles.Length; i++)
+        {
+            string name = HumanTrait.MuscleName[i];
+            if (!name.StartsWith(prefix) || !name.Contains("Stretched")) continue;
+            pose.muscles[i] = name.Contains(".1 ") ? proximal : name.Contains(".2 ") ? middle : distal;
+        }
+        handler.SetHumanPose(ref pose);
+        handler.Dispose();
+    }
+
     // Bod dlane (kde ruka drzi predmet) a natoceni ruky (z = prsty, y = hrbet ruky) podle aktualni pozy kosti.
     public static void PalmPose(Arm arm, out Vector3 point, out Quaternion frame)
     {

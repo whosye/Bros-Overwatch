@@ -59,8 +59,10 @@ public class FlashAbility : NetworkBehaviour
         charges--;
 
         var eye = fpc.playerCamera.transform;
-        // granat vyleti z hlavne (stejne misto jako stopy strel), miri se ale ze stredu obrazovky
+        // granat vyleti z usti granatometu (M203 u kamery), miri se ale ze stredu obrazovky
         Vector3 muzzle = eye.position + eye.right * 0.15f - eye.up * 0.12f + eye.forward * 0.4f;
+        var held = GetComponent<HeldWeapons>();
+        if (held != null && held.TryGetGrenadeMuzzle(out var launcher)) muzzle = launcher;
         GetComponent<PlayerHero>().SayAbility(ability);
         ThrowServerRpc(eye.position, eye.forward, muzzle);
     }
@@ -90,7 +92,7 @@ public class FlashAbility : NetworkBehaviour
 
         Vector3 point = origin + direction * distance;
         float flight = distance / Mathf.Max(1f, ability.speed);
-        if ((muzzle - origin).sqrMagnitude > 1f) muzzle = origin + direction * 0.5f;
+        if ((muzzle - origin).sqrMagnitude > 2.25f) muzzle = origin + direction * 0.5f;   // (usti granatometu je do 1,5 m od oka)
         ThrownClientRpc(muzzle, point, flight);
         StartCoroutine(Detonate(point, flight));
     }
@@ -136,17 +138,95 @@ public class FlashAbility : NetworkBehaviour
     [ClientRpc]
     void ThrownClientRpc(Vector3 from, Vector3 to, float seconds)
     {
-        var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        DestroyImmediate(ball.GetComponent<Collider>());
-        ball.name = "PulseGrenade";
-        ball.transform.localScale = Vector3.one * 0.14f;
-        Fx.Paint(ball, new Color(0.92f, 0.96f, 1f));
-        ball.AddComponent<FlashGrenadeVisual>().Init(from, to, seconds);
+        var grenade = BuildGrenade();
+        if ((to - from).sqrMagnitude > 0.0001f) grenade.transform.rotation = Quaternion.LookRotation(to - from);
+        var flight = grenade.AddComponent<FlashGrenadeVisual>();
+        flight.spin = 900f;
+        flight.Init(from, to, seconds);
 
-        // vystrel z granatometu: tupe bouchnuti a zablesk u hlavne
+        // vystrel z granatometu: tupe bouchnuti, zablesk a dym u usti, raz zbrane a nabiti (HeldWeapons)
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Gunshot, from, 0.9f);
         ProceduralSfx.PlayForActor(this, ProceduralSfx.Dash, from, 0.6f);
         Fx.Sparks(from, PulseColor);
+        var held = GetComponent<HeldWeapons>();
+        if (held != null) held.PlayGrenadeLaunch();
+    }
+
+    // 40mm granat (stylizovane vetsi, at je v letu videt): mosazna nabojnice, olivove telo a spicka, svitici modry
+    // pulzni prouzek; osa granatu = lokalni Z. Za sebou tahne dym (FlashGrenadeVisual ho po dopadu nechá doznit).
+    static Material brass, olive, pulseBand;
+
+    static GameObject BuildGrenade()
+    {
+        if (brass == null)
+        {
+            brass = Fx.NewLit(new Color(0.78f, 0.6f, 0.25f));
+            if (brass.HasProperty("_Metallic")) brass.SetFloat("_Metallic", 0.8f);
+            if (brass.HasProperty("_Smoothness")) brass.SetFloat("_Smoothness", 0.6f);
+            olive = Fx.NewLit(new Color(0.27f, 0.31f, 0.17f));
+            pulseBand = Fx.NewLit(PulseColor);
+            if (pulseBand.HasProperty("_EmissionColor"))
+            {
+                pulseBand.EnableKeyword("_EMISSION");
+                pulseBand.SetColor("_EmissionColor", PulseColor * 2.5f);
+            }
+        }
+        var root = new GameObject("PulseGrenade");
+        Shell(root.transform, PrimitiveType.Cylinder, new Vector3(0f, 0f, -0.045f), new Vector3(0.085f, 0.035f, 0.085f), brass);   // nabojnice
+        Shell(root.transform, PrimitiveType.Cylinder, new Vector3(0f, 0f, 0.01f), new Vector3(0.09f, 0.022f, 0.09f), olive);       // telo
+        Shell(root.transform, PrimitiveType.Cylinder, new Vector3(0f, 0f, -0.008f), new Vector3(0.093f, 0.007f, 0.093f), pulseBand); // prouzek
+        var nose = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Object.DestroyImmediate(nose.GetComponent<Collider>());
+        nose.transform.SetParent(root.transform, false);
+        nose.transform.localPosition = new Vector3(0f, 0f, 0.035f);
+        nose.transform.localScale = new Vector3(0.09f, 0.09f, 0.1f);
+        nose.GetComponent<Renderer>().sharedMaterial = olive;
+
+        // dym za granatem
+        var smokeObject = new GameObject("Smoke");
+        smokeObject.transform.SetParent(root.transform, false);
+        smokeObject.transform.localPosition = new Vector3(0f, 0f, -0.07f);
+        var smoke = smokeObject.AddComponent<ParticleSystem>();
+        smoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        var main = smoke.main;
+        main.loop = true;
+        main.playOnAwake = false;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.4f, 0.8f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(0f, 0.3f);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.16f);
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.8f, 0.82f, 0.86f, 0.35f), new Color(0.6f, 0.7f, 0.85f, 0.25f));
+        main.maxParticles = 300;
+        var emission = smoke.emission;
+        emission.rateOverTime = 0f;
+        emission.rateOverDistance = 18f;
+        var grow = smoke.sizeOverLifetime;
+        grow.enabled = true;
+        grow.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(new Keyframe(0f, 0.6f), new Keyframe(1f, 2.2f)));
+        var fade = smoke.colorOverLifetime;
+        fade.enabled = true;
+        var gradient = new Gradient();
+        gradient.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+            new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(0f, 1f) });
+        fade.color = new ParticleSystem.MinMaxGradient(gradient);
+        var renderer = smokeObject.GetComponent<ParticleSystemRenderer>();
+        renderer.material = Fx.ParticleMaterial;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        smoke.Play();
+        return root;
+    }
+
+    // Valec s osou podel lokalniho Z ('size' = prumer, pul delky, prumer jako u primitiva).
+    static void Shell(Transform parent, PrimitiveType type, Vector3 position, Vector3 size, Material material)
+    {
+        var part = GameObject.CreatePrimitive(type);
+        Object.DestroyImmediate(part.GetComponent<Collider>());
+        part.transform.SetParent(parent, false);
+        part.transform.localPosition = position;
+        part.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+        part.transform.localScale = size;
+        part.GetComponent<Renderer>().sharedMaterial = material;
+        part.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
     [ClientRpc]
@@ -175,6 +255,7 @@ public class FlashGrenadeVisual : MonoBehaviour
 {
     Vector3 from, to;
     float seconds, age;
+    public float spin;   // otaceni kolem osy letu (st./s) - granat; 0 = bez otaceni (sipka)
 
     public void Init(Vector3 start, Vector3 end, float flight)
     {
@@ -206,7 +287,17 @@ public class FlashGrenadeVisual : MonoBehaviour
     {
         age += Time.deltaTime;
         transform.position = Vector3.Lerp(from, to, age / seconds);
+        if (spin != 0f) transform.Rotate(0f, 0f, spin * Time.deltaTime, Space.Self);
         if (age >= seconds)
+        {
+            // dym za granatem dozni sam (neodmizi s nim)
+            foreach (var smoke in GetComponentsInChildren<ParticleSystem>())
+            {
+                smoke.transform.SetParent(null, true);
+                smoke.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                Destroy(smoke.gameObject, 1.2f);
+            }
             Destroy(gameObject);
+        }
     }
 }

@@ -1,0 +1,14 @@
+Model Information:
+* title:	M4A1 With Grenade Launcher
+* source:	Sketchfab - "M4A1 With Grenade Launcher" by ARIA
+* author:	ARIA (Sketchfab)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. NON-COMMERCIAL use only (the game must not be sold / monetized with this model).
+
+Used in the game as Viktor's rifle (Assets/Editor/M4Setup.cs -> Prefab/Weapons/Held_M4A1.prefab): the magazine
+(M4A1_Magazine001) is pulled out on reload, the M203 barrel (M203_Barrel) slides forward after a grenade launch.
+Unchanged model (10.8k triangles, 1k textures); markers Muzzle / GrenadeMuzzle / Foregrip added in the prefab.
+
+This work is based on "M4A1 With Grenade Launcher" by ARIA licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
