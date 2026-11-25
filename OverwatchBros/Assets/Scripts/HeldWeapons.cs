@@ -588,11 +588,9 @@ public partial class HeldWeapons : MonoBehaviour
         UpdateDartPistol();
         UpdateAmpGesture();
         UpdateBodyRevolver();
-<<<<<<< Updated upstream
         UpdateBodyDetonator();
         UpdateBodyDart();
         UpdateBodyRecoil();
-=======
         if (HasSniperVisual(builtWeapon))
         {
             foreach (var hand in bodyHands)
@@ -600,7 +598,6 @@ public partial class HeldWeapons : MonoBehaviour
                     PoseSniperOnBody(hand);
             return;
         }
->>>>>>> Stashed changes
         if (bodySupportArm == null || visual == null || visual.ModelRoot == null) return;
         if (builtModel == HeldModel.Bow)
         {
@@ -764,7 +761,6 @@ public partial class HeldWeapons : MonoBehaviour
 
     public void Swing() => Swing(1f);
 
-<<<<<<< Updated upstream
     // Pohyblive dily zbrane pri vystrelu (Honzuv granatomet): vicko na usti se odklopi (MuzzleCap), granaty v bedne
     // se posunou o misto (GrenadeFeed) - u kamery i na postave.
     void AnimateShotParts()
@@ -970,10 +966,7 @@ public partial class HeldWeapons : MonoBehaviour
         return true;
     }
 
-    public void Swing(float strength)
-=======
     public void Swing(float strength, bool scoped = false)
->>>>>>> Stashed changes
     {
         swingStrength = strength;
         sniperScopedShot = scoped;
@@ -1005,14 +998,11 @@ public partial class HeldWeapons : MonoBehaviour
             ReplayLog.Reload(this, duration);
         reloadDuration = Mathf.Max(0.05f, duration);
         reloadElapsed = 0f;
-<<<<<<< Updated upstream
         reloadCanceled = false;
         slapStruck = slapInserted = false;
         SlapRestore();
         canAfter = 99f;
-=======
         ResetSniperBolt();
->>>>>>> Stashed changes
 
         if (visual != null && visual.HasModel)
         {
@@ -1686,13 +1676,22 @@ public partial class HeldWeapons : MonoBehaviour
             hand.holder.localPosition = position;
             hand.holder.localRotation = rotation;
             UpdateRevolverParts(hand);
-<<<<<<< Updated upstream
             UpdateLauncherBarrel(hand);
+            if (hand.sniper != null) hand.sniper.SampleParts(SniperCycle, SniperReload);
 
             if (fpArms != null)
             {
-                // (rameno se posune k rukojeti, kdyz na ni paze nedosahne - kratsi paze postavy, velka zbran; luk v natazene ruce)
-                fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, true);
+                if (hand.sniper != null)
+                {
+                    // odstrelovacka: prava ruka na spousti / na zaveru, leva na predpazbi / na zasobniku
+                    fpArms.Solve(true, hand.sniper.TriggerHand(SniperCycle), hand.holder, root.transform, false, true);
+                    fpArms.Solve(false, hand.sniper.SupportHand(SniperReload), hand.holder, root.transform, true);
+                }
+                else
+                {
+                    // (rameno se posune k rukojeti, kdyz na ni paze nedosahne - kratsi paze postavy, velka zbran; luk v natazene ruce)
+                    fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, true);
+                }
                 // (leva ruka pusti predpazbi, kdyz drzi uspavaci pistolku - jen u podpory v prvni osobe)
                 // leva ruka na predpazbi: bez konecku prstu (vykukovaly pred bokem zbrane); s pistolkou zase cela
                 // (s plechovkou zase cela - prsty ji obemknou)
@@ -1707,7 +1706,7 @@ public partial class HeldWeapons : MonoBehaviour
                 // pistolku drzi leva ruka - plechovka mezitim pryc
                 if (hand.twoHanded && LeftSupportOnly && DartShowing && reloadCan != null && reloadCan.gameObject.activeSelf)
                     reloadCan.gameObject.SetActive(false);
-                if (hand.twoHanded && !(DartShowing && LeftSupportOnly))
+                if (hand.twoHanded && hand.sniper == null && !(DartShowing && LeftSupportOnly))
                 {
                     // podpora jen v prvni osobe: dlan prilozena zespodu k predpazbi, prsty za zbrani
                     // (Davidovo prebijeni: ruka s plechovkou)
@@ -1719,23 +1718,6 @@ public partial class HeldWeapons : MonoBehaviour
                     else
                         fpArms.Solve(false, hand.holder.TransformPoint(hand.foregrip), hand.holder, root.transform, true);
                 }
-=======
-            if (hand.sniper != null) hand.sniper.SampleParts(SniperCycle, SniperReload);
-
-            if (fpArms != null)
-            {
-                if (hand.sniper != null)
-                {
-                    fpArms.Solve(true, hand.sniper.TriggerHand(SniperCycle), hand.holder, root.transform, false, true);
-                    fpArms.Solve(false, hand.sniper.SupportHand(SniperReload), hand.holder, root.transform, true);
-                }
-                else
-                {
-                    fpArms.Solve(hand.side > 0f, hand.holder.TransformPoint(hand.grip), hand.holder, root.transform, false, builtModel == HeldModel.Bow);   // (luk v natazene ruce)
-                }
-                if (hand.twoHanded && hand.sniper == null)
-                    fpArms.Solve(false, hand.holder.TransformPoint(hand.foregrip), hand.holder, root.transform, true);
->>>>>>> Stashed changes
                 if (UsesRevolver && hand.revolver != null)
                 {
                     if (reloadElapsed < reloadDuration)
@@ -2573,7 +2555,6 @@ public partial class HeldWeapons : MonoBehaviour
                 {
                     hand.twoHanded = true;
                     hand.foregrip = ForegripInWeapon(holder, hand.grip);
-<<<<<<< Updated upstream
                     // podpora jen v prvni osobe: presny spodek predpazbi ze znacky v prefabu (kdyz ji model ma)
                     if (owner && weapon.firstPersonTwoHanded)
                         foreach (var marker in holder.GetComponentsInChildren<Transform>(true))
@@ -2584,10 +2565,7 @@ public partial class HeldWeapons : MonoBehaviour
                                 hand.foregripMarker = marker;
                                 break;
                             }
-                    if (owner && weapon.twoHanded && !weapon.firstPersonTwoHanded)
-=======
-                    if (owner && hand.sniper == null)
->>>>>>> Stashed changes
+                    if (owner && hand.sniper == null && !weapon.firstPersonTwoHanded)
                     {
                         // strelba od pasu: zbran nize u praveho boku, hlaven sikmo nahoru ke stredu obrazovky
                         var pose = HeldPrefabMarker(holder, "FirstPersonPose");
