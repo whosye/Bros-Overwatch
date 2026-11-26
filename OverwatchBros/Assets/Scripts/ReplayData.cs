@@ -24,9 +24,10 @@ public struct ReplayPlayerSnap
     public float holyRadius, holyProgress;
     public byte slivovice;        // zbyvajici nesmrtelnost z dedovy slivovice (desetiny s, 0 = nema)
     public bool visor;            // Viktor ma nasazene takticke bryle (ultimatka) - overlay v POTG a killcamu
-    public byte state;            // dalsi stavy postavy (StateShadow, StateHidden)
+    public byte state;            // dalsi stavy postavy (StateShadow, StateHidden, StateRampage)
     public const byte StateShadow = 1,   // Max ve stinove forme (pruhledny fialovy, bez zbrane)
-        StateHidden = 2;                 // Max schovany v obeti (ultimatka) - neni videt
+        StateHidden = 2,                 // Max schovany v obeti (ultimatka) - neni videt
+        StateRampage = 4;                // RAMPAGE (lebka v galerii) - cervena aura
 
     public const byte Alive = 1, Rushing = 2, Blocking = 4, Boosted = 8, Hidden = 16, Revealed = 32, Preaching = 64,
         Scoped = 128;   // mirí pres zamerovac (killcam z pohledu vraha: priblizeni a kruh)
@@ -74,6 +75,7 @@ public class ReplayFrame
     // o ktery bod se hralo (utok a obrana; -1 = jiny rezim) - sklopna podlaha a zabrany v zaznamu jako tehdy
     public sbyte matchPoint = -1;
     public float buffFastCooldown, buffInvulnerable, buffTramal;
+    public float buffRampage;     // zbyvajici RAMPAGE hrace, z jehoz pohledu se prehrava (HUD - BuffUI)
 
     public List<ReplayObjectState> objects = new List<ReplayObjectState>();
 }
@@ -122,7 +124,8 @@ public enum ReplayEventType : byte
 {
     Explosion, Sparks, Impact, Tracer, SpatialSound, GlobalSound, Sfx, ProjectileSpawn, ProjectileEnd,
     Voice, Swing, Reload, StopReload, Kick, FirstPersonKick, HudHit, HudFlash, HudSleep, HudTint, HudEnd,
-    NanoAura, SleepShow, SleepHide, KillFeed, SurfaceMark, Taunt, SayWhatWave, FearShow, SniperTracer, Ultimate, StunShow, Ability, BoltCycle
+    NanoAura, SleepShow, SleepHide, KillFeed, SurfaceMark, Taunt, SayWhatWave, FearShow, SniperTracer, Ultimate, StunShow, Ability, BoltCycle,
+    Announce   // napis na stredu obrazovky (CaptureUI) - jen kdyz se tyka hrace, z jehoz pohledu se prehrava
 }
 
 public class ReplayEvent
@@ -143,7 +146,7 @@ public class ReplayEvent
 
 public class ReplayClip
 {
-    public const int Version = 7;   // 7: Viktorovy bryle u kazdeho hrace
+    public const int Version = 8;   // 8: RAMPAGE (aura, ikona, hlasky)   // 7: Viktorovy bryle u kazdeho hrace
     //   // 6: bod, o ktery se hralo (podlaha a zabrany v zaznamu)   // 5: natazeni luku u kazdeho hrace
 
     public int povId;
@@ -334,6 +337,7 @@ public class ReplayClip
         w.Write(f.buffFastCooldown);
         w.Write(f.buffInvulnerable);
         w.Write(f.buffTramal);
+        w.Write(f.buffRampage);
         var slots = f.slots ?? new ReplaySlot[0];
         w.Write((byte)slots.Length);
         foreach (var s in slots)
@@ -429,6 +433,7 @@ public class ReplayClip
         f.buffFastCooldown = r.ReadSingle();
         f.buffInvulnerable = r.ReadSingle();
         f.buffTramal = r.ReadSingle();
+        f.buffRampage = r.ReadSingle();
         f.slots = new ReplaySlot[r.ReadByte()];
         for (int i = 0; i < f.slots.Length; i++)
             f.slots[i] = new ReplaySlot

@@ -131,6 +131,7 @@ public partial class MatchManager : NetworkBehaviour
         var hero = killer.GetComponent<PlayerHero>();
         if (hero != null)
             hero.kills.Value++;
+        ServerRampageOnKill(killer);   // RAMPAGE: pocitani zabiti (MatchManagerRampage)
         var killedHero = victim != null ? victim.GetComponent<PlayerHero>() : null;
         if (killedHero != null)
             killedHero.ServerKillReportedFrame = Time.frameCount;

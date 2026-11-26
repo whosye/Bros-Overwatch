@@ -20,6 +20,8 @@ public partial class PotgIntro
     public static float Clock => instance != null && instance.running ? instance.time : -1f;
     // 0..1 jak moc je scenka zrovna zpomalena (PotgUI ztlumi znelku).
     public static float SlowMo => instance != null && instance.running ? instance.slowAmount : 0f;
+    // Delka uvodu (s): vetsinou 5, nektere scenky delsi (Sindeluv souboj).
+    public static float Length => instance != null && instance.running ? instance.sceneLength : 5f;
 
     float SlowRate(float t)
     {

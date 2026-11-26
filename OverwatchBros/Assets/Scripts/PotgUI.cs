@@ -13,10 +13,10 @@ public class PotgUI : MonoBehaviour
     enum Phase { Hidden, Intro, Playing, Outro }
 
     // Uvod trva 5 s (uvod znelky; se zpomalenim o chvili dele), pak 12 s zaznamu a sekunda dojezdu.
-    const float IntroSeconds = 5f;
+    const float IntroSeconds = 5f;        // bez scenky (scenka muze byt delsi - PotgIntro.Length)
     const float OutroSeconds = 1f;
     const float MaxWaitSeconds = 10f;
-    const float CardInAt = 3.0f;          // scenka: karta vjede v detailu obliceje
+    const float CardBeforeEnd = 2.0f;     // scenka: karta vjede 2 s pred koncem uvodu (v detailu obliceje)
     const float BlackCardInAt = 0.3f;     // cerna karta (hrdina bez scenky)
     const float CardAwaySeconds = 0.25f;  // odlet karty pred strihem na zaznam
 
@@ -221,8 +221,9 @@ public class PotgUI : MonoBehaviour
         {
             // hodiny uvodu: cas scenky (zpomaleni ho protahne), bez scenky realny cas
             float clock = cinematic && PotgIntro.Active ? PotgIntro.Clock : elapsed;
-            float k = clock - (cinematic ? CardInAt : BlackCardInAt);
-            float away = Mathf.Clamp01((clock - (IntroSeconds - CardAwaySeconds)) / CardAwaySeconds);
+            float length = cinematic && PotgIntro.Active ? PotgIntro.Length : IntroSeconds;
+            float k = clock - (cinematic ? length - CardBeforeEnd : BlackCardInAt);
+            float away = Mathf.Clamp01((clock - (length - CardAwaySeconds)) / CardAwaySeconds);
             card.Tick(k, away);
             if (k >= 0f && !cardSwoosh)
             {
@@ -249,7 +250,7 @@ public class PotgUI : MonoBehaviour
             }
 
             bool complete = data != null && received >= data.Length;
-            if (clock >= IntroSeconds && (complete || elapsed > MaxWaitSeconds))
+            if (clock >= length && (complete || elapsed > MaxWaitSeconds))
             {
                 ReplayClip clip = null;
                 if (complete)

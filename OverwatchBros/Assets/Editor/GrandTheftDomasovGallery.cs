@@ -21,6 +21,7 @@ public static class GrandTheftDomasovGallery
     const string MusicMarker = "_GTDGalerie_hudba";   // hudba galerie (Assets/Audio/Music/grand_theft_domasov.wav)
     const string MusicPath = "Assets/Audio/Music/grand_theft_domasov.wav";
     const string ExtraMarker = "_GTDGalerie_plakaty_9_10";   // dalsi dva plakaty (pridane do uz postavene galerie)
+    const string RampageMarker = "_GTDGalerie_rampage";     // lebka RAMPAGE (balicek) mezi lavickou a vychodni zdi
     const string Folder = "Assets/Materials/GrandTheftDomasov";
     static readonly string[] Maps = { "Map-Domasov", "Map_DomasovPush" };
 
@@ -56,6 +57,7 @@ public static class GrandTheftDomasovGallery
                 if (tunel.Find(Marker) == null) Build(root.transform, tunel);
                 if (tunel.Find(Marker) != null && tunel.Find(ExtraMarker) == null) AddExtraPosters(root.transform, tunel);
                 if (tunel.Find(Marker) != null && tunel.Find(MusicMarker) == null) AddMusic(root.transform, tunel);
+                if (tunel.Find(Marker) != null && tunel.Find(RampageMarker) == null) AddRampage(root.transform, tunel);
             }
         }
     }
@@ -196,6 +198,30 @@ public static class GrandTheftDomasovGallery
         EditorSceneManager.MarkSceneDirty(map.gameObject.scene);
         AssetDatabase.SaveAssets();
         Debug.Log("[GTD galerie] " + map.name + ": pridany plakaty 9 a 10. Uloz scenu (Ctrl+S).");
+    }
+
+    // Lebka RAMPAGE (PickupSpot) na podlaze mezi lavickou a vychodni zdi. Jednou - kdyz ji presunes nebo smazes, zustane.
+    static void AddRampage(Transform map, Transform tunel)
+    {
+        var root = map.Find(RootName);
+        if (root == null) return;
+        Undo.IncrementCurrentGroup();
+        int group = Undo.GetCurrentGroup();
+        Undo.SetCurrentGroupName("Galerie: rampage");
+        if (root.Find("Balicek_Rampage") == null)
+        {
+            var go = new GameObject("Balicek_Rampage");
+            go.transform.SetParent(root, false);
+            go.transform.localPosition = new Vector3(12.4f, Floor, 12.75f);
+            go.AddComponent<PickupSpot>().kind = PickupKind.Rampage;
+            Undo.RegisterCreatedObjectUndo(go, "Galerie");
+        }
+        var marker = new GameObject(RampageMarker);
+        marker.transform.SetParent(tunel, false);
+        Undo.RegisterCreatedObjectUndo(marker, "Galerie");
+        Undo.CollapseUndoOperations(group);
+        EditorSceneManager.MarkSceneDirty(map.gameObject.scene);
+        Debug.Log("[GTD galerie] " + map.name + ": pridana lebka RAMPAGE. Uloz scenu (Ctrl+S).");
     }
 
     // Hudba: zdroj uprostred galerie (2D, hlasitost a tlumeni ridi GalleryMusic podle polohy posluchace). Jednou.

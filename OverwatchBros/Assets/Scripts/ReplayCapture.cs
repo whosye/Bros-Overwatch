@@ -171,6 +171,7 @@ public class ReplayCapture : MonoBehaviour
             var max = p.GetComponent<MaxAbility>();
             if (max != null && max.IsSpawned && max.ShadowFormActive) state |= ReplayPlayerSnap.StateShadow;
             if (p.IsHidden) state |= ReplayPlayerSnap.StateHidden;
+            if (p.NetworkObjectId == MatchManager.RampageHolderId) state |= ReplayPlayerSnap.StateRampage;
 
             list.Add(new ReplayPlayerSnap
             {
@@ -238,6 +239,7 @@ public class ReplayCapture : MonoBehaviour
         frame.buffFastCooldown = Mathf.Max(0f, AbilityDefinition.FastCooldownUntil - Time.time);
         frame.buffInvulnerable = Mathf.Max(hero.SlivoviceRemaining, PickupBuffs.InvulnerableUntil - Time.time);
         frame.buffTramal = Mathf.Max(0f, PickupBuffs.TramalUntil - Time.time);
+        frame.buffRampage = Mathf.Max(0f, MatchManager.LocalRampageUntil - Time.time);
 
         hero.GetAbilitySlots(slotBuffer);
         var slots = new ReplaySlot[slotBuffer.Count];
@@ -622,6 +624,11 @@ public static class ReplayLog
     public static void HudSleep(float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudSleep, f0 = seconds }); }
     public static void HudTint(Color c, float seconds) { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudTint, color = c, f0 = seconds }); }
     public static void HudEnd() { if (Recording) Add(new ReplayEvent { type = ReplayEventType.HudEnd }); }
+    // Napis na stredu obrazovky (jak ho videl hrac 'player'); 'headline' = velky s podtitulkem.
+    public static void Announce(ulong player, string title, string subtitle, Color color, float seconds, bool headline)
+    {
+        if (Recording) Add(new ReplayEvent { type = ReplayEventType.Announce, player = (int)player, name = title + "\n" + (subtitle ?? ""), color = color, f0 = seconds, flag = headline });
+    }
     public static void KillFeed(string killer, int killerTeam, string victim, int victimTeam, bool local, string icon)
     {
         if (Recording) Add(new ReplayEvent { type = ReplayEventType.KillFeed, name = killer + "\n" + victim + "\n" + icon, a = killerTeam, b = victimTeam, flag = local });

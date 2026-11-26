@@ -18,6 +18,7 @@ public enum PickupKind
     KangarooSkin, // klokani kuze: hned +100 stitu (drzi, dokud ho poskozeni nezbori)
     Ring,         // zlaty prsten na konci tajne jeskyne: hrac ho nese, dokud zije; po jeho smrti se vrati na misto
     Pellets,      // pytel pelet: hrac ho nese, dokud zije; u feederu kotle ho nasype (R) - pristi zatopeni pali vic
+    Rampage,      // lebka v galerii Grand Theft Domasov: RAMPAGE (MatchManagerRampage) - +50 % poskozeni, 5 zabiti
 }
 
 // Buffy z balicku, ktere zobrazuje HUD mistniho hrace (BuffUI). Nastavuje je MatchManager, kdyz balicek sebere
@@ -117,6 +118,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.WhitePowder => 60f,
         PickupKind.KangarooSkin => 40f,
         PickupKind.Pellets => 10f,
+        PickupKind.Rampage => 90f,
         PickupKind.Ring => float.MaxValue,   // vrati se az se smrti nositele (MatchManagerRing)
         _ => 30f,
     };
@@ -143,6 +145,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.KangarooSkin => new Color(0.8f, 0.55f, 0.32f),
         PickupKind.Ring => new Color(1f, 0.78f, 0.22f),
         PickupKind.Pellets => new Color(0.88f, 0.68f, 0.36f),
+        PickupKind.Rampage => new Color(1f, 0.22f, 0.15f),
         _ => new Color(0.45f, 0.85f, 1f),
     };
 
@@ -162,6 +165,7 @@ public class PickupSpot : MonoBehaviour
         PickupKind.KangarooSkin => "Klokaní kůže",
         PickupKind.Ring => "Prsten",
         PickupKind.Pellets => "Pytel pelet",
+        PickupKind.Rampage => "Rampage",
         _ => "Štít",
     };
 
@@ -402,6 +406,21 @@ public class PickupSpot : MonoBehaviour
                 Part(PrimitiveType.Cube, item, new Vector3(0f, 0.01f, 0f), new Vector3(0.14f, 0.008f, 0.012f), Color.white, 0.6f);
                 var note = Part(PrimitiveType.Cylinder, item, new Vector3(0.02f, 0.012f, 0.05f), new Vector3(0.012f, 0.045f, 0.012f), new Color(0.55f, 0.7f, 0.5f));
                 note.transform.localRotation = Quaternion.Euler(0f, 30f, 90f);
+                break;
+            case PickupKind.Rampage:
+                // Lebka jako rampage v GTA: lebka s ocnicemi, nosem a zuby, cervene svitici oci.
+                var bone = new Color(0.93f, 0.9f, 0.82f);
+                var socket = new Color(0.06f, 0.05f, 0.05f);
+                Part(PrimitiveType.Sphere, item, new Vector3(0f, 0.06f, 0f), new Vector3(0.36f, 0.32f, 0.38f), bone, 0.25f);
+                Part(PrimitiveType.Cube, item, new Vector3(0f, -0.1f, 0.06f), new Vector3(0.22f, 0.12f, 0.2f), bone, 0.25f);
+                foreach (float side in new[] { -1f, 1f })
+                {
+                    Part(PrimitiveType.Sphere, item, new Vector3(0.075f * side, 0.04f, 0.165f), new Vector3(0.1f, 0.09f, 0.06f), socket);
+                    Part(PrimitiveType.Sphere, item, new Vector3(0.075f * side, 0.04f, 0.18f), new Vector3(0.035f, 0.035f, 0.02f), color, 3f);
+                }
+                Part(PrimitiveType.Cube, item, new Vector3(0f, -0.04f, 0.19f), new Vector3(0.04f, 0.05f, 0.02f), socket);
+                for (int tooth = -2; tooth <= 2; tooth++)
+                    Part(PrimitiveType.Cube, item, new Vector3(tooth * 0.035f, -0.12f, 0.162f), new Vector3(0.025f, 0.04f, 0.012f), Color.white, 0.3f);
                 break;
             default:
                 // Modry sestiuhelnikovy stit.

@@ -56,6 +56,8 @@ public class BuffUI
                 until = () => ReplayPlayer.Active ? 0f : PickupBuffs.LasagneUntil },
             new Buff { key = "bila_latka", shortName = "BL", color = new Color(0.92f, 0.95f, 1f),
                 until = () => ReplayPlayer.Active ? 0f : PickupBuffs.PowderUntil },
+            new Buff { key = "rampage", shortName = "RA", color = new Color(1f, 0.22f, 0.15f),
+                until = () => ReplayPlayer.Active ? Time.time + ReplayPlayer.BuffRemaining(3) : MatchManager.LocalRampageUntil },
             new Buff { key = "monster", shortName = "MO", color = NanoAura.AuraColor,
                 until = () => ReplayPlayer.Active ? 0f : NanoBoostAbility.LocalBoostUntil, texture = NanoBoostAbility.BuffIcon },
             new Buff { key = "biotika", shortName = "BG", color = new Color(0.55f, 1f, 0.65f),

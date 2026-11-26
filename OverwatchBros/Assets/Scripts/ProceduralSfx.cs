@@ -229,6 +229,23 @@ public static class ProceduralSfx
         });
     }
 
+    // Westernove hvizdnuti (Sindeluv souboj v POTG): nabeh nahoru, drzeni s vibratem, sklouznuti dolu.
+    static AudioClip westernWhistle;
+    public static AudioClip WesternWhistle => westernWhistle ??= MakeWesternWhistle();
+
+    static AudioClip MakeWesternWhistle()
+    {
+        float phase = 0f;
+        return Make("westernWhistle", 1.4f, (t, r) =>
+        {
+            float f = t < 0.25f ? Mathf.Lerp(1350f, 2050f, t / 0.25f) : t < 0.95f ? 2050f : Mathf.Lerp(2050f, 1500f, (t - 0.95f) / 0.45f);
+            f *= 1f + 0.012f * Mathf.Sin(t * 2f * Mathf.PI * 6f);   // vibrato
+            phase += 2f * Mathf.PI * f / Rate;
+            float envelope = Mathf.Min(1f, t / 0.05f) * Mathf.Clamp01((1.4f - t) / 0.3f);
+            return (Mathf.Sin(phase) * 0.8f + Mathf.Sin(phase * 2f) * 0.08f + Noise(r) * 0.02f) * envelope * 0.45f;
+        });
+    }
+
     // Dopad karty POTG / razitko pocitadla: kratky tupy uder s plesknutim.
     static AudioClip potgStamp;
     public static AudioClip PotgStamp => potgStamp ??= Make("potgStamp", 0.3f, (t, r) =>

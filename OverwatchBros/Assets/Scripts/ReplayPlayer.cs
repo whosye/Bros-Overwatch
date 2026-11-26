@@ -29,7 +29,7 @@ public class ReplayPlayer : MonoBehaviour
         return f == null || index < 0 || index >= 64 || (f.pickupMask & (1UL << index)) != 0;
     }
 
-    // 0 = rychle cooldowny (Respin Joker), 1 = nesmrtelnost (dedova slivovice), 2 = Tramal
+    // 0 = rychle cooldowny (Respin Joker), 1 = nesmrtelnost (dedova slivovice), 2 = Tramal, 3 = RAMPAGE
     public static float BuffRemaining(int which)
     {
         var f = Frame;
@@ -41,7 +41,7 @@ public class ReplayPlayer : MonoBehaviour
             return 0f;
         }
         if (f == null || IsKillcam) return 0f;
-        return which == 0 ? f.buffFastCooldown : which == 1 ? f.buffInvulnerable : f.buffTramal;
+        return which == 0 ? f.buffFastCooldown : which == 1 ? f.buffInvulnerable : which == 2 ? f.buffTramal : f.buffRampage;
     }
     public static Camera Camera => instance != null ? instance.view : null;
 
@@ -159,6 +159,8 @@ public class ReplayPlayer : MonoBehaviour
         public bool slivovice;
         public bool shadow;             // Max ve stinove forme
         public ParticleSystem shadowAura;
+        public bool rampage;            // RAMPAGE - cervena aura
+        public ParticleSystem rampageAura;
         public Light holyLight;
         public GameObject holyCircle;
         public int session = -1;        // ve kterem prehravani byla postava naposledy pouzita
@@ -306,6 +308,8 @@ public class ReplayPlayer : MonoBehaviour
         if (g.holyAura != null) g.holyAura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         if (g.shadow) { g.shadow = false; if (g.visual != null) g.visual.SetShadow(false); }
         if (g.shadowAura != null) g.shadowAura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        g.rampage = false;
+        if (g.rampageAura != null) g.rampageAura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         if (g.held != null) g.held.GhostUntargetable = false;
         if (g.holyLight != null) g.holyLight.enabled = false;
         if (g.holyCircle != null) g.holyCircle.SetActive(false);
@@ -395,6 +399,22 @@ public class ReplayPlayer : MonoBehaviour
                 }
             }
             g.held.GhostUntargetable = shadow || hiddenInVictim;
+            // RAMPAGE: cervena aura (ne kolem kamery, kdyz se prehrava z jeho oci)
+            bool rampage = (p.state & ReplayPlayerSnap.StateRampage) != 0 && alive && !(pov && !povThird);
+            if (rampage != g.rampage)
+            {
+                g.rampage = rampage;
+                if (rampage && g.rampageAura == null)
+                {
+                    g.rampageAura = Fx.CreateAura(g.go.transform, MatchManager.RampageColor);
+                    g.rampageAura.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+                }
+                if (g.rampageAura != null)
+                {
+                    if (rampage) g.rampageAura.Play();
+                    else g.rampageAura.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                }
+            }
             g.visual.GhostFrenzy = (p.flags & ReplayPlayerSnap.Rushing) != 0;
             g.visual.GhostBlocking = (p.flags & ReplayPlayerSnap.Blocking) != 0;
 
@@ -774,6 +794,14 @@ public class ReplayPlayer : MonoBehaviour
             case ReplayEventType.HudSleep: HudUI.NotifySleep(e.f0); break;
             case ReplayEventType.HudTint: HudUI.NotifyTint(e.color, e.f0); break;
             case ReplayEventType.HudEnd: HudUI.EndOverlay(); break;
+            case ReplayEventType.Announce:
+                if (e.player == clip.povId)
+                {
+                    var lines = (e.name ?? "").Split('\n');
+                    if (e.flag) CaptureUI.Headline(lines[0], lines.Length > 1 ? lines[1] : "", e.color, e.f0);
+                    else CaptureUI.Announce(lines[0], e.color, e.f0);
+                }
+                break;
             case ReplayEventType.KillFeed:
                 var names = (e.name ?? "").Split('\n');
                 MatchOverlayUI.AddKill(names[0], e.a, names.Length > 1 ? names[1] : "", e.b, e.flag, names.Length > 2 ? names[2] : "");

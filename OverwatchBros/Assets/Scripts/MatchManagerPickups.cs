@@ -20,6 +20,7 @@ public partial class MatchManager
     {
         if (!IsServer) return;
         ServerResetRing();
+        ServerResetRampage();
         pickupMask.Value = ulong.MaxValue;
         System.Array.Clear(pickupRespawnAt, 0, pickupRespawnAt.Length);
     }
@@ -31,6 +32,7 @@ public partial class MatchManager
 
         var spots = PickupSpot.Sorted;
         ServerRingTick();
+        ServerRampageTick();
         ulong mask = pickupMask.Value;
 
         // Obnoveni sebranych.
@@ -127,6 +129,8 @@ public partial class MatchManager
                 return true;
             case PickupKind.Pellets:
                 return ServerGivePellets(hero);
+            case PickupKind.Rampage:
+                return ServerStartRampage(hero);
             case PickupKind.Lasagne:
                 if (!health.HealBlocked) Combat.HealedLine(health, health.Heal(health.maxHealth));
                 health.ServerHoldShield(PickupBuffs.LasagneShield, PickupBuffs.LasagneSeconds);
