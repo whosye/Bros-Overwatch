@@ -431,7 +431,7 @@ public partial class HeldWeapons : MonoBehaviour
     // leva ruka v prvni osobe podpira zbran zespodu (David, Viktor) - u kamery bez strelby od pasu
     bool LeftSupportOnly => builtWeapon != null && builtWeapon.firstPersonTwoHanded;
     const float DartShowSeconds = 0.75f;
-    static readonly Vector3 DartGrip = new Vector3(0f, -0.06f, 0.02f);
+    internal static readonly Vector3 DartGrip = new Vector3(0f, -0.06f, 0.02f);
     // posun modelu pistolky (Resources/Weapons/DartPistol) vuci ruce: ruka zustava v DartGrip, model se posune
     // (y = nahoru, z = dopredu, x = doprava; v metrech)
     static readonly Vector3 DartModelOffset = new Vector3(0f, 0.02f, 0f);
@@ -445,7 +445,7 @@ public partial class HeldWeapons : MonoBehaviour
 
     // Uspavaci pistole: model ze Sketchfabu (Resources/Weapons/DartPistol, postavi Editor/DartPistolSetup - rukojet v bode
     // DartGrip, hlaven +Z). Kdyz chybi: tmave telo, dlouha hlaven, CO2 bombicka pod hlavni, v hlavni sipka s oranzovou spickou.
-    static Transform BuildDartPistol(Transform parent)
+    internal static Transform BuildDartPistol(Transform parent)
     {
         var holder = new GameObject("DartPistol").transform;
         holder.SetParent(parent, false);
@@ -712,6 +712,7 @@ public partial class HeldWeapons : MonoBehaviour
     Transform ghostCamera;
     bool ghostFirstPerson;
     public bool GhostDead, GhostThirdPerson, GhostBlocking, GhostUltCasting;
+    public bool GhostUntargetable;   // duch v zaznamu: Max ve stinu / v obeti - zbrane schovane jako ve hre
     public float GhostUltWindup, GhostCharge;
 
     public void SetGhost(HeroDefinition hero, bool firstPerson, Transform camera)
@@ -1162,7 +1163,7 @@ public partial class HeldWeapons : MonoBehaviour
         detonateClicked = false;
     }
 
-    static Transform BuildDetonator(Transform parent)
+    internal static Transform BuildDetonator(Transform parent)
     {
         var holder = new GameObject("Detonator").transform;
         holder.SetParent(parent, false);
@@ -1291,7 +1292,7 @@ public partial class HeldWeapons : MonoBehaviour
     }
 
     // Predmet v dlani: 'grip' = bod predmetu (v jeho souradnicich), kde ho drzi pest; svetova velikost 1.
-    static void PlaceInPalm(Transform prop, Vector3 palm, Quaternion handFrame, Vector3 grip)
+    internal static void PlaceInPalm(Transform prop, Vector3 palm, Quaternion handFrame, Vector3 grip)
     {
         Vector3 fingers = handFrame * Vector3.forward, back = handFrame * Vector3.up;
         if (!prop.gameObject.activeSelf) prop.gameObject.SetActive(true);
@@ -1495,7 +1496,7 @@ public partial class HeldWeapons : MonoBehaviour
 
         // Zbrane u kamery (majitel v 1. osobe) a zbrane v rukou postavy (ostatni, majitel ve 3. osobe).
         // (zivi hraci jsou behem prehravani POTG skryti, hraji misto nich duchove)
-        bool hiddenByReplay = !ghost && (ReplayPlayer.Active || (CurrentHeroComponent != null && CurrentHeroComponent.IsSpawned
+        bool hiddenByReplay = ghost ? GhostUntargetable : (ReplayPlayer.Active || (CurrentHeroComponent != null && CurrentHeroComponent.IsSpawned
             && (CurrentHeroComponent.IsUntargetable || CurrentHeroComponent.HiddenFromLocal)));
         bool cameraHandsVisible = !dead && !(owner && thirdPerson) && !hiddenByReplay;
         float scopeBlend = 0f;

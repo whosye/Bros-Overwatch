@@ -192,7 +192,7 @@ public class TopBarUI
             p.name.text = attacking ? "ÚTOK" : "OBRANA";
         }
         else
-            p.name.text = $"TÝM {team}";
+            p.name.text = MatchManager.TeamName(team);
         p.name.color = color;
         p.you.text = isMine ? "VY" : "NEPŘÁTELÉ";
         // postup k cili (team deathmatch); v utoku a obrane bez pruhu

@@ -537,6 +537,7 @@ public class CharacterVisual : MonoBehaviour
     AnimationClip ultimateClip;
     AnimationClipPlayable ultimatePlayable;
     float ultimateWeight, ultimateTime, ultimateUntil = -1f;
+    bool ultimateHold;   // klip jednou a pak drzet posledni snimek (ne smycka)
 
     public bool HasUltimateAnimation => ultimateClip != null;
     public bool UltimateActive => ultimateUntil > Time.time;
@@ -549,11 +550,13 @@ public class CharacterVisual : MonoBehaviour
         if (!graph.IsValid() || ultimateClip == null) return;
         ultimateUntil = Time.time + seconds;
         ultimateTime = 0f;
+        ultimateHold = false;
     }
 
     // Libovolna animace pres cele telo ve smycce (vrstva ultimatky) na 'seconds' s - napr. sezeni v uvodni scence.
     // 'instant' = hned naplno (bez prolnuti).
-    public void PlayFullBody(AnimationClip clip, float seconds, bool instant = false)
+    // 'holdLast' = prehrat jednou a drzet posledni snimek (napr. podrep v POTG), jinak smycka.
+    public void PlayFullBody(AnimationClip clip, float seconds, bool instant = false, bool holdLast = false)
     {
         if (!graph.IsValid() || clip == null) return;
         if (clip != ultimateClip)
@@ -567,6 +570,7 @@ public class CharacterVisual : MonoBehaviour
         }
         ultimateUntil = Time.time + seconds;
         ultimateTime = 0f;
+        ultimateHold = holdLast;
         if (instant)
         {
             ultimateWeight = 1f;
@@ -589,7 +593,8 @@ public class CharacterVisual : MonoBehaviour
         ultimateWeight = Mathf.MoveTowards(ultimateWeight, on ? 1f : 0f, dt * 6f);
         if (ultimateWeight > 0f && ultimateClip != null)
         {
-            ultimateTime = Mathf.Repeat(ultimateTime + dt, Mathf.Max(0.05f, ultimateClip.length));
+            ultimateTime = ultimateHold ? Mathf.Min(ultimateTime + dt, Mathf.Max(0f, ultimateClip.length - 0.01f))
+                : Mathf.Repeat(ultimateTime + dt, Mathf.Max(0.05f, ultimateClip.length));
             ultimatePlayable.SetTime(ultimateTime);
         }
         layers.SetInputWeight(6, ultimateWeight);

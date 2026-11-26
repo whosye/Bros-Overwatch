@@ -5,25 +5,32 @@ using UnityEngine.UI;
 
 // Prehravani "play of the game" na konci zapasu: uvodni karta se jmenem hrace a pak jeho akce prehrana primo ve hre
 // (data posila PotgRecorder, prehrava ReplayPlayer - v plnem rozliseni, s jeho HUD a zvuky hry).
+// Uvod = scenka hrdiny (PotgIntro) a karta jako v Overwatchi (PotgCard). Casy uvodu jdou podle hodin scenky, takze
+// zpomaleni ve vrcholu scenky uvod o tu chvili prodlouzi (nic se neutne). Ukazka z editoru (PotgIntro.Preview)
+// ukaze kartu a pusti znelku i bez zapasu.
 public class PotgUI : MonoBehaviour
 {
     enum Phase { Hidden, Intro, Playing, Outro }
 
-    // Karta se jmenem hrace trva 5 s (uvod znelky), pak 12 s zaznamu a sekunda dojezdu = 18 s jako znelka.
+    // Uvod trva 5 s (uvod znelky; se zpomalenim o chvili dele), pak 12 s zaznamu a sekunda dojezdu.
     const float IntroSeconds = 5f;
     const float OutroSeconds = 1f;
     const float MaxWaitSeconds = 10f;
+    const float CardInAt = 3.0f;          // scenka: karta vjede v detailu obliceje
+    const float BlackCardInAt = 0.3f;     // cerna karta (hrdina bez scenky)
+    const float CardAwaySeconds = 0.25f;  // odlet karty pred strihem na zaznam
 
     static PotgUI instance;
 
     GameObject overlay;
     Image background;
-    Image bottomShade;
+    SkewBar bottomShade;
+    PotgCard card;
+    TextMeshProUGUI cornerLabel;
 
-    // Uvodni scenka hrdiny (PotgIntro) misto cerne karty: texty pak vjedou zleva dole v detailu obliceje.
-    bool cinematic;
-    const float TextInAt = 3.0f;
-    TextMeshProUGUI introTitle, introName, introCategory, cornerLabel;
+    bool cinematic;   // uvodni scenka hrdiny (jinak cerna karta)
+    bool preview;     // ukazka z editoru: bez zapasu a zaznamu, konci se scenkou
+    bool cardSwoosh, cardHit;
 
     AudioSource introSource;
 
@@ -63,22 +70,19 @@ public class PotgUI : MonoBehaviour
         UiKit.Stretch(background.rectTransform);
         overlay = background.gameObject;
 
-        introTitle = UiKit.MakeText(overlay.transform, "Title", "PLAY OF THE GAME", 96, TextAlignmentOptions.Center, center,
-            new Vector2(0f, 70f), new Vector2(1700f, 130f), UiKit.Accent);
-        introName = UiKit.MakeText(overlay.transform, "Name", "", 60, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -50f), new Vector2(1700f, 90f));
-        introCategory = UiKit.MakeText(overlay.transform, "Category", "", 40, TextAlignmentOptions.Center, center,
-            new Vector2(0f, -130f), new Vector2(1700f, 60f), UiKit.Muted);
+        // Tmavy stin vlevo dole pod kartou (doprava mizi - vpravo v zaberu zustane videt, co se deje za hrdinou).
+        bottomShade = SkewBar.Make(overlay.transform, "BottomShade", new Color(0f, 0f, 0f, 0.7f), Vector2.zero, new Vector2(1500f, 360f), 0f);
+        bottomShade.gradient = true;
+        bottomShade.rightColor = new Color(0f, 0f, 0f, 0f);
+        bottomShade.gameObject.SetActive(false);
+
+        card = new PotgCard(overlay.transform);
         cornerLabel = UiKit.MakeText(overlay.transform, "Corner", "", 34, TextAlignmentOptions.TopLeft, new Vector2(0f, 1f),
             new Vector2(40f, -30f), new Vector2(1200f, 100f));
 
-        // Tmavy pruh dole pod texty scenky (at jsou citelne).
-        bottomShade = UiKit.MakeImage(overlay.transform, "BottomShade", new Color(0f, 0f, 0f, 0.6f), new Vector2(0.5f, 0f),
-            new Vector2(0f, 150f), new Vector2(4000f, 300f));
-        bottomShade.transform.SetSiblingIndex(0);
-        bottomShade.gameObject.SetActive(false);
-
-        introSource = gameObject.AddComponent<AudioSource>();
+        var music = new GameObject("PotgZnelka");
+        music.transform.SetParent(transform, false);
+        introSource = music.AddComponent<AudioSource>();
         introSource.playOnAwake = false;
         introSource.spatialBlend = 0f;
 
@@ -97,6 +101,7 @@ public class PotgUI : MonoBehaviour
         // vse, co jeste dohrava ze hry (hlasky, ultimatky), hned utichne
         HeroVoice.SilenceAll();
         Fx.StopGlobalSounds();
+        instance.preview = false;
         instance.BeginInternal(playerName, heroName, team, totalBytes, category);
 
         // Scenka hrdiny; kdyz nejde (hrdina bez modelu), zustane cerna karta.
@@ -104,28 +109,22 @@ public class PotgUI : MonoBehaviour
         instance.LayoutIntro();
     }
 
-    // Rozlozeni textu uvodu: na cerne karte uprostred, pri scence vlevo dole.
-    void LayoutIntro()
+    // Ukazka z editoru (scenka uz bezi): karta s prezdivkou z menu a znelka, bez zapasu a zaznamu.
+    public static void BeginPreview(string heroName)
     {
-        var center = new Vector2(0.5f, 0.5f);
-        var left = new Vector2(0f, 0f);
-        Place(introTitle, cinematic ? left : center, cinematic ? new Vector2(110f, 230f) : new Vector2(0f, 70f), cinematic ? 84 : 96);
-        Place(introName, cinematic ? left : center, cinematic ? new Vector2(110f, 140f) : new Vector2(0f, -50f), cinematic ? 58 : 60);
-        Place(introCategory, cinematic ? left : center, cinematic ? new Vector2(110f, 78f) : new Vector2(0f, -130f), 40);
-
-        var alignment = cinematic ? TMPro.TextAlignmentOptions.Left : TMPro.TextAlignmentOptions.Center;
-        introTitle.alignment = introName.alignment = introCategory.alignment = alignment;
-        background.color = cinematic ? new Color(0f, 0f, 0f, 0f) : Color.black;
-        bottomShade.gameObject.SetActive(false);
+        if (instance == null) return;
+        instance.preview = true;
+        instance.BeginInternal(MainMenuUI.PlayerName, heroName, 0, 0, "Ukázka z editoru");
+        instance.cinematic = true;
+        instance.LayoutIntro();
     }
 
-    static void Place(TMPro.TextMeshProUGUI text, Vector2 anchor, Vector2 position, float size)
+    // Karta: pri scence vlevo dole, na cerne karte uprostred.
+    void LayoutIntro()
     {
-        var rect = text.rectTransform;
-        rect.anchorMin = rect.anchorMax = anchor;
-        rect.pivot = new Vector2(anchor.x, 0.5f);
-        rect.anchoredPosition = position;
-        text.fontSize = size;
+        card.Place(cinematic);
+        background.color = cinematic ? new Color(0f, 0f, 0f, 0f) : Color.black;
+        bottomShade.gameObject.SetActive(false);
     }
 
     public static void AddChunk(int offset, byte[] chunk)
@@ -145,13 +144,15 @@ public class PotgUI : MonoBehaviour
 
     void BeginInternal(string playerName, string heroName, int team, int totalBytes, string category)
     {
-        introCategory.text = category;
         data = new byte[totalBytes];
         received = 0;
+        cardSwoosh = cardHit = false;
+
+        card.Set(playerName, heroName, category, UiKit.TeamColor(team));
+        card.Tick(-1f, 0f);
 
         string color = ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(team));
         string who = string.IsNullOrEmpty(heroName) ? playerName : $"{playerName}  ·  {heroName}";
-        introName.text = $"<color=#{color}>{who}</color>";
         cornerLabel.text = $"<color=#F28C1A>PLAY OF THE GAME</color>\n<size=80%><color=#{color}>{who}</color></size>"
             + (string.IsNullOrEmpty(category) ? "" : $"\n<size=65%><color=#A6B3C7>{category}</color></size>");
 
@@ -160,14 +161,8 @@ public class PotgUI : MonoBehaviour
 
         introSource.clip = IntroClip();
         introSource.volume = 0.9f;
+        introSource.pitch = 1f;
         introSource.Play();
-    }
-
-    static void SlideIn(TMPro.TextMeshProUGUI text, float y, float k, float unused)
-    {
-        float ease = 1f - Mathf.Pow(1f - Mathf.Clamp01(k), 3f);
-        text.rectTransform.anchoredPosition = new Vector2(Mathf.Lerp(-500f, 110f, ease), y);
-        text.alpha = ease;
     }
 
     void SetPhase(Phase next)
@@ -176,17 +171,12 @@ public class PotgUI : MonoBehaviour
         phaseStart = Time.unscaledTime;
 
         bool intro = next == Phase.Intro;
-        introTitle.gameObject.SetActive(intro);
-        introName.gameObject.SetActive(intro);
-        introCategory.gameObject.SetActive(intro);
+        card.SetVisible(intro);
         cornerLabel.gameObject.SetActive(!intro);
+        if (!intro) bottomShade.gameObject.SetActive(false);
 
         // Uvodni karta na cernem pozadi (pri scence pruhledna); pri prehravani je pozadi pruhledne (hraje se ve scene).
         background.color = intro && !cinematic ? Color.black : new Color(0f, 0f, 0f, 0f);
-        if (!intro)
-        {
-            introTitle.alpha = introName.alpha = introCategory.alpha = 1f;
-        }
     }
 
     void Hide()
@@ -195,6 +185,7 @@ public class PotgUI : MonoBehaviour
         data = null;
         received = 0;
         cinematic = false;
+        preview = false;
         PotgIntro.Stop();
         ReplayPlayer.Stop();
         if (introSource != null)
@@ -207,10 +198,10 @@ public class PotgUI : MonoBehaviour
     {
         if (phase == Phase.Hidden) return;
 
-        // Hrac opustil hru nebo zacal novy zapas.
+        // Hrac opustil hru nebo zacal novy zapas (ukazka z editoru zapas nema).
         var network = NetworkManager.Singleton;
         var match = MatchManager.Instance;
-        if (network == null || !network.IsListening || match == null || !match.IsOver)
+        if (!preview && (network == null || !network.IsListening || match == null || !match.IsOver))
         {
             Hide();
             return;
@@ -219,6 +210,7 @@ public class PotgUI : MonoBehaviour
         float elapsed = Time.unscaledTime - phaseStart;
 
         // Znelka: pri uvodni karte naplno, pod akci tise (at je slyset zvuk hry), na konci do ztracena.
+        // (zpomaleni scenky ji nemeni - nahravka hraje porad stejne)
         if (introSource != null && introSource.isPlaying)
         {
             float wanted = phase == Phase.Intro ? 0.9f : phase == Phase.Playing ? 0.6f : 0.6f * Mathf.Clamp01(1f - elapsed / OutroSeconds);
@@ -227,20 +219,37 @@ public class PotgUI : MonoBehaviour
 
         if (phase == Phase.Intro)
         {
-            // Scenka: texty vjedou zleva v detailu obliceje.
+            // hodiny uvodu: cas scenky (zpomaleni ho protahne), bez scenky realny cas
+            float clock = cinematic && PotgIntro.Active ? PotgIntro.Clock : elapsed;
+            float k = clock - (cinematic ? CardInAt : BlackCardInAt);
+            float away = Mathf.Clamp01((clock - (IntroSeconds - CardAwaySeconds)) / CardAwaySeconds);
+            card.Tick(k, away);
+            if (k >= 0f && !cardSwoosh)
+            {
+                cardSwoosh = true;
+                Fx.PlayGlobal(ProceduralSfx.Dash, 0.3f);
+            }
+            if (k >= 0.12f && !cardHit)
+            {
+                cardHit = true;
+                Fx.PlayGlobal(ProceduralSfx.PotgStamp, 0.5f);
+            }
             if (cinematic)
             {
-                float k = Mathf.Clamp01((elapsed - TextInAt) / 0.35f);
-                float ease = 1f - Mathf.Pow(1f - k, 3f);
-                bottomShade.gameObject.SetActive(k > 0f);
-                bottomShade.color = new Color(0f, 0f, 0f, 0.6f * ease);
-                SlideIn(introTitle, 230f, ease, 0f);
-                SlideIn(introName, 140f, Mathf.Clamp01((elapsed - TextInAt - 0.12f) / 0.35f), 0f);
-                SlideIn(introCategory, 78f, Mathf.Clamp01((elapsed - TextInAt - 0.24f) / 0.35f), 0f);
+                float shade = Mathf.Clamp01(k / 0.35f) * (1f - away);
+                bottomShade.gameObject.SetActive(shade > 0f);
+                bottomShade.color = new Color(0f, 0f, 0f, 0.72f * shade);
+            }
+
+            // ukazka: konci se scenkou (zaznam neni)
+            if (preview)
+            {
+                if (!PotgIntro.Active) Hide();
+                return;
             }
 
             bool complete = data != null && received >= data.Length;
-            if (elapsed >= IntroSeconds && (complete || elapsed > MaxWaitSeconds))
+            if (clock >= IntroSeconds && (complete || elapsed > MaxWaitSeconds))
             {
                 ReplayClip clip = null;
                 if (complete)
@@ -256,7 +265,6 @@ public class PotgUI : MonoBehaviour
                 }
 
                 PotgIntro.Stop();
-                bottomShade.gameObject.SetActive(false);
                 SetPhase(Phase.Playing);
                 ReplayPlayer.Play(clip);
             }

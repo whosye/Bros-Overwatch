@@ -258,6 +258,57 @@ public static class RoofHoleTool
         EditorSceneManager.MarkSceneDirty(roof.gameObject.scene);
     }
 
+    // Zvetsi diry na 'target' x 'target' m (jen tolik, kolik dovoli okraje strechy - Margin; nikdy nezmensi), strechu
+    // prestavi a zkontroluje, jestli dirou projde hrac (koule 0,5 m ze vzduchu nad dirou dolu do podkrovi).
+    // Zebriky zustavaji (jejich poloha je od stredu diry, ten se nemeni). Vraci zpravu.
+    public static string EnlargeHoles(RoofHoles roof, float target)
+    {
+        if (roof == null || roof.holes.Count == 0) return "bez der";
+        if (roof.source == null || !Shape.TryRead(roof.source, out var shape)) return "chybi puvodni strecha (Source)";
+
+        float sizeX = target, sizeY = target;
+        foreach (var h in roof.holes)
+        {
+            sizeX = Mathf.Min(sizeX, 2f * Mathf.Min(h.along - Margin, shape.Length - h.along - Margin));
+            sizeY = Mathf.Min(sizeY, 2f * Mathf.Min(h.down - Margin, shape.Slant(h.side) - h.down - Margin));
+        }
+        var old = roof.holeSize;
+        var size = new Vector2(Mathf.Max(old.x, sizeX), Mathf.Max(old.y, sizeY));
+        var report = new System.Text.StringBuilder();
+        if ((size - old).sqrMagnitude > 0.0001f)
+        {
+            Undo.RecordObject(roof, "Zvetsit diry ve strese");
+            roof.holeSize = size;
+            Rebuild(roof);
+            report.Append($"dira {old.x:0.0}x{old.y:0.0} -> {size.x:0.00}x{size.y:0.00} m");
+        }
+        else report.Append($"dira {old.x:0.00}x{old.y:0.00} m (vic nejde - okraj strechy)");
+
+        // kontrola pruchodu: vodorovne volno napric svahem a koule hrace shora dolu
+        Physics.SyncTransforms();
+        foreach (var h in roof.holes)
+        {
+            shape.Frame(h.side, out var origin, out var u, out var v, out var n);
+            float cos = Mathf.Max(0.05f, new Vector2(v.x, v.z).magnitude), sin = Mathf.Abs(v.y);
+            float open = roof.holeSize.y * cos - roof.thickness * sin;
+            Vector3 center = origin + u * h.along + v * h.down;
+            report.Append($"; vodorovne volno {open:0.00} m x {roof.holeSize.x:0.00} m (hrac 1 m), sklon {Mathf.Atan2(sin, cos) * Mathf.Rad2Deg:0} st.");
+            var blockers = new List<string>();
+            Vector3 from = center + Vector3.up * 1.6f;
+            foreach (var hit in Physics.SphereCastAll(from, 0.45f, Vector3.down, 3.2f, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.distance <= 0f) { blockers.Add(hit.collider.name + " (uz v miste nad dirou)"); continue; }
+                float y = from.y - hit.distance;
+                if (y < center.y - 1.3f) continue;   // podlaha podkrovi apod.
+                string path = hit.collider.name;
+                for (var t = hit.collider.transform.parent; t != null && t != roof.transform.parent; t = t.parent) path = t.name + "/" + path;
+                blockers.Add($"{path} ({y - center.y:+0.00;-0.00} m od diry)");
+            }
+            report.Append(blockers.Count == 0 ? "; pruchod shora volny" : "; PREKAZI: " + string.Join(", ", blockers));
+        }
+        return report.ToString();
+    }
+
     // Jeden svah: obdelnik [0..L] x [0..S] bez der, poskladany z kvadru (pasy mezi hranami der).
     static void BuildSlope(RoofHoles roof, Shape shape, int side, Material material, Material beam)
     {

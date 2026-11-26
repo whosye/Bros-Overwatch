@@ -505,6 +505,16 @@ public class MatchUI : MonoBehaviour
         endTitle.text = winner < 0
             ? "REMÍZA"
             : $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(winner))}>TÝM {winner} VYHRÁL</color>";
+        {
+            // kazdy rezim: VITEZSTVI / PORAZKA podle tymu hrace a skore tymu (Tlacenice: dotlacene metry)
+            int local = MatchManager.LocalTeam();
+            string color = ColorUtility.ToHtmlStringRGB(MatchManager.VerdictColor(winner, local));
+            string c0 = ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(0)), c1 = ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(1));
+            string s0 = match.IsPushMode ? $"{match.PushBest(0):0} m" : match.team0Score.Value.ToString();
+            string s1 = match.IsPushMode ? $"{match.PushBest(1):0} m" : match.team1Score.Value.ToString();
+            endTitle.text = $"<color=#{color}>{MatchManager.Verdict(winner, local)}</color>  <size=44>"
+                + $"<color=#{c0}>{MatchManager.TeamName(0)} {s0}</color> : <color=#{c1}>{s1} {MatchManager.TeamName(1)}</color></size>";
+        }
 
         bool isHost = network.IsServer;
         // Dokud nedobehne play of the game, host nemuze zapas ukoncit.

@@ -491,7 +491,7 @@ public partial class MatchManager
             firstProgress.Value = all ? 0f : progressOnNext;
             firstTime.Value = timeBank[team];
             RoundOverClientRpc($"KONEC {round.Value}. KOLA",
-                $"tým {team}: {PointsWord(pointsTaken)}{bankText}  ·  výměna stran", team);
+                $"{TeamName(team)}: {PointsWord(pointsTaken)}{bankText}  ·  výměna stran", team);
             ServerQueueRound(other, KindSecond, round.Value == 1 ? AttackSeconds : timeBank[other]);
             return;
         }
@@ -527,7 +527,7 @@ public partial class MatchManager
         {
             int solo = bankOther ? other : team;
             RoundOverClientRpc("NEROZHODNĚ - ROZSTŘEL",
-                $"jen tým {solo} má v bance aspoň {Mathf.RoundToInt(MinBankSeconds)} s  ·  za {Clock(timeBank[solo])} musí dobýt třetinu bodu A", solo);
+                $"jen {TeamName(solo)} má v bance aspoň {Mathf.RoundToInt(MinBankSeconds)} s  ·  za {Clock(timeBank[solo])} musí dobýt třetinu bodu A", solo);
             ServerQueueRound(solo, KindSolo, timeBank[solo]);
         }
         else
@@ -604,9 +604,9 @@ public partial class MatchManager
         var localPlayer = NetworkManager != null && NetworkManager.LocalClient != null ? NetworkManager.LocalClient.PlayerObject : null;
         var localTeam = localPlayer != null ? localPlayer.GetComponent<PlayerTeam>() : null;
         if (localTeam != null && localTeam.teamId.Value != attackers)
-            CaptureUI.Headline("BRAŇTE BOD", $"útočí tým {attackers}  ·  vy bráníte", UiKit.TeamColor(localTeam.teamId.Value));
+            CaptureUI.Headline("BRAŇTE BOD", $"útočí {TeamName(attackers)}  ·  vy bráníte", UiKit.TeamColor(localTeam.teamId.Value));
         else
-            CaptureUI.Headline("ÚTOK ZAČAL", $"útočí tým {attackers}", UiKit.TeamColor(attackers));
+            CaptureUI.Headline("ÚTOK ZAČAL", $"útočí {TeamName(attackers)}", UiKit.TeamColor(attackers));
     }
 
     [ClientRpc]

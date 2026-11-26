@@ -132,8 +132,8 @@ public class PushUI
             SetMark(marks1[i], markFill1[i], on, BarX(route, route.Checkpoint(1, i)), i < match.pushCheckpoints1.Value, UiKit.Team1);
         }
 
-        base0.text = mine == 0 ? "VY  «" : "TÝM 0  «";
-        base1.text = mine == 1 ? "»  VY" : "»  TÝM 1";
+        base0.text = mine == 0 ? "VY  «" : $"{MatchManager.TeamName(0)}  «";
+        base1.text = mine == 1 ? "»  VY" : $"»  {MatchManager.TeamName(1)}";
 
         // stav Honzy
         int pushers0 = match.PushersOf(0), pushers1 = match.PushersOf(1);
@@ -148,12 +148,12 @@ public class PushUI
                 status.color = Contested;
                 break;
             case MatchManager.PushWalking:
-                status.text = $"HONZA BĚŽÍ K YARISU TÝMU {owner}{(owner == mine ? " (VAŠEMU)" : "")}";
+                status.text = $"HONZA BĚŽÍ K YARISU: {MatchManager.TeamName(owner)}{(owner == mine ? " (VÁŠ)" : "")}";
                 status.color = UiKit.TeamColor(owner);
                 break;
             case MatchManager.PushPushing:
                 int count = owner == 0 ? pushers0 : pushers1;
-                status.text = $"TLAČÍ TÝM {owner}{(owner == mine ? " (VY)" : "")}  ·  {new string('»', Mathf.Clamp(count, 1, 3))}";
+                status.text = $"TLAČÍ {MatchManager.TeamName(owner)}{(owner == mine ? " (VY)" : "")}  ·  {new string('»', Mathf.Clamp(count, 1, 3))}";
                 status.color = UiKit.TeamColor(owner);
                 break;
             default:
@@ -161,8 +161,8 @@ public class PushUI
                 status.color = new Color(0.85f, 0.88f, 0.95f);
                 break;
         }
-        distances.text = $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team0)}>tým 0: {match.pushBest0.Value:0} m</color>      "
-            + $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team1)}>tým 1: {match.pushBest1.Value:0} m</color>";
+        distances.text = $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team0)}>{MatchManager.TeamName(0)}: {match.pushBest0.Value:0} m</color>      "
+            + $"<color=#{ColorUtility.ToHtmlStringRGB(UiKit.Team1)}>{MatchManager.TeamName(1)}: {match.pushBest1.Value:0} m</color>";
     }
 
     // s na trase -> x na pruhu (s = 0 vlevo, stred trasy uprostred).

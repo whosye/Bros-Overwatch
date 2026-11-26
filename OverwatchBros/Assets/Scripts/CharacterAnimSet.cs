@@ -62,4 +62,7 @@ public class CharacterAnimSet : ScriptableObject
     // Pro uvodni scenky pred "play of the game".
     public AnimationClip sitIdle;
     public AnimationClip hitChest;
+    [Tooltip("POTG uvod: podrep (Mixamo \"Standing To Crouched\" - prehraje se jednou a posledni snimek drzi). "
+        + "Soubor <Hrdina>_PotgCrouch.fbx ve slozce hrdiny v Models/Animations/Mixamo.")]
+    public AnimationClip potgCrouch;
 }

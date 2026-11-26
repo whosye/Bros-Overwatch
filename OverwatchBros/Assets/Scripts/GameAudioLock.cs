@@ -14,6 +14,7 @@ public static class GameAudioLock
         get
         {
             if (!Application.isPlaying) return false;   // (nahledy v editoru)
+            if (PotgIntro.Active) return false;          // ukazka POTG scenky z editoru (v menu) - se zvuky
             var network = NetworkManager.Singleton;
             return network == null || network.ShutdownInProgress || !(network.IsClient || network.IsServer);
         }

@@ -16,6 +16,7 @@ MonoBehaviour:
   walk: {fileID: -203655887218126122, guid: e002bb6758fc31942af10105920cf16e, type: 3}
   jog: {fileID: -203655887218126122, guid: 18fd1a34cd91ef4459483f93b7f39f54, type: 3}
   sprint: {fileID: -203655887218126122, guid: c893c321f9381cd409552fd59b6cfdf6, type: 3}
+  runUpright: 0
   jump: {fileID: 0}
   death: {fileID: 0}
   meleeAttack: {fileID: -203655887218126122, guid: 709d0d25e90293e43a5bd2a7d0900e4c, type: 3}
@@ -33,5 +34,18 @@ MonoBehaviour:
   shiftTo: 0
   rmbAbility: {fileID: -203655887218126122, guid: 18d6fbef2bed0ce40b96defc5bd8d983, type: 3}
   eAbility: {fileID: 0}
+  combo1: {fileID: 0}
+  combo2: {fileID: 0}
+  combo3: {fileID: 0}
+  strafeLeft: {fileID: 0}
+  strafeRight: {fileID: 0}
+  crouchWalk: {fileID: 0}
+  crouchHeadPitch: 0
+  jumpStart: {fileID: 0}
+  landIdle: {fileID: 0}
+  landRun: {fileID: 0}
+  climb: {fileID: 0}
+  bowHold: {fileID: 0}
+  bowTilt: 0
   sitIdle: {fileID: 0}
   hitChest: {fileID: 0}

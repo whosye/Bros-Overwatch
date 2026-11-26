@@ -29,6 +29,9 @@ public partial class MatchManager
     public const float PushRadius = 8f;            // kdo je bliz k Honzovi (nebo k Yarisu, ktery prave tlaci), je "u nej"
     const float PushHeight = 3f;
     public const float PushWalkSpeed = 3f;         // Honza bezi k Yarisu druheho tymu
+    public const float PushHealPerSecond = 10f;    // tym, ktery ma Honzu sam pro sebe, se u nej leci (jako u nakladu v OW)
+    const float PushHealInterval = 0.5f;
+    float nextPushHeal;
     const float PushOvertimeGrace = 1.5f;
     static readonly float[] PushSpeeds = { 0f, 0.9f, 1.05f, 1.2f };   // podle poctu tlacicich (strop 3+)
     // (rozestup Honzy od stredu Yarisu: PushRoute.robotOffset - podle velikosti auta, u vsech stejne ze sceny)
@@ -211,6 +214,13 @@ public partial class MatchManager
         else state = PushIdle;
 
         if (pushState.Value != state) pushState.Value = state;
+
+        // leceni u Honzy: jen tym, ktery u nej je sam (ne pri sporu)
+        if ((state == PushPushing || state == PushWalking) && Time.time >= nextPushHeal)
+        {
+            nextPushHeal = Time.time + PushHealInterval;
+            ServerPushHeal(robot, car, owner, PushHealPerSecond * PushHealInterval);
+        }
         if (!Mathf.Approximately(pushRobotRate.Value, rate))
         {
             pushRobotRate.Value = rate;
@@ -246,7 +256,7 @@ public partial class MatchManager
             int winner = serverCar[0] >= length - 0.01f ? 0 : 1;
             ForceSyncCar(winner);
             pushRobot.Value = serverRobot;
-            ServerEndPush(winner, $"TÝM {winner} DOTLAČIL YARIS", $"až do základny týmu {1 - winner}");
+            ServerEndPush(winner, "Yaris dotlačen až do základny", $"{TeamName(0)} {PushBest(0):0} m : {TeamName(1)} {PushBest(1):0} m");
             return;
         }
 
@@ -268,9 +278,9 @@ public partial class MatchManager
         if (roundPhase.Value == RoundOvertime && pushOvertimeEmpty < PushOvertimeGrace) return;
 
         if (leader < 0)
-            ServerEndPush(-1, "REMÍZA", "oba týmy dotlačily stejně daleko");
+            ServerEndPush(-1, "oba týmy dotlačily stejně daleko", $"{TeamName(0)} {PushBest(0):0} m : {TeamName(1)} {PushBest(1):0} m");
         else
-            ServerEndPush(leader, $"TÝM {leader} VYHRÁL", $"dotlačil dál: {PushBest(leader):0} m proti {PushBest(1 - leader):0} m");
+            ServerEndPush(leader, "dotlačil Yaris dál", $"{TeamName(0)} {PushBest(0):0} m : {TeamName(1)} {PushBest(1):0} m");
     }
 
     // Poloha tlaceneho Yarisu do site 5x za s (klienti ho mezi tim dopocitavaji z polohy Honzy).
@@ -312,7 +322,7 @@ public partial class MatchManager
         roundPhase.Value = RoundDone;
         pushRobotRate.Value = 0f;
         pushState.Value = PushIdle;
-        RoundOverClientRpc(title, subtitle, winner);
+        PushOverClientRpc(winner, title, subtitle);
         EndMatch(winner);
     }
 
@@ -325,29 +335,61 @@ public partial class MatchManager
         {
             var player = client.PlayerObject;
             if (player == null) continue;
-
-            var health = player.GetComponent<Health>();
-            var hero = player.GetComponent<PlayerHero>();
             var team = player.GetComponent<PlayerTeam>();
-            if (health == null || team == null || health.currentHealth.Value <= 0f || (hero != null && hero.IsJoining)) continue;
-
-            Vector3 feet = player.transform.position;
-            Vector3 a = new Vector3(robot.x, 0f, robot.z), b = new Vector3(car.x, 0f, car.z), p = new Vector3(feet.x, 0f, feet.z);
-            Vector3 ab = b - a;
-            float t = ab.sqrMagnitude > 1e-4f ? Mathf.Clamp01(Vector3.Dot(p - a, ab) / ab.sqrMagnitude) : 0f;
-            if (Vector3.Distance(p, a + ab * t) > PushRadius) continue;
-            float groundY = Mathf.Lerp(robot.y, car.y, t);
-            // kdo stoji na strese Yarisu (nebo na Honzovi), je u nej taky - i kdyz je vys nez PushHeight
-            bool onTop = feet.y > groundY + PushHeight && feet.y < groundY + 8f
-                && PushRobot.Instance != null && PushRobot.Instance.Occupies(feet, 0.3f);
-            if (feet.y < groundY - 1.5f || (feet.y > groundY + PushHeight && !onTop)) continue;
+            if (!AtRobot(player, robot, car)) continue;
 
             if (team.teamId.Value == 0) team0++;
             else team1++;
         }
     }
 
+    // Leceni hracu tymu 'team', kteri jsou u Honzy (server).
+    void ServerPushHeal(Vector3 robot, Vector3 car, int team, float amount)
+    {
+        if (team < 0) return;
+        foreach (var client in PlayerSlots())
+        {
+            var player = client.PlayerObject;
+            if (player == null) continue;
+            var playerTeam = player.GetComponent<PlayerTeam>();
+            if (playerTeam == null || playerTeam.teamId.Value != team || !AtRobot(player, robot, car)) continue;
+            var health = player.GetComponent<Health>();
+            if (health != null && health.currentHealth.Value < health.maxHealth) health.Heal(amount);
+        }
+    }
+
+    // Je hrac (zivy, ve hre) u Honzy - do PushRadius od usecky Honza - tlaceny Yaris, vyskove do PushHeight (nebo na strese)?
+    static bool AtRobot(NetworkObject player, Vector3 robot, Vector3 car)
+    {
+        {
+            var health = player.GetComponent<Health>();
+            var hero = player.GetComponent<PlayerHero>();
+            var team = player.GetComponent<PlayerTeam>();
+            if (health == null || team == null || health.currentHealth.Value <= 0f || (hero != null && hero.IsJoining)) return false;
+
+            Vector3 feet = player.transform.position;
+            Vector3 a = new Vector3(robot.x, 0f, robot.z), b = new Vector3(car.x, 0f, car.z), p = new Vector3(feet.x, 0f, feet.z);
+            Vector3 ab = b - a;
+            float t = ab.sqrMagnitude > 1e-4f ? Mathf.Clamp01(Vector3.Dot(p - a, ab) / ab.sqrMagnitude) : 0f;
+            if (Vector3.Distance(p, a + ab * t) > PushRadius) return false;
+            float groundY = Mathf.Lerp(robot.y, car.y, t);
+            // kdo stoji na strese Yarisu (nebo na Honzovi), je u nej taky - i kdyz je vys nez PushHeight
+            bool onTop = feet.y > groundY + PushHeight && feet.y < groundY + 8f
+                && PushRobot.Instance != null && PushRobot.Instance.Occupies(feet, 0.3f);
+            if (feet.y < groundY - 1.5f || (feet.y > groundY + PushHeight && !onTop)) return false;
+            return true;
+        }
+    }
+
     // ---------------- hlaseni (klienti) ----------------
+
+    // Konec Tlacenice: kazdemu velke VITEZSTVI / PORAZKA (podle jeho tymu), kdo vyhral a proc.
+    [ClientRpc]
+    void PushOverClientRpc(int winner, string title, string subtitle)
+    {
+        int local = LocalTeam();
+        CaptureUI.Headline(Verdict(winner, local), $"{WinnerLine(winner, local)}  ·  {title}  ·  {subtitle}", VerdictColor(winner, local), 8f);
+    }
 
     [ClientRpc]
     void PushStartedClientRpc()
@@ -368,8 +410,8 @@ public partial class MatchManager
             PushRobot.Instance.Horn(team);
             PushRobot.Instance.Say();
         }
-        CaptureUI.Headline($"CHECKPOINT {index}  ·  TÝM {team}",
-            $"+{PushCheckpointBonus:0} s  ·  spawn týmu {team} se posunul dopředu", UiKit.TeamColor(team));
+        CaptureUI.Headline($"CHECKPOINT {index}  ·  {TeamName(team)}",
+            $"+{PushCheckpointBonus:0} s  ·  {TeamName(team)} se oživuje blíž", UiKit.TeamColor(team));
     }
 
     // ---------------- texty pro HUD ----------------

@@ -166,6 +166,11 @@ public class ReplayCapture : MonoBehaviour
             var mover = p.GetComponent<FirstPersonController>();
             if (mover != null && mover.IsSpawned && mover.scoped.Value) flags |= ReplayPlayerSnap.Scoped;
             var visor = p.GetComponent<VisorAbility>();
+            // Max: stinova forma a schovani v obeti (killcam a POTG je musi ukazat jako ve hre)
+            byte state = 0;
+            var max = p.GetComponent<MaxAbility>();
+            if (max != null && max.IsSpawned && max.ShadowFormActive) state |= ReplayPlayerSnap.StateShadow;
+            if (p.IsHidden) state |= ReplayPlayerSnap.StateHidden;
 
             list.Add(new ReplayPlayerSnap
             {
@@ -175,6 +180,7 @@ public class ReplayCapture : MonoBehaviour
                 position = p.transform.position,
                 yaw = p.transform.eulerAngles.y,
                 flags = flags,
+                state = state,
                 health = h != null ? h.currentHealth.Value : 0f,
                 maxHealth = h != null ? h.maxHealth : 100f,
                 charge = (byte)Mathf.RoundToInt(Mathf.Clamp01(bow != null ? bow.ChargeFraction : 0f) * 255f),

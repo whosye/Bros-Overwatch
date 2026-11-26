@@ -776,7 +776,7 @@ public class HudUI
         float fraction = current / max;
 
         nameText.text = d.team >= 0
-            ? $"{d.hero.heroName.ToUpperInvariant()}  ·  <color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(d.team))}>TÝM {d.team}</color>"
+            ? $"{d.hero.heroName.ToUpperInvariant()}  ·  <color=#{ColorUtility.ToHtmlStringRGB(UiKit.TeamColor(d.team))}>{MatchManager.TeamName(d.team)}</color>"
             : d.hero.heroName.ToUpperInvariant();
         healthText.text = d.shield >= 0.5f
             ? $"{Mathf.CeilToInt(current)}<color=#{ColorUtility.ToHtmlStringRGB(Health.ShieldColor)}>+{Mathf.CeilToInt(d.shield)}</color><size=45%> / {max:0}</size>"

@@ -7,7 +7,8 @@ using UnityEngine.UI;
 //  Honza   - drzi karburator a fouka z nej prach; za nim vybuchne naloz a Pova (sedi na bedne) odleti. Honza ani nemrkne.
 //  Viktor  - stahne si zamerovac na oci, hodi flash do kamery (obraz zbeli); pod nohama mu sviti lecive pole.
 //  Mirek   - vystreli z luku mimo zaber; za nim se prozene jeho smrst s oblicejem. Neotoci se, pak pohled do kamery.
-//  Anna    - (David) uspavaci sipka do Tomaska na gauci, ten usne a upusti pivo; David sfoukne hlaven.
+//  Anna    - (David) uspavaci pistolkou uspí Tomaska na gauci, pomalu k nemu dojde; pohled uspaneho Tomaska zespodu:
+//            David se nad nim nakloni, podiva se do kamery a da si prst na pusu ("psst") - jako Anin POTG v Overwatchi.
 //  Sniper  - (Kondulic) na vysokem sloupu, hakem se pritahne dolu ke kamere a kopne do ni.
 //  Max     - u stolku s lasagnemi zmizi ve stinu, vynori se pred kamerou a otockou kosy rozpuli lasagne.
 //  Bard    - (Mosino) u reproduktoru: basovy uder odhodi bedny, svetla se rozblikaji a tanci.
@@ -29,6 +30,13 @@ public partial class PotgIntro
     float cupAppear, cupAtMouth, cupDrinkEnd, cupLowered;
     float cupHalf = 0.088f, cupTilt = 100f, cupRadius = 0.036f;
     float cupNose;   // o kolik vys nez pusa (Max: bankovka k nosu)
+    // Max snupe: hlava se skloni k bankovce (ne zakloni jako pri piti) a ruka ji drzi konecky prstu dole u konce,
+    // kousek stranou od obliceje (ne celou dlani jako plechovku - pest zajizdela do obliceje)
+    float cupHeadTilt = -18f;   // naklon hlavy pri piti (zaporne = zaklonit, kladne = sklonit)
+    float cupGripSide, cupGripDown;   // ruka od osy napoje do strany / dolu po nem (m)
+    bool cupFollowsHead;              // osy obliceje z hlavy (bankovka u nosu), ne z tela
+    Vector3 faceForwardLocal, faceUpLocal, faceRightLocal;
+    bool faceAxes;
     FirstPersonArms.Arm drinkArm;
     bool silentCloseup;   // v detailu bez hlasky (pije)
     bool visorAxes;
@@ -52,9 +60,20 @@ public partial class PotgIntro
         visorAxes = false;
         cup = drinkFrame = null;
         cupNose = 0f;
+        cupHeadTilt = -18f;
+        cupGripSide = cupGripDown = 0f;
+        cupFollowsHead = faceAxes = false;
         cheerLeft = cheerRight = null;
         cheerFrame = null;
+        honzaDetonator = null;
+        davidPistol = null;
+        davidLeft = davidRight = null;
+        davidFaceAxes = false;
+        davidFaceLight = null;
         tomasekArm = null;
+        tray = trayLine = bill = null;
+        trayArm = billArm = null;
+        maxFaceAxes = false;
         tomasekGrip = null;
         cutLine = cutGlow = null;
         drinkArm = null;
@@ -145,10 +164,26 @@ public partial class PotgIntro
         float sip = drink * (1f - lower);
 
         Vector3 forward = hero.forward, up = hero.up, right = hero.right;
-        // hlava se pri piti zakloni
-        var back = Quaternion.AngleAxis(-18f * sip, right);
+        if (cupFollowsHead)
+        {
+            // osy obliceje v prostoru hlavy (zachyceno na zacatku) - napoj sleduje natoceni hlavy z animace
+            if (!faceAxes)
+            {
+                var inverse = Quaternion.Inverse(head.rotation);
+                faceForwardLocal = inverse * hero.forward;
+                faceUpLocal = inverse * hero.up;
+                faceRightLocal = inverse * hero.right;
+                faceAxes = true;
+            }
+            forward = head.rotation * faceForwardLocal;
+            up = head.rotation * faceUpLocal;
+            right = head.rotation * faceRightLocal;
+        }
+        // hlava se pri piti zakloni (snupnuti: lehce skloni)
+        var back = Quaternion.AngleAxis(cupHeadTilt * sip, right);
         head.rotation = back * head.rotation;
-        Vector3 mouth = head.position + back * (forward * (0.115f + cupNose * 0.3f) + up * (0.005f + cupNose));
+        if (cupFollowsHead) { forward = back * forward; up = back * up; }
+        Vector3 mouth = head.position + (cupFollowsHead ? Quaternion.identity : back) * (forward * (0.115f + cupNose * 0.3f) + up * (0.005f + cupNose));
 
         // plechovka: vrskem u pusy, naklani se tim vic, cim dele pije
         float tilt = Mathf.Lerp(Mathf.Lerp(10f, cupTilt * 0.4f, raise), cupTilt, drink);
@@ -165,7 +200,7 @@ public partial class PotgIntro
         if (drinkArm != null)
         {
             drinkFrame.rotation = Quaternion.LookRotation(fingers, canUp);
-            FirstPersonArms.SolveArm(drinkArm, center - right * cupRadius, drinkFrame, -up - right * 0.8f - forward * 0.2f, false);
+            FirstPersonArms.SolveArm(drinkArm, center - right * (cupRadius + cupGripSide) - canUp * cupGripDown, drinkFrame, -up - right * 0.8f - forward * 0.2f, false);
         }
 
         // oci zavrene a rty na plechovce, po napiti spokojeny usmev
@@ -234,14 +269,13 @@ public partial class PotgIntro
                 break;
 
             case "Anna":
-                hero.SetPositionAndRotation(Ground(0.9f, 1.1f), Facing(Stage + new Vector3(0.9f, 0f, 1.1f), Stage + new Vector3(-1.3f, 0f, 2.7f)));
-                BuildTomasek(new Vector3(-1.3f, 0f, 2.7f), Quaternion.Euler(0f, 130f, 0f), true);
-                var monster = new GameObject("BilyMonster").transform;
-                monster.SetParent(root.transform, false);
-                MonsterCan.Build(monster);
-                monster.localScale = Vector3.one;   // skutecna velikost (v letu je zvetsena)
-                SetupDrink(monster, 3.0f, 3.45f, 4.45f, 4.8f, 0.088f, 100f, 0.036f);
-                sceneWhip = 2.5f;
+                // Tomasek na gauci, David pred nim (kus od nej) s uspavaci pistolkou v leve ruce
+                seat = Stage + new Vector3(-1.3f, 0f, 2.7f);
+                seatRotation = Quaternion.Euler(0f, 130f, 0f);
+                BuildTomasek(new Vector3(-1.3f, 0f, 2.7f), seatRotation, true);
+                hero.SetPositionAndRotation(DavidStart, Facing(DavidStart, seat));
+                silentCloseup = true;   // misto hlasky "psst"
+                sceneWhip = 99f;        // bez spolecneho detailu - konci pohledem uspaneho Tomaska
                 break;
 
             case "Sniper":
@@ -273,8 +307,7 @@ public partial class PotgIntro
                 // vedle u stolu sedi Honza a natahuje se, ze si lajnu vysnupe
                 BuildTomasek(new Vector3(0.45f, 0f, 1.75f), Quaternion.Euler(0f, -90f, 0f), false, "Honza");
                 if (beer != null) beer.gameObject.SetActive(false);
-                SetupDrink(BuildBanknote(), 2.2f, 2.6f, 3.15f, 3.45f, 0.045f, 40f, 0.008f);
-                cupNose = 0.035f;   // ke nosu, ne k puse
+                BuildMaxSnort();   // v detailu: stribrny tacek s lajnou, snupnuti bankovkou, blazenost
                 maxChair = false;
                 BuildCutOverlay();
                 sceneWhip = 2.55f;
@@ -357,6 +390,24 @@ public partial class PotgIntro
 
     // ---------------- choreografie ----------------
 
+    // Vrchol scenky (cas scenky) - kolem nej se zpomali (PotgIntroExtras); -1 = bez zpomaleni.
+    float SceneClimax()
+    {
+        if (pova) return ImpactAt;                                         // Pova odpali Tomaska
+        switch (scene)
+        {
+            case "Honza": return 1.7f;                                     // naloz vybuchne, Pova leti
+            case "Viktor": return ViktorShot + ViktorGrenadeFlight - 0.12f;   // granat tesne pred objektivem
+            case "Mirek": return StormAt + (StormRun - 1.2f * StormAbility.LengthFactor) / StormSpeed;   // smrst u kamery
+            case "Anna": return DavidHit;                                  // sipka zasahne Tomaska
+            case "Sniper": return 1.82f;                                   // kopanec do kamery
+            case "Max": return MaxCut;                                     // rez kosou
+            case "Bard": return MosinoHit;                                 // basovy uder
+            case "Sindel": return SindelThrow + SindelGrenadeFlight - 0.12f;   // svaty granat pred objektivem
+        }
+        return -1f;
+    }
+
     // Vraci false, kdyz hrdina vlastni scenku nema (pak obecna).
     bool AnimateScene(float t, out Vector3 widePos, out Quaternion wideRot, out float wideFov)
     {
@@ -403,6 +454,56 @@ public partial class PotgIntro
         for (int i = 0; i < stageLights.Count; i++) stageLights[i].intensity = baseIntensity[i] * flare;
     }
 
+    // ---------------- Honza: detonator ----------------
+
+    // Honza zvedne levou ruku s detonatorem pred sebe (jako ve hre), palcem zmackne - naloz vybuchne (Launch 1,7 s) -
+    // a detonator drzi v pesti i pri radosti.
+    const float DetonatorRaise = 1.1f, DetonatorRaiseSeconds = 0.25f, DetonatorPress = 1.64f;
+    Transform honzaDetonator;
+    Quaternion detonatorFrame = Quaternion.identity;
+
+    void HonzaDetonator()
+    {
+        if (time < DetonatorRaise || visual == null || visual.BodyAnimator == null) return;
+        if (cheerLeft == null) cheerLeft = FirstPersonArms.BuildArm(visual.BodyAnimator, false);
+        var arm = cheerLeft;
+        if (arm == null || arm.upper == null) return;
+        if (honzaDetonator == null)
+        {
+            honzaDetonator = HeldWeapons.BuildDetonator(root.transform);
+            honzaDetonator.name = "HonzuvDetonator";
+        }
+
+        var body = visual.ModelRoot != null ? visual.ModelRoot : hero;
+        Vector3 forward = body.forward, up = body.up, right = body.right;
+        float k = Mathf.Clamp01((time - DetonatorRaise) / DetonatorRaiseSeconds);
+        float raise = 1f - (1f - k) * (1f - k);
+        // zmacknuti: kratke cuknuti pesti dopredu a dolu
+        float d = time - DetonatorPress;
+        float squeeze = d < 0f ? 0f : Mathf.Exp(-d * 14f) * Mathf.Min(1f, d * 50f);
+
+        // ruka pred levym ramenem, kousek nad nim a ke stredu tela; pest: prsty dopredu, hrbet ruky vlevo
+        Vector3 target = arm.upper.position + forward * 0.36f + up * 0.16f + right * 0.08f + (forward * 0.015f - up * 0.012f) * squeeze;
+        detonatorFrame = Quaternion.LookRotation(forward, -right) * Quaternion.Euler(8f * squeeze, 0f, 0f);
+        Quaternion upper = arm.upper.localRotation, lower = arm.lower.localRotation, wrist = arm.hand.localRotation;
+        FirstPersonArms.SolveArmFrame(arm, target, detonatorFrame, body.TransformDirection(new Vector3(-0.6f, -1f, -0.2f)), false);
+        if (raise < 0.999f)
+        {
+            arm.upper.localRotation = Quaternion.Slerp(upper, arm.upper.localRotation, raise);
+            arm.lower.localRotation = Quaternion.Slerp(lower, arm.lower.localRotation, raise);
+            arm.hand.localRotation = Quaternion.Slerp(wrist, arm.hand.localRotation, raise);
+        }
+        if (Once(3, time, DetonatorPress)) ProceduralSfx.Play(ProceduralSfx.Empty, Chest, 1f);   // cvak
+    }
+
+    // Detonator do leve dlane (po radosti, ktera ruku jeste zvedne).
+    void HonzaDetonatorInHand()
+    {
+        if (honzaDetonator == null || cheerLeft == null) return;
+        FirstPersonArms.PalmPose(cheerLeft, out var palm, out var handFrame);
+        HeldWeapons.PlaceInPalm(honzaDetonator, palm, handFrame, Vector3.zero);
+    }
+
     // ---------------- Honza: radost po odpalu Povy ----------------
 
     const float CheerStart = 1.95f;
@@ -437,6 +538,8 @@ public partial class PotgIntro
                 Vector3 raised = shoulder + up * (0.62f * pump) + right * (arm.side * 0.22f) + forward * 0.08f;
                 Vector3 grip = Vector3.Lerp(arm.hand.position, raised, cheer);
                 cheerFrame.rotation = Quaternion.LookRotation(up, -forward);   // pest: prsty nahoru, dlan dopredu
+                if (arm == cheerLeft && honzaDetonator != null)   // (leva ruka plynule z drzeni detonatoru)
+                    cheerFrame.rotation = Quaternion.Slerp(detonatorFrame, cheerFrame.rotation, cheer);
                 FirstPersonArms.SolveArm(arm, grip, cheerFrame, right * arm.side - forward * 0.3f, false);
             }
         }
@@ -485,7 +588,7 @@ public partial class PotgIntro
         {
             float k = Mathf.Clamp01((t - ViktorShot) / ViktorGrenadeFlight);
             grenade.position = Vector3.Lerp(grenadeFrom, ViktorCamera + Vector3.forward * 0.3f, k);
-            grenade.Rotate(700f * Time.unscaledDeltaTime, 400f * Time.unscaledDeltaTime, 0f);
+            grenade.Rotate(700f * stepDt, 400f * stepDt, 0f);
             if (k >= 1f) grenade.gameObject.SetActive(false);
         }
         // zablesk: obraz zbeli, chvili nic, pak se pomalu vraci
@@ -666,22 +769,47 @@ public partial class PotgIntro
         }
     }
 
+    // ---------------- David: uspavaci sipka, pomaly prichod a "psst" nad uspanym Tomaskem ----------------
+    // (jako Anin POTG v Overwatchi) David levou rukou vystreli uspavaci pistolkou do Tomaska na gauci, pistolku spusti
+    // k boku a pomalu k nemu dojde. Strih na pohled uspaneho Tomaska (zespodu, nakrivo): David se nad nim nakloni,
+    // podiva se do kamery a da si prst na pusu.
+    const float DavidAim = 0.12f, DavidShot = 0.55f, DavidHit = 0.65f, DavidLower = 1.0f;
+    const float DavidWalkStart = 1.05f, DavidWalkEnd = 2.55f, DavidCut = 1.95f;
+    const float DavidLeanStart = 2.45f, DavidLeanEnd = 3.0f, DavidShush = 3.05f, DavidShushIn = 0.3f;
+    const float DavidFrom = 2.65f, DavidStop = 1.25f;   // jak daleko pred Tomaskem zacina a kde zastavi (m)
+    const float DavidLeanAngle = 38f;                   // predklon trupu nad Tomaska (bez animace podrepu)
+    const float DavidCrouchLean = 18f;                  // predklon navic k animaci podrepu
+    const float DavidCrouchAt = 2.4f;                   // kdy zacne podrep (pri dojiti)
+    // podrep z Mixama (Models/Animations/Mixamo/David/David_PotgCrouch.fbx), kdyz je
+    AnimationClip DavidCrouchClip => definition != null && definition.animations != null ? definition.animations.potgCrouch : null;
+    const float DavidDutch = 18f;                       // naklon kamery v pohledu uspaneho
+    Transform davidPistol;
+    FirstPersonArms.Arm davidLeft, davidRight;
+    Vector3 davidFaceForwardLocal, davidFaceUpLocal;
+    bool davidFaceAxes;
+    UnityEngine.Light davidFaceLight;
+
+    Vector3 TomasekForward => seatRotation * Vector3.forward;
+    Vector3 DavidStart => seat + TomasekForward * DavidFrom + Vector3.up * RootY;
+    Vector3 DavidEnd => seat + TomasekForward * DavidStop + Vector3.up * RootY;
+    // oci uspaneho Tomaska (kamera): pred hrudi, nizko
+    Vector3 SleeperView => seat + Vector3.up * (DavidCrouchClip != null ? 0.72f : 0.95f) + TomasekForward * 0.45f;
+    Vector3 TomasekNeck => tomasekHead != null ? tomasekHead.position + Vector3.down * 0.3f : seat + Vector3.up * 1f;
+
     void David(float t, out Vector3 pos, out Quaternion rot, out float fov)
     {
-        if (Once(0, t, 0.8f))
+        if (Once(0, t, 0f)) held.HideWeapons();   // puska pryc - jen uspavaci pistolka v leve ruce (DavidLate)
+        if (Once(1, t, DavidShot))
         {
-            visual.PlayAttack(false, 0.4f);
-            held.Swing();
-            ProceduralSfx.Play(ProceduralSfx.Gunshot, Chest, 0.35f);
-            var hand = visual.GetHand(true);
-            Vector3 from = hand != null ? hand.position : Chest;
-            Vector3 to = tomasekHead != null ? tomasekHead.position + Vector3.down * 0.35f : seat + Vector3.up;
-            Fx.Tracer(from, to, new Color(0.6f, 0.4f, 1f), false);
+            ProceduralSfx.Play(CollectedAudioBank.Pick("david_sleep.fire", ProceduralSfx.Dash), Chest, 0.6f);
+            Vector3 from = davidPistol != null ? davidPistol.position + davidPistol.forward * 0.18f : Chest;
+            Fx.Tracer(from, TomasekNeck, new Color(0.6f, 0.4f, 1f), false);
         }
-        if (Once(1, t, 0.9f))
+        if (Once(2, t, DavidHit))
         {
             sleepAt = t;
-            if (tomasekHead != null) Fx.Sparks(tomasekHead.position + Vector3.down * 0.35f, new Color(0.6f, 0.4f, 1f));
+            Fx.Sparks(TomasekNeck, new Color(0.6f, 0.4f, 1f));
+            ProceduralSfx.Play(ProceduralSfx.Hit, TomasekNeck, 0.6f);
             if (beer != null)
             {
                 beer.SetParent(root.transform, true);
@@ -699,25 +827,243 @@ public partial class PotgIntro
         }
         if (beerFlying && beer != null)
         {
-            beerVelocity += Vector3.down * 9f * Time.unscaledDeltaTime;
-            beer.position += beerVelocity * Time.unscaledDeltaTime;
-            beer.Rotate(new Vector3(300f, 0f, 200f) * Time.unscaledDeltaTime, Space.World);
+            beerVelocity += Vector3.down * 9f * stepDt;
+            beer.position += beerVelocity * stepDt;
+            beer.Rotate(new Vector3(300f, 0f, 200f) * stepDt, Space.World);
             if (beer.position.y < Stage.y + 0.05f) { beerFlying = false; Fx.Sparks(beer.position, new Color(1f, 0.75f, 0.2f)); }
         }
-        // David se otoci ke kamere a sfoukne hlaven
-        float turn = Smooth(Mathf.Clamp01((t - 1.6f) / 0.4f));
-        hero.rotation = Quaternion.Slerp(Facing(Stage + new Vector3(0.9f, 0f, 1.1f), seat), ToCamera, turn);
-        if (Once(2, t, 2.15f))
+
+        // pomaly prichod k Tomaskovi (chuze z animace podle rychlosti)
+        float walk = Smooth(Mathf.Clamp01((t - DavidWalkStart) / (DavidWalkEnd - DavidWalkStart)));
+        hero.SetPositionAndRotation(Vector3.Lerp(DavidStart, DavidEnd, walk), Facing(DavidStart, seat));
+
+        if (DavidCrouchClip != null && Once(4, t, DavidCrouchAt))
+            visual.PlayFullBody(DavidCrouchClip, 10f, false, true);   // podrep (jednou, drzi posledni snimek)
+        if (Once(3, t, DavidShush + DavidShushIn * 0.6f))
+            ProceduralSfx.Play(ProceduralSfx.Shush, head != null ? head.position : Chest, 0.7f);
+
+        if (t < DavidCut)
         {
-            var hand = visual.GetHand(true);
-            Fx.Sparks((hand != null ? hand.position : Chest) + Vector3.up * 0.15f, new Color(0.7f, 0.7f, 0.72f));
-            ProceduralSfx.Play(ProceduralSfx.Dash, Chest, 0.25f);
+            // celek: David strili a vyrazi k Tomaskovi
+            Vector3 look = Vector3.Lerp(seat + Vector3.up * 0.9f, Chest, 0.45f);
+            pos = Vector3.Lerp(Stage + new Vector3(0.4f, 1.2f, -1.9f), Stage + new Vector3(0.6f, 1.1f, -1.4f), Smooth(Mathf.Clamp01(t / DavidCut)));
+            rot = Quaternion.LookRotation(look - pos);
+            fov = 50f;
+            return;
         }
 
-        Vector3 look = Vector3.Lerp(seat + Vector3.up * 0.9f, Chest, Smooth(Mathf.Clamp01((t - 1.2f) / 1f)));
-        pos = Vector3.Lerp(Stage + new Vector3(0.4f, 1.2f, -1.9f), Stage + new Vector3(0.8f, 1.15f, -1.5f), Smooth(Mathf.Clamp01(t / 2.4f)));
-        rot = Quaternion.LookRotation(look - pos);
-        fov = 50f;
+        // pohled uspaneho Tomaska: zespodu a nakrivo; David prichazi, nakloni se a diva se do kamery
+        if (davidFaceLight == null)
+            davidFaceLight = PointLight(SleeperView + Vector3.up * 0.25f, new Color(0.78f, 0.72f, 1f), 1.6f, 3f);
+        Vector3 face = head != null ? head.position + Vector3.up * 0.03f : Chest + Vector3.up * 0.5f;
+        Vector3 target = Vector3.Lerp(Chest + Vector3.up * 0.1f, face, Smooth(Mathf.Clamp01((t - (DavidWalkEnd - 0.6f)) / 0.9f)));
+        Vector3 sway = new Vector3(Mathf.PerlinNoise(t * 0.7f, 0.1f) - 0.5f, Mathf.PerlinNoise(0.3f, t * 0.6f) - 0.5f, 0f) * 0.03f;
+        pos = SleeperView + sway;
+        rot = Quaternion.LookRotation(target - pos) * Quaternion.Euler(0f, 0f, DavidDutch);
+        fov = Mathf.Lerp(54f, 44f, Smooth(Mathf.Clamp01((t - DavidCut) / 2.2f)));
+    }
+
+    // Po animaci: predklon, pistolka v leve ruce, pohled do kamery, prst na pusu a vyraz.
+    void DavidLate()
+    {
+        if (visual == null || visual.BodyAnimator == null || head == null) return;
+        var anim = visual.BodyAnimator;
+        Vector3 forward = hero.forward, right = hero.right, up = Vector3.up;
+
+        // osy obliceje v prostoru hlavy (ze zakladni pozy na zacatku - az po prvnich snimcich animace)
+        if (!davidFaceAxes && time > 0.1f)
+        {
+            var inverse = Quaternion.Inverse(head.rotation);
+            davidFaceForwardLocal = inverse * forward;
+            davidFaceUpLocal = inverse * up;
+            davidFaceAxes = true;
+        }
+
+        // predklon trupu nad Tomaska
+        float lean = Smooth(Mathf.Clamp01((time - DavidLeanStart) / (DavidLeanEnd - DavidLeanStart)));
+        if (lean > 0f)
+        {
+            float angle = DavidCrouchClip != null ? DavidCrouchLean : DavidLeanAngle;
+            BendBone(anim, HumanBodyBones.Spine, angle * 0.38f * lean, right);
+            BendBone(anim, HumanBodyBones.Chest, angle * 0.37f * lean, right);
+            BendBone(anim, HumanBodyBones.UpperChest, angle * 0.25f * lean, right);
+        }
+
+        // hlava: v predklonu se diva do kamery (oci uspaneho) a trochu ji nakloni na stranu
+        if (lean > 0f)
+        {
+            Vector3 faceNow = head.rotation * davidFaceForwardLocal;
+            Vector3 toCamera = (SleeperView - head.position).normalized;
+            Quaternion look = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(faceNow, toCamera), 0.85f * lean);
+            head.rotation = Quaternion.AngleAxis(-10f * lean, toCamera) * look * head.rotation;
+        }
+
+        // leva ruka: uspavaci pistolka - miri na Tomaska, vystreli (cuknuti), pak ji drzi u boku hlavni dolu
+        if (davidLeft == null) davidLeft = FirstPersonArms.BuildArm(anim, false);
+        if (davidPistol == null)
+        {
+            davidPistol = HeldWeapons.BuildDartPistol(root.transform);
+            davidPistol.name = "DavidovaPistolka";
+        }
+        if (davidLeft != null && davidLeft.upper != null)
+        {
+            float raise = Smooth(Mathf.Clamp01((time - DavidAim) / 0.25f));
+            float d = time - DavidShot;
+            float kick = d > 0f && d < 0.2f ? Mathf.Sin(d / 0.2f * Mathf.PI) : 0f;
+            float lower = Smooth(Mathf.Clamp01((time - DavidLower) / 0.4f));
+            Vector3 shoulder = davidLeft.upper.position;
+            Vector3 aim = (TomasekNeck - shoulder).normalized;
+            Vector3 side = Vector3.Cross(Vector3.up, aim).normalized;
+            Vector3 aimAt = shoulder + aim * 0.42f + up * 0.04f + side * 0.08f - aim * 0.05f * kick;
+            Quaternion aimFrame = Quaternion.LookRotation(aim, -side) * Quaternion.Euler(-12f * kick, 0f, 0f);
+            Vector3 hangAt = shoulder - up * 0.5f + forward * 0.1f - right * 0.03f;
+            Quaternion hangFrame = Quaternion.LookRotation((forward * 0.35f - up).normalized, -right);   // hlaven sikmo dolu
+            var frame = Quaternion.Slerp(aimFrame, hangFrame, lower);
+            SolveDavidArm(davidLeft, Vector3.Lerp(aimAt, hangAt, lower), frame, hero.TransformDirection(new Vector3(-0.6f, -1f, -0.2f)), raise);
+            FirstPersonArms.PalmPose(davidLeft, out var palm, out var handFrame);
+            HeldWeapons.PlaceInPalm(davidPistol, palm, handFrame, HeldWeapons.DartGrip);
+        }
+
+        // prava ruka: ukazovacek na rty ("psst"), ostatni prsty v pest
+        float shush = Smooth(Mathf.Clamp01((time - DavidShush) / DavidShushIn));
+        if (shush > 0f)
+        {
+            if (davidRight == null) davidRight = FirstPersonArms.BuildArm(anim, true);
+            if (davidRight != null && davidRight.upper != null)
+                DavidShushHand(anim, shush);
+        }
+
+        // vyraz: privrene oci a lisacky usmev, pri "psst" spulene rty; mrknuti na konci
+        float blink = Mathf.Clamp01(1f - Mathf.Abs(time - 4.35f) / 0.08f);
+        heroFace.Set("eyeBlinkLeft", Mathf.Max(28f * lean, 100f * blink));
+        heroFace.Set("eyeBlinkRight", Mathf.Max(28f * lean, 100f * blink));
+        heroFace.Set("eyeSquintLeft", 35f * lean);
+        heroFace.Set("eyeSquintRight", 35f * lean);
+        heroFace.Set("browDownLeft", 25f * lean);
+        heroFace.Set("browOuterUpRight", 35f * lean);
+        heroFace.Set("mouthSmileLeft", 40f * lean * (1f - 0.6f * shush));
+        heroFace.Set("mouthPucker", 70f * shush);
+        heroFace.Set("mouthFunnel", 15f * shush);
+    }
+
+    void BendBone(Animator anim, HumanBodyBones bone, float angle, Vector3 axis)
+    {
+        var t = anim.GetBoneTransform(bone);
+        if (t != null) t.rotation = Quaternion.AngleAxis(angle, axis) * t.rotation;
+    }
+
+    // Ruka do cile (dlan, osy ruky 'frame'); weight < 1 = jeste se zveda z pozy animace.
+    static void SolveDavidArm(FirstPersonArms.Arm arm, Vector3 palmAt, Quaternion frame, Vector3 pole, float weight)
+    {
+        Quaternion upper = arm.upper.localRotation, lower = arm.lower.localRotation, wrist = arm.hand.localRotation;
+        FirstPersonArms.SolveArmFrame(arm, palmAt, frame, pole, false);
+        if (weight >= 0.999f) return;
+        arm.upper.localRotation = Quaternion.Slerp(upper, arm.upper.localRotation, weight);
+        arm.lower.localRotation = Quaternion.Slerp(lower, arm.lower.localRotation, weight);
+        arm.hand.localRotation = Quaternion.Slerp(wrist, arm.hand.localRotation, weight);
+    }
+
+    // Rty Davida: podle kosti oci (stred oci, kousek dolu a dopredu), jinak odhad od kosti hlavy.
+    bool DavidLips(Animator anim, Vector3 faceForward, Vector3 faceUp, out Vector3 lips)
+    {
+        var leftEye = anim.GetBoneTransform(HumanBodyBones.LeftEye);
+        var rightEye = anim.GetBoneTransform(HumanBodyBones.RightEye);
+        if (leftEye != null && rightEye != null)
+            lips = (leftEye.position + rightEye.position) * 0.5f - faceUp * DavidLipsBelowEyes + faceForward * DavidLipsForward;
+        else
+            lips = head.position + faceForward * 0.12f + faceUp * 0.03f;
+        return true;
+    }
+
+    static readonly HumanBodyBones[][] DavidRightFingers =
+    {
+        new[] { HumanBodyBones.RightIndexProximal, HumanBodyBones.RightIndexIntermediate, HumanBodyBones.RightIndexDistal },
+        new[] { HumanBodyBones.RightMiddleProximal, HumanBodyBones.RightMiddleIntermediate, HumanBodyBones.RightMiddleDistal },
+        new[] { HumanBodyBones.RightRingProximal, HumanBodyBones.RightRingIntermediate, HumanBodyBones.RightRingDistal },
+        new[] { HumanBodyBones.RightLittleProximal, HumanBodyBones.RightLittleIntermediate, HumanBodyBones.RightLittleDistal },
+    };
+    // ohyb clanku k dlani (stupne): ukazovacek natazeny, ostatni v pest
+    static readonly float[][] ShushCurl = { new[] { 0f, 5f, 5f }, new[] { 75f, 85f, 45f }, new[] { 80f, 85f, 45f }, new[] { 85f, 80f, 45f } };
+    const float DavidLipsBelowEyes = 0.075f, DavidLipsForward = 0.035f;   // rty vuci stredu oci (m)
+
+    // "Psst": ruka z profilu (dlan doleva, hrbet ruky doprava), prsty nahoru, ukazovacek natazeny pres rty, ostatni
+    // v pest pred nim. Ruka se dorovna tak, aby kloub ukazovacku (zacatek posledniho clanku) byl na rtech.
+    void DavidShushHand(Animator anim, float weight)
+    {
+        var arm = davidRight;
+        Vector3 faceForward = head.rotation * davidFaceForwardLocal, faceUp = head.rotation * davidFaceUpLocal;
+        Vector3 faceRight = Vector3.Cross(faceUp, faceForward).normalized;
+        DavidLips(anim, faceForward, faceUp, out var lips);
+        Vector3 lipTarget = lips + faceForward * 0.012f;   // prst tesne pred rty
+
+        // puvodni poza z animace (pro nabeh)
+        Quaternion upper0 = arm.upper.localRotation, lower0 = arm.lower.localRotation, hand0 = arm.hand.localRotation;
+        var fingerBones = new Transform[DavidRightFingers.Length][];
+        var fingerRest = new Quaternion[DavidRightFingers.Length][];
+        for (int f = 0; f < DavidRightFingers.Length; f++)
+        {
+            fingerBones[f] = new Transform[3];
+            fingerRest[f] = new Quaternion[3];
+            for (int b = 0; b < 3; b++)
+            {
+                fingerBones[f][b] = anim.GetBoneTransform(DavidRightFingers[f][b]);
+                if (fingerBones[f][b] != null) fingerRest[f][b] = fingerBones[f][b].localRotation;
+            }
+        }
+
+        var frame = Quaternion.LookRotation(faceUp, (faceRight + faceForward * 0.35f).normalized);
+        Vector3 pole = hero.TransformDirection(new Vector3(0.6f, -1f, -0.3f));
+        Vector3 palmAt = lips - faceUp * 0.1f + faceForward * 0.04f + faceRight * 0.03f;
+        var indexJoint = fingerBones[0][2];
+        for (int i = 0; i < 3; i++)
+        {
+            FirstPersonArms.SolveArmFrame(arm, palmAt, frame, pole, false);
+            FirstPersonArms.PalmPose(arm, out _, out var handFrame);
+            PoseFingers(fingerBones, handFrame, ShushCurl);
+            if (indexJoint == null) break;
+            palmAt += lipTarget - indexJoint.position;
+        }
+
+        if (weight >= 0.999f) return;
+        arm.upper.localRotation = Quaternion.Slerp(upper0, arm.upper.localRotation, weight);
+        arm.lower.localRotation = Quaternion.Slerp(lower0, arm.lower.localRotation, weight);
+        arm.hand.localRotation = Quaternion.Slerp(hand0, arm.hand.localRotation, weight);
+        for (int f = 0; f < fingerBones.Length; f++)
+            for (int b = 0; b < 3; b++)
+                if (fingerBones[f][b] != null)
+                    fingerBones[f][b].localRotation = Quaternion.Slerp(fingerRest[f][b], fingerBones[f][b].localRotation, weight);
+    }
+
+    // Prsty presne (ne pricitat k animaci): kazdy clanek natocit podel prstu ruky (z) a ohnout k dlani o dany uhel.
+    // Posledni clanek nema kost za sebou - smer bere ze stejne osy jako predchozi clanek.
+    static void PoseFingers(Transform[][] fingers, Quaternion handFrame, float[][] curl)
+    {
+        Vector3 along = handFrame * Vector3.forward;
+        Vector3 axis = handFrame * Vector3.right;   // ohyb k dlani (hrbet ruky = +y)
+        for (int f = 0; f < fingers.Length; f++)
+        {
+            var bones = fingers[f];
+            float total = 0f;
+            Vector3 axisLocal = Vector3.zero;
+            for (int b = 0; b < 3; b++)
+            {
+                var bone = bones[b];
+                if (bone == null) break;
+                total += curl[f][b];
+                Vector3 current;
+                if (b < 2 && bones[b + 1] != null)
+                {
+                    current = bones[b + 1].position - bone.position;
+                    if (current.sqrMagnitude < 1e-8f) continue;
+                }
+                else if (axisLocal != Vector3.zero) current = bone.rotation * axisLocal;
+                else continue;
+                Vector3 wanted = Quaternion.AngleAxis(total, axis) * along;
+                bone.rotation = Quaternion.FromToRotation(current, wanted) * bone.rotation;
+                if (b < 2 && bones[b + 1] != null)
+                    axisLocal = Quaternion.Inverse(bone.rotation) * (bones[b + 1].position - bone.position).normalized;
+            }
+        }
     }
 
     void Kondulic(float t, out Vector3 pos, out Quaternion rot, out float fov)
@@ -906,22 +1252,131 @@ public partial class PotgIntro
             heroFace.Set("mouthPressLeft", 50f);
             heroFace.Set("mouthPressRight", 50f);
         }
-        // snupnuti pres bankovku (Drink ji drzi u nosu): nosni dirky, pak vykulene oci a hlava cukne dozadu
-        float sniff = Mathf.Clamp01((time - cupAtMouth) / 0.12f) * (1f - Mathf.Clamp01((time - cupDrinkEnd) / 0.15f));
-        float kick = Smooth(Mathf.Clamp01((time - cupDrinkEnd) / 0.15f)) * (1f - Smooth(Mathf.Clamp01((time - cupDrinkEnd - 0.9f) / 0.4f)));
+        MaxSnort();
+    }
+
+    // ---------------- Max v detailu: stribrny tacek s lajnou, snupnuti bankovkou, blazenost ----------------
+    // Po rezu (zbran pryc) vezme pravou rukou stribrny tacek s bilou lajnou a zvedne ho pod oblicej, levou rukou drzi
+    // srolovanou bankovku u nosu. Pri snupnuti se tacek posouva, spodni konec bankovky projede lajnu a lajna mizi.
+    // Pak tacek a bankovku sklopi a blazene kyva hlavou nahoru a dolu (privrene oci, usmev).
+    const float TrayUp = 2.2f, SnortStart = 2.65f, SnortEnd = 3.2f, TrayDown = 3.5f, BlissStart = 3.35f;
+    const float LineHalf = 0.065f, BillLength = 0.09f;
+    Transform tray, trayLine, bill;
+    FirstPersonArms.Arm trayArm, billArm;
+    Vector3 maxFaceF, maxFaceU, maxFaceR;
+    bool maxFaceAxes;
+
+    void BuildMaxSnort()
+    {
+        tray = new GameObject("StribrnyTacek").transform;
+        tray.SetParent(root.transform, false);
+        var dish = Prim(PrimitiveType.Cylinder, tray, Vector3.zero, new Vector3(0.24f, 0.004f, 0.24f), new Color(0.84f, 0.86f, 0.9f));
+        dish.transform.localPosition = Vector3.zero;
+        var silver = dish.GetComponent<Renderer>().sharedMaterial;
+        if (silver.HasProperty("_Metallic")) silver.SetFloat("_Metallic", 0.95f);
+        if (silver.HasProperty("_Smoothness")) silver.SetFloat("_Smoothness", 0.85f);
+        var rim = Prim(PrimitiveType.Cylinder, tray, Vector3.zero, new Vector3(0.25f, 0.007f, 0.25f), new Color(0.7f, 0.72f, 0.76f));
+        rim.transform.localPosition = new Vector3(0f, -0.004f, 0f);
+        trayLine = Prim(PrimitiveType.Cube, tray, Vector3.zero, new Vector3(LineHalf * 2f, 0.004f, 0.012f), Color.white).transform;
+        trayLine.localPosition = new Vector3(0f, 0.006f, 0f);
+        bill = BuildBanknote();
+        foreach (var r in tray.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        foreach (var r in bill.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        tray.gameObject.SetActive(false);
+        bill.gameObject.SetActive(false);
+        silentCloseup = true;   // v detailu snupe - bez hlasky
+    }
+
+    void MaxSnort()
+    {
+        if (tray == null || bill == null || head == null) return;
+        bool show = time >= TrayUp;
+        if (tray.gameObject.activeSelf != show) { tray.gameObject.SetActive(show); bill.gameObject.SetActive(show); }
+        if (!show) return;
+        if (!maxFaceAxes)
+        {
+            // osy obliceje v prostoru hlavy (tacek i bankovka sleduji natoceni hlavy z animace)
+            var inverse = Quaternion.Inverse(head.rotation);
+            maxFaceF = inverse * hero.forward;
+            maxFaceU = inverse * hero.up;
+            maxFaceR = inverse * hero.right;
+            maxFaceAxes = true;
+        }
+
+        float raise = Smooth(Mathf.Clamp01((time - TrayUp) / (SnortStart - TrayUp)));
+        float snort = Mathf.Clamp01((time - SnortStart) / (SnortEnd - SnortStart));
+        float lower = Smooth(Mathf.Clamp01((time - SnortEnd) / (TrayDown - SnortEnd)));
+        float bliss = Smooth(Mathf.Clamp01((time - BlissStart) / 0.4f));
+        float hold = Smooth(Mathf.Clamp01((time - TrayUp) / 0.25f));
+
+        // hlava: k tacku se skloni, v blazenosti pomale kyvani nahoru a dolu (mirne zaklonena)
+        float lean = 16f * Smooth(Mathf.Clamp01((time - (SnortStart - 0.2f)) / 0.2f)) * (1f - lower);
+        float nod = bliss * (11f * Mathf.Sin((time - BlissStart) * Mathf.PI * 2f * 1.2f) - 7f);
+        head.rotation = Quaternion.AngleAxis(lean + nod, head.rotation * maxFaceR) * head.rotation;
+        Vector3 F = head.rotation * maxFaceF, U = head.rotation * maxFaceU, R = head.rotation * maxFaceR;
+        Vector3 nose = head.position + F * 0.115f + U * 0.035f;
+
+        // telo (tacek drzi vodorovne): lajna podel prave osy tela
+        Vector3 bodyF = hero.forward, bodyU = Vector3.up, bodyR = hero.right;
+        Vector3 billDir = (-U * 0.85f + F * 0.5f).normalized;   // od nosu sikmo dolu dopredu
+        Vector3 billTipAtNose = nose + billDir * BillLength;      // spodni konec bankovky (na lajne)
+        float sweep = time < SnortStart ? LineHalf - 0.01f : Mathf.Lerp(LineHalf - 0.01f, -LineHalf + 0.01f, snort);
+        Vector3 trayAtFace = billTipAtNose - bodyU * 0.008f - bodyR * sweep;
+        Vector3 trayLow = head.position - bodyU * 0.55f + bodyF * 0.3f + bodyR * 0.12f;
+        Vector3 trayPos = Vector3.Lerp(Vector3.Lerp(trayLow, trayAtFace, raise), trayLow + bodyU * 0.05f, lower);
+        tray.SetPositionAndRotation(trayPos, Quaternion.LookRotation(bodyF, bodyU));
+
+        // lajna mizi od konce, kudy uz bankovka projela
+        float end = time < SnortStart ? LineHalf : sweep;
+        float remaining = Mathf.Max(0f, end + LineHalf);
+        trayLine.gameObject.SetActive(remaining > 0.004f && time < SnortEnd + 0.05f);
+        trayLine.localScale = new Vector3(Mathf.Max(0.001f, remaining), 0.004f, 0.012f);
+        trayLine.localPosition = new Vector3((end - LineHalf) * 0.5f, 0.006f, 0f);
+
+        // bankovka: pri snupnuti horni konec u nosu, predtim zvedana s tackem, pak dolu
+        Vector3 billAtNose = nose + billDir * (BillLength * 0.5f);
+        Vector3 billLow = trayLow - bodyR * 0.3f + bodyU * 0.08f;
+        Vector3 billPos = Vector3.Lerp(Vector3.Lerp(billLow, billAtNose, raise), billLow + bodyU * 0.05f, lower);
+        Vector3 billAxis = Vector3.Slerp(Vector3.Slerp(bodyU, -billDir, raise), bodyU, lower);
+        bill.SetPositionAndRotation(billPos, Quaternion.FromToRotation(Vector3.up, billAxis));
+
+        // ruce: prava drzi tacek zespodu (dlan nahoru), leva drzi bankovku konecky prstu z leve strany
+        if (visual.BodyAnimator != null)
+        {
+            if (trayArm == null) trayArm = FirstPersonArms.BuildArm(visual.BodyAnimator, true);
+            if (billArm == null) billArm = FirstPersonArms.BuildArm(visual.BodyAnimator, false);
+            SolveHeld(trayArm, trayPos - bodyU * 0.006f + bodyR * 0.03f, Quaternion.LookRotation(bodyF, -bodyU), bodyR * 0.6f - bodyU, hold);
+            SolveHeld(billArm, billPos - R * 0.028f, Quaternion.LookRotation(F, -R), -bodyR * 0.6f - bodyU, hold);
+        }
+
+        // oblicej: pri snupnuti nos a privrene oci, v blazenosti usmev a pomale zavirani oci
+        float sniff = Mathf.Clamp01((time - SnortStart) / 0.12f) * (1f - Mathf.Clamp01((time - SnortEnd) / 0.15f));
         heroFace.Set("mouthFunnel", 0f);
         heroFace.Set("noseSneerLeft", 90f * sniff);
         heroFace.Set("noseSneerRight", 90f * sniff);
-        heroFace.Set("eyeBlinkLeft", 70f * sniff);
-        heroFace.Set("eyeBlinkRight", 70f * sniff);
-        heroFace.Set("eyeWideLeft", 100f * kick);
-        heroFace.Set("eyeWideRight", 100f * kick);
-        heroFace.Set("browInnerUp", 70f * kick);
-        heroFace.Set("browOuterUpLeft", 80f * kick);
-        heroFace.Set("browOuterUpRight", 80f * kick);
-        heroFace.Set("jawOpen", 20f * kick);
-        head.rotation = Quaternion.AngleAxis(-12f * kick + Mathf.Sin(time * 40f) * 2f * kick, hero.right) * head.rotation;
-        if (Once(11, time, cupAtMouth + 0.05f)) ProceduralSfx.Play(ProceduralSfx.Splash, head.position, 0.25f);   // "sssnf"
+        heroFace.Set("eyeBlinkLeft", Mathf.Max(70f * sniff, 55f * bliss));
+        heroFace.Set("eyeBlinkRight", Mathf.Max(70f * sniff, 55f * bliss));
+        heroFace.Set("mouthSmileLeft", 85f * bliss);
+        heroFace.Set("mouthSmileRight", 80f * bliss);
+        heroFace.Set("cheekSquintLeft", 45f * bliss);
+        heroFace.Set("cheekSquintRight", 45f * bliss);
+        heroFace.Set("browInnerUp", 45f * bliss);
+        heroFace.Set("browDownLeft", 0f);
+        heroFace.Set("browDownRight", 0f);
+        if (Once(11, time, SnortStart + 0.05f)) ProceduralSfx.Play(ProceduralSfx.Splash, head.position, 0.25f);   // "sssnf"
+        if (Once(12, time, SnortStart + 0.35f)) ProceduralSfx.Play(ProceduralSfx.Splash, head.position, 0.2f);
+    }
+
+    // Paze k bodu s danym natocenim ruky (IK po animaci), plynule podle 'weight'.
+    static void SolveHeld(FirstPersonArms.Arm arm, Vector3 grip, Quaternion frame, Vector3 pole, float weight)
+    {
+        if (arm == null || weight <= 0f) return;
+        Quaternion upper = arm.upper.localRotation, lower = arm.lower.localRotation, wrist = arm.hand.localRotation;
+        FirstPersonArms.SolveArmFrame(arm, grip, frame, pole, false);
+        if (weight >= 0.999f) return;
+        arm.upper.localRotation = Quaternion.Slerp(upper, arm.upper.localRotation, weight);
+        arm.lower.localRotation = Quaternion.Slerp(lower, arm.lower.localRotation, weight);
+        arm.hand.localRotation = Quaternion.Slerp(wrist, arm.hand.localRotation, weight);
     }
 
     // Tomasek natahuje pravou ruku k taliri (IK po animaci sezeni), po rezu ji stahne; oblicej: chtivy, pak vydeseny.
@@ -1029,7 +1484,7 @@ public partial class PotgIntro
         float dolly = Mathf.Pow(Smooth(Mathf.Clamp01(t / MosinoStop)), 1.4f);
         Vector3 camPos = Vector3.Lerp(MosinoCamStart, MosinoCamNear, dolly);
         if (t >= MosinoStop)
-            hero.rotation = Quaternion.Slerp(hero.rotation, Facing(hero.position, camPos), 1f - Mathf.Exp(-14f * Time.unscaledDeltaTime));
+            hero.rotation = Quaternion.Slerp(hero.rotation, Facing(hero.position, camPos), 1f - Mathf.Exp(-14f * stepDt));
         if (Once(1, t, MosinoShot))
         {
             visual.PlayAttack(false, 0.35f);
@@ -1225,7 +1680,7 @@ public partial class PotgIntro
         {
             float k = Mathf.Clamp01((t - SindelThrow) / SindelGrenadeFlight);
             holyGrenade.position = Vector3.Lerp(holyFrom, SindelCamera + Vector3.forward * 0.35f, k) + Vector3.up * Mathf.Sin(k * Mathf.PI) * 0.3f;
-            holyGrenade.Rotate(500f * Time.unscaledDeltaTime, 250f * Time.unscaledDeltaTime, 0f);
+            holyGrenade.Rotate(500f * stepDt, 250f * stepDt, 0f);
             if (k >= 1f) holyGrenade.gameObject.SetActive(false);
         }
         // vybuch: obraz zbeli (do zlata), chvili nic, pak se pomalu vraci
@@ -1322,7 +1777,7 @@ public partial class PotgIntro
     // Odletujici veci (bedny, pulky lasagni).
     void UpdateFlying()
     {
-        float dt = Time.unscaledDeltaTime;
+        float dt = stepDt;
         for (int i = flying.Count - 1; i >= 0; i--)
         {
             var (t, velocity, spin) = flying[i];
@@ -1355,7 +1810,11 @@ public partial class PotgIntro
         if (cup != null && head != null)
             Drink();
         if (scene == "Honza")
+        {
+            HonzaDetonator();
             HonzaCheer();
+            HonzaDetonatorInHand();
+        }
         if (scene == "Sniper")
             KondulicFrown();
         if (scene == "Sindel")
@@ -1364,6 +1823,8 @@ public partial class PotgIntro
             MaxLate();
         if (scene == "Bard")
             MosinoLate();
+        if (scene == "Anna")
+            DavidLate();
         if (scene == "Anna" && sleepAt >= 0f && tomasek != null && tomasek.go != null)
         {
             float k = Smooth(Mathf.Clamp01((time - sleepAt) / 0.4f));

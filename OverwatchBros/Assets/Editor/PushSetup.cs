@@ -70,6 +70,29 @@ public static class PushSetup
         Debug.Log("[Tlacenice] Kopie smazana. Ted kroky 1, 2 a 3.");
     }
 
+    // Vse najednou: smazat kopii, znovu zkopirovat aktualni Domasov, postavit trasu / robota / spawny a projet QA audit.
+    [MenuItem("BrosOverwatch/Tlacenice/Postavit znovu od nuly (0 + 1 + 2 + 3)")]
+    static void RebuildAll()
+    {
+        if (EditorApplication.isPlaying) { Debug.LogWarning("[Tlacenice] Nejdriv ukonci Play."); return; }
+        var copy = FindRoot(CopyName);
+        if (copy != null)
+        {
+            if (!EditorUtility.DisplayDialog("Tlacenice", $"Smazat {CopyName} (kopii Domasova pro Tlacenici) vcetne vsech rucnich uprav v ni " +
+                    "a postavit ji znovu podle aktualniho Domasova (kopie, trasa, robot, spawny, QA audit)?\nPuvodni Domasov zustane, jak je.",
+                    "Postavit znovu", "Zrusit"))
+                return;
+            Undo.DestroyObjectImmediate(copy);
+            Debug.Log("[Tlacenice] Stara kopie smazana.");
+        }
+        CopyMap();
+        if (FindRoot(CopyName) == null) { Debug.LogError("[Tlacenice] Kopie se nevytvorila - konec."); return; }
+        Build();
+        Audit();
+        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        Debug.Log("[Tlacenice] Postaveno znovu od nuly. Zkontroluj zpravy vyse (Temp/PushRouteAudit.txt) a uloz scenu (Ctrl+S).");
+    }
+
     // ---------------- 1. kopie ----------------
 
     [MenuItem("BrosOverwatch/Tlacenice/1. Zkopirovat Domasov do nove mapy (jen jednou)")]

@@ -41,7 +41,10 @@ public partial class PotgIntro : MonoBehaviour
     HeroVoice voice;
     HeroDefinition definition;
     Transform head;
-    float feetOffset = -1f;
+    // vyska chodidel vuci pivotu hrace (CharacterController center.y - standHeight / 2). Bez hracu ve scene
+    // (ukazka z menu) jako hrac ve hre: center 1, vyska 2 -> 0 (drive -1 = postavy v ukazce o metr pod zemi)
+    const float DefaultFeetOffset = 0f;
+    float feetOffset = DefaultFeetOffset;
     readonly Faces heroFace = new Faces();
 
     Vector3 shake;
@@ -120,7 +123,7 @@ public partial class PotgIntro : MonoBehaviour
     // ---------------- verejne ----------------
 
     // Vraci false, kdyz scenku nejde postavit (hrdina bez modelu) - pak se ukaze obycejna cerna karta.
-    public static bool Play(int heroIndex)
+    public static bool Play(int heroIndex, bool asPreview = false)
     {
         var definition = HeroRegistry.Get(heroIndex);
         if (definition == null || definition.characterPrefab == null) return false;
@@ -129,7 +132,7 @@ public partial class PotgIntro : MonoBehaviour
             instance = new GameObject("ReplayIntro").AddComponent<PotgIntro>();
         try
         {
-            instance.preview = false;
+            instance.preview = asPreview;
             return instance.Begin(definition);
         }
         catch (System.Exception e)
@@ -151,9 +154,9 @@ public partial class PotgIntro : MonoBehaviour
     {
         var heroes = HeroRegistry.All;
         for (int i = 0; i < heroes.Length; i++)
-            if (heroes[i] != null && heroes[i].name == heroAssetName && Play(i))
+            if (heroes[i] != null && heroes[i].name == heroAssetName && Play(i, true))
             {
-                instance.preview = true;
+                PotgUI.BeginPreview(heroes[i].heroName);   // karta a znelka jako ve hre
                 Debug.Log("[POTG] Ukazka uvodu: " + heroes[i].heroName);
                 return true;
             }
@@ -169,6 +172,9 @@ public partial class PotgIntro : MonoBehaviour
         definition = heroDefinition;
         pova = heroDefinition.name == "Ayran";
         time = 0f;
+        stepDt = 0f;
+        slowAmount = 0f;
+        slowHit = false;
         spoke = launched = twinkled = beerFlying = swungDone = false;
         launchVelocity = LaunchVelocity;
         ResetScene();
@@ -176,6 +182,7 @@ public partial class PotgIntro : MonoBehaviour
         shake = Vector3.zero;
         clips = Resources.Load<CharacterAnimSet>("Characters/CharacterAnimations");
 
+        feetOffset = DefaultFeetOffset;
         foreach (var player in FindObjectsByType<FirstPersonController>())
         {
             var controller = player.GetComponent<CharacterController>();
@@ -199,6 +206,7 @@ public partial class PotgIntro : MonoBehaviour
         else
             BuildScene();
         BuildCamera();
+        climax = SceneClimax();   // zpomaleni ve vrcholu scenky
 
         running = true;
         Animate(0f);
@@ -208,6 +216,8 @@ public partial class PotgIntro : MonoBehaviour
     void End()
     {
         running = false;
+        RestoreTimeScale();
+        slowAmount = 0f;
         EndScene();
         if (tomasek != null) tomasek.Destroy();
         tomasek = null;
@@ -457,7 +467,7 @@ public partial class PotgIntro : MonoBehaviour
     void Update()
     {
         if (!running) return;
-        time += Time.unscaledDeltaTime;
+        StepClock();   // cas scenky (ve vrcholu zpomali)
         Animate(time);
 
         if (preview && time > 5.6f)
@@ -512,6 +522,7 @@ public partial class PotgIntro : MonoBehaviour
             if (HeroVoice.HasLines(definition, kind, 0))
                 voice.Play(definition, kind, 0, Random.Range(0, 1000));
         }
+
     }
 
     void AnimateGeneric(float t, out Vector3 widePos, out Quaternion wideRot, out float wideFov)
@@ -605,9 +616,9 @@ public partial class PotgIntro : MonoBehaviour
         // Pivo leti zvlast a toci se.
         if (beerFlying && beer != null)
         {
-            beerVelocity += Vector3.down * 9f * Time.unscaledDeltaTime;
-            beer.position += beerVelocity * Time.unscaledDeltaTime;
-            beer.Rotate(new Vector3(540f, 120f, 300f) * Time.unscaledDeltaTime, Space.World);
+            beerVelocity += Vector3.down * 9f * stepDt;
+            beer.position += beerVelocity * stepDt;
+            beer.Rotate(new Vector3(540f, 120f, 300f) * stepDt, Space.World);
             if (beer.position.y < Stage.y - 2f) beer.gameObject.SetActive(false);
         }
 
@@ -617,7 +628,7 @@ public partial class PotgIntro : MonoBehaviour
             float s = Mathf.Clamp01((t - starTime) / 0.6f);
             float pulse = Mathf.Sin(s * Mathf.PI) * (1f + 0.3f * Mathf.Sin(t * 60f));
             star.localScale = Vector3.one * 0.35f * pulse;
-            star.Rotate(0f, 0f, 400f * Time.unscaledDeltaTime);
+            star.Rotate(0f, 0f, 400f * stepDt);
             starLight.intensity = 6f * pulse;
             if (s >= 1f) star.gameObject.SetActive(false);
         }

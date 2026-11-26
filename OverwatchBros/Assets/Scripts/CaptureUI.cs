@@ -226,7 +226,7 @@ public class CaptureUI
         int localTeam = TeamOf(local);
         string role = localTeam < 0 ? "" : localTeam == attackers ? "  ·  <b>ÚTOČÍŠ</b>" : "  ·  <b>BRÁNÍŠ</b>";
         string pointName = MatchManager.PointNames[Mathf.Clamp(match.pointIndex.Value, 0, MatchManager.PointNames.Length - 1)];
-        header.text = $"{match.round.Value}. KOLO  ·  ÚTOČÍ TÝM {attackers}  ·  BOD {pointName}{role}";
+        header.text = $"{match.round.Value}. KOLO  ·  ÚTOČÍ {MatchManager.TeamName(attackers)}  ·  BOD {pointName}{role}";
         header.color = UiKit.TeamColor(attackers);
 
         int phase = match.roundPhase.Value;

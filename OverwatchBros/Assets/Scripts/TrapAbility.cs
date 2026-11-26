@@ -35,6 +35,9 @@ public class TrapAbility : NetworkBehaviour
     GameObject visual;
     TrapJaws jaws;
 
+    // vyska modelu pasti vuci jeho sirce (prefab HonzaTrap ma sirku 1) a kolik z ni je polozene pasti v zemi
+    const float TrapModelHeight = 0.28f, TrapSink = 0.4f;
+
     // model pasti ze Sketchfabu (Editor/TrapSetup: sirka 1, spodek v pocatku, celisti JawFront / JawBack na ose pantu)
     static GameObject trapPrefab;
     static bool trapPrefabLoaded;
@@ -278,6 +281,14 @@ public class TrapAbility : NetworkBehaviour
 
         visual = BuildVisual(out jaws);
         visual.transform.position = point + Vector3.up * 0.02f;
+        // polozena past je vizualne zapustena do zeme (ven koukaji zuby a vrsek kruhu); poloha pasti, zasahova
+        // zona i chyceni zustavaji, kde byly (jen model jde dolu)
+        var trapModel = visual.transform.Find("TrapModel");
+        if (trapModel != null)
+        {
+            float radius = ability != null ? Mathf.Clamp(ability.radius * 0.6f, 0.35f, 0.7f) : 0.5f;
+            trapModel.localPosition = Vector3.down * (radius * 2.2f * TrapModelHeight * TrapSink + 0.02f);
+        }
 
         // Zasahova zona pasti (aby ji slo rozstrilet); nizka, takze se pres ni da prejit.
         float size = ability != null ? Mathf.Clamp(ability.radius * 1.2f, 0.7f, 1.4f) : 1f;
@@ -330,6 +341,7 @@ public class TrapAbility : NetworkBehaviour
         {
             // model: kruh celisti zhruba o prumeru 2 * radius (sirka i s naboji o kus vetsi)
             var model = Instantiate(trapPrefab, root.transform);
+            model.name = "TrapModel";
             model.transform.localPosition = Vector3.zero;
             model.transform.localRotation = Quaternion.identity;
             model.transform.localScale = Vector3.one * radius * 2.2f;

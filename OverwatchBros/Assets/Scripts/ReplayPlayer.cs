@@ -157,6 +157,8 @@ public class ReplayPlayer : MonoBehaviour
         public ParticleSystem holyAura;
         public bool boosted;
         public bool slivovice;
+        public bool shadow;             // Max ve stinove forme
+        public ParticleSystem shadowAura;
         public Light holyLight;
         public GameObject holyCircle;
         public int session = -1;        // ve kterem prehravani byla postava naposledy pouzita
@@ -302,6 +304,9 @@ public class ReplayPlayer : MonoBehaviour
         if (g.boosted) { g.boosted = false; NanoAura.Set(g.go.transform, false); }
         if (g.slivovice) { g.slivovice = false; SlivoviceAura.Set(g.go.transform, false); }
         if (g.holyAura != null) g.holyAura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        if (g.shadow) { g.shadow = false; if (g.visual != null) g.visual.SetShadow(false); }
+        if (g.shadowAura != null) g.shadowAura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        if (g.held != null) g.held.GhostUntargetable = false;
         if (g.holyLight != null) g.holyLight.enabled = false;
         if (g.holyCircle != null) g.holyCircle.SetActive(false);
         if (g.rushAura != null) g.rushAura.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -369,7 +374,27 @@ public class ReplayPlayer : MonoBehaviour
             // (killcam: vrah vzdy z prvni osoby; HUD a stav schopnosti v zaznamu patri obeti)
             bool povThird = killcamVictim < 0 && a.thirdPerson;
             g.visual.GhostDead = !alive;
-            g.visual.GhostHidden = pov && !povThird;
+            // Max schovany v obeti (ultimatka): neni videt (jako ve hre)
+            bool hiddenInVictim = (p.state & ReplayPlayerSnap.StateHidden) != 0 && alive;
+            g.visual.GhostHidden = (pov && !povThird) || hiddenInVictim;
+            // Max ve stinove forme: pruhledny fialovy s fialovou aurou, bez zbrane (jako ve hre)
+            bool shadow = (p.state & ReplayPlayerSnap.StateShadow) != 0 && alive;
+            if (shadow != g.shadow)
+            {
+                g.shadow = shadow;
+                g.visual.SetShadow(shadow);
+                if (shadow && g.shadowAura == null)
+                {
+                    g.shadowAura = Fx.CreateAura(g.go.transform, MaxAbility.ShadowColor);
+                    g.shadowAura.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+                }
+                if (g.shadowAura != null)
+                {
+                    if (shadow) g.shadowAura.Play();
+                    else g.shadowAura.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                }
+            }
+            g.held.GhostUntargetable = shadow || hiddenInVictim;
             g.visual.GhostFrenzy = (p.flags & ReplayPlayerSnap.Rushing) != 0;
             g.visual.GhostBlocking = (p.flags & ReplayPlayerSnap.Blocking) != 0;
 

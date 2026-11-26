@@ -109,6 +109,14 @@ public class Tractor : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    // Je bod (chodidla hrace) v obrysu traktoru rozsirenem o 'margin' (napr. misto oziveni)?
+    public bool Covers(Vector3 feet, float margin)
+    {
+        Vector3 local = transform.InverseTransformPoint(feet + Vector3.up * 0.5f);
+        return local.x > HullMin.x - margin && local.x < HullMax.x + margin && local.y > HullMin.y - 1f && local.y < HullMax.y + 0.5f
+            && local.z > HullMin.z - margin && local.z < HullMax.z + margin;
+    }
+
     // Je bod (chodidla hrace) v obrysu traktoru?
     public bool Contains(Vector3 world)
     {

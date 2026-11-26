@@ -86,6 +86,7 @@ public partial class MatchManager : NetworkBehaviour
 
         scoreToWinSynced.Value = Mathf.Max(1, scoreToWin);
         gameName.Value = new FixedString64Bytes(string.IsNullOrWhiteSpace(PendingGameName) ? "Hra" : PendingGameName);
+        ServerLoadTeamNames();
         phase.Value = PhaseLobby;
         if (HostOptions.ApplyOnSpawn)
         {
@@ -232,6 +233,8 @@ public partial class MatchManager : NetworkBehaviour
     {
         winnerTeam.Value = winner;
         matchOver.Value = true;
+        // kazdemu VITEZSTVI / PORAZKA podle jeho tymu (Tlacenice ma vlastni text s metry)
+        if (!IsPushMode) MatchResultClientRpc(winner);
         Debug.Log(winner >= 0 ? $"Tým {winner} vyhrál zápas!" : "Remíza!");
 
         PotgPending = true;

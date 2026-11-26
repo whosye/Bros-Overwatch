@@ -37,6 +37,8 @@ public class LobbyUI
     float nextRefresh;
 
     readonly TextMeshProUGUI[] teamCounts = new TextMeshProUGUI[2];
+    readonly TextMeshProUGUI[] teamHeadings = new TextMeshProUGUI[2];
+    readonly TMP_InputField[] teamNameInputs = new TMP_InputField[2];
     readonly RectTransform[] rosterContent = new RectTransform[2];
     readonly GameObject[] views = new GameObject[3];
     readonly Button[] viewTabs = new Button[3];
@@ -78,7 +80,15 @@ public class LobbyUI
         {
             int t=team;
             var card = FramedPanel(board, "Team"+team, new Vector2(-665,team==0?250:-30), new Vector2(420,250)).transform;
-            MenuStyle.Text(card, "TeamHeading", "TÝM "+(team+1), new Vector2(-75,92), new Vector2(200,38), 30, MenuStyle.Cream);
+            // nazev tymu: kliknutim prejmenovat (host kterykoli tym, hrac svuj)
+            teamHeadings[team] = MenuStyle.Text(card, "TeamHeading", "TÝM "+(team+1), new Vector2(-75,92), new Vector2(200,38), 30, MenuStyle.Cream);
+            teamHeadings[team].raycastTarget = true;
+            var headingButton = teamHeadings[team].gameObject.AddComponent<Button>();
+            headingButton.targetGraphic = teamHeadings[team];
+            headingButton.onClick.AddListener(()=>OpenTeamRename(t));
+            teamNameInputs[team] = MenuStyle.Input(card, "TeamNameInput", "", new Vector2(-60,92), new Vector2(240,36), MatchManager.TeamNameLimit);
+            teamNameInputs[team].onEndEdit.AddListener(value=>SubmitTeamRename(t, value));
+            teamNameInputs[team].gameObject.SetActive(false);
             MenuStyle.Box(card,"TeamColor",new Vector2(-190,92),new Vector2(6,25),UiKit.TeamColor(team));
             teamCounts[team] = MenuStyle.Text(card, "Count", "", new Vector2(120,92), new Vector2(130,38), 21, MenuStyle.Muted, TextAlignmentOptions.Right);
             rosterContent[team] = ScrollContent(card, "Roster", new Vector2(0,10), new Vector2(380,112));
@@ -137,7 +147,7 @@ public class LobbyUI
         FieldLabel(bots,"Hrdina",110);
         botHeroButton=ValueButton(bots,"BotHeroValue",110,()=>OpenChoices(botHeroButton,Array.ConvertAll(HeroRegistry.All,h=>h.heroName),botHero,index=>botHero=index));
         FieldLabel(bots,"Tým",48);
-        botTeamButton=ValueButton(bots,"BotTeamValue",48,()=>OpenChoices(botTeamButton,new[]{"Tým 1","Tým 2"},botTeam,index=>botTeam=index));
+        botTeamButton=ValueButton(bots,"BotTeamValue",48,()=>OpenChoices(botTeamButton,new[]{MatchManager.TeamName(0),MatchManager.TeamName(1)},botTeam,index=>botTeam=index));
         FieldLabel(bots,"Obtížnost",-14);
         botDifficultyButton=ValueButton(bots,"BotDifficultyValue",-14,()=>OpenChoices(botDifficultyButton,BotBrain.DifficultyNames,BotBrain.Difficulty,index=>BotBrain.Difficulty=index));
         botAddButton=MenuStyle.Button(bots,"+ PŘIDAT BOTA",new Vector2(0,-95),new Vector2(400,46),()=>MatchManager.Instance?.ServerAddBot(botHero,botTeam),true,25);
@@ -377,7 +387,7 @@ public class LobbyUI
         UiKit.SetButtonLabel(startButton, !mapReady ? "MAPA NENÍ HOTOVÁ" : !modeReady ? "REŽIM NENÍ DOSTUPNÝ" : "START ZÁPASU");
         enterButton.gameObject.SetActive(joining);
         waitText.gameObject.SetActive(true);
-        waitText.text=joining?"Až budeš připravený, vstup do hry.":isHost?"Vyberte týmy a hrdiny. Pak můžete začít.":"Čekáme, až hostitel spustí zápas…";
+        waitText.text=joining?"Až budeš připravený, vstup do hry.":isHost?"Vyberte týmy a hrdiny. Pak můžete začít. Název týmu změníš kliknutím na něj.":"Čekáme, až hostitel spustí zápas… Název svého týmu změníš kliknutím na něj.";
 
         bool botsVisible = isHost && !joining;
         foreach (var button in new[] { botHeroButton, botTeamButton, botAddButton, botRemoveButton, botDifficultyButton })
@@ -388,7 +398,7 @@ public class LobbyUI
             botHero = Mathf.Clamp(botHero, 0, Mathf.Max(0, heroes.Length - 1));
             string heroName = heroes.Length > 0 ? heroes[botHero].heroName : "?";
             UiKit.SetButtonLabel(botHeroButton,heroName);
-            UiKit.SetButtonLabel(botTeamButton,$"Tým {botTeam+1}");
+            UiKit.SetButtonLabel(botTeamButton,MatchManager.TeamName(botTeam));
             int count = BotBrain.All.Count;
             UiKit.SetButtonLabel(botRemoveButton, count > 0 ? $"ODEBRAT BOTY ({count})" : "ODEBRAT BOTY");
             botRemoveButton.interactable = count > 0;
@@ -417,11 +427,34 @@ public class LobbyUI
         }
         for (int i = 0; i < PlayerTeam.TeamCount; i++)
         {
+            if (!teamNameInputs[i].gameObject.activeSelf) teamHeadings[i].text = MatchManager.TeamName(i);
             FinishRoster(i,counts[i]);
             teamButtons[i].interactable = localHero != null && localTeam != i;
             UiKit.SetButtonColor(teamButtons[i], localTeam == i ? new Color(.10f,.24f,.14f) : MenuStyle.Ink);
             UiKit.SetButtonLabel(teamButtons[i], localTeam == i ? "TVŮJ TÝM" : "›   PŘEJÍT DO TÝMU");
         }
+    }
+
+    void OpenTeamRename(int team)
+    {
+        var match=MatchManager.Instance;
+        if(match==null||!MatchManager.CanRenameTeam(team))return;
+        var input=teamNameInputs[team];
+        teamHeadings[team].gameObject.SetActive(false);
+        input.gameObject.SetActive(true);
+        input.text=match.CustomTeamName(team);
+        input.Select(); input.ActivateInputField();
+    }
+
+    void SubmitTeamRename(int team,string value)
+    {
+        teamNameInputs[team].gameObject.SetActive(false);
+        teamHeadings[team].gameObject.SetActive(true);
+        var match=MatchManager.Instance;
+        if(match==null||!match.IsSpawned)return;
+        string clean=MatchManager.CleanTeamName(value);
+        if(clean!=match.CustomTeamName(team))match.RenameTeamRpc(team,new Unity.Collections.FixedString64Bytes(clean));
+        teamHeadings[team].text=string.IsNullOrEmpty(clean)?"TÝM "+(team+1):clean.ToUpperInvariant();
     }
 
     void SetRosterEntry(int team,int index,string player,string hero,string badge,bool local)
@@ -530,7 +563,7 @@ public class LobbyUI
         UiKit.SetButtonLabel(modeButton,"Deathmatch");
         scoreText.text="30"; scoreLabel.text="Zabití\nna výhru";
         UiKit.SetButtonLabel(heroModeButton,HeroModeLabel(0)); UiKit.SetButtonLabel(testButton,"VYPNUTO  ○");
-        UiKit.SetButtonLabel(botHeroButton,hero.heroName); UiKit.SetButtonLabel(botTeamButton,"Tým 2");
+        UiKit.SetButtonLabel(botHeroButton,hero.heroName); UiKit.SetButtonLabel(botTeamButton,MatchManager.TeamName(1));
         UiKit.SetButtonLabel(botDifficultyButton,"Normální");
         enterButton.gameObject.SetActive(false); waitText.text="Vyberte týmy a hrdiny. Pak můžete začít.";
         SetView(page);

@@ -196,6 +196,9 @@ public class PlayerRespawn : NetworkBehaviour
     {
         foreach (var c in Physics.OverlapCapsule(feet + Vector3.up * 0.6f, feet + Vector3.up * 1.5f, 0.42f, ~0, QueryTriggerInteraction.Ignore))
             if (!(c is CharacterController) && c.GetComponentInParent<PlayerHero>() == null) return false;
+        // traktor (pri jizde ma vypnute kolize - jeho kvadr nese ridic, ten se vyse nepocita) a Yarisy / obr Tlacenice
+        if (Tractor.Instance != null && Tractor.Instance.isActiveAndEnabled && Tractor.Instance.Covers(feet, 0.8f)) return false;
+        if (PushRobot.Instance != null && PushRobot.Instance.isActiveAndEnabled && PushRobot.Instance.Occupies(feet, 0.7f)) return false;
         return true;
     }
 
@@ -203,9 +206,11 @@ public class PlayerRespawn : NetworkBehaviour
     // a neni ve zdi - kdyz je misto vedle znacky zablokovane, zkusi se jine smery a nakonec znacka sama.
     static Vector3 SafeSpawn(Vector3 marker, Vector3 offset)
     {
-        for (int attempt = 0; attempt <= 6; attempt++)
+        // (kruh kolem znacky, kdyz je plny - napr. zaparkovany traktor - jeste dva vetsi kruhy, nakonec znacka)
+        for (int attempt = 0; attempt <= 18; attempt++)
         {
-            Vector3 p = marker + (attempt < 6 ? Quaternion.Euler(0f, attempt * 60f, 0f) * offset : Vector3.zero);
+            float ring = 1f + attempt / 6;
+            Vector3 p = marker + (attempt < 18 ? Quaternion.Euler(0f, attempt * 60f + (attempt / 6) * 30f, 0f) * offset * ring : Vector3.zero);
             if (!GroundBelow(p, out float y)) continue;
             p.y = y + 0.05f;
             if (Free(p)) return p;

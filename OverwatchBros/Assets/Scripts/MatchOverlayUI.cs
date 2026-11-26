@@ -467,9 +467,9 @@ public class MatchOverlayUI
 
         string gameName = match.gameName.Value.Length > 0 ? match.gameName.Value.ToString() : "Zápas";
         boardTitle.text = match.IsPushMode
-            ? $"{gameName}  ·  tlačenice  ·  dotlačeno: tým 0 {match.pushBest0.Value:0} m, tým 1 {match.pushBest1.Value:0} m"
+            ? $"{gameName}  ·  tlačenice  ·  dotlačeno: {MatchManager.TeamName(0)} {match.pushBest0.Value:0} m, {MatchManager.TeamName(1)} {match.pushBest1.Value:0} m"
             : match.IsAttackMode
-            ? $"{gameName}  ·  útok a obrana  ·  {match.round.Value}. kolo, útočí tým {match.attackTeam.Value}"
+            ? $"{gameName}  ·  útok a obrana  ·  {match.round.Value}. kolo, útočí {MatchManager.TeamName(match.attackTeam.Value)}"
             : $"{gameName}  ·  do {match.scoreToWinSynced.Value} zabití";
 
         var sorted = new List<PlayerHero>();
@@ -481,7 +481,7 @@ public class MatchOverlayUI
         for (int team = 0; team < PlayerTeam.TeamCount; team++)
         {
             int score = team == 0 ? match.team0Score.Value : match.team1Score.Value;
-            boardHeads[team].text = $"TÝM {team}   <color=#FFFFFF>{score}</color>";
+            boardHeads[team].text = $"{MatchManager.TeamName(team)}   <color=#FFFFFF>{score}</color>";
 
             var text = new StringBuilder();
             foreach (var player in sorted)

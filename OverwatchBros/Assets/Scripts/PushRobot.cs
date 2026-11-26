@@ -81,6 +81,15 @@ public class PushRobot : MonoBehaviour
             creaks[team] = source;
         }
         if (giant != null) giantCapsule = giant.GetComponent<CapsuleCollider>();
+        // pohyblive kolize (auta a obr se posouvaji transformem): kinematicke telo, at je fyzika bere jako pohyblive
+        foreach (var body in new[] { cargo, cargo1, giant })
+            if (body != null && body.GetComponent<Rigidbody>() == null)
+            {
+                var rb = body.gameObject.AddComponent<Rigidbody>();
+                rb.isKinematic = true;
+                rb.useGravity = false;
+                rb.interpolation = RigidbodyInterpolation.None;
+            }
         BuildGiant();
         BuildZone();
         nextVoice = Time.time + Random.Range(20f, 35f);
@@ -463,6 +472,13 @@ public class PushRobot : MonoBehaviour
                     Vector3 away = dist > 0.05f ? d / dist : giant.right;
                     Push(controller, away * (r - dist + 0.03f), giant.right);
                     feet = controller.transform.position;
+                    // porad uvnitr (CharacterController se z kolize nevymota): rovnou ven na volne misto
+                    Vector3 rest = feet - giant.position;
+                    rest.y = 0f;
+                    if (rest.magnitude < r - 0.1f)
+                        PlaceOutside(controller, giant.position + (rest.magnitude > 0.05f ? rest.normalized : away) * (r + 0.08f),
+                            giant.position - (rest.magnitude > 0.05f ? rest.normalized : away) * (r + 0.08f));
+                    feet = controller.transform.position;
                 }
             }
         }
@@ -487,6 +503,37 @@ public class PushRobot : MonoBehaviour
                 : rotation * new Vector3(0f, 0f, Mathf.Sign(local.z == 0f ? 1f : local.z) * (pz + 0.03f));
             Push(controller, push, rotation * Vector3.right);
             feet = controller.transform.position;
+
+            // porad uvnitr auta (auto do nej najelo, CharacterController se z kolize nevymota): rovnou ven -
+            // nejkratsi strana, kdyz je tam zed, opacna strana
+            local = Quaternion.Inverse(rotation) * (feet - center);
+            if (Mathf.Abs(local.x) < half.x + radius - 0.1f && Mathf.Abs(local.z) < half.z + radius - 0.1f)
+            {
+                float side = Mathf.Sign(local.x == 0f ? 1f : local.x);
+                Vector3 near = center + rotation * new Vector3(side * (half.x + radius + 0.08f), local.y, local.z);
+                Vector3 far = center + rotation * new Vector3(-side * (half.x + radius + 0.08f), local.y, local.z);
+                near.y = far.y = feet.y;
+                PlaceOutside(controller, near, far);
+                feet = controller.transform.position;
+            }
+        }
+    }
+
+    // Postavu presune na prvni volne misto (ze dvou); kdyz neni volne zadne, necha ji, kde je.
+    static void PlaceOutside(CharacterController controller, Vector3 first, Vector3 second)
+    {
+        foreach (var target in new[] { first, second })
+        {
+            Vector3 bottom = target + Vector3.up * (controller.radius + 0.05f);
+            Vector3 top = target + Vector3.up * Mathf.Max(controller.radius + 0.06f, controller.height - controller.radius);
+            bool blocked = false;
+            foreach (var c in Physics.OverlapCapsule(bottom, top, controller.radius * 0.95f, ~0, QueryTriggerInteraction.Ignore))
+                if (c != controller && !c.transform.IsChildOf(controller.transform)) { blocked = true; break; }
+            if (blocked) continue;
+            controller.enabled = false;
+            controller.transform.position = target;
+            controller.enabled = true;
+            return;
         }
     }
 

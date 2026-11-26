@@ -200,6 +200,40 @@ public static class ProceduralSfx
         return Mathf.Clamp(drum + chord * 0.16f, -1f, 1f);
     });
 
+    // Zpomaleni ve vrcholu POTG scenky: hluboky uder s propadem basu (jako "boom" v trailerech).
+    static AudioClip potgSlowHit;
+    public static AudioClip PotgSlowHit => potgSlowHit ??= Make("potgSlowHit", 1.8f, (t, r) =>
+    {
+        float sweep = Mathf.Min(t, 0.9f);
+        float phase = 2f * Mathf.PI * (30f * t + 50f * (sweep - sweep * sweep / 1.8f));   // 80 Hz -> 30 Hz
+        float attack = Mathf.Min(1f, t * 300f);
+        float boom = Mathf.Sin(phase) * Mathf.Exp(-t * 2.2f) * attack;
+        float body = Mathf.Sin(phase * 2.02f) * 0.3f * Mathf.Exp(-t * 6f) * attack;
+        float slap = Noise(r) * 0.4f * Mathf.Exp(-t * 30f);
+        return boom * 0.85f + body + slap;
+    });
+
+    // "Psst" (David v POTG): tlumeny sum (sykavka "s" je ostrejsi, "s" s hackem hlubsi) s mekkym nabehem a dojezdem.
+    static AudioClip shush;
+    public static AudioClip Shush => shush ??= MakeShush();
+
+    static AudioClip MakeShush()
+    {
+        float low = 0f, lower = 0f;
+        return Make("shush", 0.95f, (t, r) =>
+        {
+            low += (Noise(r) - low) * 0.4f;
+            lower += (low - lower) * 0.5f;
+            float envelope = Mathf.Min(1f, t / 0.1f) * Mathf.Clamp01((0.95f - t) / 0.4f);
+            return (low - lower * 0.6f) * 0.9f * envelope;
+        });
+    }
+
+    // Dopad karty POTG / razitko pocitadla: kratky tupy uder s plesknutim.
+    static AudioClip potgStamp;
+    public static AudioClip PotgStamp => potgStamp ??= Make("potgStamp", 0.3f, (t, r) =>
+        Mathf.Sin(2f * Mathf.PI * (130f - 150f * t) * t) * Mathf.Exp(-t * 16f) * 0.8f + Noise(r) * 0.5f * Mathf.Exp(-t * 55f));
+
     // Priprava ultimatky (zastupny zvuk, dokud hrdina nema vlastni nahravku): stoupajici ton s chvenim.
     public static AudioClip UltCharge => ultCharge ??= Make("ultCharge", 1.0f, (t, r) =>
     {
